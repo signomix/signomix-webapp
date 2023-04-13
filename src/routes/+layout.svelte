@@ -26,6 +26,19 @@
         userSession.set(session);
         return true
     }
+    function text(name) {
+        let labels = {
+            'anonymous': {
+                'pl': "niezalogowany",
+                'en': "anonymous"
+            },
+            'description': {
+                'pl': "Opis aplikacji ...",
+                'en': "Application description ..."
+            }
+        }
+        return labels[name][session.language]
+    }
 </script>
 
 <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse navbar-collapse">
@@ -36,7 +49,7 @@
                 {#if $userSession.logged}
                 <span class="lead">{$userSession.login} </span>
                 {:else}
-                <span class="lead">niezalogowany </span>
+                <span class="lead">niezalogowany</span>
                 {/if}
                 <i class="bi bi-caret-down-fill"></i>
             </a>
