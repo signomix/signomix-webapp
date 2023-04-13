@@ -16,46 +16,9 @@
                     <label for="id">ID</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input required type="text" class="form-control" id="eui" name="eui" placeholder="EUI urządzenia"
-                        value={data.eui} on:change={clearMessage}>
-                    <label for="eui">EUI</label>
-                </div>
-                <div class="form-floating mb-3">
                     <textarea class="form-control" id="description" name="description"
                         rows="3">{data.description||''}</textarea>
                     <label for="description">Opis</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <textarea class="form-control" id="content" name="content" rows="3">{data.content||''}</textarea>
-                    <label for="content">Definicja</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="configTarget" id="targetMeter"
-                        checked={data.forMeter}>
-                    <label class="form-check-label" for="targetMeter">
-                        Konfiguracja licznika
-                    </label>
-                </div>
-                <div class="form-check mb-3">
-                    <input class="form-check-input" type="radio" name="configTarget" id="targetDevice"
-                        checked={!data.forMeter}>
-                    <label class="form-check-label" for="targetDevice">
-                        Konfiguracja urządzenia
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input disabled class="form-check-input" type="radio" name="source" id="sourceSDD"
-                        value={data.fromAmi?1:0} checked={!data.fromAmi}>
-                    <label class="form-check-label" for="sourceSDD">
-                        Utworzone w SDD
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input disabled class="form-check-input" type="radio" name="source" id="sourceAMI"
-                        value={data.fromAmi?1:0} checked={data.fromAmi}>
-                    <label class="form-check-label" for="sourceAMI">
-                        Utworzone w AMI
-                    </label>
                 </div>
                 <div class="form-floating mb-3">
                     <input disabled type="datetime-local" class="form-control" id="createdAt" name="createdAt"
@@ -101,11 +64,7 @@
         if (event.target.elements['id'].value.length > 0) {
             dataToSend.id = event.target.elements['id'].value
         }
-        dataToSend.eui = event.target.elements['eui'].value
-        try { dataToSend.fromAmi = event.target.elements['sourceAMI'].checked } catch (err) { console.log('sourceAMI ' + err) }
-        try { dataToSend.forMeter = event.target.elements['targetMeter'].checked } catch (err) { console.log('targetMeter ' + err) }
         dataToSend.description = event.target.elements['description'].value
-        dataToSend.content = event.target.elements['content'].value
         dataToSend.created = utils.getDateApiFormat(event.target.elements['createdAt'].value)
         dataToSend.updated = event.target.elements['updatedAt'].value
         if (dataToSend.updated.length > 0) {
@@ -113,7 +72,7 @@
         }
 
         const headers = new Headers()
-        let url = utils.getBackendUrl(location) + '/sdd/api/configurations/'
+        let url = utils.getBackendUrl(location) + '/api/dashboards/'
         if (!(dataToSend.id == null || dataToSend.id == '' || dataToSend.id == undefined)) {
             url = url + dataToSend.id
             method = 'PUT'

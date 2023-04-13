@@ -5,7 +5,7 @@
 
     function logout() {
         console.log("LOGOUT")
-        userSession.set({ logged: false, login: '', password: '' })
+        userSession.set({ logged: false, login: '', password: '', language: 'en' })
         return true
     }
 

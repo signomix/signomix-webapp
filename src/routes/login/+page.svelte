@@ -73,7 +73,7 @@
                     console.log(error)
                 });
         } else {
-            userSession.set({ logged: true, login: 'user', password: 'user', authorized: true })
+            userSession.set({ logged: true, login: 'user', password: 'user', authorized: true, language: 'en' })
             console.log($userSession.login)
             errorMessage = ''
             goto('/')
