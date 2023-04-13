@@ -70,10 +70,26 @@
             </li>
             {#if $userSession.logged}
             <li class="nav-item">
-                <a class="nav-link" class:active={$page.url.pathname==='/dashboard' } href="/dashboard">
+                <a class="nav-link" class:active={$page.url.pathname==='/dashboards' } href="/dashboards">
                     <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                         <i class="bi bi-columns-gap"></i>
-                        &nbsp;Pulpit
+                        &nbsp;Pulpity
+                    </span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" class:active={$page.url.pathname==='/devices' } href="/devices">
+                    <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                        <i class="bi bi-router"></i>
+                        &nbsp;Urządzenia
+                    </span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" class:active={$page.url.pathname==='/notifications' } href="/notifications">
+                    <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                        <i class="bi bi-megaphone"></i>
+                        &nbsp;Powiadomienia
                     </span>
                 </a>
             </li>
@@ -86,14 +102,6 @@
                 </a>
             </li>
             {/if}
-            <li class="nav-item">
-                <a class="nav-link" class:active={$page.url.pathname==='/test' } href="/test">
-                    <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                        <i class="bi bi-columns-gap"></i>
-                        &nbsp;Test
-                    </span>
-                </a>
-            </li>
             <li class="nav-item">
                 <a class="nav-link" class:active={$page.url.pathname==='/about' } href="/about">
                     <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">

@@ -1,5 +1,8 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Logowanie</h1>
+    {#if dev}
+    <div class="col p-2"><i>Tryb develperski. Login: user, hasło: user</i></div>
+    {/if}
 </div>
 <form class="text-center" on:submit={doLogin}>
     <div class="form-floating mb-3">
@@ -40,7 +43,7 @@
         if (!dev) {
             const pwd = event.target.elements['password'].value
             const lg = event.target.elements['login'].value
-            const url = utils.getBackendUrl(location) + '/sdd/api/user/' + lg
+            const url = utils.getBackendUrl(location) + '/api/user/' + lg
             const headers = new Headers()
             headers.set('Authorization', 'Basic ' + btoa(lg + ":" + pwd));
             let response = fetch(
