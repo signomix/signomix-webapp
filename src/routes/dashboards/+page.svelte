@@ -30,7 +30,8 @@
                         <td class="col-5">{config.description.substring(0,20)}</td>
                         <td class="col-4">{utils.getLocalDateFormat(config.updated)}</td>
                         <td class="col-1">
-                            <a href="/dashboards/{config.id}"><i class="bi bi-pencil-square"></i></a>
+                            <a href="/dashboards/{config.id}"><i class="bi bi-eye me-2"></i></a>
+                            <a href="/dashboards/{config.id}/edit"><i class="bi bi-pencil-square"></i></a>
                         </td>
                     </tr>
                     {/each}
@@ -89,7 +90,19 @@
         }
         if (dev) {
             for (var i = 0; i < limit; i++) {
-                configs.push({ id: (i + offset + 1), description: 'jakiś długi opis tej konkretnej konfiguracji', createdAt: Date.now(), updatedAt: Date.now() })
+                configs.push(
+                    {
+                        id: (i + offset + 1),
+                        name: 'My Dasboard ' + (i + offset + 1),
+                        description: 'Dasboard description ' + (i + offset + 1),
+                        widgets: [
+                            {id: 0, title: 'widget 0', description: 'sample widget', width: 1, height: 1},
+                            {id: 1, title: 'widget 1',description: 'sample widget', width: 1, height: 1},
+                        ],
+                        createdAt: Date.now(),
+                        updatedAt: Date.now()
+                    }
+                )
             }
         } else {
             let headers = new Headers();
@@ -98,12 +111,12 @@
             headers.set('Authorization', 'Basic ' + btoa(session.login + ":" + session.password));
             await fetch(url, { headers: headers })
                 .then((response) => {
-                    if(response.status==200){
+                    if (response.status == 200) {
                         configs = response.json();
                     } else if (response.status == 401 || response.status == 403) {
                         utils.setAuthorized(session, false)
                     } else {
-                        alert(alertMessage.replace('%1',response.status).replace('%2',response.statusText))
+                        alert(alertMessage.replace('%1', response.status).replace('%2', response.statusText))
                     }
                 }).catch((error) => {
                     console.log(error)
@@ -132,6 +145,6 @@
     function handleDoNothing(event) {
         console.log(event)
     }
-    
+
 
 </script>

@@ -17,12 +17,12 @@ export const load = async ({ params, url }) => {
         name: 'My Dasboard ',
         description: 'Dasboard description ',
         widgets: [
-          { id: 0, title: 'widget 0', description: 'sample widget', width: 1, height: 1 },
-          { id: 1, title: 'widget 1',description: 'sample widget', width: 2, height: 1 },
+            {id: 0, description: 'sample widget', width: 1, height: 1},
+            {id: 1, description: 'sample widget', width: 1, height: 1},
         ],
         createdAt: Date.now(),
         updatedAt: Date.now()
-      }
+    }
     } else {
       let config = null
       try {
@@ -32,15 +32,15 @@ export const load = async ({ params, url }) => {
         await fetch(endpoint, { headers: headers }).then(response => {
           if (response.status == 200) {
             config = response.json();
-          } else if (response.status == 401 || response.status == 403) {
+        } else if (response.status == 401 || response.status == 403) {
             utils.setAuthorized(session, false)
-          } else {
+        } else {
             alert(
-              utils.getMessage(utils.FETCH_STATUS)
-                .replace('%1', response.status)
-                .replace('%2', response.statusText)
+                utils.getMessage(utils.FETCH_STATUS)
+                    .replace('%1', response.status)
+                    .replace('%2', response.statusText)
             )
-          }
+        }
         })
       } catch (error) {
         console.log('ERROR')
