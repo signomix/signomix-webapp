@@ -42,7 +42,7 @@
 </div>
 <div class="row">
     <div class="col-2">
-        <a class="btn btn-outline-primary" role="button" href="/dashboards/new">Dodaj</a>
+        <a class="btn btn-outline-primary" role="button" href="/dashboards/new/edit">Dodaj</a>
     </div>
     <div class="col-10">
         <nav aria-label="Table navigation">

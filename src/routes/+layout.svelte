@@ -35,7 +35,11 @@
             'description': {
                 'pl': "Opis aplikacji ...",
                 'en': "Application description ..."
-            }
+            },
+            'login': {
+                'pl': "Zaloguj się",
+                'en': "Login"
+            },
         }
         return labels[name][session.language]
     }

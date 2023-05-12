@@ -4,9 +4,11 @@
 </div>
 <div class="component">
     <div class="row">
+        
         {#each data.widgets as widget}
         <div class="col-{widget.width} p-2 m-1 border border-primary">{widget.title}</div>
         {/each}
+        
     </div>
 </div>
 <script>

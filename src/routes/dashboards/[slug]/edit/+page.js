@@ -12,6 +12,7 @@ export const load = async ({ params, url }) => {
 
   const getSelectedConfig = async (serviceUrl) => {
     if (dev || 'new' == params.slug) {
+      console.log(new Date().toLocaleString())  
       return {
         id: 0,
         name: 'My Dasboard ',
@@ -20,9 +21,10 @@ export const load = async ({ params, url }) => {
             {id: 0, description: 'sample widget', width: 1, height: 1},
             {id: 1, description: 'sample widget', width: 1, height: 1},
         ],
-        createdAt: Date.now(),
-        updatedAt: Date.now()
+        createdAt: new Date(),
+        updatedAt: new Date()
     }
+    
     } else {
       let config = null
       try {

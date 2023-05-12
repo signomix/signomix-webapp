@@ -1,6 +1,6 @@
 {
-"name": "LoRAMI SDD",
-"short_name": "LoRAMI",
+"name": "Signomix Web App",
+"short_name": "Signomix",
 "start_url": "http://localhost/app",
 "display": "standalone",
 "description": "A description for your application",
