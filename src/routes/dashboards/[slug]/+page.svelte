@@ -7,10 +7,11 @@
 </div>
 <div class="demo-container size">
     <Grid bind:items={items} rowHeight={100} let:item {cols} let:index>
-        <div class="demo-widget content">
-            <h5>widget {index}</h5>
+        <div class="demo-widget content bg-white border border-primary" >
+            <Widget index={index} config={widgets[index]}/>
         </div>
     </Grid>
+
 </div>
 <script>
     import Grid from "svelte-grid";
@@ -20,6 +21,8 @@
     import { goto } from '$app/navigation';
     import { userSession } from '$lib/stores.js';
 
+    import Widget from '$lib/components/Widget.svelte';
+
     export let data
     let errorMessage = ''
 
@@ -27,7 +30,13 @@
     userSession.subscribe(value => {
         session = value;
     });
-    
+
+    let widgets = [
+        { title: 'Tytuł 1', type: 'sticket' }, 
+        { title: 'Tytuł 2', type: 'graph' }, 
+        { title: 'Tytuł 3', type: 'table' }
+    ]
+
     const { item } = gridHelp;
     const id = () => "_" + Math.random().toString(36).substr(2, 9);
 
@@ -76,6 +85,10 @@
         [1024, 6],
         [500, 1],
     ];
+
+    function onWidgetClick(event) {
+        console.log('onWidgetClick', event);
+    }
 </script>
 <style>
     .size {
@@ -84,12 +97,9 @@
     }
 
     .demo-widget {
-        background: #f1f1f1;
         height: 100%;
         width: 100%;
         display: flex;
-        justify-content: center;
-        align-items: center;
     }
 
     .demo-container {
