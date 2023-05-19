@@ -1,5 +1,6 @@
 <!--
-    see: https://svelte-grid.vercel.app/examples/responsive
+    responsive grid: https://svelte-grid.vercel.app/examples/responsive
+    bindings: https://learn.svelte.dev/tutorial/text-inputs
 -->
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -8,7 +9,7 @@
 <div class="demo-container size">
     <Grid bind:items={items} rowHeight={100} let:item {cols} let:index>
         <div class="demo-widget content bg-white border border-primary" >
-            <Widget index={index} config={widgets[index]}/>
+            <Widget index={index} bind:config={widgets}/>
         </div>
     </Grid>
 
