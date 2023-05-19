@@ -1,59 +1,28 @@
-<div class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    {#if data.id=='new'}
-    <h2>Nowy pulpit</h2>
-    {:else}
-    <h2>Modyfikacja definicji pulpitu</h2>
-    {/if}
+<!--
+    responsive grid: https://svelte-grid.vercel.app/examples/responsive
+    bindings: https://learn.svelte.dev/tutorial/text-inputs
+-->
+<div
+    class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h2>{data.name}</h2>
 </div>
-<div class="component">
-    <div class="row">
-        <div class="col">
-            <form class="text-center" on:submit|preventDefault={doSend}>
-                <div class="form-floating mb-3">
-                    <input disabled type="text" class="form-control" id="id" name="id" placeholder="ID konfiguracji"
-                        value={data.id=='new' ?'':data.id}>
-                    <label for="id">ID</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <input disabled type="text" class="form-control" id="name" name="name" placeholder="Nazwa"
-                        value={data.name}>
-                    <label for="id">name</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <textarea class="form-control" id="description" name="description"
-                        rows="3">{data.description||''}</textarea>
-                    <label for="description">Opis</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <input type="datetime-local" class="form-control" 
-                    id="createdAt" name="createdAt"
-                        value={utils.getLocalDateFormat(data.created)}>
-                    <label for="createdAt">Data utworzenia</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <input disabled type="datetime-local" class="form-control" 
-                    id="updatedAt" name="updatedAt"
-                        value={data.createdAt.toLocaleString()}>
-                    <label for="updatedAt">Data modyfikacji</label>
-                </div>
-                {#if errorMessage!=''}
-                <div class="alert alert-danger w-100" role="alert">
-                    {errorMessage}
-                </div>
-                {/if}
-                <div>
-                    <button class="w-25 btn btn-lg btn-primary" type="submit">Zapisz</button>
-                    <button class="w-25 btn btn-lg btn-secondary" type="button" on:click={cancel}>Wróć</button>
-                </div>
-            </form>
+<div class="demo-container size">
+    <Grid bind:items={items} rowHeight={100} let:item {cols} let:index>
+        <div class="demo-widget content bg-white border border-primary" >
+            <WidgetConfig index={index} bind:config={widgets}/>
         </div>
-    </div>
+    </Grid>
+
 </div>
 <script>
+    import Grid from "svelte-grid";
+    import gridHelp from "svelte-grid/build/helper/index.mjs";
     import { dev } from '$app/environment';
     import { utils } from '$lib/utils.js';
     import { goto } from '$app/navigation';
     import { userSession } from '$lib/stores.js';
+
+    import WidgetConfig from '$lib/components/WidgetConfig.svelte';
 
     export let data
     let errorMessage = ''
@@ -63,67 +32,79 @@
         session = value;
     });
 
-    function doSend(event) {
+    let widgets = [
+        { title: 'Tytuł 1', type: 'sticket' }, 
+        { title: 'Tytuł 2', type: 'graph' }, 
+        { title: 'Tytuł 3', type: 'table' }
+    ]
 
-        let dataToSend = {}
-        let method = 'POST'
-        if (event.target.elements['id'].value.length > 0) {
-            dataToSend.id = event.target.elements['id'].value
-        }
-        dataToSend.description = event.target.elements['description'].value
-        dataToSend.created = utils.getDateApiFormat(event.target.elements['createdAt'].value)
-        dataToSend.updated = event.target.elements['updatedAt'].value
-        if (dataToSend.updated.length > 0) {
-            dataToSend.updated = utils.getDateApiFormat(dataToSend.updated)
-        }
+    const { item } = gridHelp;
+    const id = () => "_" + Math.random().toString(36).substr(2, 9);
 
-        const headers = new Headers()
-        let url = utils.getBackendUrl(location) + '/api/dashboards/'
-        if (!(dataToSend.id == null || dataToSend.id == '' || dataToSend.id == undefined)) {
-            url = url + dataToSend.id
-            method = 'PUT'
-        }
-        if (!isValid(dataToSend)) {
-            return
-        }
-        headers.set('Authorization', 'Basic ' + btoa(session.login + ":" + session.password));
-        headers.set('Content-Type', 'application/json')
-        //console.log('URL:' + url)
-        let response = fetch(
-            url,
-            { method: method, mode: 'cors', headers: headers, body: JSON.stringify(dataToSend) }
-        ).then((response) => {
-            if (response.status == 200) {
-                errorMessage = ''
-                goto('/configs')
-            } else if (response.status == 401 || response.status == 403 || response.status == 404) {
-                utils.setAuthorized(session, false)
-            } else {
-                alert(
-                    utils.getMessage(utils.FETCH_STATUS)
-                        .replace('%1', response.status)
-                        .replace('%2', response.statusText)
-                )
-            }
-        }).catch((error) => {
-            errorMessage = error.message
-            if (errorMessage == 'Failed to fetch' && location.protocol.toLowerCase() == 'https') {
-                errorMessage = errorMessage + ' Możliwa przyczyna: self signed nie są obsługiwane.'
-            }
-            console.log(error)
-        });
+    let editable = true; // set to true to enable editing
+
+    let items = [
+        {
+            id: id(),
+            10: item({
+                x: 0,
+                y: 0,
+                w: 2,
+                h: 2,
+                draggable: editable, resizable: editable,
+            }),
+            6: item({ x: 0, w: 2, h: 2, y: 0, draggable: editable, resizable: editable, }),
+            1: item({ x: 0, y: 0, w: 1, h: 2, draggable: editable, resizable: editable, }),
+        },
+        {
+            id: id(),
+            10: item({
+                x: 2,
+                y: 0,
+                w: 3,
+                h: 2,
+            }),
+            6: item({ x: 2, w: 1, h: 2, y: 0 }),
+            1: item({ x: 0, y: 2, w: 1, h: 2 }),
+        },
+
+        {
+            id: id(),
+            10: item({
+                x: 0,
+                y: 2,
+                w: 5,
+                h: 2,
+            }),
+            6: item({ x: 0, w: 3, h: 2, y: 2 }),
+            1: item({ x: 0, y: 4, w: 1, h: 2 }),
+        },
+    ];
+
+    const cols = [
+        [1500, 10],
+        [1024, 6],
+        [500, 1],
+    ];
+
+    function onWidgetClick(event) {
+        console.log('onWidgetClick', event);
     }
-
-    function isValid(data) {
-        console.log(data)
-        return true
-    }
-
-    function cancel() {
-        goto('/dashboards')
-    }
-    function clearMessage() {
-        errorMessage = ''
-    }
-
 </script>
+<style>
+    .size {
+        max-width: 1500px;
+        width: 100%;
+    }
+
+    .demo-widget {
+        height: 100%;
+        width: 100%;
+        display: flex;
+    }
+
+    .demo-container {
+        max-width: 1500px;
+        width: 100%;
+    }
+</style>
