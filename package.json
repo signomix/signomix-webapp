@@ -17,5 +17,9 @@
 		"svelte-preprocess": "^5.0.3",
 		"vite": "^4.2.0"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"chart.js": "^4.3.0",
+		"svelte-chartjs": "^3.1.2"
+	}
 }

@@ -53,7 +53,6 @@
                 h: 2,
                 draggable: editable, resizable: editable,
             }),
-            6: item({ x: 0, w: 2, h: 2, y: 0, draggable: editable, resizable: editable, }),
             1: item({ x: 0, y: 0, w: 1, h: 2, draggable: editable, resizable: editable, }),
         },
         {
@@ -64,7 +63,6 @@
                 w: 3,
                 h: 2,
             }),
-            6: item({ x: 2, w: 1, h: 2, y: 0 }),
             1: item({ x: 0, y: 2, w: 1, h: 2 }),
         },
 
@@ -76,14 +74,12 @@
                 w: 5,
                 h: 2,
             }),
-            6: item({ x: 0, w: 3, h: 2, y: 2 }),
             1: item({ x: 0, y: 4, w: 1, h: 2 }),
         },
     ];
 
     const cols = [
         [1500, 10],
-        [1024, 6],
         [500, 1],
     ];
 
