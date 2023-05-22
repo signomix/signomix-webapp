@@ -5,7 +5,7 @@
 -->
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h2>{dashboardConfig.title}</h2><a href="/dashboards/{data.id}/edit">Configure</a>
+    <h5>{dashboardConfig.title}</h5><a href="/dashboards/{data.id}/edit">Configure</a>
 </div>
 <div class="dashboard-container" id={dashboardId} >
     <Grid bind:items={items} rowHeight={100} let:item {cols} let:index on:resize={handleResize} on:mount={handleMount}>
