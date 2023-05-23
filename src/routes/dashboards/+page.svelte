@@ -124,23 +124,14 @@
         }
         return configs;
     }
-
-    function handleMeterConfigSelected(event) {
-        console.log(event)
-        deviceTabActive = false
-    }
-    function handleDeviceConfigSelected(event) {
-        getConfigs()
-        deviceTabActive = true
-    }
     function handleLoadPrevious(event) {
         offset = offset - limit
         if (offset < 0) offset = 0
-        getConfigs()
+        promise = getConfigs()
     }
     function handleLoadNext(event) {
         offset = offset + limit;
-        getConfigs();
+        promise = getConfigs();
     }
     function handleDoNothing(event) {
         console.log(event)
