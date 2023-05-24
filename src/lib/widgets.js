@@ -115,3 +115,5 @@ export const widgets = {
         }
     }
 }
+
+export default widgets;
