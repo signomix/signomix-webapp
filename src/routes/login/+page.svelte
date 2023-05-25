@@ -35,20 +35,52 @@
 
     let errorMessage = ''
 
+    let session;
+    userSession.subscribe(value => {
+        session = value;
+    });
+
     function clearMessage(event) {
         errorMessage = ''
     }
-    function doLogin(event) {
+    async function doLogin(event) {
         event.preventDefault()
         if (!dev) {
             const pwd = event.target.elements['password'].value
             const lg = event.target.elements['login'].value
-            const url = utils.getBackendUrl(location) + '/api/user/' + lg
+            const url = utils.getBackendUrl(location) + '/api/auth?action=login'
             const headers = new Headers()
-            headers.set('Authorization', 'Basic ' + btoa(lg + ":" + pwd));
-            let response = fetch(
+            headers.set('Authentication', 'Basic ' + btoa(lg + ":" + pwd));
+
+            let response = await fetch(
                 url,
                 {
+                    method: 'POST',
+                    mode: 'cors',
+                    credentials: 'include',
+                    referrerPolicy: 'origin-when-cross-origin',
+                    headers: headers
+                });
+            if (response.ok) { // if HTTP-status is 200-299
+                // get the response body (the method explained below)
+                let text = await response.json();
+                session.logged = true
+                session.login = lg
+                session.password = pwd
+                session.authorized = true
+                session.token = text
+                userSession.set(session)
+                errorMessage = ''
+                goto('/')
+            } else {
+                errorMessage = 'Nieudane logowanie'
+                alert("HTTP-Error: " + response.status);
+            }
+
+            /* let response = fetch(
+                url,
+                {
+                    method: 'POST',
                     mode: 'cors',
                     credentials: 'include',
                     referrerPolicy: 'origin-when-cross-origin',
@@ -60,8 +92,15 @@
                         errorMessage = 'Nieudane logowanie'
                     } else {
                         //OK
-                        userSession.set({ logged: true, login: lg, password: pwd, authorized: true })
-                        console.log($userSession.login)
+                        console.log('RESPONSE: ' + response.text())
+                        userSession.set({
+                            logged: true,
+                            login: lg,
+                            password: pwd,
+                            authorized: true,
+                            token: response.text()
+                        })
+                        console.log($userSession.login, ' ', $userSession.token)
                         errorMessage = ''
                         goto('/')
                     }
@@ -71,9 +110,9 @@
                         errorMessage = errorMessage + '. Możliwa przyczyna: self signed nie są obsługiwane.'
                     }
                     console.log(error)
-                });
+                }); */
         } else {
-            userSession.set({ logged: true, login: 'user', password: 'user', authorized: true, language: 'en' })
+            userSession.set({ logged: true, login: 'user', password: 'user', authorized: true, language: 'en', token: '' })
             console.log($userSession.login)
             errorMessage = ''
             goto('/')

@@ -2,6 +2,8 @@
     import { page } from '$app/stores';
     import { userSession } from '$lib/stores.js';
     import { onMount } from 'svelte';
+    import { goto } from '$app/navigation';
+    import { utils } from '$lib/utils.js';
 
     function logout() {
         console.log("LOGOUT")
@@ -18,31 +20,17 @@
         console.log("SET LANGUAGE PL")
         session.language = 'pl';
         userSession.set(session);
+        goto('/')
         return true
     }
     function setLanguageEn(event) {
         console.log("SET LANGUAGE EN")
         session.language = 'en';
         userSession.set(session);
+        goto('/')
         return true
     }
-    function text(name) {
-        let labels = {
-            'anonymous': {
-                'pl': "niezalogowany",
-                'en': "anonymous"
-            },
-            'description': {
-                'pl': "Opis aplikacji ...",
-                'en': "Application description ..."
-            },
-            'login': {
-                'pl': "Zaloguj się",
-                'en': "Login"
-            },
-        }
-        return labels[name][session.language]
-    }
+    
 </script>
 
 <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse navbar-collapse">
@@ -89,16 +77,14 @@
             <li class="nav-item">
                 <a class="nav-link" class:active={$page.url.pathname==='/dashboards' } href="/dashboards">
                     <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                        <i class="bi bi-columns-gap"></i>
-                        &nbsp;Pulpity
+                        <i class="bi bi-columns-gap me-2"></i>Pulpity
                     </span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" class:active={$page.url.pathname==='/devices' } href="/devices">
                     <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                        <i class="bi bi-router"></i>
-                        &nbsp;Urządzenia
+                        <i class="bi bi-router me-2"></i>{utils.navText('devices',session.language)}
                     </span>
                 </a>
             </li>

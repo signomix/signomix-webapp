@@ -49,20 +49,43 @@ export const utils = {
     //
     return dateString + ':00' + timeOffsetStr
   },
+  navText: function(name, language) {
+    let labels = {
+      'home': {
+        'pl': "Strona główna",
+        'en': "Home"
+      },
+      'login': {
+        'pl': "Zaloguj się",
+        'en': "Login"
+      },
+      'logout': {
+        'pl': "Wyloguj się",
+        'en': "Logout"
+      },
+      'devices': {
+        'pl': "Urządzenia",
+        'en': "Devices"
+      },
+      'anonymous': {
+        'pl': "niezalogowany",
+        'en': "anonymous"
+      },
+      'login': {
+        'pl': "Zaloguj się",
+        'en': "Login"
+      },
+    }
+    return labels[name][language]
+  },
   getMessage: function (code) {
     switch (code) {
       case this.AUTHORIZATION_FAILED:
         return 'Błąd dostępu.'
-        case this.AUTHENTICATION_FAILED:
-          return 'Nieudane logowanie.'
-      case this.TASK_INVALID:
-        return 'Zadanie musi mieć podane EUI urządzenia lub ID grupy.'
+      case this.AUTHENTICATION_FAILED:
+        return 'Nieudane logowanie.'
       case this.FETCH:
         return ' Możliwa przyczyna: self signed nie są obsługiwane.'
-      case this.NO_FIRMWARE_FILE:
-        return 'Brak pliku.'
-      case this.FIRMWARE_SAVE_FAILED:
-        return 'Błąd zapisu wersji oprogramowania!'
       case this.FETCH_STATUS:
         return "(⊙＿⊙')\n\nUps, tego się nie spodziewaliśmy!\nBłąd (%1): %2" //http://asciimoji.com/
       default:
@@ -72,10 +95,7 @@ export const utils = {
   },
   AUTHORIZATION_FAILED: 0,
   AUTHENTICATION_FAILED: 1,
-  TASK_INVALID: 2,
   FETCH: 3,
-  FETCH_STATUS: 4,
-  NO_FIRMWARE_FILE: 5,
-  FIRMWARE_SAVE_FAILED:6
+  FETCH_STATUS: 4
 
 }

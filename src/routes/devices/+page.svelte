@@ -1,11 +1,11 @@
 {#if !session.logged}
 <div class="alert alert-danger w-100 mt-2 text-center" role="alert">
-    Brak dostępu
+    {text('denied')}
 </div>
 {:else if session.authorized}
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h4>Urządzenia</h4>
+    <h4>{text('devices')}</h4>
 </div>
 {#await promise}
 {:then devices}
@@ -18,8 +18,8 @@
                         <th scope="col" class="col-1">#</th>
                         <th scope="col" class="col-1"></th>
                         <th scope="col" class="col-2">EUI</th>
-                        <th scope="col" class="col-6">Nazwa</th>
-                        <th scope="col" class="col-2">Typ</th>
+                        <th scope="col" class="col-6">{text('name')}</th>
+                        <th scope="col" class="col-2">{text('type')}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -39,7 +39,7 @@
 </div>
 <div class="row">
     <div class="col-2">
-        <a class="btn btn-outline-primary" role="button" href="/devices/new/edit">Dodaj</a>
+        <a class="btn btn-outline-primary" role="button" href="/devices/new/edit">{text('add')}</a>
     </div>
     <div class="col-10">
         <nav aria-label="Table navigation">
@@ -70,7 +70,7 @@
     import { utils } from '$lib/utils.js';
     import { dev } from '$app/environment';
 
-    export let data
+    //export let data
     let offset = 0
     let limit = 10
     let session;
@@ -101,11 +101,19 @@
             }
             console.log(devcs)
         } else {
+            console.log(session)
             let headers = new Headers();
-            let url = utils.getBackendUrl(location) + "/api/devices"
-            url = url + '?offset=' + actualOffset + '&limit=' + limit
-            headers.set('Authorization', 'Basic ' + btoa(session.login + ":" + session.password));
-            await fetch(url, { headers: headers })
+            let url = utils.getBackendUrl(location) + "/api/core/device"
+            url = url + '?offset=' + actualOffset + '&limit=' + limit + '&full=true'
+            headers.set('Authentication', session.token);
+            headers.set('Access-Control-Allow-Origin', '*');
+            await fetch(url,
+                {
+                    mode: 'cors',
+                    method: 'GET',
+                    referrerPolicy: 'origin-when-cross-origin',
+                    headers: headers
+                })
                 .then((response) => {
                     if (response.status == 200) {
                         devcs = response.json();
@@ -131,6 +139,32 @@
     }
     function handleDoNothing(event) {
         console.log(event)
+    }
+
+    function text(name) {
+        let labels = {
+            'devices': {
+                'pl': "Urządzenia",
+                'en': "Devices"
+            },
+            'name': {
+                'pl': "Nazwa",
+                'en': "Name"
+            },
+            'type': {
+                'pl': "Typ",
+                'en': "Type"
+            },
+            'denied': {
+                'pl': "Brak dostępu",
+                'en': "Access denied"
+            },
+            'add': {
+                'pl': "Dodaj",
+                'en': "Add"
+            }
+        }
+        return labels[name][session.language]
     }
 
 
