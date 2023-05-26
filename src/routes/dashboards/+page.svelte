@@ -5,7 +5,7 @@
 {:else if session.authorized}
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h2>Pulpity</h2>
+    <h4>Pulpity</h4>
 </div>
 {#await promise}
 {:then configs}
@@ -17,7 +17,7 @@
                     <tr>
                         <th scope="col" class="col-1">#</th>
                         <th scope="col" class="col-1">ID</th>
-                        <th scope="col" class="col-5">Opis</th>
+                        <th scope="col" class="col-5">Nazwa</th>
                         <th scope="col" class="col-4">Data aktualizacji</th>
                         <th scope="col" class="col-1">Akcje</th>
                     </tr>
@@ -27,7 +27,7 @@
                     <tr>
                         <th scope="row" class="col-1">{offset+1+index}</th>
                         <td class="col-1">{config.id}</td>
-                        <td class="col-5">{config.description.substring(0,20)}</td>
+                        <td class="col-5">{config.name}</td>
                         <td class="col-4">{utils.getLocalDateFormat(config.updated)}</td>
                         <td class="col-1">
                             <a href="/dashboards/{config.id}"><i class="bi bi-eye me-2"></i></a>

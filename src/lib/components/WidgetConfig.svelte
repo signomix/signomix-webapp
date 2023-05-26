@@ -6,31 +6,25 @@
     <div class="alert alert-danger" role="alert">
         <h4 class="alert-heading">Uwaga</h4>
         <p>Czy na pewno chcesz usunąć?</p>
-        <button class="btn btn-outline-primary mt-2" on:click={() => {removeCallback(index)}}>Tak</button>
-        <button class="btn btn-outline-primary mt-2" on:click={() => {showAlert(false)}}>Nie</button>
-      </div>
+        <button class="btn btn-outline-primary mt-2" on:click={()=> {removeCallback(index)}}>Tak</button>
+        <button class="btn btn-outline-primary mt-2" on:click={()=> {showAlert(false)}}>Nie</button>
+    </div>
     {:else}
-    <p>{config[index].title}<br>
-        {config[index].type}<br>
-        {config[index].controlTitle}<br>
-        <button class="btn btn-outline-primary mt-2" data-bs-toggle="modal" data-bs-target="#configModal"
-            on:click={setCurrentIndex(index)}>
-            Konfiguracja
-        </button>
-        <br>
-        <button class="btn btn-outline-primary mt-2" on:pointerdown={e => e.stopPropagation()}
-        on:click={() => showAlert(true)}
-        >
+    {config[index].title}<br>
+    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#configModal"
+        on:click={setCurrentIndex(index)}><i class="bi bi-gear"></i>
+    </button>
+    <button class="btn btn-outline-primary btn-sm" on:pointerdown={e=> e.stopPropagation()}
+        on:click={() => showAlert(true)} >
         <i class="bi bi-trash3"></i>
     </button>
-    </p>
     {/if}
 </div>
 <script>
     export let index
     export let config
-    export let removeCallback = () => {}
-    export let setCurrentIndex = () => {}
+    export let removeCallback = () => { }
+    export let setCurrentIndex = () => { }
 
     let alertVisible = false;
 
