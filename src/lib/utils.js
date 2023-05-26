@@ -49,34 +49,8 @@ export const utils = {
     //
     return dateString + ':00' + timeOffsetStr
   },
-  navText: function(name, language) {
-    let labels = {
-      'home': {
-        'pl': "Strona główna",
-        'en': "Home"
-      },
-      'login': {
-        'pl': "Zaloguj się",
-        'en': "Login"
-      },
-      'logout': {
-        'pl': "Wyloguj się",
-        'en': "Logout"
-      },
-      'devices': {
-        'pl': "Urządzenia",
-        'en': "Devices"
-      },
-      'anonymous': {
-        'pl': "niezalogowany",
-        'en': "anonymous"
-      },
-      'login': {
-        'pl': "Zaloguj się",
-        'en': "Login"
-      },
-    }
-    return labels[name][language]
+  getText: function (name, language, texts) {
+    return texts[name][language]
   },
   getMessage: function (code) {
     switch (code) {

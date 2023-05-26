@@ -1,0 +1,136 @@
+{
+    "items": [
+        {
+            "1": {
+                "fixed": false,
+                "resizable": true,
+                "draggable": true,
+                "customDragger": false,
+                "customResizer": false,
+                "min": {
+                    "w": 1,
+                    "h": 1
+                },
+                "max": {},
+                "w": 2,
+                "h": 2,
+                "x": 0,
+                "y": 0
+            },
+            "10": {
+                "fixed": false,
+                "resizable": true,
+                "draggable": true,
+                "customDragger": false,
+                "customResizer": false,
+                "min": {
+                    "w": 1,
+                    "h": 1
+                },
+                "max": {},
+                "w": 1,
+                "h": 1,
+                "x": 2,
+                "y": 0,
+                "id": "_rovr8yqsx"
+            },
+            "id": "_rovr8yqsx"
+        },
+        {
+            "1": {
+                "fixed": false,
+                "resizable": true,
+                "draggable": true,
+                "customDragger": false,
+                "customResizer": false,
+                "min": {
+                    "w": 1,
+                    "h": 1
+                },
+                "max": {},
+                "w": 2,
+                "h": 2,
+                "x": 0,
+                "y": 0
+            },
+            "10": {
+                "fixed": false,
+                "resizable": true,
+                "draggable": true,
+                "customDragger": false,
+                "customResizer": false,
+                "min": {
+                    "w": 1,
+                    "h": 1
+                },
+                "max": {},
+                "w": 2,
+                "h": 2,
+                "x": 0,
+                "y": 0
+            },
+            "id": "_di4cofrgw"
+        },
+        {
+            "1": {
+                "fixed": false,
+                "resizable": true,
+                "draggable": true,
+                "customDragger": false,
+                "customResizer": false,
+                "min": {
+                    "w": 1,
+                    "h": 1
+                },
+                "max": {},
+                "w": 2,
+                "h": 2,
+                "x": 0,
+                "y": 0
+            },
+            "10": {
+                "fixed": false,
+                "resizable": true,
+                "draggable": true,
+                "customDragger": false,
+                "customResizer": false,
+                "min": {
+                    "w": 1,
+                    "h": 1
+                },
+                "max": {},
+                "w": 2,
+                "h": 2,
+                "x": 3,
+                "y": 0
+            },
+            "id": "_dp2ywnh8b"
+        }
+    ],
+    "widgets_data": [
+        {
+            "title": "0",
+            "type": "text",
+            "controlTitle": "tytuł kontrolki",
+            "controlWidth": 2,
+            "role": "rola",
+            "description": "opis"
+        },
+        {
+            "title": "1",
+            "type": "text",
+            "controlTitle": "tytuł kontrolki",
+            "controlWidth": 2,
+            "role": "rola",
+            "description": "opis"
+        },
+        {
+            "title": "2",
+            "type": "text",
+            "controlTitle": "tytuł kontrolki",
+            "controlWidth": 2,
+            "role": "rola",
+            "description": "opis"
+        }
+    ]
+}
