@@ -1,80 +1,3 @@
-<script>
-    import { page } from '$app/stores';
-    import { userSession } from '$lib/stores.js';
-    import { onMount } from 'svelte';
-    import { goto } from '$app/navigation';
-    import { utils } from '$lib/utils.js';
-
-    function logout() {
-        console.log("LOGOUT")
-        userSession.set({ logged: false, login: '', password: '', language: 'en' })
-        return true
-    }
-
-    let session;
-    userSession.subscribe(value => {
-        session = value;
-    });
-
-    function setLanguagePl(event) {
-        console.log("SET LANGUAGE PL")
-        session.language = 'pl';
-        userSession.set(session);
-        goto('/')
-        return true
-    }
-    function setLanguageEn(event) {
-        console.log("SET LANGUAGE EN")
-        session.language = 'en';
-        userSession.set(session);
-        goto('/')
-        return true
-    }
-    let labels = {
-      'home': {
-        'pl': "Strona główna",
-        'en': "Home"
-      },
-      'signin': {
-        'pl': "Zaloguj się",
-        'en': "Sign in"
-      },
-      'signout': {
-        'pl': "Wyloguj się",
-        'en': "Sign out"
-      },
-      'anonymous': {
-        'pl': "niezalogowany",
-        'en': "anonymous"
-      },
-      'devices': {
-        'pl': "Urządzenia",
-        'en': "Devices"
-      },
-      'dashboards': {
-        'pl': "Pulpity",
-        'en': "Dashboards"
-      },
-      'notifications': {
-        'pl': "Powiadomienia",
-        'en': "Notifications"
-      },
-      'settings': {
-        'pl': "Ustawienia",
-        'en': "Settings"
-      },
-      'about': {
-        'pl': "O aplikacji",
-        'en': "About"
-      },
-      'api-unaviable': {
-        'pl': "Brak dostępu do API serwisu",
-        'en': "Service API unaviable"
-      }
-    }
-    
-</script>
-
 <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse navbar-collapse">
     <div class="position-sticky pt-0 sidebar-sticky">
         <div class="nav flex-column">
@@ -116,19 +39,45 @@
             </li>
             {#if $userSession.logged}
             <li class="nav-item">
+                <a class="nav-link" class:active={$page.url.pathname==='/organization' } href="/organization">
+                    <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                        <i class="bi bi-bank me-2"></i>{utils.getText('organization',session.language, labels)}
+                    </span>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" class:active={$page.url.pathname==='/dashboards' } href="/dashboards">
                     <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                         <i class="bi bi-columns-gap me-2"></i>{utils.getText('dashboards',session.language, labels)}
                     </span>
                 </a>
             </li>
+            <!-- Structure -->
             <li class="nav-item">
-                <a class="nav-link" class:active={$page.url.pathname==='/devices' } href="/devices">
-                    <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                        <i class="bi bi-router me-2"></i>{utils.getText('devices',session.language, labels)}
-                    </span>
+                <a class="nav-link" class:active={false} on:click={toggleStructure}>
+                    <span><i class="bi bi-diagram-3 me-2"></i><span>{utils.getText('structure',session.language, labels)}</span>
                 </a>
             </li>
+            {#if structureExpanded}
+            <li class="nav-item ms-3">
+                <a class="nav-link" class:active={$page.url.pathname==='/devices' } href="/devices">
+                    <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                        <i class="bi bi-hdd-network me-2"></i><span>{utils.getText('devices',session.language, labels)}</span>
+                </a>
+            </li>
+            <li class="nav-item ms-3">
+                <a class="nav-link" class:active={$page.url.pathname==='/groups' } href="/groups">
+                    <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                        <i class="bi bi-hdd-stack me-2"></i><span>{utils.getText('groups',session.language, labels)}</span>
+                </a>
+            </li>
+            <li class="nav-item ms-3">
+                <a class="nav-link" class:active={$page.url.pathname==='/applications' } href="/applications">
+                    <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                        <i class="bi bi-code-square me-2"></i><span>{utils.getText('apps',session.language, labels)}</span>
+                </a>
+            </li>
+            {/if}
             <li class="nav-item">
                 <a class="nav-link" class:active={$page.url.pathname==='/notifications' } href="/notifications">
                     <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
@@ -143,6 +92,19 @@
                     </span>
                 </a>
             </li>
+            {#if $userSession.type==1}
+            <!-- Administration -->
+            <li class="nav-item">
+                <a class="nav-link" class:active={false} on:click={toggleAdministration}>
+                    <span><i class="bi bi-tools me-2"></i><span>{utils.getText('administration',session.language, labels)}</span>
+                </a>
+            </li>
+            {#if administrationExpanded}
+                        <!-- TODO -->
+            {/if}
+            <!-- end Administration -->
+            {/if}
+            <!-- end logged in -->
             {/if}
             <li class="nav-item">
                 <a class="nav-link" class:active={$page.url.pathname==='/about' } href="/about">
@@ -162,3 +124,108 @@
     {/if}
     <slot></slot>
 </main>
+<script>
+    import { page } from '$app/stores';
+    import { userSession } from '$lib/stores.js';
+    import { onMount } from 'svelte';
+    import { goto } from '$app/navigation';
+    import { utils } from '$lib/utils.js';
+
+    function logout() {
+        console.log("LOGOUT")
+        userSession.set({ logged: false, login: '', password: '', language: 'en' })
+        return true
+    }
+
+    let session;
+    userSession.subscribe(value => {
+        session = value;
+    });
+
+    let structureExpanded = false;
+    function toggleStructure(event) {
+        structureExpanded = !structureExpanded;
+    }
+    let administrationExpanded = false;
+    function toggleAdministration(event) {
+        administrationExpanded = !administrationExpanded;
+    }
+
+    function setLanguagePl(event) {
+        console.log("SET LANGUAGE PL")
+        session.language = 'pl';
+        userSession.set(session);
+        goto('/')
+        return true
+    }
+    function setLanguageEn(event) {
+        console.log("SET LANGUAGE EN")
+        session.language = 'en';
+        userSession.set(session);
+        goto('/')
+        return true
+    }
+    let labels = {
+      'home': {
+        'pl': "Strona główna",
+        'en': "Home"
+      },
+      'signin': {
+        'pl': "Zaloguj się",
+        'en': "Sign in"
+      },
+      'signout': {
+        'pl': "Wyloguj się",
+        'en': "Sign out"
+      },
+      'anonymous': {
+        'pl': "niezalogowany",
+        'en': "anonymous"
+      },
+      'organization': {
+        'pl': "Organizacja",
+        'en': "Organization"
+      },
+      'devices': {
+        'pl': "Urządzenia",
+        'en': "Devices"
+      },
+      'groups': {
+        'pl': "Grupy",
+        'en': "Groups"
+      },
+      'apps': {
+        'pl': "Aplikacje",
+        'en': "Applications"
+      },
+      'structure': {
+        'pl': "Struktura",
+        'en': "Structure"
+      },
+      'dashboards': {
+        'pl': "Pulpity",
+        'en': "Dashboards"
+      },
+      'notifications': {
+        'pl': "Powiadomienia",
+        'en': "Notifications"
+      },
+      'settings': {
+        'pl': "Ustawienia",
+        'en': "Settings"
+      },
+      'administration': {
+        'pl': "Administracja",
+        'en': "Administration"
+      }
+      ,
+      'about': {
+        'pl': "O aplikacji",
+        'en': "About"
+      },
+      'api-unaviable': {
+        'pl': "Brak dostępu do API serwisu",
+        'en': "Service API unaviable"
+      }
+    }
+</script>

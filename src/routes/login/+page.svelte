@@ -1,5 +1,5 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Logowanie</h1>
+    <h4>Logowanie</h4>
     {#if dev}
     <div class="col p-2"><i>Tryb develperski. Login: user, hasło: user</i></div>
     {/if}
@@ -71,51 +71,63 @@
                 session.token = text
                 userSession.set(session)
                 errorMessage = ''
-                goto('/')
             } else {
                 errorMessage = 'Nieudane logowanie'
                 alert("HTTP-Error: " + response.status);
             }
+        } else {
+            session.logged = true
+            session.login = 'user'
+            session.password = 'user'
+            session.authorized = true
+            session.token = ''
+            session.language = 'en'
+            userSession.set(session)
+            console.log($userSession.login)
+            errorMessage = ''
+        }
+        getUser()
+    }
 
-            /* let response = fetch(
+    async function getUser() {
+        if (!dev) {
+            const url = utils.getBackendUrl(location) + '/api/user/' + session.login
+            const headers = new Headers()
+            headers.set('Authentication', session.token);
+
+            let response = await fetch(
                 url,
                 {
-                    method: 'POST',
+                    method: 'GET',
                     mode: 'cors',
                     credentials: 'include',
                     referrerPolicy: 'origin-when-cross-origin',
                     headers: headers
-                })
-                .then((response) => {
-                    if (response.status == 401 || response.status == 403 || response.status == 404) {
-                        console.log('UNAUTHORIZED')
-                        errorMessage = 'Nieudane logowanie'
-                    } else {
-                        //OK
-                        console.log('RESPONSE: ' + response.text())
-                        userSession.set({
-                            logged: true,
-                            login: lg,
-                            password: pwd,
-                            authorized: true,
-                            token: response.text()
-                        })
-                        console.log($userSession.login, ' ', $userSession.token)
-                        errorMessage = ''
-                        goto('/')
-                    }
-                }).catch((error) => {
-                    errorMessage = error.message
-                    if (errorMessage == 'Failed to fetch' && location.protocol.toLowerCase() == 'https') {
-                        errorMessage = errorMessage + '. Możliwa przyczyna: self signed nie są obsługiwane.'
-                    }
-                    console.log(error)
-                }); */
+                });
+            if (response.ok) { // if HTTP-status is 200-299
+                // get the response body (the method explained below)
+                // user.type: 0 - user, 1 - owner,system admin, 9 - organization admin
+                let user = await response.json();
+                session.organization = user.organization
+                session.type = user.type
+                userSession.set(session)
+                errorMessage = ''
+            } else {
+                errorMessage = 'Nieudane logowanie'
+                alert("HTTP-Error: " + response.status);
+            }
         } else {
-            userSession.set({ logged: true, login: 'user', password: 'user', authorized: true, language: 'en', token: '' })
-            console.log($userSession.login)
+            session.logged = true
+            session.login = 'admin'
+            session.password = 'admin'
+            session.authorized = true
+            session.token = ''
+            session.language = 'en'
+            session.organization = 0
+            session.type = 1
+            userSession.set(session)
             errorMessage = ''
-            goto('/')
         }
+        goto('/')
     }
 </script>

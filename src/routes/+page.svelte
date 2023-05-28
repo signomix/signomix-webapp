@@ -1,17 +1,22 @@
-<p>{text('info')}</p>
+<div class="container mt-5 w-75 text-center">
+    <h6 class="mb-4">{utils.getText('info',session.language, labels)}</h6>
+    <h2>{utils.getText('info2',session.language, labels)}</h2>
+</div>
 <script>
     import { userSession } from '$lib/stores.js';
+    import { utils } from '$lib/utils.js';
     let session;
     userSession.subscribe(value => {
         session = value;
     });
-    function text(name) {
-        let labels = {
-            'info': {
-                'pl': "Tu będzie strona startowa",
-                'en': "This will be the home page"
-            }
+    let labels = {
+        'info': {
+            'pl': "To jest prototyp nowej webaplikacji Signomiksa. Niektóre funkcjonalności mogą nie działać prawidłowo lub nie działać wcale. Wszystko może się zmienić w przyszłości.",
+            'en': "This is the prototype of the new Signomix web application. Some features may not work properly or not work at all. Everything may change in the future."
+        },
+        'info2': {
+            'pl': "Używasz tej aplikacji na własne ryzyko",
+            'en': "You use this app at your own risk"
         }
-        return labels[name][session.language]
     }
 </script>

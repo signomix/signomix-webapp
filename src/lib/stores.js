@@ -7,7 +7,9 @@ export const userSession = writable(
         password: '',
         language: 'en',
         authorized: false,
-        token: ''
+        token: '',
+        organization: 0,
+        type: 0
     }
 );
 export const baseUrl = writable({ url: '' })
