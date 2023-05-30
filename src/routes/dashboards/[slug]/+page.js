@@ -13,7 +13,7 @@ export const load = async ({ params, url }) => {
   const getSelectedConfig = async (serviceUrl) => {
     if (dev || 'new' == params.slug) {
       return {
-        id: 0,
+        id: params.slug,
         name: 'My Dasboard ',
         description: 'Dasboard description ',
         widgets: [
