@@ -10,11 +10,10 @@
         <button class="btn btn-outline-primary mt-2" on:click={()=> {showAlert(false)}}>Nie</button>
     </div>
     {:else}
-    {config[index].title}<br>
-    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#configModal"
+    <button class="btn btn-outline-primary btn-sm p-1" data-bs-toggle="modal" data-bs-target="#configModal"
         on:click={setCurrentIndex(index)}><i class="bi bi-gear"></i>
     </button>
-    <button class="btn btn-outline-primary btn-sm" on:pointerdown={e=> e.stopPropagation()}
+    <button class="btn btn-outline-primary btn-sm p-1" on:pointerdown={e=> e.stopPropagation()}
         on:click={() => showAlert(true)} >
         <i class="bi bi-trash3"></i>
     </button>
@@ -29,6 +28,9 @@
     let alertVisible = false;
 
     function showAlert(show) {
-        alertVisible = show;
+        //alertVisible = show;
+        if(confirm("Usunąć wybraną kontrolkę?")){
+            removeCallback(index)
+        }
     }
 </script>

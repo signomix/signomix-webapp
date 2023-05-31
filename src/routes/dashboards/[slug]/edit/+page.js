@@ -10,16 +10,115 @@ export const load = async ({ params, url }) => {
     session = value;
   });
 
+  const widgetObject={
+    name: "",
+    dev_id: "",
+    channel: "",
+    channelTranslated: "",
+    unitName: "",
+    rounding: 2,
+    type: "",
+    query: "last 1",
+    range: "",
+    title: "",
+    icon: "",
+    description: "",
+    format: "",
+    chartOption: "",
+    group: "",
+    config: "",
+    cubicInterpolation: false,
+    imageUrl: "",
+    app_id: "",
+    role: ""
+}
+
   const getSelectedConfig = async (serviceUrl) => {
     if (dev || 'new' == params.slug) {
       console.log(new Date().toLocaleString())
       return {
         id: params.slug,
-        name: 'My Dasboard ',
-        description: 'Dasboard description ',
+        userID: session.login,
+        title: 'My Dasboard ',
+        team: '',
+        administrators: '',
+        shared: true,  // true if shared with other users
+        items:  [
+          {
+              "1": {
+                  "fixed": false,
+                  "resizable": true,
+                  "draggable": true,
+                  "customDragger": false,
+                  "customResizer": false,
+                  "min": {
+                      "w": 1,
+                      "h": 1
+                  },
+                  "max": {},
+                  "w": 2,
+                  "h": 2,
+                  "x": 0,
+                  "y": 0
+              },
+              "10": {
+                  "fixed": false,
+                  "resizable": true,
+                  "draggable": true,
+                  "customDragger": false,
+                  "customResizer": false,
+                  "min": {
+                      "w": 1,
+                      "h": 1
+                  },
+                  "max": {},
+                  "w": 1,
+                  "h": 1,
+                  "x": 2,
+                  "y": 0,
+                  "id": "_rovr8yqsx"
+              },
+              "id": "_rovr8yqsx"
+          },
+          {
+              "1": {
+                  "fixed": false,
+                  "resizable": true,
+                  "draggable": true,
+                  "customDragger": false,
+                  "customResizer": false,
+                  "min": {
+                      "w": 1,
+                      "h": 1
+                  },
+                  "max": {},
+                  "w": 2,
+                  "h": 2,
+                  "x": 0,
+                  "y": 0
+              },
+              "10": {
+                  "fixed": false,
+                  "resizable": true,
+                  "draggable": true,
+                  "customDragger": false,
+                  "customResizer": false,
+                  "min": {
+                      "w": 1,
+                      "h": 1
+                  },
+                  "max": {},
+                  "w": 2,
+                  "h": 2,
+                  "x": 0,
+                  "y": 0
+              },
+              "id": "_di4cofrgw"
+          }
+      ],
         widgets: [
-          { id: 0, description: 'sample widget', width: 1, height: 1 },
-          { id: 1, description: 'sample widget', width: 1, height: 1 },
+          { id: 0, title: 'sample widget 0', type: 'line_chart' },
+          { id: 1, title: 'sample widget 1', type: 'line' },
         ],
         createdAt: new Date(),
         updatedAt: new Date()
