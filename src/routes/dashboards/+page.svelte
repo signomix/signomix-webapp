@@ -27,7 +27,7 @@
                     <tr>
                         <th scope="row" class="col-1">{offset+1+index}</th>
                         <td class="col-1">{config.id}</td>
-                        <td class="col-5">{config.name}</td>
+                        <td class="col-5">{config.title}</td>
                         <td class="col-4">{utils.getLocalDateFormat(config.updated)}</td>
                         <td class="col-1">
                             <a href="/dashboards/{config.id}"><i class="bi bi-eye me-2"></i></a>
@@ -49,7 +49,7 @@
             <ul class="pagination justify-content-end">
                 <li class="page-item">
                     <a class="page-link" class:disabled={offset==0} on:click={handleLoadPrevious}>
-                        <span aria-hidden="true"> &laquo; poprzednie {limit}</span>
+                        <span aria-hidden="true" class="px-2"> &laquo;</span>
                     </a>
                 </li>
                 <li class="page-item">
@@ -59,7 +59,7 @@
                 </li>
                 <li class="page-item">
                     <a class="page-link" class:disabled={configs.length<limit} on:click={handleLoadNext}>
-                        <span aria-hidden="true">kolejne {limit} &raquo;</span>
+                        <span aria-hidden="true" class="px-2">&raquo;</span>
                     </a>
                 </li>
             </ul>
@@ -89,20 +89,8 @@
             return configs
         }
         if (dev) {
-            for (var i = 0; i < limit; i++) {
-                configs.push(
-                    {
-                        id: (i + offset + 1),
-                        name: 'My Dasboard ' + (i + offset + 1),
-                        description: 'Dasboard description ' + (i + offset + 1),
-                        widgets: [
-                            {id: 0, title: 'widget 0', description: 'sample widget', width: 1, height: 1},
-                            {id: 1, title: 'widget 1',description: 'sample widget', width: 1, height: 1},
-                        ],
-                        createdAt: Date.now(),
-                        updatedAt: Date.now()
-                    }
-                )
+            for (let i = 0; i < window.localStorage.length; i++) {
+                configs.push(JSON.parse(window.localStorage.getItem(window.localStorage.key(i))));
             }
         } else {
             let headers = new Headers();

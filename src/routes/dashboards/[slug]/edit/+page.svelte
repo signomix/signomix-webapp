@@ -22,7 +22,7 @@
                 <input disabled type="text" class="form-control" id="input-userid" bind:value={data.userID}>
             </div>
             <div class="col-md-4">
-                
+
                 <input type="checkbox" class="form-check-input me-2" id="input-shared" bind:value={data.shared}>
                 <label class="form-check-label" for="input-shared">Shared</label>
             </div>
@@ -51,20 +51,21 @@
         </div>
         <div class="row">
             <div class="col-form-label">
-                <button class="btn btn-outline-secondary mt-1">Cancel</button>
-                <button class="btn btn-outline-primary me-4 mt-1" on:click={saveItems} disabled={modified==false}><i
+                <button class="btn btn-outline-secondary mt-1" on:click={goBack}>Cancel</button>
+                <button class="btn btn-outline-primary me-4 mt-1" on:click={saveDashboard} disabled={modified==false}><i
                         class="bi bi-save me-2"></i> Zapisz knfigurację
                 </button>
-                <button class="btn btn-outline-primary mt-1 me-4" on:click={addWidget}><i class="bi bi-plus-lg"></i></button> <label class="button mt-1">{items.length} kontrolek</label>
+                <button class="btn btn-outline-primary mt-1 me-4" on:click={addWidget}><i
+                        class="bi bi-plus-lg"></i></button>
             </div>
         </div>
 
     </form>
 </div>
 <div class="demo-container size">
-    <Grid bind:items={items} rowHeight={100} let:item {cols} let:index>
+    <Grid bind:items={data.items} rowHeight={100} let:item {cols} let:index>
         <div class="demo-widget content bg-white border border-primary">
-            <WidgetConfig index={index} bind:config={widgets_data} removeCallback={removeItem} setCurrentIndex={(idx)=>
+            <WidgetConfig index={index} bind:config={data.widgets} removeCallback={removeItem} setCurrentIndex={(idx)=>
                 setCurrentConfigureIndex(idx)}/>
         </div>
     </Grid>
@@ -75,7 +76,9 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-body">
-                <WidgetForm bind:index={currentConfigureIndex} bind:config={widgets_data} callback={testCallback} />
+                {#if currentConfigureIndex >= 0}
+                <WidgetForm bind:index={currentConfigureIndex} bind:config={data.widgets} callback={testCallback} />
+                {/if}
             </div>
         </div>
     </div>
@@ -87,8 +90,9 @@
     import { browser } from '$app/environment'
     import { dev } from '$app/environment';
     import { utils } from '$lib/utils.js';
-    import { goto } from '$app/navigation';
     import { userSession } from '$lib/stores.js';
+    import { base } from '$app/paths'
+    import { goto, afterNavigate } from '$app/navigation'
 
     import WidgetConfig from '$lib/components/WidgetConfig.svelte';
     import WidgetForm from '$lib/components/WidgetForm.svelte';
@@ -101,12 +105,16 @@
     userSession.subscribe(value => {
         session = value;
     });
+    let previousPage = base ;
+    afterNavigate(({ from }) => {
+        previousPage = from?.url.pathname || previousPage
+    })
+	function goBack() {
+        console.log('goBack: ', previousPage);
+        goto('/');
+    }
 
-    let currentConfigureIndex = 0;
-    //let items = [];
-    //let widgets_data = [];
-    let items=data.items;
-    let widgets_data=data.widgets;
+    let currentConfigureIndex = -1;
     let modified = false;
 
     const cols = [
@@ -123,67 +131,19 @@
 
     const id = () => "_" + Math.random().toString(36).substr(2, 9);
 
-    function initialize() {
+    function saveDashboard() {
         if (browser) {
-            let savedItemsLocal = window.localStorage.getItem(data.id);
-            if (!savedItemsLocal) {
-                console.log("No data ", data.id, " has been saved in local storage.");
-            } else {
-                let saveItemsJson = JSON.parse(savedItemsLocal);
-                items = saveItemsJson.items;
-                widgets_data = saveItemsJson.widgets_data;
+            if (data.id == 'new') {
+                data.id = new Date().getTime();
             }
-
-        }
-    }
-
-
-    function saveItems() {
-        if (browser && data.id != 'new') {
-            window.localStorage.setItem(data.id, JSON.stringify({
-                items: items,
-                widgets: widgets_data
-            }));
+            window.localStorage.setItem(data.id, JSON.stringify(data));
         }
         modified = false;
-    }
-
-    function saveConfiguration() {
-        console.log("Save current index: ", currentConfigureIndex);
-
-        var input = document.getElementById("input-type");
-        var value = input.value;
-        widgets_data[currentConfigureIndex].type = value;
-
-        input = document.getElementById("input-control-title");
-        value = input.value;
-        widgets_data[currentConfigureIndex].controlTitle = value;
-
-        input = document.getElementById("input-control-width");
-        value = input.value;
-        widgets_data[currentConfigureIndex].controlWidth = value;
-        items[currentConfigureIndex][10].w = value;
-        items[currentConfigureIndex][1].w = value;
-
-        input = document.getElementById("input-role");
-        value = input.value;
-        widgets_data[currentConfigureIndex].role = value;
-
-        input = document.getElementById("input-description");
-        value = input.value;
-        widgets_data[currentConfigureIndex].description = value;
-
-        items = gridHelp.adjust(items, COLS);
     }
 
     function setCurrentConfigureIndex(idx) {
         currentConfigureIndex = idx;
         console.log('New currentConfigureIndex: ', currentConfigureIndex);
-    }
-
-    function onWidgetClick(event) {let items = [];
-    let widgets_data = [];
-        console.log('onWidgetClick', event);
     }
 
     function testCallback(idx, cfg) {
@@ -194,12 +154,10 @@
         console.log('addWidget');
         modified = true
 
-        widgets_data.push({
-            title: widgets_data.length.toString(), 
-            type: 'text', 
-            controlTitle: 'tytuł kontrolki',
-            controlWidth: 2, 
-            role: 'rola', 
+        data.widgets.push({
+            title: data.widgets.length.toString(),
+            type: 'text',
+            role: '',
             description: 'opis'
         });
 
@@ -221,7 +179,7 @@
             }),
         };
 
-        let findOutPosition = gridHelp.findSpace(newItem, items, COLS);
+        let findOutPosition = gridHelp.findSpace(newItem, data.items, COLS);
 
         newItem = {
             ...newItem,
@@ -231,26 +189,25 @@
             },
         };
 
-        items = [...items, ...[newItem]];
+        data.items = [...data.items, ...[newItem]];
 
-        console.log('widgets_data size ' + widgets_data.length + ' items size ' + items.length);
+        console.log('widgets_data size ' + data.widgets.length + ' items size ' + data.items.length);
     }
 
     function removeItem(itemIndex) {
         console.log(itemIndex);
 
         if (itemIndex > -1) {
-            items.splice(itemIndex, 1);
-            widgets_data.splice(itemIndex, 1);
+            data.items.splice(itemIndex, 1);
+            data.widgets.splice(itemIndex, 1);
         }
 
-        items = gridHelp.normalize(items, COLS);
+        data.items = gridHelp.normalize(data.items, COLS);
 
-        console.log('widgets_data size ' + widgets_data.length + ' items size ' + items.length);
+        console.log('widgets_data size ' + data.widgets.length + ' items size ' + data.items.length);
         modified = true;
     }
 
-    initialize();
 </script>
 <style>
     .size {

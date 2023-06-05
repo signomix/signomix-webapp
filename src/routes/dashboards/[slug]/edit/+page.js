@@ -10,7 +10,7 @@ export const load = async ({ params, url }) => {
     session = value;
   });
 
-  const widgetObject={
+  const widgetObject = {
     name: "",
     dev_id: "",
     channel: "",
@@ -31,11 +31,23 @@ export const load = async ({ params, url }) => {
     imageUrl: "",
     app_id: "",
     role: ""
-}
+  }
 
+  const newDashboard = {
+    id: params.slug,
+    userID: session.login,
+    title: 'My Dasboard',
+    team: '',
+    administrators: '',
+    shared: false,  // true if shared with other users
+    items: [],
+    widgets: [],
+    createdAt: new Date(),
+    updatedAt: new Date()
+  }
   const getSelectedConfig = async (serviceUrl) => {
-    if (dev || 'new' == params.slug) {
-      console.log(new Date().toLocaleString())
+    if ('new' == params.slug) {
+      //console.log(new Date().toLocaleString())
       return {
         id: params.slug,
         userID: session.login,
@@ -43,7 +55,9 @@ export const load = async ({ params, url }) => {
         team: '',
         administrators: '',
         shared: true,  // true if shared with other users
-        items:  [
+        items: [],
+        widgets: [],
+        /* items:  [
           {
               "1": {
                   "fixed": false,
@@ -119,10 +133,20 @@ export const load = async ({ params, url }) => {
         widgets: [
           { id: 0, title: 'sample widget 0', type: 'line_chart' },
           { id: 1, title: 'sample widget 1', type: 'line' },
-        ],
+        ], */
         createdAt: new Date(),
         updatedAt: new Date()
       }
+    } else if (dev) {
+      let config = newDashboard
+      if (browser) {
+        console.log(window.localStorage.getItem(params.slug))
+        config = JSON.parse(window.localStorage.getItem(params.slug))
+        if (config == null) {
+          return newDashboard
+        }
+      }
+      return config
     } else {
       let config = null
       try {
