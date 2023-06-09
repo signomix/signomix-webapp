@@ -1,19 +1,17 @@
 export const widgets = {
     types: [
-        'bar_chart',
         'button',
+        'chart',
         'date',
         'devinfo',
         'image',
         'led',
-        'line_chart',
         'map',
         'multimap',
         'multitrack',
         'plan',
         'raw',
         'report',
-        'stepped_chart',
         'sticker',
         'stopwatch',
         'time',
@@ -21,8 +19,8 @@ export const widgets = {
         'canvas_placeholder',
         'chart_placeholder'
     ],
-    widgetTypesLocal: [], // List of locally defined widget types
-    getCommunityWidgetTypes: [], // List of widgets types delivered by the community
+    localTypes: [], // List of locally defined widget types
+    communityTypes: [], // List of widgets types delivered by the community
     chartOptions: {
         line: {
             dots: 'show dots',
@@ -39,79 +37,88 @@ export const widgets = {
         bar: {
         }
     },
-    widgetFieldTypes: {
-        w_type: 'widget type',
-        w_name: 'widget name',
-        w_title: 'widget title',
-        w_group: 'device group ID',
-        w_role: 'user role required to see the widget (all users if empty)',
-        w_channel: 'channel(s) to display',
-        w_query: 'query (DQL)',
-        w_format: 'format',
-        w_chartOption: 'chart option (depends on the chart type)',
-        w_cubicInterpolation: 'cubic interpolation',
-        w_image_url: 'image URL',
-        w_app_id: 'application ID',
-        w_dev_id: 'device EUI',
-        w_configuration: 'widget configuration',
-        w_data_type: 'data type',
-        w_command_type: 'command type',
-        w_unit: 'unit',
-        w_rounding: 'value rounding',
-        w_range: 'alert range definition',
-        w_icon: 'icon name',
-        w_channel_translated: 'translated channel name(s)'
+    typeFields: {
+        default: ['title', 'type', 'role','configuration', 'app_id', 'dev_id'],
+        button: ['eui','channel', 'data_type', 'command_type'],
+        chart: ['eui','channel', 'query', 'format', 'chartType'],
+        date: ['eui','channel', 'query'],
+        devinfo: ['eui',],
+        image: ['image_url'],
+        led: ['eui','channel', 'rule'],
+        map: ['eui','channel', 'query'],
+        multimap: ['group','channel'],
+        multitrack: ['group','channel'],
+        plan: ['group','channel','rule'],
+        raw: ['eui','channel', 'query'],
+        report: ['group','channel','channel_translated'],
+        text: [],
+        stopwatch: ['eui','channel', 'query'],
+        time: ['eui','channel', 'query'],
+        sticker: ['eui','channel','channel_translated','rule','unit', 'rounding', 'icon'],
     },
-    widgetFields: {
-        tab0: {
-            required: ['w_type', 'w_name', 'w_title'],
-            typeDependent: {
-                'report': ['w_group'],
-                'multimap': ['w_group'],
-                'multitrack': ['w_group'],
-                'plan': ['w_group'],
-                'text': [],
-                'image': [],
-                'raw': [],
-                'line': ['w_channel', 'w_query', 'w_format', 'w_chartOption', 'w_cubicInterpolation'],
-                'stepped': ['w_channel', 'w_query', 'w_format', 'w_chartOption', 'w_cubicInterpolation'],
-                'bar': ['w_channel', 'w_query', 'w_format'],
-                'map': ['w_channel', 'w_query'],
-                'date': ['w_channel', 'w_query'],
-                'stopwatch': ['w_channel', 'w_query'],
-                'time': ['w_channel', 'w_query'],
-                'plan': ['w_channel', 'w_query', 'w_range'],
-                'led': ['w_channel', 'w_query', 'w_range'],
-                'sticker': []
-            },
-            tab1: {
-                required: ['w_role'],
-                typeDependent: {
-                    'text': [],
-                    'image': ['w_image_url'],
-                    'raw': ['w_channel', 'w_query'],
-                    'line': ['w_channel', 'w_query', 'w_format', 'w_chartOption', 'w_cubicInterpolation'],
-                    'stepped': ['w_channel', 'w_query', 'w_format', 'w_chartOption', 'w_cubicInterpolation'],
-                    'bar': ['w_channel', 'w_query', 'w_format'],
-                    'map': ['w_channel', 'w_query'],
-                    'date': ['w_channel', 'w_query'],
-                    'stopwatch': ['w_channel', 'w_query'],
-                    'time': ['w_channel', 'w_query'],
-                    'plan': ['w_channel', 'w_query', 'w_range'],
-                    'led': ['w_channel', 'w_query', 'w_range'],
-                    'report': ['w_channel', 'w_query', 'w_channel_translated'],
-                    'devinfo': ['w_channel', 'w_query', 'w_channel_translated'],
-                    'multimap': ['w_channel', 'w_query', 'w_channel_translated', 'w_range'],
-                    'multitrack': ['w_channel', 'w_query', 'w_channel_translated', 'w_range'],
-                    'button': ['w_channel', 'w_data_type', 'w_command_type'],
-                    'sticker': ['w_channel', 'w_query', 'w_unit', 'w_rounding', 'w_range', 'w_icon']
-                }
-            },
-            tab2: {
-                required: ['w_configuration', 'w_app_id', 'w_dev_id'],
-                typeDependent: {
-                }
-            }
+    chartFields: {
+        line: ['cubicInterpolation'],
+        stepped: ['cubicInterpolation'],
+        bar: []
+    },
+    fieldNames: {
+        type: {en:'Type', pl:'Typ'},
+        title: {en:'Title', pl:'Tytuł'},
+        group: {en:'Group ID', pl:'ID grupy'},
+        role: {en:'User role', pl:'Rola użytkownika'},
+        channel: {en:'Measure names', pl:'Nazwy pomiarów'},
+        query: {en:'query (DQL)', pl:'zapytanie (DQL)'},
+        format: {en:'format', pl:'format'},
+        chartOption: {en:'chart option (depends on the chart type)', pl:'opcja wykresu (zależy od typu wykresu)'},
+        cubicInterpolation: {en:'cubic interpolation', pl:'interpolacja sześcienna'},
+        image_url: {en:'image URL', pl:'adres URL obrazu'},
+        app_id: {en:'application ID', pl:'ID aplikacji'},
+        dev_id: {en:'device EUI', pl:'EUI urządzenia'},
+        configuration: {en:'widget configuration', pl:'konfiguracja kontrolki'},
+        data_type: {en:'data type', pl:'typ danych'},
+        command_type: {en:'command type', pl:'typ polecenia'},
+        unit: {en:'unit', pl:'jednostka'},
+        rounding: {en:'value rounding', pl:'zaokrąglenie wartości'},
+        range: {en:'alert range definition', pl:'definicja zakresu alarmu'},
+        icon: {en:'icon name', pl:'nazwa ikony'},
+        channel_translated: {en:'translated channel name(s)', pl:'przetłumaczona nazwa kanału'}
+    },
+    fieldHints: {
+        type: {en:'widget type', pl:'typ kontrolki'},
+        title: {en:'widget title', pl:'tytuł kontrolki'},
+        group: {en:'device group ID', pl:'ID grupy urządzeń'},
+        role: {en:'user role required to see the widget (all users if empty)', pl:'rola użytkownika wymagana do wyświetlenia kontrolki (wszyscy użytkownicy jeśli puste)'},
+        channel: {en:'channel(s) to display', pl:'kanał(y) do wyświetlenia'},
+        query: {en:'query (DQL)', pl:'zapytanie (DQL)'},
+        format: {en:'format', pl:'format'},
+        chartOption: {en:'chart option (depends on the chart type)', pl:'opcja wykresu (zależy od typu wykresu)'},
+        cubicInterpolation: {en:'cubic interpolation', pl:'interpolacja sześcienna'},
+        image_url: {en:'image URL', pl:'adres URL obrazu'},
+        app_id: {en:'application ID', pl:'ID aplikacji'},
+        dev_id: {en:'device EUI', pl:'EUI urządzenia'},
+        configuration: {en:'widget configuration', pl:'konfiguracja kontrolki'},
+        data_type: {en:'data type', pl:'typ danych'},
+        command_type: {en:'command type', pl:'typ polecenia'},
+        unit: {en:'unit', pl:'jednostka'},
+        rounding: {en:'value rounding', pl:'zaokrąglenie wartości'},
+        range: {en:'alert range definition', pl:'definicja zakresu alarmu'},
+        icon: {en:'icon name', pl:'nazwa ikony'},
+        channel_translated: {en:'translated channel name(s)', pl:'przetłumaczona nazwa kanału'}
+    },
+    isVisible: function (widgetTypeName, fieldName){
+        if(this.typeFields.default.indexOf(fieldName) >= 0){
+            return true;
+        }else if (this.typeFields[widgetTypeName] && this.typeFields[widgetTypeName].indexOf(fieldName) >= 0){
+            return true;
+        } else {
+            return false;
+        }
+    },
+    getFieldName: function (fieldName, lang){
+        if(this.fieldNames[fieldName]){
+            return this.fieldNames[fieldName][lang];
+        } else {
+            return fieldName;
         }
     }
 }
