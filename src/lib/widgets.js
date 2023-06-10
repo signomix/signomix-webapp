@@ -19,42 +19,36 @@ export const widgets = {
         'canvas_placeholder',
         'chart_placeholder'
     ],
+    chartTypes: [
+        'line',
+        'stepped',
+        'bar'
+    ],
     localTypes: [], // List of locally defined widget types
     communityTypes: [], // List of widgets types delivered by the community
     chartOptions: {
-        line: {
-            dots: 'show dots',
-            plain: 'line only',
-            area: 'area below',
-            areaWithDots: 'area with dots'
-        },
-        stepped: {
-            dots: 'show dots',
-            plain: 'line only',
-            area: 'area below',
-            areaWithDots: 'area with dots'
-        },
-        bar: {
-        }
+        line: ['dots:', 'plain:', 'area:', 'areaWithDots:'],
+        stepped: ['dots:', 'plain:', 'area:', 'areaWithDots:'],
+        bar: []
     },
     typeFields: {
-        default: ['title', 'type', 'role','configuration', 'app_id', 'dev_id'],
-        button: ['eui','channel', 'data_type', 'command_type'],
-        chart: ['eui','channel', 'query', 'format', 'chartType'],
-        date: ['eui','channel', 'query'],
-        devinfo: ['eui',],
-        image: ['image_url'],
-        led: ['eui','channel', 'rule'],
-        map: ['eui','channel', 'query'],
+        default: ['title', 'type', 'role','config', 'app_id'],
+        button: ['dev_id','channel', 'commandType'],
+        chart: ['dev_id','channel', 'query', 'format', 'chartType'],
+        date: ['dev_id','channel', 'query'],
+        devinfo: ['dev_id',],
+        image: ['imageUrl'],
+        led: ['dev_id','channel', 'range'],
+        map: ['dev_id','channel', 'query'],
         multimap: ['group','channel'],
         multitrack: ['group','channel'],
-        plan: ['group','channel','rule'],
-        raw: ['eui','channel', 'query'],
+        plan: ['group','channel','range'],
+        raw: ['dev_id','channel', 'query'],
         report: ['group','channel','channel_translated'],
         text: [],
-        stopwatch: ['eui','channel', 'query'],
-        time: ['eui','channel', 'query'],
-        sticker: ['eui','channel','channel_translated','rule','unit', 'rounding', 'icon'],
+        stopwatch: ['dev_id','channel', 'query'],
+        time: ['dev_id','channel', 'query'],
+        sticker: ['dev_id','channel','channel_translated','range','unit', 'rounding', 'icon'],
     },
     chartFields: {
         line: ['cubicInterpolation'],
@@ -75,7 +69,6 @@ export const widgets = {
         app_id: {en:'application ID', pl:'ID aplikacji'},
         dev_id: {en:'device EUI', pl:'EUI urządzenia'},
         configuration: {en:'widget configuration', pl:'konfiguracja kontrolki'},
-        data_type: {en:'data type', pl:'typ danych'},
         command_type: {en:'command type', pl:'typ polecenia'},
         unit: {en:'unit', pl:'jednostka'},
         rounding: {en:'value rounding', pl:'zaokrąglenie wartości'},
@@ -97,7 +90,6 @@ export const widgets = {
         app_id: {en:'application ID', pl:'ID aplikacji'},
         dev_id: {en:'device EUI', pl:'EUI urządzenia'},
         configuration: {en:'widget configuration', pl:'konfiguracja kontrolki'},
-        data_type: {en:'data type', pl:'typ danych'},
         command_type: {en:'command type', pl:'typ polecenia'},
         unit: {en:'unit', pl:'jednostka'},
         rounding: {en:'value rounding', pl:'zaokrąglenie wartości'},

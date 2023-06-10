@@ -28,7 +28,7 @@
                         <th scope="row" class="col-1">{offset+1+index}</th>
                         <td class="col-1">{config.id}</td>
                         <td class="col-5">{config.title}</td>
-                        <td class="col-4">{utils.getLocalDateFormat(config.updated)}</td>
+                        <td class="col-4">{utils.getLocalDateFormat(config.updatedAt)}</td>
                         <td class="col-1">
                             <a href="/dashboards/{config.id}"><i class="bi bi-eye me-2"></i></a>
                             <a href="/dashboards/{config.id}/edit"><i class="bi bi-pencil-square"></i></a>

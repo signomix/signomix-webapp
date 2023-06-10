@@ -11,8 +11,14 @@ export const load = async ({ params, url }) => {
   });
 
   const getSelectedConfig = async (serviceUrl) => {
-    if (dev || 'new' == params.slug) {
-      return {
+    let config = null
+    if (dev) {
+      if (browser) {
+        console.log(window.localStorage.getItem(params.slug))
+        config = JSON.parse(window.localStorage.getItem(params.slug))
+      }
+
+      /* return {
         id: params.slug,
         name: 'My Dasboard ',
         description: 'Dasboard description ',
@@ -22,9 +28,8 @@ export const load = async ({ params, url }) => {
         ],
         createdAt: Date.now(),
         updatedAt: Date.now()
-      }
+      } */
     } else {
-      let config = null
       try {
         let endpoint = serviceUrl + "/api/dashboards/" + params.slug
         let headers = new Headers();
@@ -46,8 +51,9 @@ export const load = async ({ params, url }) => {
         console.log('ERROR')
         console.log(error)
       }
-      return config
+      
     }
+    return config
   }
 
   return await getSelectedConfig(utils.getBackendUrl(url))

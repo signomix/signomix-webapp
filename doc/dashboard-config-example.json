@@ -8,27 +8,27 @@
     "widgets": [
         {
             "name": "w0",
-            "dev_id": "A840414B41841C21",
-            "channel": "batv",
-            "channelTranslated": null,
-            "type": "symbol",
-            "query": "last 1",
-            "range": "",
-            "title": "Napięcie baterii",
-            "description": "",
-            "unitName": "V",
-            "group": "",
-            "chartOption": "plain",
-            "app_id": "",
-            "format": "standard",
-            "commandType": null,
-            "role": "",
-            "unit": null,
-            "rounding": "2",
-            "icon": "",
-            "config": null,
-            "cubicInterpolation": false,
-            "imageUrl": ""
+            "dev_id": "A840414B41841C21",//
+            "channel": "batv",//
+            "channelTranslated": null,//
+            "type": "symbol",//
+            "query": "last 1",//
+            "range": "",//
+            "title": "Napięcie baterii",//
+            "description": "",//
+            "unitName": "V",//
+            "group": "",//
+            "chartOption": "plain",//
+            "app_id": "",//
+            "format": "standard",//
+            "commandType": null,//
+            "role": "",//
+            "unit": null,//
+            "rounding": "2",//
+            "icon": "",//
+            "config": null,//
+            "cubicInterpolation": false,//
+            "imageUrl": ""//
         },
         {
             "name": "w1",

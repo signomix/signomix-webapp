@@ -11,9 +11,15 @@
     <Grid bind:items={items} rowHeight={100} let:item {cols} let:index on:resize={handleResize} on:mount={handleMount}>
         <div class="dashboard-widget content bg-white border border-primary">
             {#if 'chartjs'===getWidgetType(index)}
-            <ChartjsWidget index={index} bind:config={items} bind:cols={numberOfCols} />
+            <ChartjsWidget index={index} bind:config={items} />
             {:else if 'canvas'===getWidgetType(index)}
-            <CanvasWidget index={index} bind:config={items} bind:cols={numberOfCols} />
+            <CanvasWidget index={index} bind:config={items} />
+            {:else if 'canvas_placeholder'===getWidgetType(index)}
+            <CanvasWidget index={index} bind:config={items} />
+            {:else if 'chart_placeholder'===getWidgetType(index)}
+            <ChartjsWidget index={index} bind:config={items} />
+            {:else}
+            <CanvasWidget index={index} bind:config={items} />
             {/if }
         </div>
     </Grid>
@@ -33,7 +39,7 @@
     export let data
     let errorMessage = ''
     let dashboardId = 'dashboard' + 0 //TODO
-    let parentDiv
+    //let parentDiv
     let numberOfCols = 1
     let session;
     userSession.subscribe(value => {
@@ -51,65 +57,16 @@
 
     let getWidgetType = function (idx) {
         try {
-            return items[idx][numberOfCols].widget.type
+            console.log('dashboardConfig.widgets[idx].type ', dashboardConfig.widgets[idx].type)
+            return dashboardConfig.widgets[idx].type
         } catch (e) {
             return 'unknown'
         }
     }
     let show = function () {
-        // dashboardConfig = data
-        dashboardConfig={
-            id:0,
-            title: 'Dashboard 1',
-            items:[]
-        }
-        dashboardConfig.items = [
-            {
-                id: 0,
-                10: item({
-                    x: 0,
-                    y: 0,
-                    w: 2,
-                    h: 2,
-                    draggable: editable, resizable: editable,
-                    widget: { type: 'canvas', title: 'Tytuł 1' }
-                }),
-                1: item({
-                    x: 0, y: 0, w: 1, h: 2, draggable: editable, resizable: editable,
-                    widget: { type: 'chartjs', title: 'Tytuł 1' }
-                }),
-            },
-            {
-                id: 1,
-                10: item({
-                    x: 2,
-                    y: 0,
-                    w: 3,
-                    h: 2,
-                    draggable: editable, resizable: editable,
-                    widget: { type: 'canvas', title: 'Tytuł 2' }
-                }),
-                1: item({
-                    x: 0, y: 2, w: 1, h: 2, draggable: editable, resizable: editable,
-                    widget: { type: 'canvas', title: 'Tytuł 2' }
-                }),
-            },
-            {
-                id: 2,
-                10: item({
-                    x: 0,
-                    y: 2,
-                    w: 5,
-                    h: 2,
-                    draggable: editable, resizable: editable,
-                    widget: { type: 'chartjs', title: 'Tytuł 3' }
-                }),
-                1: item({
-                    x: 0, y: 4, w: 1, h: 2, draggable: editable, resizable: editable,
-                    widget: { type: 'canvas', title: 'Tytuł 3' }
-                }),
-            },
-        ];
+        dashboardConfig = data
+        blockChanges(dashboardConfig)
+        console.log('dashboardConfig ', dashboardConfig)
         items = dashboardConfig.items
         cols = [
             [800, 10],
@@ -118,12 +75,21 @@
     }
 
     onMount(() => {
-        parentDiv = document.getElementById(dashboardId)
-        console.log(dashboardId, ' ', parentDiv.offsetWidth);
-        console.log('window.innerWidth ', window.innerWidth);
+        //parentDiv = document.getElementById(dashboardId)
+        //console.log(dashboardId, ' ', parentDiv.offsetWidth);
+        //console.log('window.innerWidth ', window.innerWidth);
         show()
     });
 
+    const blockChanges=function(config){
+        //set draggable and resizable to false
+        config.items.forEach(function (item) {
+            item[1].draggable = false
+            item[1].resizable = false
+            item[10].draggable = false
+            item[10].resizable = false
+        })
+    }
     const handleResize = (event) => {
         numberOfCols = event.detail.cols
     }

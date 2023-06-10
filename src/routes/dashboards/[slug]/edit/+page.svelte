@@ -63,7 +63,7 @@
     </form>
 </div>
 <div class="demo-container size">
-    <Grid bind:items={data.items} rowHeight={100} let:item {cols} let:index>
+    <Grid bind:items={data.items} rowHeight={100} let:item {cols} let:index on:change={onChange}>
         <div class="demo-widget content bg-white border border-primary">
             <WidgetConfig index={index} bind:config={data.widgets} removeCallback={removeItem} setCurrentIndex={(idx)=>
                 setCurrentConfigureIndex(idx)}/>
@@ -77,7 +77,7 @@
         <div class="modal-content">
             <div class="modal-body">
                 {#if currentConfigureIndex >= 0}
-                <WidgetForm bind:index={currentConfigureIndex} bind:config={data.widgets} callback={testCallback} />
+                <WidgetForm bind:index={currentConfigureIndex} bind:config={data.widgets} callback={widgetFormCallback} />
                 {/if}
             </div>
         </div>
@@ -110,8 +110,8 @@
         previousPage = from?.url.pathname || previousPage
     })
 	function goBack() {
-        console.log('goBack: ', previousPage);
-        goto('/');
+        //console.log('goBack: ', previousPage);
+        goto("/dashboards");
     }
 
     let currentConfigureIndex = -1;
@@ -131,11 +131,17 @@
 
     const id = () => "_" + Math.random().toString(36).substr(2, 9);
 
+    function onChange({ detail }) {
+        console.log('onChange: ', detail);
+        modified = true
+    }
+    
     function saveDashboard() {
         if (browser) {
             if (data.id == 'new') {
                 data.id = new Date().getTime();
             }
+            data.updatedAt = new Date();
             window.localStorage.setItem(data.id, JSON.stringify(data));
         }
         modified = false;
@@ -146,8 +152,9 @@
         console.log('New currentConfigureIndex: ', currentConfigureIndex);
     }
 
-    function testCallback(idx, cfg) {
+    function widgetFormCallback(idx, cfg) {
         console.log('testCallback ', idx, cfg);
+        modified = true
     }
 
     function addWidget() {

@@ -2,14 +2,15 @@
     bindings: https://learn.svelte.dev/tutorial/text-inputs
 -->
 <div class="canvas text-right p-1" id={parentId}>
-    <canvas bind:this={canvas} on:click={onWidgetClick} id={canvasId} ></canvas>
+    <canvas bind:this={canvas} on:click={onWidgetClick} id={canvasId}></canvas>
 </div>
 <style>
-    .canvas{
+    .canvas {
         width: 100%;
         height: 100%;
     }
-    canvas{
+
+    canvas {
         width: 100%;
         height: 100%;
     }
@@ -19,12 +20,10 @@
 
     export let index
     export let config
-    export let widgetWidth
-    export let widgetHeight
 
     let parentDiv
     let parentId = 'widget' + index
-    let canvasId = 'canvas'+index
+    let canvasId = 'canvas' + index
 
     let front = true
     let rawdata = "[]"
@@ -38,15 +37,15 @@
 
     let canvas;
     let ctx
-    
-	onMount(() => {
+
+    onMount(() => {
         ctx = canvas.getContext('2d');
-        parentDiv=document.getElementById(parentId)
+        parentDiv = document.getElementById(parentId)
         show()
     });
 
     function onWidgetClick(event) {
-        console.log('canvas ', canvasId, ' ',parentDiv.offsetWidth);
+        console.log('canvas ', canvasId, ' ', parentDiv.offsetWidth);
     }
 
     let show = function () {
