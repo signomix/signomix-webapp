@@ -1,0 +1,82 @@
+{
+    "id": "TEST1",
+    "name": "TEST1",
+    "userID": "tester1",
+    "title": "TEST1",
+    "shared": false,
+    "team": ",",
+    "widgets": [
+        {
+            "name": "w0",
+            "dev_id": "IOT-EMULATOR",
+            "channel": "temperature",
+            "type": "symbol",
+            "query": "last 1",
+            "range": "",
+            "title": "t",
+            "description": "",
+            "unitName": "",
+            "width": 1,
+            "group": "",
+            "modified": true,
+            "app_id": "",
+            "dev_auth_key": "123",
+            "dev_config": "{test:true}",
+            "dev_app_config": "",
+            "format": "standard",
+            "chartOption": "plain",
+            "cubicInterpolation": false,
+            "rounding": "",
+            "icon": "",
+            "imageUrl": "",
+            "role": ""
+        }
+    ],
+    "items": [
+        {
+            "id": "027e10f3-d770-4f5f-a24e-bbce747b10bf",
+            "_el1": {
+                "fixed": false,
+                "resizable": true,
+                "draggable": true,
+                "customDragger": false,
+                "customResizer": false,
+                "min": {
+                    "w": 1,
+                    "h": 1
+                },
+                "max": {
+                    "w": 10,
+                    "h": 4
+                },
+                "w": 1,
+                "h": 1,
+                "x": 0,
+                "y": 0
+            },
+            "_el10": {
+                "fixed": false,
+                "resizable": true,
+                "draggable": true,
+                "customDragger": false,
+                "customResizer": false,
+                "min": {
+                    "w": 1,
+                    "h": 1
+                },
+                "max": {
+                    "w": 10,
+                    "h": 4
+                },
+                "w": 1,
+                "h": 1,
+                "x": 0,
+                "y": 0
+            }
+        }
+    ],
+    "sharedToken": null,
+    "administrators": ",",
+    "itemsAsJson": "{\"@type\":\"java.util.ArrayList\",\"@items\":[{\"@type\":\"com.signomix.common.gui.DashboardItem\",\"id\":\"027e10f3-d770-4f5f-a24e-bbce747b10bf\",\"_el1\":{\"fixed\":false,\"resizable\":true,\"draggable\":true,\"customDragger\":false,\"customResizer\":false,\"min\":{\"w\":1,\"h\":1},\"max\":{\"w\":10,\"h\":4},\"w\":1,\"h\":1,\"x\":0,\"y\":0},\"_el10\":{\"fixed\":false,\"resizable\":true,\"draggable\":true,\"customDragger\":false,\"customResizer\":false,\"min\":{\"w\":1,\"h\":1},\"max\":{\"w\":10,\"h\":4},\"w\":1,\"h\":1,\"x\":0,\"y\":0}}]}",
+    "widgetsAsJson": "{\"@type\":\"java.util.ArrayList\",\"@items\":[{\"@type\":\"java.util.LinkedHashMap\",\"name\":\"w0\",\"dev_id\":\"IOT-EMULATOR\",\"channel\":\"temperature\",\"type\":\"symbol\",\"query\":\"last 1\",\"range\":\"\",\"title\":\"t\",\"description\":\"\",\"unitName\":\"\",\"width\":1,\"group\":\"\",\"modified\":true,\"app_id\":\"\",\"dev_auth_key\":\"123\",\"dev_config\":\"{test:true}\",\"dev_app_config\":\"\",\"format\":\"standard\",\"chartOption\":\"plain\",\"cubicInterpolation\":false,\"rounding\":\"\",\"icon\":\"\",\"imageUrl\":\"\",\"role\":\"\"}]}"
+}

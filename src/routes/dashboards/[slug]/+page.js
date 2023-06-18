@@ -3,8 +3,10 @@ import { browser, building, dev, version } from '$app/environment';
 import { error } from '@sveltejs/kit';
 import { userSession } from '$lib/stores.js';
 import { utils } from '$lib/utils.js';
+import { transform } from 'svelte-preprocess/dist/autoProcess.js';
 
 export const load = async ({ params, url }) => {
+  
   let session;
   userSession.subscribe(value => {
     session = value;
@@ -31,12 +33,12 @@ export const load = async ({ params, url }) => {
       } */
     } else {
       try {
-        let endpoint = serviceUrl + "/api/dashboards/" + params.slug
+        let endpoint = serviceUrl + "/api/core/v2/dashboards/" + params.slug
         let headers = new Headers();
-        headers.set('Authorization', 'Basic ' + btoa(session.login + ":" + session.password));
+        headers.set('Authentication', session.token);
         await fetch(endpoint, { headers: headers }).then(response => {
           if (response.status == 200) {
-            config = response.json();
+            config=response.json()
           } else if (response.status == 401 || response.status == 403) {
             utils.setAuthorized(session, false)
           } else {
@@ -51,10 +53,28 @@ export const load = async ({ params, url }) => {
         console.log('ERROR')
         console.log(error)
       }
-      
+
     }
     return config
   }
 
-  return await getSelectedConfig(utils.getBackendUrl(url))
+  async function transform(){
+    let cfg = await getSelectedConfig(utils.getBackendUrl(url))
+    console.log("TRANSFORM "+JSON.stringify(cfg))
+    for(let i=0; i<cfg.items.length; i++) {
+      console.log(cfg.items[i])
+      let item = cfg.items[i]
+      if (item['1'] !== null) {
+        item['1'] = item['_el1']
+      }
+      if (item['10'] !== null) {
+        item['10'] = item['_el10']
+      }
+    }
+    console.log(cfg)
+    return cfg
+  }
+
+  //return await getSelectedConfig(utils.getBackendUrl(url))
+  return await transform()
 }

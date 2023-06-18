@@ -16,21 +16,18 @@
                 <thead class="table-light">
                     <tr>
                         <th scope="col" class="col-1">#</th>
-                        <th scope="col" class="col-1">ID</th>
-                        <th scope="col" class="col-5">Nazwa</th>
-                        <th scope="col" class="col-4">Data aktualizacji</th>
-                        <th scope="col" class="col-1">Akcje</th>
+                        <th scope="col" class="col-4">ID</th>
+                        <th scope="col" class="col-5">Title</th>
+                        <th scope="col" class="col-2">Config</th>
                     </tr>
                 </thead>
                 <tbody>
                     {#each configs as config, index}
                     <tr>
                         <th scope="row" class="col-1">{offset+1+index}</th>
-                        <td class="col-1">{config.id}</td>
+                        <td class="col-4"><a href="/dashboards/{config.id}">{config.id}</a></td>
                         <td class="col-5">{config.title}</td>
-                        <td class="col-4">{utils.getLocalDateFormat(config.updatedAt)}</td>
-                        <td class="col-1">
-                            <a href="/dashboards/{config.id}"><i class="bi bi-eye me-2"></i></a>
+                        <td class="col-2">
                             <a href="/dashboards/{config.id}/edit"><i class="bi bi-pencil-square"></i></a>
                         </td>
                     </tr>
@@ -94,9 +91,9 @@
             }
         } else {
             let headers = new Headers();
-            let url = utils.getBackendUrl(location) + "/api/dashboards"
+            let url = utils.getBackendUrl(location) + "/api/core/v2/dashboards"
             url = url + '?offset=' + offset + '&limit=' + limit
-            headers.set('Authorization', 'Basic ' + btoa(session.login + ":" + session.password));
+            headers.set('Authentication', session.token);
             await fetch(url, { headers: headers })
                 .then((response) => {
                     if (response.status == 200) {

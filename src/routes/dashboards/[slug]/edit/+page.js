@@ -50,9 +50,9 @@ export const load = async ({ params, url }) => {
     } else {
       let config = null
       try {
-        let endpoint = serviceUrl + "/api/dashboards/" + params.slug
+        let endpoint = serviceUrl + "/api/core/v2/dashboards/" + params.slug
         let headers = new Headers();
-        headers.set('Authorization', 'Basic ' + btoa(session.login + ":" + session.password));
+        headers.set('Authentication', session.token);
         await fetch(endpoint, { headers: headers }).then(response => {
           if (response.status == 200) {
             config = response.json();
