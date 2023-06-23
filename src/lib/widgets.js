@@ -12,7 +12,7 @@ export const widgets = {
         'plan',
         'raw',
         'report',
-        'sticker',
+        'symbol',
         'stopwatch',
         'time',
         'text',
@@ -48,7 +48,7 @@ export const widgets = {
         text: [],
         stopwatch: ['dev_id','channel', 'query'],
         time: ['dev_id','channel', 'query'],
-        sticker: ['dev_id','channel','channel_translated','range','unit', 'rounding', 'icon'],
+        symbol: ['dev_id','channel','channel_translated','range','unit', 'rounding', 'icon'],
     },
     chartFields: {
         line: ['cubicInterpolation'],

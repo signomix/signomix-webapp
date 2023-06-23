@@ -77,7 +77,8 @@
         <div class="modal-content">
             <div class="modal-body">
                 {#if currentConfigureIndex >= 0}
-                <WidgetForm bind:index={currentConfigureIndex} bind:config={data.widgets} callback={widgetFormCallback} />
+                <WidgetForm bind:index={currentConfigureIndex} bind:config={data.widgets}
+                    callback={widgetFormCallback} />
                 {/if}
             </div>
         </div>
@@ -105,11 +106,11 @@
     userSession.subscribe(value => {
         session = value;
     });
-    let previousPage = base ;
+    let previousPage = base;
     afterNavigate(({ from }) => {
         previousPage = from?.url.pathname || previousPage
     })
-	function goBack() {
+    function goBack() {
         //console.log('goBack: ', previousPage);
         goto("/dashboards");
     }
@@ -135,14 +136,18 @@
         console.log('onChange: ', detail);
         modified = true
     }
-    
+
     function saveDashboard() {
-        if (browser) {
-            if (data.id == 'new') {
-                data.id = new Date().getTime();
+        if (dev) {
+            if (browser) {
+                if (data.id == 'new') {
+                    data.id = new Date().getTime();
+                }
+                data.updatedAt = new Date();
+                window.localStorage.setItem(data.id, JSON.stringify(data));
             }
-            data.updatedAt = new Date();
-            window.localStorage.setItem(data.id, JSON.stringify(data));
+        }else{
+            
         }
         modified = false;
     }

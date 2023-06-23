@@ -23,56 +23,62 @@ export const load = async ({ params, url }) => {
     updatedAt: new Date()
   }
   const getSelectedConfig = async (serviceUrl) => {
-    if ('new' == params.slug) {
-      //console.log(new Date().toLocaleString())
-      return {
-        id: params.slug,
-        userID: session.login,
-        title: 'My Dasboard ',
-        team: '',
-        administrators: '',
-        shared: true,  // true if shared with other users
-        items: [],
-        widgets: [],
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }
-    } else if (dev) {
-      let config = newDashboard
-      if (browser) {
-        console.log(window.localStorage.getItem(params.slug))
-        config = JSON.parse(window.localStorage.getItem(params.slug))
-        if (config == null) {
-          return newDashboard
-        }
-      }
-      return config
+    let config = null
+    if (params.slug == 'new') {
+      config = newDashboard
     } else {
-      let config = null
-      try {
-        let endpoint = serviceUrl + "/api/core/v2/dashboards/" + params.slug
-        let headers = new Headers();
-        headers.set('Authentication', session.token);
-        await fetch(endpoint, { headers: headers }).then(response => {
-          if (response.status == 200) {
-            config = response.json();
-          } else if (response.status == 401 || response.status == 403) {
-            utils.setAuthorized(session, false)
-          } else {
-            alert(
-              utils.getMessage(utils.FETCH_STATUS)
-                .replace('%1', response.status)
-                .replace('%2', response.configstatusText)
-            )
-          }
-        })
-      } catch (error) {
-        console.log('ERROR')
-        console.log(error)
+      if (dev) {
+        if (browser) {
+          console.log(window.localStorage.getItem(params.slug))
+          config = JSON.parse(window.localStorage.getItem(params.slug))
+        }
+      } else {
+        try {
+          let endpoint = serviceUrl + "/api/core/v2/dashboards/" + params.slug
+          let headers = new Headers();
+          headers.set('Authentication', session.token);
+          await fetch(endpoint, { headers: headers }).then(response => {
+            if (response.status == 200) {
+              config = response.json()
+            } else if (response.status == 401 || response.status == 403) {
+              utils.setAuthorized(session, false)
+            } else {
+              alert(
+                utils.getMessage(utils.FETCH_STATUS)
+                  .replace('%1', response.status)
+                  .replace('%2', response.statusText)
+              )
+            }
+          })
+        } catch (error) {
+          console.log('ERROR')
+          console.log(error)
+        }
+
       }
-      return config
     }
+    return config
   }
 
-  return await getSelectedConfig(utils.getBackendUrl(url))
+  async function transform() {
+    let cfg = await getSelectedConfig(utils.getBackendUrl(url))
+    console.log("TRANSFORM " + JSON.stringify(cfg))
+    for (let i = 0; i < cfg.items.length; i++) {
+      console.log(cfg.items[i])
+      let item = cfg.items[i]
+      if (item['1'] !== null) {
+        item['1'] = item['_el1']
+        delete item['_el1']
+      }
+      if (item['10'] !== null) {
+        item['10'] = item['_el10']
+        delete item['_el10']
+      }
+    }
+    console.log(cfg)
+    return cfg
+  }
+
+  //return await getSelectedConfig(utils.getBackendUrl(url))
+  return await transform()
 }

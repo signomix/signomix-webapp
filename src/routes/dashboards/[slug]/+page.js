@@ -19,18 +19,6 @@ export const load = async ({ params, url }) => {
         console.log(window.localStorage.getItem(params.slug))
         config = JSON.parse(window.localStorage.getItem(params.slug))
       }
-
-      /* return {
-        id: params.slug,
-        name: 'My Dasboard ',
-        description: 'Dasboard description ',
-        widgets: [
-          { id: 0, title: 'widget 0', description: 'sample widget', width: 1, height: 1 },
-          { id: 1, title: 'widget 1',description: 'sample widget', width: 2, height: 1 },
-        ],
-        createdAt: Date.now(),
-        updatedAt: Date.now()
-      } */
     } else {
       try {
         let endpoint = serviceUrl + "/api/core/v2/dashboards/" + params.slug
@@ -66,9 +54,11 @@ export const load = async ({ params, url }) => {
       let item = cfg.items[i]
       if (item['1'] !== null) {
         item['1'] = item['_el1']
+        delete item['_el1']
       }
       if (item['10'] !== null) {
         item['10'] = item['_el10']
+        delete item['_el10']
       }
     }
     console.log(cfg)
