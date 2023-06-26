@@ -44,10 +44,10 @@
                     </select>
                     <label class="form-label">Type {config[index].type} description</label>
                 </div>
-                {#if widgets.isVisible(config[index].type, 'eui')}
+                {#if widgets.isVisible(config[index].type, 'dev_id')}
                 <div class="mb-2">
-                    <label for="eui" class="form-label">EUI</label>
-                    <input type="text" class="form-control form-control-sm" id="eui"
+                    <label for="dev_id" class="form-label">EUI</label>
+                    <input type="text" class="form-control form-control-sm" id="dev_id"
                         bind:value={config[index].dev_id}>
                 </div>
                 {/if}
@@ -193,7 +193,7 @@
             <div class="p-1 mt-2">
                 <label for="description">Opis kontrolki</label>
                 <textarea id="description" class="form-control mt-1" style="font-size: 14px" rows="5"
-                    bind:value={config[index].decription}></textarea>
+                    bind:value={config[index].description}></textarea>
                 <small class="text-xs">Dla kontrolek typu 'ramka informacyjna' pojawi się w ramce.</small>
                 <br>
             </div>

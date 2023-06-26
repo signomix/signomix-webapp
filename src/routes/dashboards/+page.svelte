@@ -76,6 +76,17 @@
     let session;
     userSession.subscribe(value => {
         session = value;
+        if(!session.logged){
+            try{
+            if(window.localStorage.getItem('sgx.session.token')!=null){
+                session.token = window.localStorage.getItem('sgx.session.token')
+                session.logged = true
+                session.authorized = true
+            }
+            }catch(error){
+                console.log(error)
+            }
+        }
     });
 
     let promise = getConfigs()

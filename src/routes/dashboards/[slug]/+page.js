@@ -6,7 +6,7 @@ import { utils } from '$lib/utils.js';
 import { transform } from 'svelte-preprocess/dist/autoProcess.js';
 
 export const load = async ({ params, url }) => {
-  
+
   let session;
   userSession.subscribe(value => {
     session = value;
@@ -26,7 +26,7 @@ export const load = async ({ params, url }) => {
         headers.set('Authentication', session.token);
         await fetch(endpoint, { headers: headers }).then(response => {
           if (response.status == 200) {
-            config=response.json()
+            config = response.json()
           } else if (response.status == 401 || response.status == 403) {
             utils.setAuthorized(session, false)
           } else {
@@ -46,19 +46,21 @@ export const load = async ({ params, url }) => {
     return config
   }
 
-  async function transform(){
+  async function transform() {
     let cfg = await getSelectedConfig(utils.getBackendUrl(url))
-    console.log("TRANSFORM "+JSON.stringify(cfg))
-    for(let i=0; i<cfg.items.length; i++) {
-      console.log(cfg.items[i])
-      let item = cfg.items[i]
-      if (item['1'] !== null) {
-        item['1'] = item['_el1']
-        delete item['_el1']
-      }
-      if (item['10'] !== null) {
-        item['10'] = item['_el10']
-        delete item['_el10']
+    if (!dev) {
+      console.log("TRANSFORM " + JSON.stringify(cfg))
+      for (let i = 0; i < cfg.items.length; i++) {
+        console.log(cfg.items[i])
+        let item = cfg.items[i]
+        if (item['1'] !== null) {
+          item['1'] = item['_el1']
+          delete item['_el1']
+        }
+        if (item['10'] !== null) {
+          item['10'] = item['_el10']
+          delete item['_el10']
+        }
       }
     }
     console.log(cfg)

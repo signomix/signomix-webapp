@@ -53,7 +53,10 @@
             <div class="col-form-label">
                 <button class="btn btn-outline-secondary mt-1" on:click={goBack}>Cancel</button>
                 <button class="btn btn-outline-primary me-4 mt-1" on:click={saveDashboard} disabled={modified==false}><i
-                        class="bi bi-save me-2"></i> Zapisz knfigurację
+                        class="bi bi-save me-2"></i> Zapisz konfigurację
+                </button>
+                <button class="btn btn-outline-primary me-4 mt-1" on:click={removeDashboard}>
+                    <i class="bi bi-trash me-2"></i> Usuń pulpit
                 </button>
                 <button class="btn btn-outline-primary mt-1 me-4" on:click={addWidget}><i
                         class="bi bi-plus-lg"></i></button>
@@ -138,6 +141,13 @@
     }
 
     function saveDashboard() {
+        data.items = gridHelp.normalize(data.items, COLS);
+        console.log(data)
+        if (data.version == 1) {
+            if (!confirm('Zapisana konfiguracja pulpitu jest w wersji 1.0. \nPo zaktualizowaniu do wersji 2 nie będzie możliwe wyświetlenie go w starszej wersji aplikacji?\n Zapisać?')) {
+                return;
+            }
+        }
         if (dev) {
             if (browser) {
                 if (data.id == 'new') {
@@ -146,10 +156,101 @@
                 data.updatedAt = new Date();
                 window.localStorage.setItem(data.id, JSON.stringify(data));
             }
-        }else{
-            
+        } else {
+            sendForm(data);
         }
         modified = false;
+    }
+
+    function removeDashboard() {
+        if (!confirm('Usunąć?')) {
+            return;
+        }
+        remove();
+    }
+
+    function remove() {
+        const headers = new Headers()
+        let method = 'DELETE'
+        let url = utils.getBackendUrl(location) + "/api/core/v2/dashboards/" + data.id
+        headers.set('Authentication', session.token);
+        let response = fetch(
+            url,
+            { method: method, mode: 'cors', headers: headers, body: JSON.stringify(data) }
+        ).then((response) => {
+            if (response.status == 200) {
+                errorMessage = ''
+                goto('/dashboards')
+            } else if (response.status == 401 || response.status == 403 || response.status == 404) {
+                utils.setAuthorized(session, false)
+            } else {
+                alert(
+                    utils.getMessage(utils.FETCH_STATUS)
+                        .replace('%1', response.status)
+                        .replace('%2', response.statusText)
+                )
+            }
+        }).catch((error) => {
+            errorMessage = error.message
+            if (errorMessage == 'Failed to fetch' && location.protocol.toLowerCase() == 'https') {
+                errorMessage = errorMessage + ' Możliwa przyczyna: self signed nie są obsługiwane.'
+            }
+            console.log(error)
+        });
+    }
+
+    function sendForm(data) {
+        data = transformBack(data)
+        const headers = new Headers()
+        let method = 'POST'
+        let url = utils.getBackendUrl(location) + "/api/core/v2/dashboards/"
+        if (!(data.id === 'new' || data.id == null || data.id == '' || data.id == undefined)) {
+            url = url + data.id
+            method = 'PUT'
+        }
+        headers.set('Authentication', session.token);
+        headers.set('Content-Type', 'application/json');
+        let response = fetch(
+            url,
+            { method: method, mode: 'cors', headers: headers, body: JSON.stringify(data) }
+        ).then((response) => {
+            if (response.status == 200) {
+                errorMessage = ''
+                goto('/dashboards')
+            } else if (response.status == 401 || response.status == 403 || response.status == 404) {
+                utils.setAuthorized(session, false)
+            } else {
+                alert(
+                    utils.getMessage(utils.FETCH_STATUS)
+                        .replace('%1', response.status)
+                        .replace('%2', response.statusText)
+                )
+            }
+        }).catch((error) => {
+            errorMessage = error.message
+            if (errorMessage == 'Failed to fetch' && location.protocol.toLowerCase() == 'https') {
+                errorMessage = errorMessage + ' Możliwa przyczyna: self signed nie są obsługiwane.'
+            }
+            console.log(error)
+        });
+    }
+
+    function transformBack(cfg) {
+        console.log('transformBack')
+        console.log(cfg)
+        for (let i = 0; i < cfg.items.length; i++) {
+            let item = cfg.items[i]
+            if (item['_el1'] !== null) {
+                item['_el1'] = item['1']
+                //delete item['1']
+            }
+            if (item['_el10'] !== null) {
+                item['_el10'] = item['10']
+                //delete item['10']
+            }
+        }
+        console.log(cfg)
+        return cfg
     }
 
     function setCurrentConfigureIndex(idx) {

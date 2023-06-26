@@ -9,7 +9,7 @@
 </div>
 <div class="dashboard-container" id={dashboardId} >
     <Grid bind:items={items} rowHeight={100} let:item {cols} let:index on:resize={handleResize} on:mount={handleMount}>
-        <div class="dashboard-widget content bg-white border border-primary">
+        <div class="dashboard-widget content bg-white border border-primary rounded-1">
             {#if 'chartjs'===getWidgetType(index)}
             <ChartjsWidget index={index} bind:config={items} />
             {:else if 'canvas'===getWidgetType(index)}
@@ -18,6 +18,10 @@
             <CanvasWidget index={index} bind:config={items} />
             {:else if 'chart_placeholder'===getWidgetType(index)}
             <ChartjsWidget index={index} bind:config={items} />
+            {:else if 'symbol'===getWidgetType(index)}
+            <SymbolWidget bind:config={dashboardConfig.widgets[index]} />
+            {:else if 'text'===getWidgetType(index)}
+            <TextWidget bind:config={dashboardConfig.widgets[index]} />
             {:else}
             <CanvasWidget index={index} bind:config={items} />
             {/if }
@@ -35,6 +39,8 @@
 
     import CanvasWidget from '$lib/components/widgets/CanvasWidget.svelte';
     import ChartjsWidget from '$lib/components/widgets/ChartjsWidget.svelte';
+    import SymbolWidget from '$lib/components/widgets/SymbolWidget.svelte';
+    import TextWidget from '$lib/components/widgets/TextWidget.svelte';
 
     export let data
     let errorMessage = ''
@@ -45,7 +51,6 @@
     userSession.subscribe(value => {
         session = value;
     });
-
     let { item } = gridHelp;
 
     let editable = false; // set to true to enable editing
@@ -57,12 +62,12 @@
 
     let getWidgetType = function (idx) {
         try {
-            console.log('dashboardConfig.widgets[idx].type ', dashboardConfig.widgets[idx].type)
             return dashboardConfig.widgets[idx].type
         } catch (e) {
             return 'unknown'
         }
     }
+
     let show = function () {
         dashboardConfig = data
         blockChanges(dashboardConfig)

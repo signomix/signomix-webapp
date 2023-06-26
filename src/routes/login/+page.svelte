@@ -70,6 +70,7 @@
                 session.authorized = true
                 session.token = text
                 userSession.set(session)
+                window.localStorage.setItem('sgx.session.token', session.token);
                 errorMessage = ''
             } else {
                 errorMessage = 'Nieudane logowanie'
