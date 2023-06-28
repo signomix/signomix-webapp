@@ -6,6 +6,10 @@
     import { userSession } from '$lib/stores.js';
     import { utils } from '$lib/utils.js';
     import { browser } from '$app/environment'
+    import { redirects } from '$lib/redirects.js';
+
+    redirects.handleOriginalUri();
+    
     let session;
     userSession.subscribe(value => {
         session = value;
