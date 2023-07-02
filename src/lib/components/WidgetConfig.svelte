@@ -14,9 +14,10 @@
         on:click={setCurrentIndex(index)}><i class="bi bi-gear"></i>
     </button>
     <button class="btn btn-outline-primary btn-sm p-1" on:pointerdown={e=> e.stopPropagation()}
-        on:click={() => showAlert(true)} >
+        on:click={() => showAlert()} >
         <i class="bi bi-trash3"></i>
     </button>
+    {config[index].name}
     {/if}
 </div>
 <script>
@@ -28,7 +29,7 @@
     let alertVisible = false;
 
     function showAlert(show) {
-        //alertVisible = show;
+        // alert class not apropriate for mobile
         if(confirm("Usunąć wybraną kontrolkę?")){
             removeCallback(index)
         }

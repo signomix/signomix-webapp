@@ -159,23 +159,29 @@
     function logout() {
         console.log("LOGOUT")
         userSession.set({ logged: false, login: '', password: '', language: 'en' })
-        if(browser) window.localStorage.removeItem('sgx.session.token');
+        if (browser) {
+            try{
+                window.localStorage.removeItem('sgx.session.token');
+            } catch (error) {
+                console.log(error)
+            }
+        }
         return true
     }
 
     let session;
     userSession.subscribe(value => {
         session = value;
-        if(!session.logged){
-            try{
-            if(window.localStorage.getItem('sgx.session.token')!=null){
-                session.token = window.localStorage.getItem('sgx.session.token')
-                session.logged = true
-                session.authorized = true
-            }else{
-                console.log("NO TOKEN")
-            }
-            }catch(error){
+        if (!session.logged) {
+            try {
+                if (window.localStorage.getItem('sgx.session.token') != null) {
+                    session.token = window.localStorage.getItem('sgx.session.token')
+                    session.logged = true
+                    session.authorized = true
+                } else {
+                    console.log("NO TOKEN")
+                }
+            } catch (error) {
                 console.log(error)
             }
         }

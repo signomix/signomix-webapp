@@ -55,7 +55,7 @@
                 <button class="btn btn-outline-primary me-4 mt-1" on:click={saveDashboard} disabled={modified==false}><i
                         class="bi bi-save me-2"></i> Zapisz konfigurację
                 </button>
-                <button class="btn btn-outline-primary me-4 mt-1" on:click={removeDashboard}>
+                <button class="btn btn-outline-primary me-4 mt-1" on:click|preventDefault={removeDashboard}>
                     <i class="bi bi-trash me-2"></i> Usuń pulpit
                 </button>
                 <button class="btn btn-outline-primary mt-1 me-4" on:click={addWidget}><i
@@ -154,7 +154,7 @@
                     data.id = new Date().getTime();
                 }
                 data.updatedAt = new Date();
-                window.localStorage.setItem(data.id, JSON.stringify(data));
+                window.localStorage.setItem(data.id, JSON.stringify(transformBack(data)));
             }
         } else {
             sendForm(data);
@@ -166,7 +166,12 @@
         if (!confirm('Usunąć?')) {
             return;
         }
-        remove();
+        if (dev) {
+            window.localStorage.removeItem(data.id)
+            goto('/dashboards')
+        } else {
+            remove();
+        }
     }
 
     function remove() {
@@ -271,7 +276,8 @@
             title: data.widgets.length.toString(),
             type: 'text',
             role: '',
-            description: 'opis'
+            description: 'opis',
+            name: 'w' + data.widgets.length
         });
 
         let newItem = {
