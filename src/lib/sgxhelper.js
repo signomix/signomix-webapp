@@ -50,16 +50,16 @@ export const sgxhelper = {
         if (defs.length > 2) {
             notRespondingDef = defs[2];
         }
-        let alertRule = getAlertRule(alertDef);
-        let warningRule = getAlertRule(warningDef);
-        let notRespondingRule = getNotRespondingRule(notRespondingDef);
-        if (isNotResponding(notRespondingRule, tstamp)) {
+        let alertRule = this.getAlertRule(alertDef);
+        let warningRule = this.getAlertRule(warningDef);
+        let notRespondingRule = this.getNotRespondingRule(notRespondingDef);
+        if (this.isNotResponding(notRespondingRule, tstamp)) {
             return 3;
         }
-        if (isRuleMet(alertRule, value)) {
+        if (this.isRuleMet(alertRule, value)) {
             return 2;
         }
-        if (isRuleMet(warningRule, value)) {
+        if (this.isRuleMet(warningRule, value)) {
             return 1;
         }
         return 0;

@@ -22,6 +22,8 @@
             <SymbolWidget bind:config={dashboardConfig.widgets[index]} />
             {:else if 'text'===getWidgetType(index)}
             <TextWidget bind:config={dashboardConfig.widgets[index]} />
+            {:else if 'led'===getWidgetType(index)}
+            <LedWidget bind:config={dashboardConfig.widgets[index]} />
             {:else}
             <CanvasWidget index={index} bind:config={items} />
             {/if }
@@ -41,6 +43,7 @@
     import ChartjsWidget from '$lib/components/widgets/ChartjsWidget.svelte';
     import SymbolWidget from '$lib/components/widgets/SymbolWidget.svelte';
     import TextWidget from '$lib/components/widgets/TextWidget.svelte';
+    import LedWidget from '$lib/components/widgets/LedWidget.svelte';
 
     export let data
     let errorMessage = ''
