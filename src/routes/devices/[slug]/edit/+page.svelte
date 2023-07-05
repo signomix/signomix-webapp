@@ -1,0 +1,348 @@
+<!--
+    responsive grid: https://svelte-grid.vercel.app/examples/responsive
+    bindings: https://learn.svelte.dev/tutorial/text-inputs
+-->
+<div
+    class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-2 border-bottom">
+    <h5>Konfiguracja pulpitu</h5><a href="/dashboards/{data.id}">Show</a>
+</div>
+<div class="container border-bottom pb-2">
+    <form>
+        <div class="row">
+            <div class="col-md-1 col-form-label">
+                <label for="input-id" class="form-label">ID</label>
+            </div>
+            <div class="col-md-3">
+                <input disabled type="text" class="form-control" id="input-id" bind:value={data.id}>
+            </div>
+            <div class="col-md-1 col-form-label">
+                <label for="input-userid" class="form-label">Owner</label>
+            </div>
+            <div class="col-md-3">
+                <input disabled type="text" class="form-control" id="input-userid" bind:value={data.userID}>
+            </div>
+            <div class="col-md-4">
+
+                <input type="checkbox" class="form-check-input me-2" id="input-shared" bind:value={data.shared}>
+                <label class="form-check-label" for="input-shared">Shared</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-1 col-form-label">
+                <label for="input-title" class="form-label">Title</label>
+            </div>
+            <div class="col-md-11">
+                <input type="text" class="form-control" id="input-name" bind:value={data.title}>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-1 col-form-label">
+                <label for="input-team" class="form-label">Team</label>
+            </div>
+            <div class="col-md-4">
+                <input type="text" class="form-control" id="input-team" bind:value={data.team}>
+            </div>
+            <div class="col-md-2 col-form-label">
+                <label for="input-admins" class="form-label">Administrators</label>
+            </div>
+            <div class="col-md-5">
+                <input type="text" class="form-control" id="input-admins" bind:value={data.administrators}>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-form-label">
+                <button class="btn btn-outline-secondary mt-1" on:click={goBack}>Cancel</button>
+                <button class="btn btn-outline-primary me-4 mt-1" on:click={saveDashboard} disabled={modified==false}><i
+                        class="bi bi-save me-2"></i> Zapisz konfigurację
+                </button>
+                <button class="btn btn-outline-primary me-4 mt-1" on:click|preventDefault={removeDashboard}>
+                    <i class="bi bi-trash me-2"></i> Usuń pulpit
+                </button>
+                <button class="btn btn-outline-primary mt-1 me-4" on:click={addWidget}><i
+                        class="bi bi-plus-lg"></i></button>
+            </div>
+        </div>
+
+    </form>
+</div>
+<div class="demo-container size">
+    <Grid bind:items={data.items} rowHeight={100} let:item {cols} let:index on:change={onChange}>
+        <div class="demo-widget content bg-white border border-primary">
+            <WidgetConfig index={index} bind:config={data.widgets} removeCallback={removeItem} setCurrentIndex={(idx)=>
+                setCurrentConfigureIndex(idx)}/>
+        </div>
+    </Grid>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="configModal" tabindex="0" role="dialog" aria-labelledby="configModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                {#if currentConfigureIndex >= 0}
+                <WidgetForm bind:index={currentConfigureIndex} bind:config={data.widgets}
+                    callback={widgetFormCallback} />
+                {/if}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    import Grid from "svelte-grid";
+    import gridHelp from "svelte-grid/build/helper/index.mjs";
+    import { browser } from '$app/environment'
+    import { dev } from '$app/environment';
+    import { utils } from '$lib/utils.js';
+    import { userSession } from '$lib/stores.js';
+    import { base } from '$app/paths'
+    import { goto, afterNavigate } from '$app/navigation'
+
+    import WidgetConfig from '$lib/components/WidgetConfig.svelte';
+    import WidgetForm from '$lib/components/WidgetForm.svelte';
+    import widgets from '$lib/widgets.js';
+
+    export let data
+    let errorMessage = ''
+
+    let session;
+    userSession.subscribe(value => {
+        session = value;
+    });
+    let previousPage = base;
+    afterNavigate(({ from }) => {
+        previousPage = from?.url.pathname || previousPage
+    })
+    function goBack() {
+        //console.log('goBack: ', previousPage);
+        goto("/dashboards");
+    }
+
+    let currentConfigureIndex = -1;
+    let modified = false;
+
+    const cols = [
+        [1500, 10],
+        [500, 1],
+    ];
+
+    let WIDTH = 1500;
+    if (browser) {
+        WIDTH = screen.width;
+    }
+    const COLS = WIDTH > 500 ? 10 : 1;
+    console.log("screen width: ", WIDTH, ", cols size: ", COLS);
+
+    const id = () => "_" + Math.random().toString(36).substr(2, 9);
+
+    function onChange({ detail }) {
+        console.log('onChange: ', detail);
+        modified = true
+    }
+
+    function saveDashboard() {
+        data.items = gridHelp.normalize(data.items, COLS);
+        console.log(data)
+        if (data.version == 1) {
+            if (!confirm('Zapisana konfiguracja pulpitu jest w wersji 1.0. \nPo zaktualizowaniu do wersji 2 nie będzie możliwe wyświetlenie go w starszej wersji aplikacji?\n Zapisać?')) {
+                return;
+            }
+        }
+        if (dev) {
+            if (browser) {
+                if (data.id == 'new') {
+                    data.id = new Date().getTime();
+                }
+                data.updatedAt = new Date();
+                window.localStorage.setItem(data.id, JSON.stringify(transformBack(data)));
+            }
+        } else {
+            sendForm(data);
+        }
+        modified = false;
+    }
+
+    function removeDashboard() {
+        if (!confirm('Usunąć?')) {
+            return;
+        }
+        if (dev) {
+            window.localStorage.removeItem(data.id)
+            goto('/dashboards')
+        } else {
+            remove();
+        }
+    }
+
+    function remove() {
+        const headers = new Headers()
+        let method = 'DELETE'
+        let url = utils.getBackendUrl(location) + "/api/core/v2/dashboards/" + data.id
+        headers.set('Authentication', session.token);
+        let response = fetch(
+            url,
+            { method: method, mode: 'cors', headers: headers, body: JSON.stringify(data) }
+        ).then((response) => {
+            if (response.status == 200) {
+                errorMessage = ''
+                goto('/dashboards')
+            } else if (response.status == 401 || response.status == 403 || response.status == 404) {
+                utils.setAuthorized(session, false)
+            } else {
+                alert(
+                    utils.getMessage(utils.FETCH_STATUS)
+                        .replace('%1', response.status)
+                        .replace('%2', response.statusText)
+                )
+            }
+        }).catch((error) => {
+            errorMessage = error.message
+            if (errorMessage == 'Failed to fetch' && location.protocol.toLowerCase() == 'https') {
+                errorMessage = errorMessage + ' Możliwa przyczyna: self signed nie są obsługiwane.'
+            }
+            console.log(error)
+        });
+    }
+
+    function sendForm(data) {
+        data = transformBack(data)
+        const headers = new Headers()
+        let method = 'POST'
+        let url = utils.getBackendUrl(location) + "/api/core/v2/dashboards/"
+        if (!(data.id === 'new' || data.id == null || data.id == '' || data.id == undefined)) {
+            url = url + data.id
+            method = 'PUT'
+        }
+        headers.set('Authentication', session.token);
+        headers.set('Content-Type', 'application/json');
+        let response = fetch(
+            url,
+            { method: method, mode: 'cors', headers: headers, body: JSON.stringify(data) }
+        ).then((response) => {
+            if (response.status == 200) {
+                errorMessage = ''
+                goto('/dashboards')
+            } else if (response.status == 401 || response.status == 403 || response.status == 404) {
+                utils.setAuthorized(session, false)
+            } else {
+                alert(
+                    utils.getMessage(utils.FETCH_STATUS)
+                        .replace('%1', response.status)
+                        .replace('%2', response.statusText)
+                )
+            }
+        }).catch((error) => {
+            errorMessage = error.message
+            if (errorMessage == 'Failed to fetch' && location.protocol.toLowerCase() == 'https') {
+                errorMessage = errorMessage + ' Możliwa przyczyna: self signed nie są obsługiwane.'
+            }
+            console.log(error)
+        });
+    }
+
+    function transformBack(cfg) {
+        console.log('transformBack')
+        console.log(cfg)
+        for (let i = 0; i < cfg.items.length; i++) {
+            let item = cfg.items[i]
+            if (item['_el1'] !== null) {
+                item['_el1'] = item['1']
+                //delete item['1']
+            }
+            if (item['_el10'] !== null) {
+                item['_el10'] = item['10']
+                //delete item['10']
+            }
+        }
+        console.log(cfg)
+        return cfg
+    }
+
+    function setCurrentConfigureIndex(idx) {
+        currentConfigureIndex = idx;
+        console.log('New currentConfigureIndex: ', currentConfigureIndex);
+    }
+
+    function widgetFormCallback(idx, cfg) {
+        console.log('testCallback ', idx, cfg);
+        modified = true
+    }
+
+    function addWidget() {
+        console.log('addWidget');
+        modified = true
+
+        data.widgets.push({
+            title: data.widgets.length.toString(),
+            type: 'text',
+            role: '',
+            description: 'opis',
+            name: 'w' + data.widgets.length
+        });
+
+        let newItem = {
+            id: id(),
+            10: gridHelp.item({
+                w: 2,
+                h: 2,
+                x: 0,
+                y: 0,
+                draggable: true, resizable: true
+            }),
+            1: gridHelp.item({
+                w: 2,
+                h: 2,
+                x: 0,
+                y: 0,
+                draggable: true, resizable: true
+            }),
+        };
+
+        let findOutPosition = gridHelp.findSpace(newItem, data.items, COLS);
+
+        newItem = {
+            ...newItem,
+            [COLS]: {
+                ...newItem[COLS],
+                ...findOutPosition,
+            },
+        };
+
+        data.items = [...data.items, ...[newItem]];
+
+        console.log('widgets_data size ' + data.widgets.length + ' items size ' + data.items.length);
+    }
+
+    function removeItem(itemIndex) {
+        console.log(itemIndex);
+
+        if (itemIndex > -1) {
+            data.items.splice(itemIndex, 1);
+            data.widgets.splice(itemIndex, 1);
+        }
+
+        data.items = gridHelp.normalize(data.items, COLS);
+
+        console.log('widgets_data size ' + data.widgets.length + ' items size ' + data.items.length);
+        modified = true;
+    }
+
+</script>
+<style>
+    .size {
+        max-width: 1500px;
+        width: 100%;
+    }
+
+    .demo-widget {
+        height: 100%;
+        width: 100%;
+        display: flex;
+
+    }
+
+    .demo-container {
+        max-width: 1500px;
+        width: 100%;
+    }
+</style>
