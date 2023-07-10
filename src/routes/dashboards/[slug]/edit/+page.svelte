@@ -14,7 +14,7 @@
             </div>
             <div class="col-md-3">
                 <input disabled type="text" class="form-control" id="input-id" bind:value={data.id}>
-            </div>
+            </div> 
             <div class="col-md-1 col-form-label">
                 <label for="input-userid" class="form-label">Owner</label>
             </div>
@@ -241,12 +241,15 @@
     }
 
     function transformBack(cfg) {
+        // TODO: layout will be OK when configured for 10 columns: for 1 column layout widget height will be always 1 row
+        // TODO: it should be possible preserve widget height when changing layout from 10 to 1 column
         console.log('transformBack')
         console.log(cfg)
         for (let i = 0; i < cfg.items.length; i++) {
             let item = cfg.items[i]
             if (item['_el1'] !== null) {
                 item['_el1'] = item['1']
+                item['_el1']['y'] = i // fixes position of items in 1 column layout
                 //delete item['1']
             }
             if (item['_el10'] !== null) {
@@ -290,8 +293,8 @@
                 draggable: true, resizable: true
             }),
             1: gridHelp.item({
-                w: 2,
-                h: 2,
+                w: 1,
+                h: 1,
                 x: 0,
                 y: 0,
                 draggable: true, resizable: true
@@ -332,6 +335,7 @@
     .size {
         max-width: 1500px;
         width: 100%;
+        height: 2000px;
     }
 
     .demo-widget {

@@ -17,7 +17,7 @@
 
     async function getRequiredData() {
         if (dev) {
-            return sgxdata.getOneChannelExample(config.dev_id, config.channel, 1)
+            return sgxdata.getOneChannelExample(config.dev_id, config.channel, 3)
         }
         const headers = new Headers()
         headers.set('Accept', 'application/json');
@@ -33,41 +33,25 @@
     let promise = getRequiredData();
     let front = true;
 
-    function recalculate(value) {
-        return Number.parseFloat(value).toFixed(config.rounding);
-    }
     function switchView() {
         front = !front;
     }
-    function getLedImgUrl(measurement) {
-        let level = sgxhelper.getAlertLevel(config.range, measurement.value, measurement.timestamp)
-        switch (level) {
-            case 0:
-                return '/img/led/led-green.svg'
-            case 1:
-                return '/img/led/led-yellow.svg'
-            case 2:
-                return '/img/led/led-red.svg'
-            case 3:
-                return '/img/led/led-grey.svg'
-            default:
-                return '/img/led/KO.svg'
-        }
-    }
+
 </script>
-<div class="p-1 w-100" on:click={switchView}>
+
+<div class="p-1 w-100" on:click={switchView} bind:clientHeight={parentHeight}>
     {#if config.title!=""}
     <div class="row text-center">
         <div class="col-12"><span>{config.title}</span></div>
     </div>
     {/if}
-    <div class="row text-center">
-        <div class="col-12" bind:clientHeight={parentHeight}>
+    <div class="row text-left">
+        <div class="col-12" >
             {#await promise}
             ...
             {:then data}
             {#if front}
-            <img class="w-25" src={getLedImgUrl(data[0][0])} />
+            <pre style="height: auto; max-height: {parentHeight-32}px; overflow: auto;">{JSON.stringify(data, null, 2)}</pre>
             {:else}
             {new Date(data[0][0].timestamp).toLocaleString()}
             {/if}

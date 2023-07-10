@@ -16,7 +16,7 @@
 
     async function getRequiredData() {
         if(dev){
-            return sgxdata.getOneChannelExample(config.dev_id, config.channel)
+            return sgxdata.getOneChannelExample(config.dev_id, config.channel, 1)
         }
         const headers = new Headers()
         headers.set('Accept', 'application/json');
@@ -96,7 +96,7 @@
             ...
             {:then data}
             {#if front}
-            <span class="h4"><i class="bi {getIconName()} me-1" style={getIconColor(data[0][0])}></i>{recalculate(data[0][0].value)}{@html config.unitName}</span>
+            <span class="h4"><i class="bi {getIconName()} me-2" style={getIconColor(data[0][0])}></i>{recalculate(data[0][0].value)}{@html config.unitName}</span>
             {:else}
             {new Date(data[0][0].timestamp).toLocaleString()}
             {/if}

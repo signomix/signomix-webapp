@@ -155,12 +155,14 @@
     import { goto } from '$app/navigation';
     import { utils } from '$lib/utils.js';
     import { browser } from '$app/environment'
+    import { poll } from '$lib/poll.js';
+    import { dev } from '$app/environment';
 
     function logout() {
         console.log("LOGOUT")
         userSession.set({ logged: false, login: '', password: '', language: 'en' })
         if (browser) {
-            try{
+            try {
                 window.localStorage.removeItem('sgx.session.token');
             } catch (error) {
                 console.log(error)
@@ -174,12 +176,14 @@
         session = value;
         if (!session.logged) {
             try {
-                if (window.localStorage.getItem('sgx.session.token') != null) {
-                    session.token = window.localStorage.getItem('sgx.session.token')
-                    session.logged = true
-                    session.authorized = true
-                } else {
-                    console.log("NO TOKEN")
+                if (browser) {
+                    if (window.localStorage.getItem('sgx.session.token') != null) {
+                        session.token = window.localStorage.getItem('sgx.session.token')
+                        session.logged = true
+                        session.authorized = true
+                    } else {
+                        console.log("NO TOKEN")
+                    }
                 }
             } catch (error) {
                 console.log(error)
@@ -210,6 +214,13 @@
         goto('/')
         return true
     }
+    poll(async function fetchData() {
+        // your implementation goes here
+        if (session.logged && session.authorized) {
+            console.log("POLL")
+        }
+    }, dev ? 10000 : 60000);
+
     let labels = {
         'home': {
             'pl': "Strona główna",

@@ -20,6 +20,8 @@
 	"type": "module",
 	"dependencies": {
 		"chart.js": "^4.3.0",
+		"chartjs-adapter-moment": "^1.0.1",
+		"moment": "^2.29.4",
 		"svelte-chartjs": "^3.1.2"
 	}
 }

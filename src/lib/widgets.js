@@ -21,14 +21,13 @@ export const widgets = {
     ],
     chartTypes: [
         'line',
-        'stepped',
-        'bar'
+        'bar',
+        'scatter'
     ],
     localTypes: [], // List of locally defined widget types
     communityTypes: [], // List of widgets types delivered by the community
     chartOptions: {
         line: ['dots:', 'plain:', 'area:', 'areaWithDots:'],
-        stepped: ['dots:', 'plain:', 'area:', 'areaWithDots:'],
         bar: []
     },
     typeFields: {

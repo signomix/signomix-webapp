@@ -11,21 +11,25 @@
     <Grid bind:items={items} rowHeight={100} let:item {cols} let:index on:resize={handleResize} on:mount={handleMount}>
         <div class="dashboard-widget content bg-white border border-primary rounded-1">
             {#if 'chartjs'===getWidgetType(index)}
-            <ChartjsWidget index={index} bind:config={items} />
+            <ChartjsWidgetExample index={index} bind:config={items} />
             {:else if 'canvas'===getWidgetType(index)}
-            <CanvasWidget index={index} bind:config={items} />
+            <CanvasWidgetExample index={index} bind:config={items} />
             {:else if 'canvas_placeholder'===getWidgetType(index)}
-            <CanvasWidget index={index} bind:config={items} />
+            <CanvasWidgetExample index={index} bind:config={items} />
             {:else if 'chart_placeholder'===getWidgetType(index)}
-            <ChartjsWidget index={index} bind:config={items} />
+            <ChartjsWidgetExample index={index} bind:config={items} />
             {:else if 'symbol'===getWidgetType(index)}
             <SymbolWidget bind:config={dashboardConfig.widgets[index]} />
             {:else if 'text'===getWidgetType(index)}
             <TextWidget bind:config={dashboardConfig.widgets[index]} />
             {:else if 'led'===getWidgetType(index)}
             <LedWidget bind:config={dashboardConfig.widgets[index]} />
+            {:else if 'raw'===getWidgetType(index)}
+            <RawDataWidget bind:config={dashboardConfig.widgets[index]} />
+            {:else if 'chart'===getWidgetType(index)}
+            <ChartWidget bind:config={dashboardConfig.widgets[index]} />
             {:else}
-            <CanvasWidget index={index} bind:config={items} />
+            <CanvasWidgetExample index={index} bind:config={items} />
             {/if }
         </div>
     </Grid>
@@ -38,12 +42,15 @@
     import { utils } from '$lib/utils.js';
     import { goto } from '$app/navigation';
     import { userSession } from '$lib/stores.js';
+    import { invalidateAll } from '$app/navigation';
 
-    import CanvasWidget from '$lib/components/widgets/CanvasWidget.svelte';
-    import ChartjsWidget from '$lib/components/widgets/ChartjsWidget.svelte';
+    import CanvasWidgetExample from '$lib/components/widgets/CanvasWidgetExample.svelte';
+    import ChartjsWidgetExample from '$lib/components/widgets/ChartjsWidgetExample.svelte';
     import SymbolWidget from '$lib/components/widgets/SymbolWidget.svelte';
     import TextWidget from '$lib/components/widgets/TextWidget.svelte';
     import LedWidget from '$lib/components/widgets/LedWidget.svelte';
+    import RawDataWidget from '$lib/components/widgets/RawDataWidget.svelte';
+    import ChartWidget from '$lib/components/widgets/ChartWidget.svelte';
 
     export let data
     let errorMessage = ''
@@ -70,10 +77,22 @@
             return 'unknown'
         }
     }
+    let getWidgetChartType = function (idx) {
+        try {
+            if('chart'===dashboardConfig.widgets[idx].type){
+            return dashboardConfig.widgets[idx].chartType
+            }else{
+                return 'unknown'
+            }
+        } catch (e) {
+            return 'unknown'
+        }
+    }
 
     let show = function () {
         dashboardConfig = data
         blockChanges(dashboardConfig)
+        console.log('SHOW dashboard')
         console.log('dashboardConfig ', dashboardConfig)
         items = dashboardConfig.items
         cols = [
@@ -86,7 +105,12 @@
         //parentDiv = document.getElementById(dashboardId)
         //console.log(dashboardId, ' ', parentDiv.offsetWidth);
         //console.log('window.innerWidth ', window.innerWidth);
+        const interval = setInterval(() => {
+            invalidateAll()
+           show()
+        }, dev?10000:60000);
         show()
+        return () => {clearInterval(interval);}
     });
 
     const blockChanges=function(config){

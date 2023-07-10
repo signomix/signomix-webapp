@@ -13,8 +13,8 @@
                         on:click={selectExtended}>Details</a>
                     {/if}
                     {#if config[index].type=='chart'}
-                    <a class="nav-link {selectedTab==='chart'?'active':''}" type="button" on:click={selectChart}>Chart
-                        opt.</a>
+                    <a class="nav-link {selectedTab==='chart'?'active':''}" type="button" 
+                        on:click={selectChart}>Chart opt.</a>
                     {/if}
                     <a class="nav-link {selectedTab==='config'?'active':''}" type="button"
                         on:click={selectConfig}>Config</a>
@@ -138,7 +138,7 @@
 
             </div>
             {/if}
-            {#if selectedTab === 'chart' && config[index].type=='chart'}
+            {#if selectedTab === 'chart'}
             <div class="p-1 mt-2">
                 <label for="chart_type">Typ wykresu</label>
                 <select id="chart_type" class="form-control form-control-sm" bind:value={config[index].chartType}>
@@ -147,7 +147,8 @@
                     {/each}
                 </select>
             </div>
-            {#if config[index].chartType=='line' || config[index].chartType=='stepped'}
+            {#if config[index].chartType=='line'}
+            <!--
             <div class="p-1 mt-2">
                 <label for="chart_option">Wersja</label>
                 <select id="chart_option" class="form-control form-control-sm" bind:value={config[index].chartOption}>
@@ -157,6 +158,7 @@
                     {/each}
                 </select>
             </div>
+            -->
             <div class="p-1 mt-2">
                 <label for="cubic">Cubic interpolation</label>
                 <select id="cubic" class="form-control form-control-sm" bind:value={config[index].cubicInterpolation}>
