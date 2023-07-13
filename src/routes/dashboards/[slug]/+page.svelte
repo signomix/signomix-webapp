@@ -7,7 +7,7 @@
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h5>{dashboardConfig.title}</h5><a href="/dashboards/{data.id}/edit">Configure</a>
 </div>
-<div class="dashboard-container" id={dashboardId} >
+<div class="dashboard-container" id={dashboardId}>
     <Grid bind:items={items} rowHeight={100} let:item {cols} let:index on:resize={handleResize} on:mount={handleMount}>
         <div class="dashboard-widget content bg-white border border-primary rounded-1">
             {#if 'chartjs'===getWidgetType(index)}
@@ -64,7 +64,7 @@
     let { item } = gridHelp;
 
     let editable = false; // set to true to enable editing
-    let dashboardConfig={}
+    let dashboardConfig = {}
     let items = []
     // Documentation of cols
     // https://github.com/vaheqelyan/svelte-grid/issues/140
@@ -79,14 +79,75 @@
     }
     let getWidgetChartType = function (idx) {
         try {
-            if('chart'===dashboardConfig.widgets[idx].type){
-            return dashboardConfig.widgets[idx].chartType
-            }else{
+            if ('chart' === dashboardConfig.widgets[idx].type) {
+                return dashboardConfig.widgets[idx].chartType
+            } else {
                 return 'unknown'
             }
         } catch (e) {
             return 'unknown'
         }
+    }
+
+    let getRefreshInterval = function () {
+        let interval = dev ? 10000 : 60000
+        let applications = [
+            {
+                id: 0,
+                organization: 0,
+                version: 0,
+                name: "dashboards",
+                configuration: "{\"refreshInterval\":7000,\"theme\":\"dark\"}",
+            }
+        ]
+        if (!dev) {
+            applications = getApplications()
+        }
+
+        try {
+            for (let i = 0; i < applications.length; i++) {
+                if (applications[i].name === "default") {
+                    let config = JSON.parse(applications[i].configuration)
+                    interval = config.refreshInterval
+                    break
+                }
+            }
+        } catch (e) {
+            console.log( e)
+        }
+        console.log('refresh interval: ', interval)
+        return interval
+    }
+
+    let getApplications = function () {
+        const headers = new Headers()
+        let method = 'GET'
+        let url = utils.getBackendUrl(location) + "/api/application/"
+        headers.set('Authentication', session.token);
+        let apps = fetch(
+            url,
+            { method: method, mode: 'cors', headers: headers }
+        ).then((response) => {
+            if (response.status == 200) {
+                errorMessage = ''
+                return response.json()
+            } else if (response.status == 401 || response.status == 403 || response.status == 404) {
+                utils.setAuthorized(session, false)
+            } else {
+                alert(
+                    utils.getMessage(utils.FETCH_STATUS)
+                        .replace('%1', response.status)
+                        .replace('%2', response.statusText)
+                )
+            }
+        }).catch((error) => {
+            errorMessage = error.message
+            if (errorMessage == 'Failed to fetch' && location.protocol.toLowerCase() == 'https') {
+                errorMessage = errorMessage + ' Możliwa przyczyna: self signed nie są obsługiwane.'
+            }
+            console.log(error)
+        });
+        return apps
     }
 
     let show = function () {
@@ -102,18 +163,15 @@
     }
 
     onMount(() => {
-        //parentDiv = document.getElementById(dashboardId)
-        //console.log(dashboardId, ' ', parentDiv.offsetWidth);
-        //console.log('window.innerWidth ', window.innerWidth);
         const interval = setInterval(() => {
             invalidateAll()
-           show()
-        }, dev?10000:60000);
+            show()
+        }, getRefreshInterval());
         show()
-        return () => {clearInterval(interval);}
+        return () => { clearInterval(interval); }
     });
 
-    const blockChanges=function(config){
+    const blockChanges = function (config) {
         //set draggable and resizable to false
         config.items.forEach(function (item) {
             item[1].draggable = false
@@ -137,6 +195,7 @@
         width: 100%;
         display: flex;
     }
+
     .dashboard-container {
         max-width: 1500px;
         width: 100%;
