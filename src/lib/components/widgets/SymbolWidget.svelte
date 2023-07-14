@@ -17,21 +17,6 @@
     let errorMessage = '';
     const apiUrl = utils.getBackendUrl(location) + '/api/provider/device/'
 
-    /* async function getRequiredData() {
-        if(dev){
-            return sgxdata.getOneChannelExample(config.dev_id, config.channel, 1)
-        }
-        const headers = new Headers()
-        headers.set('Accept', 'application/json');
-        const endpoint = apiUrl + config.dev_id + "/" + config.channel + "?query=" + config.query + "&tid=" + session.token;
-        const res = await fetch(endpoint, { mode: 'cors', headers: headers });
-        const data = await res.json();
-        if (res.ok) {
-            return data;
-        } else {
-            throw new Error(text);
-        }
-    } */
     let promise = sgxdata.getData(dev,apiUrl,config,filter,session.token);
     let front = true;
 
@@ -45,7 +30,13 @@
         front = !front;
     }
     function getColor(data){
-        let level = sgxhelper.getAlertLevel(config.rule, data.value, data.timestamp);
+        let level = sgxhelper.getAlertLevel(config.range, recalculate(data.value), data.timestamp);
+        if(config.config!=undefined && config.config!=null){
+            let cfg = JSON.parse(config.config)
+            if(cfg.colors!=undefined && cfg.colors!=null&&cfg.colors.length==5){
+                return cfg.colors[level]
+            }
+        }
         switch (level) {
             case 0:
                 return 'text-success'

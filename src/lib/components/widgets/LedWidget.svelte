@@ -19,46 +19,38 @@
     let parentHeight = 0;
     let alertLevel = 3;
 
-    /* async function getRequiredData() {
-        if (dev) {
-            return sgxdata.getOneChannelExample(config.dev_id, config.channel, 1)
-        }
-        const headers = new Headers()
-        headers.set('Accept', 'application/json');
-        const endpoint = apiUrl + config.dev_id + "/" + config.channel + "?query=" + config.query + "&tid=" + session.token;
-        const res = await fetch(endpoint, { mode: 'cors', headers: headers });
-        const data = await res.json();
-        if (res.ok) {
-            return data;
-        } else {
-            throw new Error(text);
-        }
-    } */
     let promise = sgxdata.getData(dev,apiUrl,config,filter,session.token);
     let front = true;
 
     afterUpdate(() => {
         promise = sgxdata.getData(dev,apiUrl,config,filter,session.token);
     });
-
-    function getLedImgUrl(measurement) {
-        let level = sgxhelper.getAlertLevel(config.range, measurement.value, measurement.timestamp)
-        switch (level) {
-            case 0:
-                return '/img/led/led-green.svg'
-            case 1:
-                return '/img/led/led-yellow.svg'
-            case 2:
-                return '/img/led/led-red.svg'
-            case 3:
-                return '/img/led/led-grey.svg'
-            default:
-                return '/img/led/KO.svg'
-        }
+    function recalculate(value){
+        return Number.parseFloat(value).toFixed(config.rounding);
     }
     function isCalculated(measurement) {
-        alertLevel = sgxhelper.getAlertLevel(config.range, measurement.value, measurement.timestamp)
+        alertLevel = sgxhelper.getAlertLevel(config.range, recalculate(measurement.value), measurement.timestamp)
         return true
+    }
+    function getColor() {
+        if(config.config!=undefined && config.config!=null){
+            let cfg = JSON.parse(config.config)
+            if(cfg.colors!=undefined && cfg.colors!=null&&cfg.colors.length==5){
+                return cfg.colors[alertLevel]
+            }
+        }
+        switch (alertLevel) {
+            case 0:
+                return 'text-success'
+            case 1:
+                return 'text-warning'
+            case 2:
+                return 'text-danger'
+            case 3:
+                return 'text-muted'
+            default:
+                return 'text-muted'
+        }
     }
 </script>
 <div class="p-1 w-100">
@@ -74,15 +66,15 @@
             {:then data}
             {#if isCalculated(data[0][0])}
             {#if alertLevel==0}
-            <i class="bi bi-emoji-smile-fill h3 text-success"></i>
+            <i class="bi bi-emoji-smile-fill h3 {getColor()}"></i>
             {:else if alertLevel==1}
-            <i class="bi bi-emoji-neutral-fill h3 text-warning"></i>
+            <i class="bi bi-emoji-neutral-fill h3 {getColor()}"></i>
             {:else if alertLevel==2}
-            <i class="bi bi-emoji-frown-fill h3 text-danger"></i>
+            <i class="bi bi-emoji-frown-fill h3 {getColor()}"></i>
             {:else if alertLevel==3}
-            <i class="bi bi-emoji-expressionless-fill h3 text-muted"></i>
+            <i class="bi bi-emoji-expressionless-fill h3 {getColor()}"></i>
             {:else}
-            <i class="bi bi-emoji-expressionless h3 text-muted"></i>
+            <i class="bi bi-emoji-expressionless h3 {getColor()}"></i>
             {/if}
             {/if}
             {:catch error}
