@@ -29,7 +29,7 @@ export const load = async ({ params, url }) => {
     } else {
       if (dev) {
         if (browser) {
-          console.log(window.localStorage.getItem(params.slug))
+          //console.log(window.localStorage.getItem(params.slug))
           config = JSON.parse(window.localStorage.getItem(params.slug))
         }
       } else {
@@ -51,8 +51,8 @@ export const load = async ({ params, url }) => {
             }
           })
         } catch (error) {
-          console.log('ERROR')
-          console.log(error)
+          //console.log('ERROR')
+          //console.log(error)
         }
 
       }
@@ -62,9 +62,9 @@ export const load = async ({ params, url }) => {
 
   async function transform() {
     let cfg = await getSelectedConfig(utils.getBackendUrl(url))
-    console.log("TRANSFORM " + JSON.stringify(cfg))
+    //console.log("TRANSFORM " + JSON.stringify(cfg))
     for (let i = 0; i < cfg.items.length; i++) {
-      console.log(cfg.items[i])
+      //console.log(cfg.items[i])
       let item = cfg.items[i]
       if (item['1'] !== null) {
         item['1'] = item['_el1']
@@ -75,7 +75,7 @@ export const load = async ({ params, url }) => {
         delete item['_el10']
       }
     }
-    console.log(cfg)
+    //console.log(cfg)
     return cfg
   }
 

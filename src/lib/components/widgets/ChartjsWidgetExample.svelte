@@ -71,6 +71,7 @@
         ],
     };
 
+    export let filter
 </script>
 <style>
     .canvas {

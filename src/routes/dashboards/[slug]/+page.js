@@ -1,9 +1,9 @@
 // @ts-nocheck
-import { browser, building, dev, version } from '$app/environment';
-import { error } from '@sveltejs/kit';
+import { browser, dev, } from '$app/environment';
+//import { error } from '@sveltejs/kit';
 import { userSession } from '$lib/stores.js';
 import { utils } from '$lib/utils.js';
-import { transform } from 'svelte-preprocess/dist/autoProcess.js';
+//import { transform } from 'svelte-preprocess/dist/autoProcess.js';
 
 export const load = async ({ params, url }) => {
 
@@ -16,7 +16,7 @@ export const load = async ({ params, url }) => {
     let config = null
     if (dev) {
       if (browser) {
-        console.log(window.localStorage.getItem(params.slug))
+        //console.log(window.localStorage.getItem(params.slug))
         config = JSON.parse(window.localStorage.getItem(params.slug))
       }
     } else {
@@ -38,8 +38,8 @@ export const load = async ({ params, url }) => {
           }
         })
       } catch (error) {
-        console.log('ERROR')
-        console.log(error)
+        //console.log('ERROR')
+        //console.log(error)
       }
 
     }
@@ -49,9 +49,9 @@ export const load = async ({ params, url }) => {
   async function transform() {
     let cfg = await getSelectedConfig(utils.getBackendUrl(url))
     if (!dev) {
-      console.log("TRANSFORM " + JSON.stringify(cfg))
+      //console.log("TRANSFORM " + JSON.stringify(cfg))
       for (let i = 0; i < cfg.items.length; i++) {
-        console.log(cfg.items[i])
+        //console.log(cfg.items[i])
         let item = cfg.items[i]
         if (item['1'] !== null) {
           item['1'] = item['_el1']
@@ -63,10 +63,9 @@ export const load = async ({ params, url }) => {
         }
       }
     }
-    console.log(cfg)
+    //console.log(cfg)
     return cfg
   }
 
-  //return await getSelectedConfig(utils.getBackendUrl(url))
   return await transform()
 }

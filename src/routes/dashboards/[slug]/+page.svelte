@@ -5,34 +5,62 @@
 -->
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h5>{dashboardConfig.title}</h5><a href="/dashboards/{data.id}/edit">Configure</a>
+    <h5>{dashboardConfig.title}</h5>
+    <span>
+        <a title="Filter" data-bs-toggle="modal" data-bs-target="#filterModal" 
+           on:click|preventDefault={setFilter}>
+            {#if isFilterSet(dashboardFilter)}
+            <i class="bi bi-funnel-fill h5 me-2 link-dark" ></i>
+            {:else}
+            <i class="bi bi-funnel h5 me-2 link-dark" ></i>        
+            {/if}
+        </a>
+        <a href="/dashboards/{data.id}/edit" title="Configure"><i class="bi bi-gear h5 me-2 link-dark"></i></a>
+    </span>
 </div>
 <div class="dashboard-container" id={dashboardId}>
     <Grid bind:items={items} rowHeight={100} let:item {cols} let:index on:resize={handleResize} on:mount={handleMount}>
         <div class="dashboard-widget content bg-white border border-primary rounded-1">
             {#if 'chartjs'===getWidgetType(index)}
-            <ChartjsWidgetExample index={index} bind:config={items} />
+            <ChartjsWidgetExample index={index} bind:config={items}  bind:filter={dashboardFilter}/>
             {:else if 'canvas'===getWidgetType(index)}
-            <CanvasWidgetExample index={index} bind:config={items} />
+            <CanvasWidgetExample index={index} bind:config={items}  bind:filter={dashboardFilter}/> pe-2
             {:else if 'canvas_placeholder'===getWidgetType(index)}
-            <CanvasWidgetExample index={index} bind:config={items} />
+            <CanvasWidgetExample index={index} bind:config={items}  bind:filter={dashboardFilter}/>
             {:else if 'chart_placeholder'===getWidgetType(index)}
-            <ChartjsWidgetExample index={index} bind:config={items} />
+            <ChartjsWidgetExample index={index} bind:config={items}  bind:filter={dashboardFilter}/>
             {:else if 'symbol'===getWidgetType(index)}
-            <SymbolWidget bind:config={dashboardConfig.widgets[index]} />
+            <SymbolWidget bind:config={dashboardConfig.widgets[index]}  bind:filter={dashboardFilter}/>
             {:else if 'text'===getWidgetType(index)}
-            <TextWidget bind:config={dashboardConfig.widgets[index]} />
+            <TextWidget bind:config={dashboardConfig.widgets[index]}  bind:filter={dashboardFilter}/>
             {:else if 'led'===getWidgetType(index)}
-            <LedWidget bind:config={dashboardConfig.widgets[index]} />
+            <LedWidget bind:config={dashboardConfig.widgets[index]}  bind:filter={dashboardFilter}/>
             {:else if 'raw'===getWidgetType(index)}
-            <RawDataWidget bind:config={dashboardConfig.widgets[index]} />
+            <RawDataWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter}/>
             {:else if 'chart'===getWidgetType(index)}
-            <ChartWidget bind:config={dashboardConfig.widgets[index]} />
+            <ChartWidget bind:config={dashboardConfig.widgets[index]}  bind:filter={dashboardFilter}/>
             {:else}
-            <CanvasWidgetExample index={index} bind:config={items} />
+            <CanvasWidgetExample index={index} bind:config={items}  bind:filter={dashboardFilter}/>
             {/if }
         </div>
     </Grid>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="filterModal" tabindex="0" role="dialog" aria-labelledby="filterModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">Filtr danych pulpitu</h5>
+<!--                 <button type="button" class="close" data-dismiss="modal" aria-label="Zamknij">
+                    <span aria-hidden="true">&times;</span>
+                </button> -->
+            </div>
+            <div class="modal-body">
+                <DashboardFilterForm bind:config={editedFilter} callbackSave={filterFormCallback} callbackCancel={filterFormCallbackCancel} />
+            </div>
+        </div>
+    </div>
 </div>
 <script>
     import { onMount } from 'svelte';
@@ -44,6 +72,7 @@
     import { userSession } from '$lib/stores.js';
     import { invalidateAll } from '$app/navigation';
 
+    import DashboardFilterForm from '$lib/components/DashboardFilterForm.svelte';
     import CanvasWidgetExample from '$lib/components/widgets/CanvasWidgetExample.svelte';
     import ChartjsWidgetExample from '$lib/components/widgets/ChartjsWidgetExample.svelte';
     import SymbolWidget from '$lib/components/widgets/SymbolWidget.svelte';
@@ -65,6 +94,10 @@
 
     let editable = false; // set to true to enable editing
     let dashboardConfig = {}
+    let dashboardFilter = {from:'', to:''}
+    let editedFilter = {from:'', to:''}
+    //let filterVisible=false
+
     let items = []
     // Documentation of cols
     // https://github.com/vaheqelyan/svelte-grid/issues/140
@@ -115,7 +148,7 @@
         } catch (e) {
             console.log( e)
         }
-        console.log('refresh interval: ', interval)
+        //console.log('refresh interval: ', interval)
         return interval
     }
 
@@ -153,8 +186,8 @@
     let show = function () {
         dashboardConfig = data
         blockChanges(dashboardConfig)
-        console.log('SHOW dashboard')
-        console.log('dashboardConfig ', dashboardConfig)
+        //console.log('SHOW dashboard')
+        //console.log('dashboardConfig ', dashboardConfig)
         items = dashboardConfig.items
         cols = [
             [800, 10],
@@ -186,6 +219,23 @@
 
     const handleMount = (event) => {
         numberOfCols = event.detail.cols
+    }
+
+    let setFilter = function (event) {
+        editedFilter.from = dashboardFilter.from
+        editedFilter.to = dashboardFilter.to
+    }
+
+    function filterFormCallback(cfg) {
+        dashboardFilter.from = cfg.from
+        dashboardFilter.to = cfg.to
+        editedFilter = {from:'', to:''}
+    }
+    function filterFormCallbackCancel() {
+        editedFilter = {from:'', to:''}
+    }
+    let isFilterSet=function(filter) {
+        return filter.from != '' || filter.to != ''
     }
 
 </script>

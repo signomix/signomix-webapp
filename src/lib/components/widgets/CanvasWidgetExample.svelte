@@ -20,6 +20,7 @@
 
     export let index
     export let config
+    export let filter
 
     let parentDiv
     let parentId = 'widget' + index
@@ -45,13 +46,13 @@
     });
 
     function onWidgetClick(event) {
-        console.log('canvas ', canvasId, ' ', parentDiv.offsetWidth);
+        //console.log('canvas ', canvasId, ' ', parentDiv.offsetWidth);
     }
 
     let show = function () {
-        console.log('SHOW')
+        //console.log('SHOW')
         jsonData = JSON.parse(rawdata)
-        console.log(jsonData)
+        //console.log(jsonData)
         //if (jsonData.length == 0 || jsonData[0].length == 0) {
         //    dataAvailable = false;
         //    return;
@@ -69,15 +70,15 @@
 
     function drawDedicated(list, unitName, rounding) {
         //put your code here and return true
-        console.log('drawDedicated() is not used')
-        console.log(devConfigs)
-        console.log(appConfigs)
+        //console.log('drawDedicated() is not used')
+        //console.log(devConfigs)
+        //console.log(appConfigs)
         return false;
     }
 
     function drawDefault() {
-        console.log('drawDefault')
-        console.log(ctx)
+        //console.log('drawDefault')
+        //console.log(ctx)
         ctx.clearRect(0, 0, canvas.width, canvas.height)
         ctx.fillStyle = 'rgb(255, 255, 255)';
         ctx.fillRect(0, 0, canvas.width, canvas.height)

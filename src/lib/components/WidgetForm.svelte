@@ -224,7 +224,7 @@
 
     let selectedTab = 'basic'
     function handleClick(event) {
-        //console.log('clicked widget index', index, 'config', config[index])
+        ////console.log('clicked widget index', index, 'config', config[index])
         callback(index, config[index])
     }
     function selectBasic() {

@@ -7,6 +7,7 @@
     import { onMount } from 'svelte';
 
     export let config
+    export let filter
     let session;
     userSession.subscribe(value => {
         session = value;
@@ -15,22 +16,8 @@
     const apiUrl = utils.getBackendUrl(location) + '/api/provider/device/'
     let parentHeight = 0;
 
-    async function getRequiredData() {
-        if (dev) {
-            return sgxdata.getOneChannelExample(config.dev_id, config.channel, 3)
-        }
-        const headers = new Headers()
-        headers.set('Accept', 'application/json');
-        const endpoint = apiUrl + config.dev_id + "/" + config.channel + "?query=" + config.query + "&tid=" + session.token;
-        const res = await fetch(endpoint, { mode: 'cors', headers: headers });
-        const data = await res.json();
-        if (res.ok) {
-            return data;
-        } else {
-            throw new Error(text);
-        }
-    }
-    let promise = getRequiredData();
+    console.log('RawDataWidget config', config)
+    let promise = sgxdata.getData(dev,apiUrl,config,filter,session.token);
     let front = true;
 
     function switchView() {

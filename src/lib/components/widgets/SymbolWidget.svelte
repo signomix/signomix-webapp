@@ -5,8 +5,11 @@
     import { sgxhelper } from '$lib/sgxhelper.js';
     import { dev } from '$app/environment';
     import { onMount } from 'svelte';
+    import { afterUpdate } from 'svelte';
 
     export let config
+    export let filter
+
     let session;
     userSession.subscribe(value => {
         session = value;
@@ -14,7 +17,7 @@
     let errorMessage = '';
     const apiUrl = utils.getBackendUrl(location) + '/api/provider/device/'
 
-    async function getRequiredData() {
+    /* async function getRequiredData() {
         if(dev){
             return sgxdata.getOneChannelExample(config.dev_id, config.channel, 1)
         }
@@ -28,28 +31,32 @@
         } else {
             throw new Error(text);
         }
-    }
-    let promise = getRequiredData();
+    } */
+    let promise = sgxdata.getData(dev,apiUrl,config,filter,session.token);
     let front = true;
 
+    afterUpdate(() => {
+        promise = sgxdata.getData(dev,apiUrl,config,filter,session.token);
+    });
     function recalculate(value){
         return Number.parseFloat(value).toFixed(config.rounding);
     }
     function switchView(){
         front = !front;
     }
-    function getIconColor(data){
-        let alertLevel = sgxhelper.getAlertLevel(config.rule, data.value, data.timestamp);
-        if(alertLevel<0){ 
-            return 'color:black;' // not defined
-        }else if(alertLevel==0){
-            return 'color:green;' // ok
-        }else if(alertLevel==1){
-            return 'color:orange;' // warning
-        }else if(alertLevel==2){
-            return 'color:red;' // alert
-        }else if(alertLevel==3){
-            return 'color:lightgray;' // inactive
+    function getColor(data){
+        let level = sgxhelper.getAlertLevel(config.rule, data.value, data.timestamp);
+        switch (level) {
+            case 0:
+                return 'text-success'
+            case 1:
+                return 'text-warning'
+            case 2:
+                return 'text-danger'
+            case 3:
+                return 'text-muted'
+            default:
+                return 'text-muted'
         }
     }
     function getIconName(){
@@ -91,12 +98,12 @@
     </div>
     {/if}
     <div class="row text-center">
-        <div class="col-12">
+        <div class="col-12 mt-1">
             {#await promise}
             ...
             {:then data}
             {#if front}
-            <span class="h4"><i class="bi {getIconName()} me-2" style={getIconColor(data[0][0])}></i>{recalculate(data[0][0].value)}{@html config.unitName}</span>
+            <span class="h4"><i class="bi {getIconName()} me-2 {getColor(data[0][0])}"></i>{recalculate(data[0][0].value)}{@html config.unitName}</span>
             {:else}
             {new Date(data[0][0].timestamp).toLocaleString()}
             {/if}
@@ -105,4 +112,4 @@
             {/await}
         </div>
     </div>
-</div>
+</div> 

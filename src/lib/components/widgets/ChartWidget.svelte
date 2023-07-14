@@ -12,6 +12,8 @@
 
 
     export let config
+    export let filter
+
     let session;
     userSession.subscribe(value => {
         session = value;
@@ -22,7 +24,7 @@
     let chartCanvas
     let ctx
     onMount(async () => {
-        console.log('onMount');
+        //console.log('onMount');
         ctx = chartCanvas.getContext('2d');
         show(ctx)
         /* var myChart
@@ -31,22 +33,34 @@
             myChart = new Chart(ctx, data);
         } catch (error) {
             errorMessage = error.message;
-            console.log('error', errorMessage);
+            //console.log('error', errorMessage);
         } */
     });
 
     afterUpdate(() => {
-        console.log('afterUpdate');
+        //console.log('afterUpdate');
         show(ctx)
     });
     var myChart
     async function show(ctx) {
-        console.log('SHOW')
-
-        try {
+        /* try {
+            console.log('SHOW1')
             const data = await getRequiredData();
+            console.log('SHOW2 data', data)
             if (myChart) myChart.destroy()
             myChart = new Chart(ctx, data);
+        } catch (error) {
+            errorMessage = error.message;
+            console.log('error', errorMessage);
+        } */
+        try {
+            let promise = await sgxdata.getData(dev, apiUrl, config, filter, session.token, transform)
+                .then(function (data) {
+                    //console.log('SHOW2 data', data)
+                    if (myChart) myChart.destroy()
+                    myChart = new Chart(ctx, data);
+                    //console.log('SHOW3', myChart)
+                })
         } catch (error) {
             errorMessage = error.message;
             console.log('error', errorMessage);
@@ -54,9 +68,8 @@
         return null
     }
 
-    async function getRequiredData() {
+    /* async function getRequiredData() {
         if (dev) {
-            //return await transform(sgxdata.getOneChannelExample(config.dev_id, config.channel, 7))
             return await transform(sgxdata.getDataExample(config.dev_id, config.channel, 7))
         }
         const headers = new Headers()
@@ -69,11 +82,11 @@
         } else {
             throw new Error(text);
         }
-    }
+    } */
 
     async function transform(rawData) {
         let jsonData = await rawData;
-        console.log('jsonData', jsonData)
+        //console.log('jsonData', jsonData)
         let multiLine = jsonData[0].length > 1 && jsonData[0][1]['name'] != jsonData[0][0]['name']
         let numberOfLines = multiLine ? jsonData[0].length : 1
         let chartData = {
@@ -146,7 +159,7 @@
                     colors.push('rgba(54, 162, 235, 0.2)')
                     borders.push('rgb(54, 162, 235)')
                 } catch (err) {
-                    console.log(err)
+                    //console.log(err)
                 }
             }
 
@@ -164,7 +177,7 @@
             )
 
         }
-        console.log('chartData', chartData)
+        //console.log('chartData', chartData)
 
         chartData.labels = labels
         if (toLocaleTimeStringSupportsLocales()) {
@@ -214,7 +227,7 @@
             data: chartData,
             options: barChartOptions
         }
-        console.log('barCharConfig', barCharConfig)
+        //console.log('barCharConfig', barCharConfig)
         return barCharConfig
     }
 

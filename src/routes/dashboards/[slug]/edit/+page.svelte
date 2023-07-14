@@ -4,7 +4,7 @@
 -->
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-2 border-bottom">
-    <h5>Konfiguracja pulpitu</h5><a href="/dashboards/{data.id}">Show</a>
+    <h5>Konfiguracja pulpitu</h5><a href="/dashboards/{data.id}" title="View dashboard"><i class="bi bi-eye h5 me-2 link-dark"></i></a>
 </div>
 <div class="container border-bottom pb-2">
     <form>
