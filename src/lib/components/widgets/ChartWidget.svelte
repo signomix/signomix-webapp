@@ -84,9 +84,13 @@
         }
     } */
 
-    async function transform(rawData) {
+    async function transform(widgetConfig, rawData) {
         let jsonData = await rawData;
         //console.log('jsonData', jsonData)
+        let namesTranslated = []
+        if(config.channel_translated!==null && config.channel_translated!==undefined) {
+            namesTranslated = config.channel_translated.split(',')
+        }
         let multiLine = jsonData[0].length > 1 && jsonData[0][1]['name'] != jsonData[0][0]['name']
         let numberOfLines = multiLine ? jsonData[0].length : 1
         let chartData = {
@@ -136,7 +140,7 @@
                 }
                 chartData.datasets.push(
                     {
-                        label: jsonData[0].length > 0 ? jsonData[0][j]['name'] : '',
+                        label: jsonData[0].length > 0 ? getChannelNameTranslated(namesTranslated,j,jsonData[0][j]['name']) : '',
                         borderWidth: 1,
                         data: measures,
                         backgroundColor: areaColors[j],
@@ -162,10 +166,9 @@
                     //console.log(err)
                 }
             }
-
             chartData.datasets.push(
                 {
-                    label: jsonData[0].length > 0 ? jsonData[0][0]['name'] : '',
+                    label: jsonData[0].length > 0 ? getChannelNameTranslated(namesTranslated,0,jsonData[0][0]['name']) : '',
                     borderWidth: 1,
                     data: measures,
                     backgroundColor: colors[0],
@@ -199,8 +202,8 @@
                     //type: (config.format == 'timeseries' ? 'timeseries' : 'time'),
                     type: 'time',
                     time: {
-                        //unit: sgxhelper.getChartUnit(dFirst, dLast, config.timeUnit),
-                        unit: 'minute',
+                        unit: sgxhelper.getChartUnit(dFirst, dLast, config.timeUnit),
+                        //unit: 'minute',
                         displayFormats: {
                             minute: 'HH:mm:ss',
                             hour: 'HH:mm:ss',
@@ -239,6 +242,14 @@
         }
         return false;
     }
+    function getChannelNameTranslated(names,index,channelName){
+        if(names.length>index){
+            return names[index]
+        } else {
+            return channelName
+        }
+    }
+
 
 </script>
 <div class="p-1 pt-2 w-100">

@@ -59,7 +59,7 @@ const getSgxData2 = async function (devMode,apiUrl, config, filter, token, trans
     if (transformFunction == null || transformFunction == undefined) {
       return sgxdata.getDataExample(config.dev_id, config.channel, 7)
     } else {
-      return await transformFunction(sgxdata.getDataExample(config.dev_id, config.channel, 7))
+      return await transformFunction(config, sgxdata.getDataExample(config.dev_id, config.channel, 7))
     }
   }
   const headers = new Headers()
@@ -70,7 +70,7 @@ const getSgxData2 = async function (devMode,apiUrl, config, filter, token, trans
   if (transformFunction == null || transformFunction == undefined) {
     data = await res.json();
   } else {
-    data = await transformFunction(res.json());
+    data = await transformFunction(config, res.json());
   }
   if (res.ok) {
     return data;

@@ -33,7 +33,7 @@ export const widgets = {
     typeFields: {
         default: ['title', 'type', 'role','config', 'app_id'],
         button: ['dev_id','channel', 'commandType'],
-        chart: ['dev_id','channel', 'query', 'format', 'chartType'],
+        chart: ['dev_id','channel', 'query', 'format', 'chartType','channel_translated'],
         date: ['dev_id','channel', 'query'],
         devinfo: ['dev_id',],
         image: ['imageUrl'],
@@ -50,9 +50,9 @@ export const widgets = {
         symbol: ['dev_id','channel','channel_translated','range','unit', 'rounding', 'icon'],
     },
     chartFields: {
-        line: ['cubicInterpolation'],
-        stepped: ['cubicInterpolation'],
-        bar: []
+        line: ['timeUnit','cubicInterpolation'],
+        stepped: ['timeUnit','cubicInterpolation'],
+        bar: ['timeUnit']
     },
     fieldNames: {
         type: {en:'Type', pl:'Typ'},

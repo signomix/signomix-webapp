@@ -13,8 +13,8 @@
                         on:click={selectExtended}>Details</a>
                     {/if}
                     {#if config[index].type=='chart'}
-                    <a class="nav-link {selectedTab==='chart'?'active':''}" type="button" 
-                        on:click={selectChart}>Chart opt.</a>
+                    <a class="nav-link {selectedTab==='chart'?'active':''}" type="button" on:click={selectChart}>Chart
+                        opt.</a>
                     {/if}
                     <a class="nav-link {selectedTab==='config'?'active':''}" type="button"
                         on:click={selectConfig}>Config</a>
@@ -26,8 +26,7 @@
             <div class="p-1 mt-2">
                 <div class="mb-2">
                     <label for="title" class="form-label">{widgets.getFieldName('title',session.language)}</label>
-                    <input type="text" class="form-control form-control-sm" id="title"
-                        bind:value={config[index].title}>
+                    <input type="text" class="form-control form-control-sm" id="title" bind:value={config[index].title}>
                 </div>
                 <div class="mb-2">
                     <label for="type">Type</label>
@@ -54,8 +53,7 @@
                 {#if widgets.isVisible(config[index].type, 'group')}
                 <div class="mb-2">
                     <label for="group" class="form-label">Group</label>
-                    <input type="text" class="form-control form-control-sm" id="group"
-                        bind:value={config[index].group}>
+                    <input type="text" class="form-control form-control-sm" id="group" bind:value={config[index].group}>
                 </div>
                 {/if}
                 {#if widgets.isVisible(config[index].type, 'imageUrl')}
@@ -86,8 +84,7 @@
                 {#if widgets.isVisible(config[index].type, 'query')}
                 <div class="mb-2">
                     <label for="query" class="form-label">Data range</label>
-                    <input type="text" class="form-control form-control-sm" id="query"
-                        bind:value={config[index].query}>
+                    <input type="text" class="form-control form-control-sm" id="query" bind:value={config[index].query}>
                 </div>
                 {/if}
                 {#if widgets.isVisible(config[index].type, 'rounding')}
@@ -107,21 +104,20 @@
                 {#if widgets.isVisible(config[index].type, 'range')}
                 <div class="mb-2">
                     <label for="range" class="form-label">Alert rule</label>
-                    <input type="text" class="form-control form-control-sm" id="range"
-                        bind:value={config[index].range}>
+                    <input type="text" class="form-control form-control-sm" id="range" bind:value={config[index].range}>
                 </div>
                 {/if}
                 {#if widgets.isVisible(config[index].type, 'icon')}
                 <div class="mb-2">
                     <label for="icon" class="form-channels">Icon</label>
-                    <input type="text" class="form-control form-control-sm" id="icon"
-                        bind:value={config[index].icon}>
+                    <input type="text" class="form-control form-control-sm" id="icon" bind:value={config[index].icon}>
                 </div>
                 {/if}
                 {#if widgets.isVisible(config[index].type, 'commandType')}
                 <div class="p-1 mt-2">
                     <label for="commandType">Command type</label>
-                    <select id="commandType" class="form-control form-control-sm" bind:value={config[index].commandType}>
+                    <select id="commandType" class="form-control form-control-sm"
+                        bind:value={config[index].commandType}>
                         <option selected={'plain'==config[index].commandType} value="plain">PLAIN</option>
                         <option selected={'hex'==config[index].commandType} value="hex">HEX</option>
                         <option selected={'json'==config[index].commandType} value="json">JSON</option>
@@ -131,8 +127,7 @@
                 {#if widgets.isVisible(config[index].type, 'role')}
                 <div class="mb-2">
                     <label for="role" class="form-label">Role</label>
-                    <input type="text" class="form-control form-control-sm" id="role"
-                        bind:value={config[index].role}>
+                    <input type="text" class="form-control form-control-sm" id="role" bind:value={config[index].role}>
                 </div>
                 {/if}
 
@@ -174,14 +169,25 @@
                     <option selected={'timeseries'==config[index].format} value='standard'>timeseries</option>
                 </select>
             </div>
+            <div class="p-1 mt-2">
+                <label for="format">Czas na osi X</label>
+                <select id="format" class="form-control form-control-sm" bind:value={config[index].timeUnit}>
+                    <option value="" selected={config[index].timeUnit=='' || config[index].timeUnit==undefined}>
+                        automatic setting</option>
+                    <option value="quarter" selected={config[index].timeUnit=='quarter' }>quarters</option>
+                    <option value="week" selected={config[index].timeUnit=='week' }>weeks</option>
+                    <option value="day" selected={config[index].timeUnit=='day' }>days</option>
+                    <option value="hour" selected={config[index].timeUnit=='hour' }>hours</option>
+                    <option value="minute" selected={config[index].timeUnit=='minute' }>minutes</option>
+                </select>
+            </div>
             {/if}
             {#if selectedTab === 'config'}
             {#if widgets.isVisible(config[index].type, 'app_id')}
-                <div class="mb-2">
-                    <label for="app_id" class="form-label">Application ID</label>
-                    <input type="text" class="form-control form-control-sm" id="app_id"
-                        bind:value={config[index].app_id}>
-                </div>
+            <div class="mb-2">
+                <label for="app_id" class="form-label">Application ID</label>
+                <input type="text" class="form-control form-control-sm" id="app_id" bind:value={config[index].app_id}>
+            </div>
             {/if}
             <div class="p-1 mt-2">
                 <label for="config">Configuration</label>
