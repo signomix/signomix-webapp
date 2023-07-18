@@ -45,9 +45,9 @@
     }
     async function doLogin(event) {
         event.preventDefault()
+        const pwd = event.target.elements['password'].value
+        const lg = event.target.elements['login'].value
         if (!dev) {
-            const pwd = event.target.elements['password'].value
-            const lg = event.target.elements['login'].value
             const url = utils.getBackendUrl(location) + '/api/auth?action=login'
             const headers = new Headers()
             headers.set('Authentication', 'Basic ' + btoa(lg + ":" + pwd));
@@ -78,8 +78,8 @@
             }
         } else {
             session.logged = true
-            session.login = 'user'
-            session.password = 'user'
+            session.login = lg
+            session.password = pwd
             session.authorized = true
             session.token = ''
             session.language = 'en'
@@ -119,13 +119,18 @@
             }
         } else {
             session.logged = true
-            session.login = 'admin'
-            session.password = 'admin'
+            //session.login = 'user'
+            //session.password = 'user'
             session.authorized = true
             session.token = ''
             session.language = 'en'
             session.organization = 0
+            if(session.login=='admin'){
             session.type = 1
+            session.role= 'admin'
+            }else{
+            session.type = 4
+            }
             userSession.set(session)
             errorMessage = ''
         }

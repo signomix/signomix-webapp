@@ -52,6 +52,7 @@
                         </a>
                     </li>
                     {#if $userSession.logged}
+                    {#if $userSession.organization!=0}
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/organization' } href="/organization">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
@@ -59,6 +60,7 @@
                             </span>
                         </a>
                     </li>
+                    {/if}
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/dashboards' } href="/dashboards">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
@@ -89,6 +91,7 @@
                                     labels)}</span>
                         </a>
                     </li>
+                    {#if $userSession.role==='admin'}
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/applications' } href="/applications">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
@@ -96,6 +99,7 @@
                                     labels)}</span>
                         </a>
                     </li>
+                    {/if}
                     {/if}
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/notifications' } href="/notifications">

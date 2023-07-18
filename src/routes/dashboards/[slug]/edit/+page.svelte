@@ -22,8 +22,7 @@
                 <input disabled type="text" class="form-control" id="input-userid" bind:value={data.userID}>
             </div>
             <div class="col-md-4">
-
-                <input type="checkbox" class="form-check-input me-2" id="input-shared" bind:value={data.shared}>
+                <input type="checkbox" class="form-check-input me-2" id="input-shared" bind:checked={data.shared} on:change={onChange}>
                 <label class="form-check-label" for="input-shared">Shared</label>
             </div>
         </div>
@@ -131,13 +130,15 @@
         WIDTH = screen.width;
     }
     const COLS = WIDTH > 500 ? 10 : 1;
-    console.log("screen width: ", WIDTH, ", cols size: ", COLS);
+    //console.log("screen width: ", WIDTH, ", cols size: ", COLS);
+    
 
     const id = () => "_" + Math.random().toString(36).substr(2, 9);
 
     function onChange({ detail }) {
         console.log('onChange: ', detail);
         modified = true
+        console.log(data)
     }
 
     function saveDashboard() {

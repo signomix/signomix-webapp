@@ -75,7 +75,7 @@ export const load = async ({ params, url }) => {
         delete item['_el10']
       }
     }
-    //console.log(cfg)
+    console.log(cfg)
     return cfg
   }
 

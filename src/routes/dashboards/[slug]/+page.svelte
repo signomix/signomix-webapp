@@ -7,6 +7,12 @@
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h5>{dashboardConfig.title}</h5>
     <span>
+        {#if dashboardConfig.shared}
+        <a title="Dashboard access" data-bs-toggle="modal" data-bs-target="#linkModal" 
+           on:click|preventDefault={showLink}>
+           <i class="bi bi-link h4 me-2 link-dark"></i>
+        </a>
+        {/if}
         <a title="Filter" data-bs-toggle="modal" data-bs-target="#filterModal" 
            on:click|preventDefault={setFilter}>
             {#if isFilterSet(dashboardFilter)}
@@ -45,7 +51,7 @@
         </div>
     </Grid>
 </div>
-<!-- Modal -->
+<!-- Filter modal -->
 <div class="modal fade" id="filterModal" tabindex="0" role="dialog" aria-labelledby="filterModalLabel"
     aria-hidden="true">
     <div class="modal-dialog">
@@ -62,6 +68,20 @@
         </div>
     </div>
 </div>
+<!-- Link modal -->
+<div class="modal fade" id="linkModal" tabindex="0" role="dialog" aria-labelledby="linkModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">Adres pulpitu</h5>
+            </div>
+            <div class="modal-body">
+                <DashboardLinkForm bind:config={ dashboardLinkConfig } callbackClose={linkFormCallback} />
+            </div>
+        </div>
+    </div>
+</div>
 <script>
     import { onMount } from 'svelte';
     import Grid from "svelte-grid";
@@ -73,6 +93,7 @@
     import { invalidateAll } from '$app/navigation';
 
     import DashboardFilterForm from '$lib/components/DashboardFilterForm.svelte';
+    import DashboardLinkForm from '$lib/components/DashboardLinkForm.svelte';
     import CanvasWidgetExample from '$lib/components/widgets/CanvasWidgetExample.svelte';
     import ChartjsWidgetExample from '$lib/components/widgets/ChartjsWidgetExample.svelte';
     import SymbolWidget from '$lib/components/widgets/SymbolWidget.svelte';
@@ -97,6 +118,7 @@
     let dashboardFilter = {from:'', to:''}
     let editedFilter = {from:'', to:''}
     //let filterVisible=false
+    let dashboardLinkConfig = {link:'', code:''}
 
     let items = []
     // Documentation of cols
@@ -123,14 +145,15 @@
     }
 
     let getRefreshInterval = function () {
-        let interval = dev ? 10000 : 60000
+        const defaultInterval = 300
+        let interval = dev ? 10 : defaultInterval
         let applications = [
             {
                 id: 0,
                 organization: 0,
                 version: 0,
-                name: "dashboards",
-                configuration: "{\"refreshInterval\":7000,\"theme\":\"dark\"}",
+                name: "system",
+                configuration: "{\"refreshInterval\":7}",
             }
         ]
         if (!dev) {
@@ -139,9 +162,12 @@
 
         try {
             for (let i = 0; i < applications.length; i++) {
-                if (applications[i].name === "default") {
+                if (applications[i].name === "system") {
                     let config = JSON.parse(applications[i].configuration)
-                    interval = config.refreshInterval
+                    let tmpIntv = config.refreshInterval
+                    if(tmpIntv!=null && tmpIntv!=undefined && tmpIntv>0){
+                        interval = tmpIntv
+                    }
                     break
                 }
             }
@@ -149,7 +175,7 @@
             console.log( e)
         }
         //console.log('refresh interval: ', interval)
-        return interval
+        return interval*1000 // in ms
     }
 
     let getApplications = function () {
@@ -225,6 +251,9 @@
         editedFilter.from = dashboardFilter.from
         editedFilter.to = dashboardFilter.to
     }
+    let showLink = function(event){
+        // do nothing
+    }
 
     function filterFormCallback(cfg) {
         dashboardFilter.from = cfg.from
@@ -236,6 +265,9 @@
     }
     let isFilterSet=function(filter) {
         return filter.from != '' || filter.to != ''
+    }
+    function linkFormCallback() {
+        // do nothing
     }
 
 </script>
