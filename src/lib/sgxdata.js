@@ -49,12 +49,15 @@ export const sgxdata = {
     }
     return cdata
   },
-  getData: function (devMode, apiUrl,config, filter, token, transformFunction) {
-    return Promise.resolve(getSgxData2(devMode,apiUrl,config,filter,token, transformFunction)).then((result) => result);
+  getData: function (devMode, apiUrl, config, filter, token, transformFunction) {
+    return Promise.resolve(getSgxData2(devMode, apiUrl, config, filter, token, transformFunction)).then((result) => result);
+  },
+  getNotifications: function (devMode, apiUrl, limit,offset, token) {
+    return Promise.resolve(getSgxNotifications(devMode, apiUrl, limit, offset, token)).then((result) => result);
   }
 }
 
-const getSgxData2 = async function (devMode,apiUrl, config, filter, token, transformFunction) {
+const getSgxData2 = async function (devMode, apiUrl, config, filter, token, transformFunction) {
   if (devMode) {
     if (transformFunction == null || transformFunction == undefined) {
       return sgxdata.getDataExample(config.dev_id, config.channel, 7)
@@ -72,6 +75,26 @@ const getSgxData2 = async function (devMode,apiUrl, config, filter, token, trans
   } else {
     data = await transformFunction(config, res.json());
   }
+  if (res.ok) {
+    return data;
+  } else {
+    throw new Error(text);
+  }
+
+
+}
+
+const getSgxNotifications = async function (devMode, apiUrl, limit, offset, token) {
+  if (devMode) {
+    return {}
+  }
+  const headers = new Headers()
+  headers.set('Accept', 'application/json');
+  headers.set('Authentication', token);
+  const endpoint = apiUrl + "?limit=" + limit + "&offset=" + offset;
+  const res = await fetch(endpoint, { mode: 'cors', headers: headers });
+  let data;
+  data = await res.json();
   if (res.ok) {
     return data;
   } else {

@@ -54,3 +54,6 @@
         </div>
     </div>
 </form>
+<script>
+    export let data;
+</script>

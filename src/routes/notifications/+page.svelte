@@ -5,7 +5,7 @@
 {:else if session.authorized}
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h5>Powiadomienia</h5><i class="bi bi-trash3 h5"></i>
+    <h5>Powiadomienia</h5><a href="#" on:click|preventDefault={removeAll}><i class="bi bi-trash3 h5 link-dark"></i></a>
 </div>
 {#await promise}
 {:then alerts}
@@ -27,9 +27,9 @@
                     <tr>
                         <td class="col-1">{alert.type}</td>
                         <td class="col-2">{alert.deviceEUI}</td>
-                        <td class="col-2">{alert.createdAt}</td>
+                        <td class="col-2">{new Date(alert.createdAt).toLocaleString()}</td>
                         <td class="col-6">{alert.payload}</td>
-                        <td class="col-1"><i class="bi bi-trash3"></i></td>
+                        <td class="col-1"><a href="#" on:click|preventDefault={remove(alert.id)}><i class="bi bi-trash3 link-dark"></i></a></td>
                     </tr>
                     {/each}
                 </tbody>
@@ -151,6 +151,51 @@
     }
     function handleDoNothing(event) {
         console.log(event)
+    }
+    function remove(id){
+        console.log("remove alert"+id)
+        sendRemove(id)
+        promise = getAlerts()
+    }
+    function removeAll(){
+        if (confirm("Czy na pewno chcesz usunąć wszystkie powiadomienia?")) {
+            console.log("remove all alerts")
+            sendRemove("*")
+            promise = getAlerts()
+        }
+    }
+
+    function sendRemove(id) {
+        if(dev){
+            return
+        }
+        const headers = new Headers()
+        let method = 'DELETE'
+        let url = utils.getBackendUrl(location) + "/api/alert/" + id
+        headers.set('Authentication', session.token);
+        let response = fetch(
+            url,
+            { method: method, mode: 'cors', headers: headers }
+        ).then((response) => {
+            if (response.status == 200) {
+                errorMessage = ''
+                goto('/notifications')
+            } else if (response.status == 401 || response.status == 403 || response.status == 404) {
+                utils.setAuthorized(session, false)
+            } else {
+                alert(
+                    utils.getMessage(utils.FETCH_STATUS)
+                        .replace('%1', response.status)
+                        .replace('%2', response.statusText)
+                )
+            }
+        }).catch((error) => {
+            errorMessage = error.message
+            if (errorMessage == 'Failed to fetch' && location.protocol.toLowerCase() == 'https') {
+                errorMessage = errorMessage + ' Możliwa przyczyna: self signed nie są obsługiwane.'
+            }
+            console.log(error)
+        });
     }
 
 

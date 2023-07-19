@@ -107,6 +107,9 @@
                                 <i class="bi bi-megaphone me-2"></i>{utils.getText('notifications',session.language,
                                 labels)}
                             </span>
+                            {#if alertCounter.value>0}
+                            <span class="badge rounded-pill text-bg-danger ms-2">{alertCounter.value}</span>
+                            {/if}
                         </a>
                     </li>
                     <li class="nav-item">
@@ -161,6 +164,7 @@
     import { browser } from '$app/environment'
     import { poll } from '$lib/poll.js';
     import { dev } from '$app/environment';
+    import { sgxdata } from '$lib/sgxdata.js';
 
     function logout() {
         console.log("LOGOUT")
@@ -218,10 +222,16 @@
         goto('/')
         return true
     }
+    let alertCounter= {value:0}
     poll(async function fetchData() {
         // your implementation goes here
         if (session.logged && session.authorized) {
             console.log("POLL")
+            await sgxdata.getNotifications(dev, 'https://localhost/api/alert', 0, 0, session.token).then((data) => {
+                alertCounter.value = data.value
+            }).catch((error) => {
+                console.log(error)
+            })
         }
     }, dev ? 10000 : 60000);
 

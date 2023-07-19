@@ -96,7 +96,8 @@
             {#if front}
             <span class="h4"><i class="bi {getIconName()} me-2 {getColor(data[0][0])}"></i>{recalculate(data[0][0].value)}{@html config.unitName}</span>
             {:else}
-            {new Date(data[0][0].timestamp).toLocaleString()}
+            {new Date(data[0][0].timestamp).toLocaleString()}<br/>
+            {config.dev_id}
             {/if}
             {:catch error}
             <p style="color: red">{error.message}</p>
