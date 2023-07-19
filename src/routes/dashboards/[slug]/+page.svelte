@@ -10,7 +10,7 @@
         {#if dashboardConfig.shared}
         <a title="Dashboard access" data-bs-toggle="modal" data-bs-target="#linkModal" 
            on:click|preventDefault={showLink}>
-           <i class="bi bi-link h4 me-2 link-dark"></i>
+           <i class="bi  bi-link-45deg h4 me-2 link-dark"></i>
         </a>
         {/if}
         <a title="Filter" data-bs-toggle="modal" data-bs-target="#filterModal" 
