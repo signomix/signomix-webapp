@@ -1,59 +1,132 @@
-<form>
-    <div class="row">
-        <div class="col-md-1 col-form-label">
-            <label for="input-id" class="form-label">ID</label>
-        </div>
-        <div class="col-md-3">
-            <input disabled type="text" class="form-control" id="input-id" bind:value={data.id}>
-        </div> 
-        <div class="col-md-1 col-form-label">
-            <label for="input-userid" class="form-label">Owner</label>
-        </div>
-        <div class="col-md-3">
-            <input disabled type="text" class="form-control" id="input-userid" bind:value={data.userID}>
-        </div>
-        <div class="col-md-4">
-
-            <input type="checkbox" class="form-check-input me-2" id="input-shared" bind:value={data.shared}>
-            <label class="form-check-label" for="input-shared">Shared</label>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-1 col-form-label">
-            <label for="input-title" class="form-label">Title</label>
-        </div>
-        <div class="col-md-11">
-            <input type="text" class="form-control" id="input-name" bind:value={data.title}>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-1 col-form-label">
-            <label for="input-team" class="form-label">Team</label>
-        </div>
-        <div class="col-md-4">
-            <input type="text" class="form-control" id="input-team" bind:value={data.team}>
-        </div>
-        <div class="col-md-2 col-form-label">
-            <label for="input-admins" class="form-label">Administrators</label>
-        </div>
-        <div class="col-md-5">
-            <input type="text" class="form-control" id="input-admins" bind:value={data.administrators}>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-form-label">
-            <button class="btn btn-outline-secondary mt-1" on:click={goBack}>Cancel</button>
-            <button class="btn btn-outline-primary me-4 mt-1" on:click={saveDashboard} disabled={modified==false}><i
-                    class="bi bi-save me-2"></i> Zapisz konfigurację
-            </button>
-            <button class="btn btn-outline-primary me-4 mt-1" on:click|preventDefault={removeDashboard}>
-                <i class="bi bi-trash me-2"></i> Usuń pulpit
-            </button>
-            <button class="btn btn-outline-primary mt-1 me-4" on:click={addWidget}><i
-                    class="bi bi-plus-lg"></i></button>
-        </div>
-    </div>
-</form>
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h5>Ustawienia</h5><a href="/settings" title="View"><i class="bi bi-gear h5 me-2 link-dark"></i></a>
+</div>
+<!--
+<div class="col-12">
+    <table class="table">
+        <tbody>
+            <tr>
+                <td>Login</td>
+                <td>{data.settings.uid}</td>
+            </tr>
+            <tr>
+                <td>Name</td>
+                <td>{data.settings.name}</td>
+            </tr>
+            <tr>
+                <td>Surname</td>
+                <td>{data.settings.surname}</td>
+            <tr>
+                <td>Role</td>
+                <td>{data.settings.role}</td>
+            </tr>
+            <tr>
+                <td>Language</td>
+                <td>{data.settings.preferredLanguage}</td>
+            </tr>
+            <tr>
+                <td>Email</td>
+                <td>{data.settings.email}</td>
+            </tr>
+            <tr>
+                <td>Registration date</td>
+                <td>{new Date(data.settings.createdAt).toISOString() }</td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table mt-2">
+        <thead>
+            <tr>
+                <th scope="col" class="col-3">Notification type</th>
+                <th scope="col" class="col-2">Channel</th>
+                <th scope="col" class="col-7">Configuration</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="col-3">General notifications</td>
+                <td class="col-2">{getChannelType(data.settings.generalNotificationChannel)}</td>
+                <td class="col-7">{getChannelConfig(data.settings.generalNotificationChannel)}</td>
+            </tr>
+            <tr>
+                <td class="col-3">Info notifications</td>
+                <td class="col-2">{getChannelType(data.settings.infoNotificationChannel)}</td>
+                <td class="col-7">{getChannelConfig(data.settings.infoNotificationChannel)}</td>
+            </tr>
+            <tr>
+                <td class="col-3">Warning notifications</td>
+                <td class="col-2">{getChannelType(data.settings.warningNotificationChannel)}</td>
+                <td class="col-7">{getChannelConfig(data.settings.warningNotificationChannel)}</td>
+            </tr>
+            <tr>
+                <td class="col-3">Alert notifications</td>
+                <td class="col-2">{getChannelType(data.settings.alertNotificationChannel)}</td>
+                <td class="col-7">{getChannelConfig(data.settings.alertNotificationChannel)}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+-->
+<SettingsForm config={data} callback={saveSettings} readonly={false} />
 <script>
+    import SettingsForm from '$lib/components/SettingsForm.svelte';
     export let data;
+    console.log('settings',data);
+
+    function getChannelType(config){
+        if(config.startsWith("SIGNOMIX")){
+            return "Application";
+        }else if(config.startsWith("SMTP")){
+            return "Email";
+        }else if(config.startsWith("SMS")){
+            return "SMS";
+        }else if(config.startsWith("WEBHOOK")){
+            return "Webhook";
+        }else{
+            return "Unknown";
+        }
+    }
+
+    function getChannelConfig(config){
+        console.log("config: ",config);
+        if(config.indexOf(":")>0){
+            return config.substring(config.indexOf(":")+1);
+        }else{
+            return "";
+        }
+    }
+
+    function saveSettings(config){
+        console.log("saveSettings: ",config);
+        /*
+        let data = {
+            "uid": data.settings.uid,
+            "settings": config
+        }
+        console.log("data: ",data);
+        fetch('/api/settings', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data),
+        }).then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Something went wrong');
+            }
+        }).then(data => {
+            console.log(data);
+            if(data.status=="OK"){
+                alert("Zapisano ustawienia");
+            }else{
+                alert("Błąd zapisu ustawień");
+            }
+        }).catch((error) => {
+            console.error('Error:', error);
+        });
+        */
+    }
+
 </script>

@@ -1,6 +1,7 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h5>Ustawienia</h5>
+    <h5>Ustawienia</h5><a href="/settings/edit" title="Edit"><i class="bi bi-gear h5 me-2 link-dark"></i></a>
 </div>
+<!--
 <div class="col-12">
     <table class="table">
         <tbody>
@@ -65,9 +66,12 @@
         </tbody>
     </table>
 </div>
+-->
+<SettingsForm config={data} callback={saveSettings} readonly={true} />
 <script>
+    import SettingsForm from '$lib/components/SettingsForm.svelte';
     export let data;
-    console.log(data);
+    console.log('settings',data);
 
     function getChannelType(config){
         if(config.startsWith("SIGNOMIX")){
@@ -90,6 +94,39 @@
         }else{
             return "";
         }
+    }
+
+    function saveSettings(config){
+        console.log("saveSettings: ",config);
+        /*
+        let data = {
+            "uid": data.settings.uid,
+            "settings": config
+        }
+        console.log("data: ",data);
+        fetch('/api/settings', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data),
+        }).then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Something went wrong');
+            }
+        }).then(data => {
+            console.log(data);
+            if(data.status=="OK"){
+                alert("Zapisano ustawienia");
+            }else{
+                alert("Błąd zapisu ustawień");
+            }
+        }).catch((error) => {
+            console.error('Error:', error);
+        });
+        */
     }
 
 </script>
