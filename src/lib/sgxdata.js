@@ -52,8 +52,11 @@ export const sgxdata = {
   getData: function (devMode, apiUrl, config, filter, token, transformFunction) {
     return Promise.resolve(getSgxData2(devMode, apiUrl, config, filter, token, transformFunction)).then((result) => result);
   },
-  getNotifications: function (devMode, apiUrl, limit,offset, token) {
+  getNotifications: function (devMode, apiUrl, limit, offset, token) {
     return Promise.resolve(getSgxNotifications(devMode, apiUrl, limit, offset, token)).then((result) => result);
+  },
+  getUserSettings: function (devMode, apiUrl, token) {
+    return Promise.resolve(getSgxUserSettings(devMode, apiUrl, token)).then((result) => result);
   }
 }
 
@@ -93,6 +96,35 @@ const getSgxNotifications = async function (devMode, apiUrl, limit, offset, toke
   headers.set('Authentication', token);
   const endpoint = apiUrl + "?limit=" + limit + "&offset=" + offset;
   const res = await fetch(endpoint, { mode: 'cors', headers: headers });
+  let data;
+  data = await res.json();
+  if (res.ok) {
+    return data;
+  } else {
+    throw new Error(text);
+  }
+
+
+}
+
+const getSgxUserSettings = async function (devMode, apiUrl, limit, offset, token) {
+  if (devMode) {
+    return {
+      settings: {
+        uid: 'tester',
+        email: 'test@localhost',
+        name: 'Test name',
+        surname: 'Test surname',
+        role: '',
+        confirmed: true,
+        preferredLanguage: 'pl'
+      }
+    }
+  }
+  const headers = new Headers()
+  headers.set('Accept', 'application/json');
+  headers.set('Authentication', token);
+  const res = await fetch(apiUrl, { mode: 'cors', headers: headers });
   let data;
   data = await res.json();
   if (res.ok) {

@@ -4,9 +4,10 @@
             <label for="input-uid" class="form-label">Login</label>
         </div>
         <div class="col-md-3">
-            <input disabled type="text" class="form-control" id="input-uid" bind:value={config.settings.uid}>
+            <input disabled type="text" class="form-control" id="input-uid" bind:value={config.uid}>
         </div> 
     </div>
+    <!--
     <div class="row">
         <div class="col-md-1 col-form-label">
             <label for="input-name" class="form-label">Name</label>
@@ -50,6 +51,7 @@
             <input type="text" class="form-control" id="input-createdAt" value={new Date(config.settings.createdAt).toISOString() } readonly>
         </div>
     </div>
+-->
     <!--
     <div class="row">
         <div class="col-md-1 col-form-label">
@@ -74,6 +76,7 @@
         </div>
     </div>
 -->
+<!--
     <hr>
     <div class="row"><div class="col"><h6>Sposoby powiadomień</h6></div></div>
     <div class="row">
@@ -82,9 +85,9 @@
         </div>
         <div class="col-md-2">
             <select class="form-select" id="input-generalNotificationChannel" bind:value={config.settings.generalNotificationChannel} readonly={readonly}>
-                <option value="signomix">W aplikacji</option>
-                <option value="smtp">E-mail</option>
-                <option value="webhook">Webhook</option>
+                <option value="SIGNOMIX">W aplikacji</option>
+                <option value="SMTP">E-mail</option>
+                <option value="WEBHOOK">Webhook</option>
             </select>
         </div>
         <div class="col-md-9">
@@ -97,9 +100,9 @@
         </div>
         <div class="col-md-2">
             <select class="form-select" id="input-infoNotificationChannel" bind:value={config.settings.infoNotificationChannel} readonly={readonly}>
-                <option value="signomix">W aplikacji</option>
-                <option value="smtp">E-mail</option>
-                <option value="webhook">Webhook</option>
+                <option value="SIGNOMIX">W aplikacji</option>
+                <option value="SMTP">E-mail</option>
+                <option value="WEBHOOK">Webhook</option>
             </select>
         </div>
         <div class="col-md-9">
@@ -112,9 +115,9 @@
         </div>
         <div class="col-md-2">
             <select class="form-select" id="input-warningNotificationChannel" bind:value={config.settings.warningNotificationChannel} readonly={readonly}>
-                <option value="signomix">W aplikacji</option>
-                <option value="smtp">E-mail</option>
-                <option value="webhook">Webhook</option>
+                <option value="SIGNOMIX">W aplikacji</option>
+                <option value="SMTP">E-mail</option>
+                <option value="WEBHOOK">Webhook</option>
             </select>
         </div>
         <div class="col-md-9">
@@ -127,19 +130,20 @@
         </div>
         <div class="col-md-2">
             <select class="form-select" id="input-alertNotificationChannel" bind:value={config.settings.alertNotificationChannel} disabled={readonly}>
-                <option value="signomix">W aplikacji</option>
-                <option value="smtp">E-mail</option>
-                <option value="webhook">Webhook</option>
+                <option value="SIGNOMIX">W aplikacji</option>
+                <option value="SMTP">E-mail</option>
+                <option value="WEBHOOK">Webhook</option>
             </select>
         </div>
         <div class="col-md-9">
             <input type="text" class="form-control" id="input-alertNotificationChannelConfig" bind:value={config.settings.alertNotificationChannelConfig} readonly={readonly}>
         </div>
     </div>
+    -->
     {#if !readonly}
     <div class="row">
         <div class="col-form-label">
-            <button class="btn btn-outline-secondary mt-1" on:click={handleCancel}>Cancel</button>
+            <a href="/settings" class="btn btn-outline-secondary mt-1" on:click={handleCancel}>Cancel</a>
             <button class="btn btn-outline-primary me-4 mt-1" on:click={handleSave}>Save</button>
         </div>
     </div>

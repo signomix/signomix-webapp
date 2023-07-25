@@ -222,6 +222,12 @@
     }
 
     onMount(() => {
+        if(!session.logged || !session.authorized || session.login==''){
+            console.log('redirect to login');
+            goto('/login');
+        }else{
+            console.log('settings',data);
+        }
         const interval = setInterval(() => {
             invalidateAll()
             show()

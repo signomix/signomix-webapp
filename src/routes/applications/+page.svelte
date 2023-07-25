@@ -5,12 +5,25 @@
     TODO
 </div>
 <script>
-    import { userSession } from '$lib/stores.js';
     import { utils } from '$lib/utils.js';
+    import { userSession } from '$lib/stores.js';
+    import { onMount } from 'svelte';
+    import { goto } from '$app/navigation';
+
     let session;
     userSession.subscribe(value => {
         session = value;
+    })
+
+    onMount(async () => {
+        if(!session.logged || !session.authorized || session.login==''){
+            console.log('redirect to login');
+            goto('/login');
+        }else{
+            console.log('settings',data);
+        }
     });
+
     let labels = {
         'title': {
             'pl': "Aplikacje",

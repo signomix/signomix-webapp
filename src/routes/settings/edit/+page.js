@@ -1,49 +1,27 @@
 import { userSession } from '$lib/stores.js';
 import { dev } from '$app/environment';
+import { utils } from '$lib/utils.js';
+import { sgxdata } from '$lib/sgxdata.js';
+import { goto } from '$app/navigation';
 
 let session;
 userSession.subscribe(value => {
     session = value;
-    if(!session.logged){
-        try{
-        if(window.localStorage.getItem('sgx.session.token')!=null){
-            session.token = window.localStorage.getItem('sgx.session.token')
-            session.logged = true
-            session.authorized = true
-        }
-        }catch(error){
-            console.log(error)
-        }
-    }
 });
 
-export async function load() {
-    return {
-        settings: await getUserSettings()
-    };
-}
 
-async function getUserSettings() {
-    if(dev){
-        devUser.uid=session.login;
-        return devUser;
+export async function load({url}) {
+    if(!session.logged || !session.authorized || session.login==''){
+        return {}
     }
-    const response = await fetch('https://api.signomix.com/user/settings', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authentication': 'Bearer ' + session.token
-        }
-    });
-    if (response.status == 200) {
-        return response.json();
-    } else {
-        return null;
-    }
+    let apiUrl = utils.getBackendUrl(url) + '/api/user/'
+    console.log('load({url})', url)
+    return await sgxdata.getUserSettings(dev, apiUrl, session.token)
 }
 
 
-let devUser =
+
+let settings =
 {
   "type":8,
   "uid":"tester",

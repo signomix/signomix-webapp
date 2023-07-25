@@ -13,7 +13,7 @@
                 <div class="nav flex-column">
                     <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="h2 bi bi-person-circle me-2"></i>
-                        {#if $userSession.logged}
+                        {#if $userSession.logged && $userSession.login!=''}
                         <span class="lead">{$userSession.login} </span>
                         {:else}
                         <span>{utils.getText('signin',session.language, labels)}</span>
@@ -21,7 +21,7 @@
                         <i class="bi bi-caret-down-fill ms-1"></i>
                     </a>
                     <ul class="dropdown-menu">
-                        {#if !$userSession.logged}
+                        {#if !$userSession.logged || $userSession.login==''}
                         <li><a class="dropdown-item" href="/login">
                                 <span data-bs-toggle="collapse"
                                     data-bs-target=".navbar-collapse.show">{utils.getText('signin',session.language,
@@ -51,7 +51,7 @@
 
                         </a>
                     </li>
-                    {#if $userSession.logged}
+                    {#if $userSession.logged && $userSession.login!=''}
                     {#if $userSession.organization!=0}
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/organization' } href="/organization">

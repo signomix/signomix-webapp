@@ -66,28 +66,29 @@
 {/await}
 {/if}
 <script>
-    import { userSession } from '$lib/stores.js';
     import { utils } from '$lib/utils.js';
     import { dev } from '$app/environment';
+    import { userSession } from '$lib/stores.js';
+    import { onMount } from 'svelte';
+    import { goto } from '$app/navigation';
+
+    let session;
+    userSession.subscribe(value => {
+        session = value;
+    })
+
+    onMount(async () => {
+        if(!session.logged || !session.authorized || session.login==''){
+            console.log('redirect to login');
+            goto('/login');
+        }else{
+            console.log('settings',data);
+        }
+    });
 
     export let data
     let offset = 0
     let limit = 10
-    let session;
-    userSession.subscribe(value => {
-        session = value;
-        if(!session.logged){
-            try{
-            if(window.localStorage.getItem('sgx.session.token')!=null){
-                session.token = window.localStorage.getItem('sgx.session.token')
-                session.logged = true
-                session.authorized = true
-            }
-            }catch(error){
-                console.log(error)
-            }
-        }
-    });
 
     let promise = getConfigs()
 

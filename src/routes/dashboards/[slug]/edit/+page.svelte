@@ -65,12 +65,14 @@
     </form>
 </div>
 <div class="demo-container size">
+    {#if session.logged && session.authorized && session.login!=''}
     <Grid bind:items={data.items} rowHeight={100} let:item {cols} let:index on:change={onChange}>
         <div class="demo-widget content bg-white border border-primary">
             <WidgetConfig index={index} bind:config={data.widgets} removeCallback={removeItem} setCurrentIndex={(idx)=>
                 setCurrentConfigureIndex(idx)}/>
         </div>
     </Grid>
+    {/if}
 </div>
 <!-- Modal -->
 <div class="modal fade" id="configModal" tabindex="0" role="dialog" aria-labelledby="configModalLabel"
@@ -96,6 +98,7 @@
     import { userSession } from '$lib/stores.js';
     import { base } from '$app/paths'
     import { goto, afterNavigate } from '$app/navigation'
+    import { onMount } from 'svelte';
 
     import WidgetConfig from '$lib/components/WidgetConfig.svelte';
     import WidgetForm from '$lib/components/WidgetForm.svelte';
@@ -108,6 +111,15 @@
     userSession.subscribe(value => {
         session = value;
     });
+    onMount(() => {
+        if(!session.logged || !session.authorized || session.login==''){
+            console.log('redirect to login');
+            goto('/login');
+        }else{
+            console.log('settings',data);
+        }
+    });
+    
     let previousPage = base;
     afterNavigate(({ from }) => {
         previousPage = from?.url.pathname || previousPage

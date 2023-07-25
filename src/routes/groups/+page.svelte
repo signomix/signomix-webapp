@@ -7,6 +7,12 @@
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h5>{text('groups')}</h5>
 </div>
+<div class="row">
+    <div class="col-12">
+        Not implemented yet
+    </div>
+</div>
+<!--
 {#await promise}
 {:then groups}
 <div class="row">
@@ -60,6 +66,7 @@
     </div>
 </div>
 {/await}
+-->
 {/if}
 <script>
     import { userSession } from '$lib/stores.js';
@@ -79,7 +86,7 @@
     async function getGroups(actualOffset) {
         let groups = []
         if (!session.logged) {
-            return devcs
+            return groups
         }
         if (dev) {
             for (var i = 0; i < limit; i++) {

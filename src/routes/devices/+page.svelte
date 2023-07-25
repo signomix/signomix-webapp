@@ -69,6 +69,8 @@
     import { userSession } from '$lib/stores.js';
     import { utils } from '$lib/utils.js';
     import { dev } from '$app/environment';
+    import { onMount } from 'svelte';
+    import { goto } from '$app/navigation';
 
     //export let data
     let offset = 0
@@ -79,6 +81,15 @@
     });
 
     let promise = getDevices(offset)
+
+    onMount(async () => {
+        if(!session.logged || !session.authorized || session.login==''){
+            console.log('redirect to login');
+            goto('/login');
+        }else{
+            console.log('settings',data);
+        }
+    });
 
     async function getDevices(actualOffset) {
         let devcs = []

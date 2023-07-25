@@ -1,5 +1,5 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h5>Ustawienia</h5><a href="/settings" title="View"><i class="bi bi-gear h5 me-2 link-dark"></i></a>
+    <h5>Ustawienia</h5><a href="/settings" title="View"><i class="bi bi-eye h5 me-2 link-dark"></i></a>
 </div>
 <!--
 <div class="col-12">
@@ -67,11 +67,33 @@
     </table>
 </div>
 -->
-<SettingsForm config={data} callback={saveSettings} readonly={false} />
+{#await data}
+{:then data}
+{#if data.settings!==undefined}
+<SettingsForm config={data.settings} callback={saveSettings} readonly={false} />
+{/if}
+{/await}
 <script>
     import SettingsForm from '$lib/components/SettingsForm.svelte';
+    import { userSession } from '$lib/stores.js';
+    import { onMount } from 'svelte';
+    import { goto } from '$app/navigation';
+
+    let session;
+    userSession.subscribe(value => {
+        session = value;
+    })
+
+    onMount(async () => {
+        if(!session.logged || !session.authorized || session.login==''){
+            console.log('redirect to login');
+            goto('/login');
+        }else{
+            console.log('settings',data);
+        }
+    });
+
     export let data;
-    console.log('settings',data);
 
     function getChannelType(config){
         if(config.startsWith("SIGNOMIX")){

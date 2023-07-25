@@ -61,6 +61,11 @@ export const load = async ({ params, url }) => {
   }
 
   async function transform() {
+    if(session == null || session == undefined 
+      || session.login == null || session.login == undefined  || session.login==''){ // not logged in
+      return newDashboard
+    }
+
     let cfg = await getSelectedConfig(utils.getBackendUrl(url))
     //console.log("TRANSFORM " + JSON.stringify(cfg))
     for (let i = 0; i < cfg.items.length; i++) {
