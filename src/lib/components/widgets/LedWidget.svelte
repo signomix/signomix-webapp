@@ -9,7 +9,7 @@
 
     export let config
     export let filter
-    
+
     let session;
     userSession.subscribe(value => {
         session = value;
@@ -19,13 +19,13 @@
     let parentHeight = 0;
     let alertLevel = 3;
 
-    let promise = sgxdata.getData(dev,apiUrl,config,filter,session.token);
+    let promise = sgxdata.getData(dev, apiUrl, config, filter, session.token);
     let front = true;
 
     afterUpdate(() => {
-        promise = sgxdata.getData(dev,apiUrl,config,filter,session.token);
+        promise = sgxdata.getData(dev, apiUrl, config, filter, session.token);
     });
-    function recalculate(value){
+    function recalculate(value) {
         return Number.parseFloat(value).toFixed(config.rounding);
     }
     function isCalculated(measurement) {
@@ -33,10 +33,15 @@
         return true
     }
     function getColor() {
-        if(config.config!=undefined && config.config!=null){
-            let cfg = JSON.parse(config.config)
-            if(cfg.colors!=undefined && cfg.colors!=null&&cfg.colors.length==5){
-                return cfg.colors[alertLevel]
+        if (config.config != undefined && config.config != null && config.config != '') {
+            try {
+                let cfg = JSON.parse(config.config)
+                if (cfg.colors != undefined && cfg.colors != null && cfg.colors.length == 5) {
+                    return cfg.colors[alertLevel]
+                }
+            } catch (e) {
+                console.log("error parsing config: ", e);
+                return 'text-muted'
             }
         }
         switch (alertLevel) {

@@ -3,6 +3,12 @@
     eventually, when released: https://github.com/cuire/svelte-grid-extended
     bindings: https://learn.svelte.dev/tutorial/text-inputs
 -->
+{#if session.logged && session.authorized && session.login!=''}
+{#if errorMessage!=''}
+<div class="alert alert-danger" role="alert">
+    {errorMessage}
+</div>
+{/if}
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h5>{dashboardConfig.title}</h5>
@@ -45,6 +51,8 @@
             <RawDataWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter}/>
             {:else if 'chart'===getWidgetType(index)}
             <ChartWidget bind:config={dashboardConfig.widgets[index]}  bind:filter={dashboardFilter}/>
+            {:else if 'plan'===getWidgetType(index)}
+            <PlanWidget bind:config={dashboardConfig.widgets[index]}  bind:filter={dashboardFilter}/>
             {:else}
             <CanvasWidgetExample index={index} bind:config={items}  bind:filter={dashboardFilter}/>
             {/if }
@@ -82,6 +90,11 @@
         </div>
     </div>
 </div>
+{:else}
+<div class="alert alert-danger" role="alert">
+    Nie jesteś zalogowany lub nie masz uprawnień do oglądania tej strony.
+</div>
+{/if}
 <script>
     import { onMount } from 'svelte';
     import Grid from "svelte-grid";
@@ -101,6 +114,7 @@
     import LedWidget from '$lib/components/widgets/LedWidget.svelte';
     import RawDataWidget from '$lib/components/widgets/RawDataWidget.svelte';
     import ChartWidget from '$lib/components/widgets/ChartWidget.svelte';
+    import PlanWidget from '$lib/components/widgets/PlanWidget.svelte';
 
     export let data
     let errorMessage = ''

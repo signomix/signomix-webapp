@@ -17,24 +17,29 @@
     let errorMessage = '';
     const apiUrl = utils.getBackendUrl(location) + '/api/provider/device/'
 
-    let promise = sgxdata.getData(dev,apiUrl,config,filter,session.token);
+    let promise = sgxdata.getData(dev, apiUrl, config, filter, session.token);
     let front = true;
 
     afterUpdate(() => {
-        promise = sgxdata.getData(dev,apiUrl,config,filter,session.token);
+        promise = sgxdata.getData(dev, apiUrl, config, filter, session.token);
     });
-    function recalculate(value){
+    function recalculate(value) {
         return Number.parseFloat(value).toFixed(config.rounding);
     }
-    function switchView(){
+    function switchView() {
         front = !front;
     }
-    function getColor(data){
+    function getColor(data) {
         let level = sgxhelper.getAlertLevel(config.range, recalculate(data.value), data.timestamp);
-        if(config.config!=undefined && config.config!=null){
-            let cfg = JSON.parse(config.config)
-            if(cfg.colors!=undefined && cfg.colors!=null&&cfg.colors.length==5){
-                return cfg.colors[level]
+        if (config.config != undefined && config.config != null && config.config != '') {
+            try {
+                let cfg = JSON.parse(config.config)
+                if (cfg.colors != undefined && cfg.colors != null && cfg.colors.length == 5) {
+                    return cfg.colors[level]
+                }
+            } catch (e) {
+                console.log("error parsing config: ", e);
+                return 'text-muted'
             }
         }
         switch (level) {
@@ -50,10 +55,10 @@
                 return 'text-muted'
         }
     }
-    function getIconName(){
-        if(config.icon==null || config.icon=="" || config.icon==undefined){
+    function getIconName() {
+        if (config.icon == null || config.icon == "" || config.icon == undefined) {
             let cname = config.channel.toLowerCase();
-            switch(cname){
+            switch (cname) {
                 case 'temperature':
                     return 'bi-thermometer-half'
                 case 'humidity':
@@ -77,7 +82,7 @@
                 default:
                     return 'bi-question-circle'
             }
-        }else{
+        } else {
             return config.icon;
         }
     }
@@ -94,9 +99,11 @@
             ...
             {:then data}
             {#if front}
-            <span class="h4"><i class="bi {getIconName()} me-2 {getColor(data[0][0])}"></i>{recalculate(data[0][0].value)}{@html config.unitName}</span>
+            <span class="h4"><i
+                    class="bi {getIconName()} me-2 {getColor(data[0][0])}"></i>{recalculate(data[0][0].value)}{@html
+                config.unitName}</span>
             {:else}
-            {new Date(data[0][0].timestamp).toLocaleString()}<br/>
+            {new Date(data[0][0].timestamp).toLocaleString()}<br />
             {config.dev_id}
             {/if}
             {:catch error}
@@ -104,4 +111,4 @@
             {/await}
         </div>
     </div>
-</div> 
+</div>

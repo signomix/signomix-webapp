@@ -222,17 +222,31 @@
         goto('/')
         return true
     }
-    let alertCounter= {value:0}
+    let alertCounter = { value: 0 }
     poll(async function fetchData() {
+        //try {
         // your implementation goes here
-        if (session.logged && session.authorized) {
+        if (session.logged && session.authorized && session.login != '') {
+            let url = utils.getBackendUrl(location) + "/api/alert/"
             console.log("POLL")
-            await sgxdata.getNotifications(dev, 'https://localhost/api/alert', 0, 0, session.token).then((data) => {
-                alertCounter.value = data.value
-            }).catch((error) => {
-                console.log(error)
-            })
+            await sgxdata.getNotifications(dev, url, 0, 0, session.token)
+                .then((data) => {
+                    alertCounter.value = data.value
+                }).catch((error) => {
+                    console.log('POLL ERROR', error)
+                    session.authorized = false;
+                    session.logged = false;
+                    session.login = '';
+                    userSession.set(session);
+                })
         }
+        /* } catch (error) {
+            console.log('POLL ERROR2', error)
+            session.authorized = false;
+            session.logged = false;
+            session.login = '';
+            userSession.set(session);
+        } */
     }, dev ? 10000 : 60000);
 
     let labels = {
