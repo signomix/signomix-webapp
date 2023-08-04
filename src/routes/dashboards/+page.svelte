@@ -1,11 +1,11 @@
 {#if !session.logged}
 <div class="alert alert-danger w-100 mt-2 text-center" role="alert">
-    Brak dostępu
+    {utils.getLabel('denied',labels,session)}
 </div>
 {:else if session.authorized}
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h5>Pulpity</h5>
+    <h5>{utils.getLabel('pagetitle',labels,session)}</h5>
 </div>
 {#await promise}
 {:then configs}
@@ -16,9 +16,9 @@
                 <thead class="table-light">
                     <tr>
                         <th scope="col" class="col-1">#</th>
-                        <th scope="col" class="col-4">ID</th>
-                        <th scope="col" class="col-5">Title</th>
-                        <th scope="col" class="col-2">Config</th>
+                        <th scope="col" class="col-4">{utils.getLabel('id',labels,session)}</th>
+                        <th scope="col" class="col-5">{utils.getLabel('title',labels,session)}</th>
+                        <th scope="col" class="col-2">{utils.getLabel('config',labels,session)}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -39,7 +39,7 @@
 </div>
 <div class="row">
     <div class="col-2">
-        <a class="btn btn-outline-primary" role="button" href="/dashboards/new/edit">Dodaj</a>
+        <a class="btn btn-outline-primary" role="button" href="/dashboards/new/edit">{utils.getLabel('add',labels,session)}</a>
     </div>
     <div class="col-10">
         <nav aria-label="Table navigation">
@@ -134,5 +134,30 @@
         console.log(event)
     }
 
-
+    let labels = {
+        'pagetitle': {
+            'pl': "Pulpity",
+            'en': "Dashboards"
+        },
+        'denied': {
+            'pl': "Brak dostępu",
+            'en': "Access denied"
+        },
+        'id': {
+            'pl': "ID",
+            'en': "ID"
+        },
+        'title': {
+            'pl': "Tytuł",
+            'en': "Title"
+        },
+        'config': {
+            'pl': "Konfiguracja",
+            'en': "Config"
+        },
+        'add': {
+            'pl': "Dodaj",
+            'en': "Add"
+        }
+    }
 </script>

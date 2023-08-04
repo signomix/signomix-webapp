@@ -52,6 +52,21 @@ export const utils = {
   getText: function (name, language, texts) {
     return texts[name][language]
   },
+  /**
+   * Returns text for given name and language
+   * @param {*} name - label name
+   * @param {*} labels - object with labels for each language
+   * @param {*} session - user session
+   * @returns text of label name for given language
+   */
+  getLabel: function (name, labels, session) {
+    try{
+      return labels[name][session.language]
+    }catch(err){
+      console.log('getLabel error: ' + err)
+      return name
+    }
+  },
   getMessage: function (code) {
     switch (code) {
       case this.AUTHORIZATION_FAILED:

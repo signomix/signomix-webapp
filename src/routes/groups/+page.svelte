@@ -1,18 +1,19 @@
 {#if !session.logged}
 <div class="alert alert-danger w-100 mt-2 text-center" role="alert">
-    {text('denied')}
+    {utils.getLabel('denied', labels, session)}
 </div>
 {:else if session.authorized}
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h5>{text('groups')}</h5>
-</div>
-<div class="row">
-    <div class="col-12">
-        Not implemented yet
-    </div>
+    <h5>{utils.getLabel('title', labels, session)}</h5>
 </div>
 <!--
+<div class="row">
+    <div class="col-12">
+        {utils.getLabel('not_implemented', labels, session)}
+    </div>
+</div>
+-->
 {#await promise}
 {:then groups}
 <div class="row">
@@ -23,7 +24,7 @@
                     <tr>
                         <th scope="col" class="col-1">#</th>
                         <th scope="col" class="col-2">EUI</th>
-                        <th scope="col" class="col-9">{text('name')}</th>
+                        <th scope="col" class="col-9">{utils.getLabel('name', labels, session)}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -41,7 +42,7 @@
 </div>
 <div class="row">
     <div class="col-2">
-        <a class="btn btn-outline-primary" role="button" href="/groups/new/edit">{text('add')}</a>
+        <a class="btn btn-outline-primary" role="button" href="/groups/new/edit">{utils.getLabel('add', labels, session)}</a>
     </div>
     <div class="col-10">
         <nav aria-label="Table navigation">
@@ -66,7 +67,7 @@
     </div>
 </div>
 {/await}
--->
+
 {/if}
 <script>
     import { userSession } from '$lib/stores.js';
@@ -151,31 +152,32 @@
         console.log(event)
     }
 
-    function text(name) {
-        let labels = {
-            'groups': {
-                'pl': "Grupy",
-                'en': "Groups"
-            },
-            'name': {
-                'pl': "Nazwa",
-                'en': "Name"
-            },
-            'type': {
-                'pl': "Typ",
-                'en': "Type"
-            },
-            'denied': {
-                'pl': "Brak dostępu",
-                'en': "Access denied"
-            },
-            'add': {
-                'pl': "Dodaj",
-                'en': "Add"
-            }
-        }
-        return labels[name][session.language]
-    }
 
+    let labels = {
+        'title': {
+            'pl': "Grupy",
+            'en': "Groups"
+        },
+        'name': {
+            'pl': "Nazwa",
+            'en': "Name"
+        },
+        'type': {
+            'pl': "Typ",
+            'en': "Type"
+        },
+        'denied': {
+            'pl': "Brak dostępu",
+            'en': "Access denied"
+        },
+        'add': {
+            'pl': "Dodaj",
+            'en': "Add"
+        },
+        'not_implemented': {
+            'pl': "Funkcjonalność w przygotowaniu",
+            'en': "Not implemented yet"
+        }
+    }
 
 </script>

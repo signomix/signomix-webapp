@@ -19,7 +19,7 @@
            <i class="bi  bi-link-45deg h4 me-2 link-dark"></i>
         </a>
         {/if}
-        <a title="Filter" data-bs-toggle="modal" data-bs-target="#filterModal" 
+        <a title={utils.getLabel('filter',labels,session)} data-bs-toggle="modal" data-bs-target="#filterModal" 
            on:click|preventDefault={setFilter}>
             {#if isFilterSet(dashboardFilter)}
             <i class="bi bi-funnel-fill h5 me-2 link-dark" ></i>
@@ -27,7 +27,7 @@
             <i class="bi bi-funnel h5 me-2 link-dark" ></i>        
             {/if}
         </a>
-        <a href="/dashboards/{data.id}/edit" title="Configure"><i class="bi bi-gear h5 me-2 link-dark"></i></a>
+        <a href="/dashboards/{data.id}/edit" title={utils.getLabel('configure',labels,session)}><i class="bi bi-gear h5 me-2 link-dark"></i></a>
     </span>
 </div>
 <div class="dashboard-container" id={dashboardId}>
@@ -36,7 +36,7 @@
             {#if 'chartjs'===getWidgetType(index)}
             <ChartjsWidgetExample index={index} bind:config={items}  bind:filter={dashboardFilter}/>
             {:else if 'canvas'===getWidgetType(index)}
-            <CanvasWidgetExample index={index} bind:config={items}  bind:filter={dashboardFilter}/> pe-2
+            <CanvasWidgetExample index={index} bind:config={items}  bind:filter={dashboardFilter}/>
             {:else if 'canvas_placeholder'===getWidgetType(index)}
             <CanvasWidgetExample index={index} bind:config={items}  bind:filter={dashboardFilter}/>
             {:else if 'chart_placeholder'===getWidgetType(index)}
@@ -65,10 +65,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalLabel">Filtr danych pulpitu</h5>
-<!--                 <button type="button" class="close" data-dismiss="modal" aria-label="Zamknij">
-                    <span aria-hidden="true">&times;</span>
-                </button> -->
+                <h5 class="modal-title" id="modalLabel">{utils.getLabel('filter',labels,session)}</h5>
             </div>
             <div class="modal-body">
                 <DashboardFilterForm bind:config={editedFilter} callbackSave={filterFormCallback} callbackCancel={filterFormCallbackCancel} />
@@ -82,7 +79,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalLabel">Adres pulpitu</h5>
+                <h5 class="modal-title" id="modalLabel">{utils.getLabel('link',labels,session)}</h5>
             </div>
             <div class="modal-body">
                 <DashboardLinkForm bind:config={ dashboardLinkConfig } callbackClose={linkFormCallback} />
@@ -92,7 +89,7 @@
 </div>
 {:else}
 <div class="alert alert-danger" role="alert">
-    Nie jesteś zalogowany lub nie masz uprawnień do oglądania tej strony.
+    {utils.getLabel('denied',labels,session)}
 </div>
 {/if}
 <script>
@@ -215,8 +212,8 @@
             }
         }).catch((error) => {
             errorMessage = error.message
-            if (errorMessage == 'Failed to fetch' && location.protocol.toLowerCase() == 'https') {
-                errorMessage = errorMessage + ' Możliwa przyczyna: self signed nie są obsługiwane.'
+            if (errorMessage == utils.getLabel('fetcherror',labels,session) && location.protocol.toLowerCase() == 'https') {
+                errorMessage = errorMessage + utils.getLabel('fetcherror_message',labels,session)
             }
             console.log(error)
         });
@@ -288,6 +285,33 @@
     }
     function linkFormCallback() {
         // do nothing
+    }
+
+    let labels = {
+        'filter': {
+            'pl': "Filtr danych pulpitu",
+            'en': "Dashboard data filter"
+        },
+        'configure': {
+            'pl': "Konfiguracja pulpitu",
+            'en': "Dashboard configuration"
+        },
+        'link': {
+            'pl': "Link do pulpitu",
+            'en': "Dashboard link"
+        },
+        'denied': {
+            'pl': "Nie jesteś zalogowany lub nie masz uprawnień do oglądania tej strony.",
+            'en': "You are not logged in or you do not have permission to view this page."
+        },
+        'fetcherror': {
+            'pl': "Błąd pobierania danych: ",
+            'en': "Fetch error: "
+        },
+        'fetcherror_message': {
+            'pl': " Możliwa przyczyna: sertyfikaty self signed nie są obsługiwane.",
+            'en': " Possible cause: self signed certificates are not supported."
+        },
     }
 
 </script>

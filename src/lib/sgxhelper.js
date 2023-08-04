@@ -265,8 +265,8 @@ export const sgxhelper = {
             return false
         }
     },
-    getChartUnit: function (firstTimestamp, lastTimeStamp,unit) {
-        if(unit!=null && unit!=undefined && unit!=''){
+    getChartUnit: function (firstTimestamp, lastTimeStamp, unit) {
+        if (unit != null && unit != undefined && unit != '') {
             return unit
         }
         var dist = (lastTimeStamp - firstTimestamp) / 1000 //distance in seconds
@@ -297,6 +297,87 @@ export const sgxhelper = {
         }
         if (dist > 120) {
             return 'minute'
+        }
+    },
+    getAccountTypeName: function (role, language) {
+        switch (language) {
+            case 'en':
+                switch (role) {
+                    case 0:
+                        return 'standard'
+                        break
+                    case 1:
+                        return 'system admin'
+                        break
+                    case 2:
+                        return 'application' //not used
+                        break
+                    case 3:
+                        return 'demo'
+                        break
+                    case 4:
+                        return 'free'
+                        break
+                    case 5:
+                        return 'primary'
+                    case 6:
+                        return 'readonly'
+                        break
+                    case 7:
+                        return 'extended'
+                        break
+                    case 8:
+                        return 'demo'
+                        break
+                    case 9:
+                        return 'administrator'
+                        break
+                    case 100:
+                        return 'subscriber'
+                        break
+                    default:
+                        return 'misconfigured'
+                }
+                break
+            case 'pl':
+                switch (role) {
+                    case 0:
+                        return 'standard'
+                        break
+                    case 1:
+                        return 'administrator systemu'
+                        break
+                    case 2:
+                        return 'aplikacja' //not used
+                        break
+                    case 3:
+                        return 'demo'
+                        break
+                    case 4:
+                        return 'darmowe'
+                        break
+                    case 5:
+                        return 'primary'
+                    case 6:
+                        return 'tylko odczyt'
+                        break
+                    case 7:
+                        return 'rozszerzone'
+                        break
+                    case 8:
+                        return 'demo'
+                        break
+                    case 9:
+                        return 'administrator'
+                        break
+                    case 100:
+                        return 'subskrybent'
+                        break
+                    default:
+                        return 'błędnie skonfigurowane'
+                }
+                break
+            default:
         }
     }
 }

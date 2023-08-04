@@ -1,6 +1,6 @@
 <div class="container mt-5 w-75 text-center">
-    <h6 class="mb-4">{utils.getText('info',session.language, labels)}</h6>
-    <h2>{utils.getText('info2',session.language, labels)}</h2>
+    <h6 class="mb-4">{utils.getLabel('info',labels,session)}</h6>
+    <h2>{utils.getLabel('info2',labels,session)}</h2>
 </div>
 <script>
     import { userSession } from '$lib/stores.js';

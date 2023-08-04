@@ -69,9 +69,7 @@
 -->
 {#await data}
 {:then data}
-{#if data.settings!==undefined}
-<SettingsForm config={data.settings} callback={saveSettings} readonly={false} />
-{/if}
+<SettingsForm config={data} callback={saveSettings} readonly={false} />
 {/await}
 <script>
     import SettingsForm from '$lib/components/SettingsForm.svelte';

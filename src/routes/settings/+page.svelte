@@ -1,19 +1,17 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h5>Ustawienia</h5><a href="/settings/edit" title="Edit"><i class="bi bi-gear h5 me-2 link-dark"></i></a>
 </div>
+<!--
 <div class="row">
     <div class="col-12">
         Not implemented yet
     </div>
 </div>
-<!--
+-->
 {#await data}
 {:then data}
-{#if data.settings!==undefined}
-<SettingsForm config={data.settings} callback={saveSettings} readonly={true} />
-{/if}
+<SettingsForm config={data} callback={saveSettings} readonly={true} />
 {/await}
--->
 <script>
     import SettingsForm from '$lib/components/SettingsForm.svelte';
     import { userSession } from '$lib/stores.js';

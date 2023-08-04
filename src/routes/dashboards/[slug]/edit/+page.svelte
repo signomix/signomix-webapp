@@ -2,33 +2,32 @@
     responsive grid: https://svelte-grid.vercel.app/examples/responsive
     bindings: https://learn.svelte.dev/tutorial/text-inputs
 -->
-<div
-    class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-2 border-bottom">
-    <h5>Konfiguracja pulpitu</h5><a href="/dashboards/{data.id}" title="View dashboard"><i class="bi bi-eye h5 me-2 link-dark"></i></a>
+<div class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-2 border-bottom">
+    <h5>{utils.getLabel('title',labels,session)}</h5><a href="/dashboards/{data.id}" title="{utils.getLabel('view',labels,session)}"><i class="bi bi-eye h5 me-2 link-dark"></i></a>
 </div>
 <div class="container border-bottom pb-2">
     <form>
         <div class="row">
             <div class="col-md-1 col-form-label">
-                <label for="input-id" class="form-label">ID</label>
+                <label for="input-id" class="form-label">{utils.getLabel('id',labels,session)}</label>
             </div>
             <div class="col-md-3">
                 <input disabled type="text" class="form-control" id="input-id" bind:value={data.id}>
             </div> 
             <div class="col-md-1 col-form-label">
-                <label for="input-userid" class="form-label">Owner</label>
+                <label for="input-userid" class="form-label">{utils.getLabel('owner',labels,session)}</label>
             </div>
             <div class="col-md-3">
                 <input disabled type="text" class="form-control" id="input-userid" bind:value={data.userID}>
             </div>
             <div class="col-md-4">
                 <input type="checkbox" class="form-check-input me-2" id="input-shared" bind:checked={data.shared} on:change={onChange}>
-                <label class="form-check-label" for="input-shared">Shared</label>
+                <label class="form-check-label" for="input-shared">{utils.getLabel('shared',labels,session)}</label>
             </div>
         </div>
         <div class="row">
             <div class="col-md-1 col-form-label">
-                <label for="input-title" class="form-label">Title</label>
+                <label for="input-title" class="form-label">{utils.getLabel('widget_title',labels,session)}</label>
             </div>
             <div class="col-md-11">
                 <input type="text" class="form-control" id="input-name" bind:value={data.title}>
@@ -36,13 +35,13 @@
         </div>
         <div class="row">
             <div class="col-md-1 col-form-label">
-                <label for="input-team" class="form-label">Team</label>
+                <label for="input-team" class="form-label">{utils.getLabel('widget_team',labels,session)}</label>
             </div>
             <div class="col-md-4">
                 <input type="text" class="form-control" id="input-team" bind:value={data.team}>
             </div>
             <div class="col-md-2 col-form-label">
-                <label for="input-admins" class="form-label">Administrators</label>
+                <label for="input-admins" class="form-label">{utils.getLabel('widget_admins',labels,session)}</label>
             </div>
             <div class="col-md-5">
                 <input type="text" class="form-control" id="input-admins" bind:value={data.administrators}>
@@ -50,12 +49,12 @@
         </div>
         <div class="row">
             <div class="col-form-label">
-                <button class="btn btn-outline-secondary mt-1" on:click={goBack}>Cancel</button>
+                <button class="btn btn-outline-secondary mt-1" on:click={goBack}>{utils.getLabel('cancel',labels,session)}</button>
                 <button class="btn btn-outline-primary me-4 mt-1" on:click={saveDashboard} disabled={modified==false}><i
-                        class="bi bi-save me-2"></i> Zapisz konfigurację
+                        class="bi bi-save me-2"></i> {utils.getLabel('save',labels,session)}
                 </button>
                 <button class="btn btn-outline-primary me-4 mt-1" on:click|preventDefault={removeDashboard}>
-                    <i class="bi bi-trash me-2"></i> Usuń pulpit
+                    <i class="bi bi-trash me-2"></i> {utils.getLabel('remove',labels,session)}
                 </button>
                 <button class="btn btn-outline-primary mt-1 me-4" on:click={addWidget}><i
                         class="bi bi-plus-lg"></i></button>
@@ -246,8 +245,8 @@
             }
         }).catch((error) => {
             errorMessage = error.message
-            if (errorMessage == 'Failed to fetch' && location.protocol.toLowerCase() == 'https') {
-                errorMessage = errorMessage + ' Możliwa przyczyna: self signed nie są obsługiwane.'
+            if (errorMessage == utils.getLabel('fetcherror',labels,session) && location.protocol.toLowerCase() == 'https') {
+                errorMessage = errorMessage + ' '+utils.getLabel('fetcherror_message',labels,session)
             }
             console.log(error)
         });
@@ -342,6 +341,62 @@
         console.log('widgets_data size ' + data.widgets.length + ' items size ' + data.items.length);
         modified = true;
     }
+
+    let labels={
+        'title': {
+            'pl': "Konfiguracja pulpitu",
+            'en': "Dashboard configuration"
+        },
+        'view':{
+            'pl': "Pokaż pulpit",
+            'en': "Show dashboard"
+        },
+        'id':{
+            'pl': "Identyfikator",
+            'en': "Identifier"
+        },
+        'owner':{
+            'pl': "Właściciel",
+            'en': "Owner"
+        },
+        'shared':{
+            'pl': "Udostępniony",
+            'en': "Shared"
+        },
+        'widget_title':{
+            'pl': "Tytuł kontrolki",
+            'en': "Widget title"
+        },
+        'widget_team':{
+            'pl': "Zespół",
+            'en': "Team"
+        },
+        'widget_admins':{
+            'pl': "Administratorzy",
+            'en': "Administrators"
+        },
+        'cancel':{
+            'pl': "Anuluj",
+            'en': "Cancel"
+        },
+        'save':{
+            'pl': "Zapisz",
+            'en': "Save"
+        },
+        'remove':{
+            'pl': "Usuń",
+            'en': "Remove"
+        },
+        'fetcherror': {
+            'pl': "Błąd pobierania danych: ",
+            'en': "Fetch error: "
+        },
+        'fetcherror_message': {
+            'pl': " Możliwa przyczyna: sertyfikaty self signed nie są obsługiwane.",
+            'en': " Possible cause: self signed certificates are not supported."
+        }
+        }
+        
 
 </script>
 <style>

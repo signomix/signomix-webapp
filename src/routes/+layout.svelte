@@ -16,7 +16,7 @@
                         {#if $userSession.logged && $userSession.login!=''}
                         <span class="lead">{$userSession.login} </span>
                         {:else}
-                        <span>{utils.getText('signin',session.language, labels)}</span>
+                        <span>{utils.getLabel('signin',labels,session)}</span>
                         {/if}
                         <i class="bi bi-caret-down-fill ms-1"></i>
                     </a>
@@ -24,14 +24,12 @@
                         {#if !$userSession.logged || $userSession.login==''}
                         <li><a class="dropdown-item" href="/login">
                                 <span data-bs-toggle="collapse"
-                                    data-bs-target=".navbar-collapse.show">{utils.getText('signin',session.language,
-                                    labels)}</span>
+                                    data-bs-target=".navbar-collapse.show">{utils.getLabel('signin',labels,session)}</span>
                             </a></li>
                         {:else}
                         <li><a class="dropdown-item" href="/" on:click={logout}>
                                 <span data-bs-toggle="collapse"
-                                    data-bs-target=".navbar-collapse.show">{utils.getText('signout',session.language,
-                                    labels)}</span></a>
+                                    data-bs-target=".navbar-collapse.show">{utils.getLabel('signout',labels,session)}</span></a>
                         </li>
                         {/if}
                         <li><a class="dropdown-item" href="/" on:click|preventDefault={setLanguagePl}>
@@ -46,7 +44,7 @@
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/' } href="/">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-house me-2"></i>{utils.getText('home',session.language, labels)}
+                                <i class="bi bi-house me-2"></i>{utils.getLabel('home',labels,session)}
                             </span>
 
                         </a>
@@ -56,7 +54,7 @@
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/organization' } href="/organization">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-bank me-2"></i>{utils.getText('organization',session.language, labels)}
+                                <i class="bi bi-bank me-2"></i>{utils.getLabel('organization',labels,session)}
                             </span>
                         </a>
                     </li>
@@ -64,39 +62,34 @@
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/dashboards' } href="/dashboards">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-columns-gap me-2"></i>{utils.getText('dashboards',session.language,
-                                labels)}
+                                <i class="bi bi-columns-gap me-2"></i>{utils.getLabel('dashboards',labels,session)}
                             </span>
                         </a>
                     </li>
                     <!-- Structure -->
                     <li class="nav-item">
                         <a class="nav-link" class:active={false} on:click={toggleStructure}>
-                            <span><i class="bi bi-diagram-3 me-2"></i><span>{utils.getText('structure',session.language,
-                                    labels)}</span>
+                            <span><i class="bi bi-diagram-3 me-2"></i><span>{utils.getLabel('structure',labels,session)}</span>
                         </a>
                     </li>
                     {#if structureExpanded}
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/devices' } href="/devices">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-hdd-network me-2"></i><span>{utils.getText('devices',session.language,
-                                    labels)}</span>
+                                <i class="bi bi-hdd-network me-2"></i><span>{utils.getLabel('devices',labels,session)}</span>
                         </a>
                     </li>
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/groups' } href="/groups">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-hdd-stack me-2"></i><span>{utils.getText('groups',session.language,
-                                    labels)}</span>
+                                <i class="bi bi-hdd-stack me-2"></i><span>{utils.getLabel('groups',labels,session)}</span>
                         </a>
                     </li>
                     {#if $userSession.role==='admin'}
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/applications' } href="/applications">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-code-square me-2"></i><span>{utils.getText('apps',session.language,
-                                    labels)}</span>
+                                <i class="bi bi-code-square me-2"></i><span>{utils.getLabel('apps',labels,session)}</span>
                         </a>
                     </li>
                     {/if}
@@ -104,8 +97,7 @@
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/notifications' } href="/notifications">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-megaphone me-2"></i>{utils.getText('notifications',session.language,
-                                labels)}
+                                <i class="bi bi-megaphone me-2"></i>{utils.getLabel('notifications',labels,session)}
                             </span>
                             {#if alertCounter.value>0}
                             <span class="badge rounded-pill text-bg-danger ms-2">{alertCounter.value}</span>
@@ -115,7 +107,7 @@
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/settings' } href="/settings">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-sliders me-2"></i>{utils.getText('settings',session.language, labels)}
+                                <i class="bi bi-sliders me-2"></i>{utils.getLabel('settings',labels,session)}
                             </span>
                         </a>
                     </li>
@@ -123,8 +115,7 @@
                     <!-- Administration -->
                     <li class="nav-item">
                         <a class="nav-link" class:active={false} on:click={toggleAdministration}>
-                            <span><i class="bi bi-tools me-2"></i><span>{utils.getText('administration',session.language,
-                                    labels)}</span>
+                            <span><i class="bi bi-tools me-2"></i><span>{utils.getLabel('administration',labels,session)}</span>
                         </a>
                     </li>
                     {#if administrationExpanded}
@@ -135,20 +126,28 @@
                     <!-- end logged in -->
                     {/if}
                     <li class="nav-item">
-                        <a class="nav-link" class:active={$page.url.pathname==='/about' } href="/about">
+                        <a class="nav-link" class:active={$page.url.pathname==='/about' }
+                         href="https://documentation.signomix.com" target="_blank">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-question-circle me-2"></i>{utils.getText('about',session.language,
-                                labels)}
+                                <i class="bi bi-question-circle me-2"></i>{utils.getLabel('documentation',labels,session)}
                             </span>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" class:active={$page.url.pathname==='/about' } href="/about">
+                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                <i class="bi bi-question-circle me-2"></i>{utils.getLabel('about',labels,session)}
+                            </span>
+                        </a>
+                    </li>
+                    <li class="nav-item text-end mt-2 me-2"><span>ver. 2.0.0</span></li>
                 </ul>
             </div>
         </nav>
         <main class="col-md-9 col-lg-10 ms-sm-auto px-md-4">
             {#if ($userSession.logged && !$userSession.authorized)}
             <div class="alert alert-danger w-100 mt-2 text-center" role="alert">
-                {utils.getText('api-unavialble',session.language, labels)}
+                {utils.getLabel('api-unavialble',labels,session)}
             </div>
             {/if}
             <slot></slot>
@@ -301,8 +300,11 @@
         'administration': {
             'pl': "Administracja",
             'en': "Administration"
-        }
-        ,
+        },
+        'documentation': {
+            'pl': "Dokumentacja",
+            'en': "Documentation"
+        },
         'about': {
             'pl': "O aplikacji",
             'en': "About"

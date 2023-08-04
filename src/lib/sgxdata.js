@@ -85,7 +85,11 @@ const getSgxData2 = async function (devMode, apiUrl, config, filter, token, tran
   }
   const headers = new Headers()
   headers.set('Accept', 'application/json');
-  const endpoint = apiUrl + config.dev_id + "/" + config.channel + "?tid=" + token + "&query=" + config.query;
+  var query = config.query;
+  if(query == null || query == undefined || query == "undefined"){
+    query="";
+  }
+  const endpoint = apiUrl + config.dev_id + "/" + config.channel + "?tid=" + token + "&query=" + query;
   const res = await fetch(endpoint, { mode: 'cors', headers: headers });
   let data;
   if (transformFunction == null || transformFunction == undefined) {
@@ -98,8 +102,6 @@ const getSgxData2 = async function (devMode, apiUrl, config, filter, token, tran
   } else {
     throw new Error(text);
   }
-
-
 }
 
 const getSgxGroupData = async function (devMode, apiUrl, config, filter, token, transformFunction) {
@@ -151,18 +153,18 @@ const getSgxNotifications = async function (devMode, apiUrl, limit, offset, toke
   }
 }
 
-const getSgxUserSettings = async function (devMode, apiUrl, limit, offset, token) {
+const getSgxUserSettings = async function (devMode, apiUrl,token) {
   if (devMode) {
     return {
-      settings: {
         uid: 'tester',
         email: 'test@localhost',
         name: 'Test name',
         surname: 'Test surname',
+        type: 4,
         role: '',
         confirmed: true,
-        preferredLanguage: 'pl'
-      }
+        preferredLanguage: 'pl',
+        createdAt: Date.now()
     }
   }
   const headers = new Headers()
@@ -174,7 +176,7 @@ const getSgxUserSettings = async function (devMode, apiUrl, limit, offset, token
   if (res.ok) {
     return data;
   } else {
-    throw new Error(text);
+    throw new Error(res.statusText);
   }
 
 
