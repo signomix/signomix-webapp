@@ -166,7 +166,7 @@
                 <label for="format">Data character</label>
                 <select id="format" class="form-control form-control-sm" bind:value={config[index].format}>
                     <option selected={'standard'==config[index].format} value='standard'>standard</option>
-                    <option selected={'timeseries'==config[index].format} value='standard'>timeseries</option>
+                    <option selected={'timeseries'==config[index].format} value='timeseries'>timeseries</option>
                 </select>
             </div>
             <div class="p-1 mt-2">

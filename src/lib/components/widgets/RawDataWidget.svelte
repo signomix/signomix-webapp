@@ -13,7 +13,7 @@
         session = value;
     });
     let errorMessage = '';
-    const apiUrl = utils.getBackendUrl(location) + '/api/provider/device/'
+    const apiUrl = utils.getBackendUrl(location) + '/api/provider/v2/device/'
     let parentHeight = 0;
 
     console.log('RawDataWidget config', config)

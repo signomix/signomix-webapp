@@ -15,7 +15,7 @@
         session = value;
     });
     let errorMessage = '';
-    const apiUrl = utils.getBackendUrl(location) + '/api/provider/device/'
+    const apiUrl = utils.getBackendUrl(location) + '/api/provider/v2/device/'
 
     let promise = sgxdata.getData(dev, apiUrl, config, filter, session.token);
     let front = true;

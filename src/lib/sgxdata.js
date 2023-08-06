@@ -8,46 +8,50 @@ export const sgxdata = {
     }
   },
   getOneChannelExample: function (eui, channelName, count) {
-    let cdata = [];
+    let timestamps = [];
     let measurement = {}
-    let measurements = []
+    let channels = []
     let tmpD
-    for (let i = 0; i < count; i++) {
+    for (let i = count-1; i >=0; i--) {
       tmpD = new Date() - 60000 * i
+      channels = []
       measurement = {
         deviceEUI: eui,
         name: channelName,
-        value: Math.random() * 100,
+        value: i!=3?Math.random() * 100:null,
         timestamp: tmpD,
         stringValue: null
       }
-      measurements.push(measurement)
+      channels.push(measurement)
+      timestamps.push(channels)
     }
-    cdata.push(measurements)
-    return cdata
+    let result={timestamps:timestamps}
+    console.log('timestamps', JSON.stringify(result))
+    return timestamps
   },
-  getMultiChannelExample: function (eui, channelNames, count) {
-    let cdata = [];
-    let channels = channelNames.split(",");
+  getMultiChannelExample: function (eui, channelNamesString, count) {
+    let timestamps = [];
+    let channels = []
+    let channelNames = channelNamesString.split(",");
     let measurement = {}
-    let measurements = []
     let tmpD
-    for (let i = 0; i < count; i++) {
-      measurements = []
+    for (let i = count-1; i>=0; i--) {
       tmpD = new Date() - 60000 * i
-      for (let j = 0; j < channels.length; j++) {
+      channels = []
+      for (let j = 0; j < channelNames.length; j++) {
         measurement = {
           deviceEUI: eui,
-          name: channels[j],
-          value: Math.random() * 100,
+          name: channelNames[j],
+          value: (i==3&&j==1)?null:Math.random() * 100,
           timestamp: tmpD,
           stringValue: null
         }
-        measurements.push(measurement)
+        channels.push(measurement)
       }
-      cdata.push(measurements)
+      timestamps.push(channels)
     }
-    return cdata
+    console.log('timestamps', timestamps)
+    return timestamps
   },
   getData: function (devMode, apiUrl, config, filter, token, transformFunction) {
     return Promise.resolve(getSgxData2(devMode, apiUrl, config, filter, token, transformFunction)).then((result) => result);
@@ -78,18 +82,19 @@ export const sgxdata = {
 const getSgxData2 = async function (devMode, apiUrl, config, filter, token, transformFunction) {
   if (devMode) {
     if (transformFunction == null || transformFunction == undefined) {
-      return sgxdata.getDataExample(config.dev_id, config.channel, 7)
+      return sgxdata.getDataExample(config.dev_id, config.channel, 10)
     } else {
-      return await transformFunction(config, sgxdata.getDataExample(config.dev_id, config.channel, 7))
+      return await transformFunction(config, sgxdata.getDataExample(config.dev_id, config.channel, 10))
     }
   }
   const headers = new Headers()
   headers.set('Accept', 'application/json');
+  headers.set('Authentication', token);
   var query = config.query;
   if(query == null || query == undefined || query == "undefined"){
     query="";
   }
-  const endpoint = apiUrl + config.dev_id + "/" + config.channel + "?tid=" + token + "&query=" + query;
+  const endpoint = apiUrl + config.dev_id + "/" + config.channel + "?query=" + query;
   const res = await fetch(endpoint, { mode: 'cors', headers: headers });
   let data;
   if (transformFunction == null || transformFunction == undefined) {

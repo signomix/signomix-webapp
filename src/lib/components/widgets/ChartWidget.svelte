@@ -19,47 +19,28 @@
         session = value;
     });
     let errorMessage = '';
-    const apiUrl = utils.getBackendUrl(location) + '/api/provider/device/'
+    const apiUrl = utils.getBackendUrl(location) + '/api/provider/v2/device/'
 
     let chartCanvas
     let ctx
+    let first = false
     onMount(async () => {
-        //console.log('onMount');
         ctx = chartCanvas.getContext('2d');
         show(ctx)
-        /* var myChart
-        try {
-            const data = await getRequiredData();
-            myChart = new Chart(ctx, data);
-        } catch (error) {
-            errorMessage = error.message;
-            //console.log('error', errorMessage);
-        } */
+        first = true
     });
 
     afterUpdate(() => {
-        //console.log('afterUpdate');
-        show(ctx)
+        if (!first) show(ctx)
+        first = false
     });
     var myChart
     async function show(ctx) {
-        /* try {
-            console.log('SHOW1')
-            const data = await getRequiredData();
-            console.log('SHOW2 data', data)
-            if (myChart) myChart.destroy()
-            myChart = new Chart(ctx, data);
-        } catch (error) {
-            errorMessage = error.message;
-            console.log('error', errorMessage);
-        } */
         try {
             let promise = await sgxdata.getData(dev, apiUrl, config, filter, session.token, transform)
                 .then(function (data) {
-                    //console.log('SHOW2 data', data)
                     if (myChart) myChart.destroy()
                     myChart = new Chart(ctx, data);
-                    //console.log('SHOW3', myChart)
                 })
         } catch (error) {
             errorMessage = error.message;
@@ -68,31 +49,14 @@
         return null
     }
 
-    /* async function getRequiredData() {
-        if (dev) {
-            return await transform(sgxdata.getDataExample(config.dev_id, config.channel, 7))
-        }
-        const headers = new Headers()
-        headers.set('Accept', 'application/json');
-        const endpoint = apiUrl + config.dev_id + "/" + config.channel + "?query=" + config.query + "&tid=" + session.token;
-        const res = await fetch(endpoint, { mode: 'cors', headers: headers });
-        const data2 = await transform(res.json());
-        if (res.ok) {
-            return data2;
-        } else {
-            throw new Error(text);
-        }
-    } */
-
     async function transform(widgetConfig, rawData) {
         let jsonData = await rawData;
-        //console.log('jsonData', jsonData)
+        console.log('jsonData', jsonData)
         let namesTranslated = []
-        if(config.channel_translated!==null && config.channel_translated!==undefined) {
+        if (config.channel_translated !== null && config.channel_translated !== undefined) {
             namesTranslated = config.channel_translated.split(',')
         }
-        let multiLine = jsonData[0].length > 1 && jsonData[0][1]['name'] != jsonData[0][0]['name']
-        let numberOfLines = multiLine ? jsonData[0].length : 1
+        let multiLine = jsonData[0].length > 1// && jsonData[0][1]['name'] != jsonData[0][0]['name']
         let chartData = {
             labels: [],
             datasets: []
@@ -103,79 +67,88 @@
         let dFirst, dLast;
         let measures = []
         let labels = []
-        let borders = []
-        let colors = []
 
         let borderColors = [
             'rgb(54, 162, 235)', //blue
             'rgb(255, 99, 132)', //red
             'rgb(75, 192, 192)', //green
-            'rgb(255, 159, 64)' //orange
+            'rgb(255, 159, 64)', //orange
+            'rgb(153, 102, 255)', //purple
+            'rgb(255, 205, 86)', //yellow
+            'rgb(201, 203, 207)'//grey
         ]
         let areaColors = [
             'rgba(54, 162, 235, 0.2)', //blue
             'rgba(255, 99, 132, 0.2)', //red
             'rgba(75, 192, 192, 0.2)', //green
-            'rgba(255, 159, 64, 0.2)' //orange
+            'rgba(255, 159, 64, 0.2)', //orange
+            'rgb(153, 102, 255, 0.2)', //purple
+            'rgb(255, 205, 86, 0.2)', //yellow
+            'rgb(201, 203, 207, 0.2)'//grey
         ]
         let dTmp
-        if (multiLine) {
-            for (var j = 0; j < jsonData[0].length && j < 4; j++) {
-                measures = []
-                borders = []
-                colors = []
-                for (var i = 0; i < jsonData.length; i++) {
+        let tmpValue
+        console.log('multiLine', multiLine)
+        if (true) {
+            let tmpDataset = new Array(jsonData.length)
+            for (var i = 0; i < jsonData.length; i++) {
+                tmpDataset[i] = []
+            }
+            let tmpMeasures = new Array(jsonData.length)
+            for (var i = 0; i < jsonData.length; i++) {
+                tmpMeasures[i] = []
+            }
+            console.log('jsonData.length', jsonData.length)
+            for (var i = 0; i < jsonData.length; i++) {
+                labels.push(jsonData[i][0]['timestamp'])
+                console.log('push '+jsonData[i][0]['timestamp'])
+                for (var j = 0; j < jsonData[i].length; j++) {
                     try {
-                        dTmp = jsonData[i][j]['timestamp']
-                        // measures.push(
-                        //     { x: (new Date(dTmp).toISOString()), y: jsonData[i][j]['value'] }
-                        // )
-                        measures.push(jsonData[i][j]['value'])
-                        labels.push(new Date(dTmp).toISOString())
-                        if (i == 0 && dTmp < dFirst) { dFirst = dTmp }
-                        if (dTmp > dLast) { dLast = dTmp }
-                        colors.push('rgba(54, 162, 235, 0.2)')
-                        borders.push('rgb(54, 162, 235)')
+                        tmpMeasures[j].push({ x: (new Date(jsonData[i][j]['timestamp']).toISOString()), y: jsonData[i][j]['value'] })
+                        if (j == 0 && jsonData[i][j]['timestamp'] < dFirst) { dFirst = jsonData[i][j]['timestamp'] }
+                        if (jsonData[i][j]['timestamp'] > dLast) { dLast = jsonData[i][j]['timestamp'] }
                     } catch (err) { }
                 }
+            }
+            for (var j = 0; j < jsonData[0].length; j++) {
                 chartData.datasets.push(
                     {
-                        label: jsonData[0].length > 0 ? getChannelNameTranslated(namesTranslated,j,jsonData[0][j]['name']) : '',
+                        label: jsonData[0].length > 0 ? getChannelNameTranslated(namesTranslated, j, jsonData[0][j]['name']) : '',
                         borderWidth: 1,
-                        data: measures,
-                        backgroundColor: areaColors[j],
-                        borderColor: borderColors[j]
+                        data: tmpMeasures[j],
+                        backgroundColor: areaColors[(j%7)],
+                        borderColor: borderColors[(j%7)],
+                        fill: true,
+                        spanGaps: true
                     }
                 )
             }
         } else {
-            for (var i = 0; i < jsonData[0].length; i++) {
+            for (var i = 0; i < jsonData.length; i++) {
                 try {
-                    dTmp = jsonData[0][i]['timestamp']
+                    dTmp = jsonData[i][0]['timestamp']
+                    tmpValue = jsonData[i][0]['value']
                     measures.push(
-                        { x: (new Date(dTmp).toISOString()), y: jsonData[0][i]['value'] }
+                        { x: (new Date(dTmp).toISOString()), y: tmpValue }
                     )
-                    //measures.push(jsonData[0][i]['value'])
-                    //labels.push(new Date(dTmp).toISOString())
                     labels.push(dTmp)
                     if (i == 0 && dTmp < dFirst) { dFirst = dTmp }
                     if (dTmp > dLast) { dLast = dTmp }
-                    colors.push('rgba(54, 162, 235, 0.2)')
-                    borders.push('rgb(54, 162, 235)')
                 } catch (err) {
                     //console.log(err)
                 }
             }
             chartData.datasets.push(
                 {
-                    label: jsonData[0].length > 0 ? getChannelNameTranslated(namesTranslated,0,jsonData[0][0]['name']) : '',
+                    label: jsonData[0].length > 0 ? getChannelNameTranslated(namesTranslated, 0, jsonData[0][0]['name']) : '',
                     borderWidth: 1,
                     data: measures,
-                    backgroundColor: colors[0],
-                    borderColor: borders[0],
+                    backgroundColor: areaColors[0],
+                    borderColor: borderColors[0],
                     borderDash: [],
                     borderDashOffset: 0.0,
-                    fill: true
+                    fill: true,
+                    spanGaps: true
                 }
             )
 
@@ -190,7 +163,7 @@
             firstDate = new Date(dFirst).toISOString().substring(0, 10)
             lastDate = new Date(dLast).toISOString().substring(0, 10)
         }
-        let barChartOptions = {
+        let chartOptions = {
             responsive: true,
             animation: false,
             maintainAspectRatio: false,
@@ -199,11 +172,10 @@
                     suggestedMin: 0
                 },
                 x: {
-                    //type: (config.format == 'timeseries' ? 'timeseries' : 'time'),
+                    type: (config.format == 'timeseries' ? 'timeseries' : 'time'),
                     type: 'time',
                     time: {
                         unit: sgxhelper.getChartUnit(dFirst, dLast, config.timeUnit),
-                        //unit: 'minute',
                         displayFormats: {
                             minute: 'HH:mm:ss',
                             hour: 'HH:mm:ss',
@@ -225,13 +197,13 @@
                 }
             }
         }
-        let barCharConfig = {
+        let charConfig = {
             type: config.chartType,
             data: chartData,
-            options: barChartOptions
+            options: chartOptions
         }
-        //console.log('barCharConfig', barCharConfig)
-        return barCharConfig
+        console.log(JSON.stringify(charConfig))
+        return charConfig
     }
 
     function toLocaleTimeStringSupportsLocales() {
@@ -242,8 +214,8 @@
         }
         return false;
     }
-    function getChannelNameTranslated(names,index,channelName){
-        if(names.length>index){
+    function getChannelNameTranslated(names, index, channelName) {
+        if (names.length > index) {
             return names[index]
         } else {
             return channelName
