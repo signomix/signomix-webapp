@@ -7,7 +7,9 @@
     <div class="row text-center">
         <div class="col-12 mt-1">
             {#await promise}
-            ...
+            <div class="spinner-border spinner-border-sm" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
             {:then data}
             {@html getPlan(data)}
             {:catch error}

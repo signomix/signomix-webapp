@@ -35,7 +35,9 @@
     <div class="row text-left">
         <div class="col-12" >
             {#await promise}
-            ...
+            <div class="spinner-border spinner-border-sm" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
             {:then data}
             {#if front}
             <pre style="height: auto; max-height: {parentHeight-32}px; overflow: auto;">{JSON.stringify(data, null, 2)}</pre>
