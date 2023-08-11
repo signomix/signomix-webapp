@@ -52,12 +52,25 @@
                     {#if $userSession.logged && $userSession.login!=''}
                     {#if $userSession.organization!=0}
                     <li class="nav-item">
-                        <a class="nav-link" class:active={$page.url.pathname==='/organization' } href="/organization">
+                        <a class="nav-link" class:active={false} on:click={toggleOrganization}>
+                            <span><i class="bi bi-building me-2"></i><span>Organizacja</span>
+                        </a>
+                    </li>
+                    {#if organizationExpanded}
+                    <li class="nav-item ms-3">
+                        <a class="nav-link" class:active={$page.url.pathname==='/organization/settings' } href="/organization/settings">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-bank me-2"></i>{utils.getLabel('organization',labels,session)}
+                                <i class="bi bi-building-gear me-2"></i><span>{utils.getLabel('orgsettings',labels,session)}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item ms-3">
+                        <a class="nav-link" class:active={$page.url.pathname==='/organization/applications' } href="/organization/applications">
+                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                <i class="bi bi-box me-2"></i>{utils.getLabel('applications',labels,session)}
                             </span>
                         </a>
                     </li>
+                    {/if}
                     {/if}
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/dashboards' } href="/dashboards">
@@ -205,6 +218,10 @@
     let administrationExpanded = false;
     function toggleAdministration(event) {
         administrationExpanded = !administrationExpanded;
+    }
+    let organizationExpanded = false;
+    function toggleOrganization(event) {
+        organizationExpanded = !organizationExpanded;
     }
 
     function setLanguagePl(event) {

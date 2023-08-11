@@ -14,47 +14,52 @@
     <h5>{dashboardConfig.title}</h5>
     <span>
         {#if dashboardConfig.shared}
-        <a title="Dashboard access" data-bs-toggle="modal" data-bs-target="#linkModal" 
-           on:click|preventDefault={showLink}>
-           <i class="bi  bi-link-45deg h4 me-2 link-dark"></i>
+        <a title="Dashboard access" data-bs-toggle="modal" data-bs-target="#linkModal"
+            on:click|preventDefault={showLink}>
+            <i class="bi  bi-link-45deg h4 me-2 link-dark"></i>
         </a>
         {/if}
-        <a title={utils.getLabel('filter',labels,session)} data-bs-toggle="modal" data-bs-target="#filterModal" 
-           on:click|preventDefault={setFilter}>
+        <a title={utils.getLabel('filter',labels,session)} data-bs-toggle="modal" data-bs-target="#filterModal"
+            on:click|preventDefault={setFilter}>
             {#if isFilterSet(dashboardFilter)}
-            <i class="bi bi-funnel-fill h5 me-2 link-dark" ></i>
+            <i class="bi bi-funnel-fill h5 me-2 link-dark"></i>
             {:else}
-            <i class="bi bi-funnel h5 me-2 link-dark" ></i>        
+            <i class="bi bi-funnel h5 me-2 link-dark"></i>
             {/if}
         </a>
-        <a href="/dashboards/{data.id}/edit" title={utils.getLabel('configure',labels,session)}><i class="bi bi-gear h5 me-2 link-dark"></i></a>
+        <a href="/dashboards/{data.id}/edit" title={utils.getLabel('configure',labels,session)}><i
+                class="bi bi-gear h5 me-2 link-dark"></i></a>
     </span>
 </div>
 <div class="dashboard-container" id={dashboardId}>
     <Grid bind:items={items} rowHeight={100} let:item {cols} let:index on:resize={handleResize} on:mount={handleMount}>
         <div class="dashboard-widget content bg-white border border-primary rounded-1">
             {#if 'chartjs'===getWidgetType(index)}
-            <ChartjsWidgetExample index={index} bind:config={items}  bind:filter={dashboardFilter}/>
+            <ChartjsWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
             {:else if 'canvas'===getWidgetType(index)}
-            <CanvasWidgetExample index={index} bind:config={items}  bind:filter={dashboardFilter}/>
+            <CanvasWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
             {:else if 'canvas_placeholder'===getWidgetType(index)}
-            <CanvasWidgetExample index={index} bind:config={items}  bind:filter={dashboardFilter}/>
+            <CanvasWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
             {:else if 'chart_placeholder'===getWidgetType(index)}
-            <ChartjsWidgetExample index={index} bind:config={items}  bind:filter={dashboardFilter}/>
+            <ChartjsWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
             {:else if 'symbol'===getWidgetType(index)}
-            <SymbolWidget bind:config={dashboardConfig.widgets[index]}  bind:filter={dashboardFilter}/>
+            <SymbolWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'text'===getWidgetType(index)}
-            <TextWidget bind:config={dashboardConfig.widgets[index]}  bind:filter={dashboardFilter}/>
+            <TextWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+            {:else if 'image'===getWidgetType(index)}
+            <ImageWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+            {:else if 'link'===getWidgetType(index)}
+            <InternalLink bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'led'===getWidgetType(index)}
-            <LedWidget bind:config={dashboardConfig.widgets[index]}  bind:filter={dashboardFilter}/>
+            <LedWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'raw'===getWidgetType(index)}
-            <RawDataWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter}/>
+            <RawDataWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'chart'===getWidgetType(index)}
-            <ChartWidget bind:config={dashboardConfig.widgets[index]}  bind:filter={dashboardFilter}/>
+            <ChartWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'plan'===getWidgetType(index)}
-            <PlanWidget bind:config={dashboardConfig.widgets[index]}  bind:filter={dashboardFilter}/>
+            <PlanWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else}
-            <CanvasWidgetExample index={index} bind:config={items}  bind:filter={dashboardFilter}/>
+            <CanvasWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
             {/if }
         </div>
     </Grid>
@@ -68,14 +73,14 @@
                 <h5 class="modal-title" id="modalLabel">{utils.getLabel('filter',labels,session)}</h5>
             </div>
             <div class="modal-body">
-                <DashboardFilterForm bind:config={editedFilter} callbackSave={filterFormCallback} callbackCancel={filterFormCallbackCancel} />
+                <DashboardFilterForm bind:config={editedFilter} callbackSave={filterFormCallback}
+                    callbackCancel={filterFormCallbackCancel} />
             </div>
         </div>
     </div>
 </div>
 <!-- Link modal -->
-<div class="modal fade" id="linkModal" tabindex="0" role="dialog" aria-labelledby="linkModalLabel"
-    aria-hidden="true">
+<div class="modal fade" id="linkModal" tabindex="0" role="dialog" aria-labelledby="linkModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -98,7 +103,7 @@
     import gridHelp from "svelte-grid/build/helper/index.mjs";
     import { dev } from '$app/environment';
     import { utils } from '$lib/utils.js';
-    import { goto } from '$app/navigation';
+    import { goto, afterNavigate, beforeNavigate } from '$app/navigation';
     import { userSession } from '$lib/stores.js';
     import { invalidateAll } from '$app/navigation';
 
@@ -108,33 +113,42 @@
     import ChartjsWidgetExample from '$lib/components/widgets/ChartjsWidgetExample.svelte';
     import SymbolWidget from '$lib/components/widgets/SymbolWidget.svelte';
     import TextWidget from '$lib/components/widgets/TextWidget.svelte';
+    import ImageWidget from '$lib/components/widgets/ImageWidget.svelte';
     import LedWidget from '$lib/components/widgets/LedWidget.svelte';
+    import InternalLink from '$lib/components/widgets/InternalLink.svelte';
     import RawDataWidget from '$lib/components/widgets/RawDataWidget.svelte';
     import ChartWidget from '$lib/components/widgets/ChartWidget.svelte';
     import PlanWidget from '$lib/components/widgets/PlanWidget.svelte';
 
     export let data
+
+
     let errorMessage = ''
     let dashboardId = 'dashboard' + 0 //TODO
-    //let parentDiv
     let numberOfCols = 1
+
+    let { item } = gridHelp;
+
+    let editable = false; // set to true to enable editing
+
+    let dashboardConfig = {}
+    let items = []
+
+    let dashboardFilter = { from: '', to: '' }
+    let editedFilter = { from: '', to: '' }
+    let dashboardLinkConfig = { link: '', code: '' }
+
+
+    // Documentation of cols
+    // https://github.com/vaheqelyan/svelte-grid/issues/140
+    let cols = {}
+
     let session;
     userSession.subscribe(value => {
         session = value;
     });
-    let { item } = gridHelp;
 
-    let editable = false; // set to true to enable editing
-    let dashboardConfig = {}
-    let dashboardFilter = {from:'', to:''}
-    let editedFilter = {from:'', to:''}
-    //let filterVisible=false
-    let dashboardLinkConfig = {link:'', code:''}
-
-    let items = []
-    // Documentation of cols
-    // https://github.com/vaheqelyan/svelte-grid/issues/140
-    let cols
+    //let interval
 
     let getWidgetType = function (idx) {
         try {
@@ -176,17 +190,17 @@
                 if (applications[i].name === "system") {
                     let config = JSON.parse(applications[i].configuration)
                     let tmpIntv = config.refreshInterval
-                    if(tmpIntv!=null && tmpIntv!=undefined && tmpIntv>0){
+                    if (tmpIntv != null && tmpIntv != undefined && tmpIntv > 0) {
                         interval = tmpIntv
                     }
                     break
                 }
             }
         } catch (e) {
-            console.log( e)
+            console.log(e)
         }
         //console.log('refresh interval: ', interval)
-        return interval*1000 // in ms
+        return interval * 1000 // in ms
     }
 
     let getApplications = function () {
@@ -212,8 +226,8 @@
             }
         }).catch((error) => {
             errorMessage = error.message
-            if (errorMessage == utils.getLabel('fetcherror',labels,session) && location.protocol.toLowerCase() == 'https') {
-                errorMessage = errorMessage + utils.getLabel('fetcherror_message',labels,session)
+            if (errorMessage == utils.getLabel('fetcherror', labels, session) && location.protocol.toLowerCase() == 'https') {
+                errorMessage = errorMessage + utils.getLabel('fetcherror_message', labels, session)
             }
             console.log(error)
         });
@@ -223,7 +237,7 @@
     let show = function () {
         dashboardConfig = data
         blockChanges(dashboardConfig)
-        //console.log('SHOW dashboard')
+        console.log('SHOW dashboard '+dashboardConfig.id)
         //console.log('dashboardConfig ', dashboardConfig)
         items = dashboardConfig.items
         cols = [
@@ -231,20 +245,39 @@
             [500, 1],
         ];
     }
-
-    onMount(() => {
-        if(!session.logged || !session.authorized || session.login==''){
+    let interval
+    afterNavigate(({ from, to }) => {
+        console.log('afterNavigate', from, to);
+        if (!session.logged || !session.authorized || session.login == '') {
             console.log('redirect to login');
             goto('/login');
-        }else{
-            console.log('settings',data);
+        } else {
+            console.log('settings', data);
         }
-        const interval = setInterval(() => {
-            invalidateAll()
-            show()
-        }, getRefreshInterval());
-        show()
-        return () => { clearInterval(interval); }
+        clearInterval(interval);
+        interval = setInterval(() => {
+             invalidateAll()
+             show()
+         }, getRefreshInterval());
+         show()
+    })
+    beforeNavigate(({ from, to }) => {
+        console.log('beforeNavigate', from, to);
+        clearInterval(interval);
+    })
+    onMount(() => {
+        // if (!session.logged || !session.authorized || session.login == '') {
+        //     console.log('redirect to login');
+        //     goto('/login');
+        // } else {
+        //     console.log('settings', data);
+        // }
+        // const interval = setInterval(() => {
+        //     invalidateAll()
+        //     show()
+        // }, getRefreshInterval());
+        // show()
+        // return () => { clearInterval(interval); }
     });
 
     const blockChanges = function (config) {
@@ -268,19 +301,19 @@
         editedFilter.from = dashboardFilter.from
         editedFilter.to = dashboardFilter.to
     }
-    let showLink = function(event){
+    let showLink = function (event) {
         // do nothing
     }
 
     function filterFormCallback(cfg) {
         dashboardFilter.from = cfg.from
         dashboardFilter.to = cfg.to
-        editedFilter = {from:'', to:''}
+        editedFilter = { from: '', to: '' }
     }
     function filterFormCallbackCancel() {
-        editedFilter = {from:'', to:''}
+        editedFilter = { from: '', to: '' }
     }
-    let isFilterSet=function(filter) {
+    let isFilterSet = function (filter) {
         return filter.from != '' || filter.to != ''
     }
     function linkFormCallback() {

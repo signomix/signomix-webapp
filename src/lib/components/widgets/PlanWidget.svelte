@@ -13,7 +13,9 @@
             {:then data}
             {@html getPlan(data)}
             {:catch error}
+            {#if !front}
             <p style="color: red">{error.message}</p>
+            {/if}
             {/await}
         </div>
     </div>

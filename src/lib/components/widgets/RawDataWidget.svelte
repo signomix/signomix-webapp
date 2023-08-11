@@ -45,7 +45,9 @@
             {new Date(data[0][0].timestamp).toLocaleString()}
             {/if}
             {:catch error}
+            {#if !front}
             <p style="color: red">{error.message}</p>
+            {/if}
             {/await}
         </div>
     </div>

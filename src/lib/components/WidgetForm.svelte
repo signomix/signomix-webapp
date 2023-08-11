@@ -63,6 +63,13 @@
                         bind:value={config[index].imageUrl}>
                 </div>
                 {/if}
+                {#if widgets.isVisible(config[index].type, 'dashboardID')}
+                <div class="mb-2">
+                    <label for="dashboardID" class="form-channels">dashboard EUI</label>
+                    <input type="text" class="form-control form-control-sm" id="dashboardID"
+                        bind:value={config[index].dashboardID}>
+                </div>
+                {/if} 
             </div>
             {/if}
             {#if selectedTab === 'extended'}

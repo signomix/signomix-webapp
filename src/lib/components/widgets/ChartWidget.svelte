@@ -221,8 +221,6 @@
             return channelName
         }
     }
-
-
 </script>
 <div class="p-1 pt-2 w-100">
     <canvas bind:this={chartCanvas} class="w-100" />

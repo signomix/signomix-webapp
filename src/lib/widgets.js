@@ -6,6 +6,7 @@ export const widgets = {
         'devinfo',
         'image',
         'led',
+        'link',
         'map',
         'multimap',
         'multitrack',
@@ -38,6 +39,7 @@ export const widgets = {
         devinfo: ['dev_id',],
         image: ['imageUrl'],
         led: ['dev_id','channel', 'range'],
+        link: ['dashboardID'],
         map: ['dev_id','channel', 'query'],
         multimap: ['group','channel'],
         multitrack: ['group','channel'],
@@ -73,7 +75,8 @@ export const widgets = {
         rounding: {en:'value rounding', pl:'zaokrąglenie wartości'},
         range: {en:'alert range definition', pl:'definicja zakresu alarmu'},
         icon: {en:'icon name', pl:'nazwa ikony'},
-        channel_translated: {en:'translated channel name(s)', pl:'przetłumaczona nazwa kanału'}
+        channel_translated: {en:'translated channel name(s)', pl:'przetłumaczona nazwa kanału'},
+        dashboardID: {en:'dashboard ID', pl:'ID pulpitu'}
     },
     fieldHints: {
         type: {en:'widget type', pl:'typ kontrolki'},
@@ -94,7 +97,8 @@ export const widgets = {
         rounding: {en:'value rounding', pl:'zaokrąglenie wartości'},
         range: {en:'alert range definition', pl:'definicja zakresu alarmu'},
         icon: {en:'icon name', pl:'nazwa ikony'},
-        channel_translated: {en:'translated channel name(s)', pl:'przetłumaczona nazwa kanału'}
+        channel_translated: {en:'translated channel name(s)', pl:'przetłumaczona nazwa kanału'},
+        dashboardID: {en:'dashboard ID', pl:'ID pulpitu'}
     },
     isVisible: function (widgetTypeName, fieldName){
         if(this.typeFields.default.indexOf(fieldName) >= 0){
