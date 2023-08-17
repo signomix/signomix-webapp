@@ -58,13 +58,16 @@
                     </li>
                     {#if organizationExpanded}
                     <li class="nav-item ms-3">
-                        <a class="nav-link" class:active={$page.url.pathname==='/organization/settings' } href="/organization/settings">
+                        <a class="nav-link" class:active={$page.url.pathname==='/organization/settings' }
+                            href="/organization/settings">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-building-gear me-2"></i><span>{utils.getLabel('orgsettings',labels,session)}</span>
+                                <i
+                                    class="bi bi-building-gear me-2"></i><span>{utils.getLabel('orgsettings',labels,session)}</span>
                         </a>
                     </li>
                     <li class="nav-item ms-3">
-                        <a class="nav-link" class:active={$page.url.pathname==='/organization/applications' } href="/organization/applications">
+                        <a class="nav-link" class:active={$page.url.pathname==='/organization/applications' }
+                            href="/organization/applications">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i class="bi bi-box me-2"></i>{utils.getLabel('applications',labels,session)}
                             </span>
@@ -82,30 +85,25 @@
                     <!-- Structure -->
                     <li class="nav-item">
                         <a class="nav-link" class:active={false} on:click={toggleStructure}>
-                            <span><i class="bi bi-diagram-3 me-2"></i><span>{utils.getLabel('structure',labels,session)}</span>
+                            <span><i
+                                    class="bi bi-diagram-3 me-2"></i><span>{utils.getLabel('structure',labels,session)}</span>
                         </a>
                     </li>
                     {#if structureExpanded}
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/devices' } href="/devices">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-hdd-network me-2"></i><span>{utils.getLabel('devices',labels,session)}</span>
+                                <i
+                                    class="bi bi-hdd-network me-2"></i><span>{utils.getLabel('devices',labels,session)}</span>
                         </a>
                     </li>
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/groups' } href="/groups">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-hdd-stack me-2"></i><span>{utils.getLabel('groups',labels,session)}</span>
+                                <i
+                                    class="bi bi-hdd-stack me-2"></i><span>{utils.getLabel('groups',labels,session)}</span>
                         </a>
                     </li>
-                    {#if $userSession.role==='admin'}
-                    <li class="nav-item ms-3">
-                        <a class="nav-link" class:active={$page.url.pathname==='/applications' } href="/applications">
-                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-code-square me-2"></i><span>{utils.getLabel('apps',labels,session)}</span>
-                        </a>
-                    </li>
-                    {/if}
                     {/if}
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/notifications' } href="/notifications">
@@ -128,11 +126,26 @@
                     <!-- Administration -->
                     <li class="nav-item">
                         <a class="nav-link" class:active={false} on:click={toggleAdministration}>
-                            <span><i class="bi bi-tools me-2"></i><span>{utils.getLabel('administration',labels,session)}</span>
+                            <span><i
+                                    class="bi bi-tools me-2"></i><span>{utils.getLabel('administration',labels,session)}</span>
                         </a>
                     </li>
                     {#if administrationExpanded}
                     <!-- TODO -->
+                    <li class="nav-item ms-3">
+                        <a class="nav-link" class:active={$page.url.pathname==='/admin/applications' } href="/admin/applications">
+                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                <i
+                                    class="bi bi-code-square me-2"></i><span>{utils.getLabel('apps',labels,session)}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item ms-3">
+                        <a class="nav-link" class:active={$page.url.pathname==='/admin/organizations' } href="/admin/organizations">
+                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                <i
+                                    class="bi bi-building me-2"></i><span>{utils.getLabel('organizations',labels,session)}</span>
+                        </a>
+                    </li>
                     {/if}
                     <!-- end Administration -->
                     {/if}
@@ -140,9 +153,10 @@
                     {/if}
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/about' }
-                         href="https://documentation.signomix.com" target="_blank">
+                            href="https://documentation.signomix.com" target="_blank">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-question-circle me-2"></i>{utils.getLabel('documentation',labels,session)}
+                                <i
+                                    class="bi bi-question-circle me-2"></i>{utils.getLabel('documentation',labels,session)}
                             </span>
                         </a>
                     </li>
@@ -285,6 +299,10 @@
         'organization': {
             'pl': "Organizacja",
             'en': "Organization"
+        },
+        'organizations': {
+            'pl': "Organizacje",
+            'en': "Organizations"
         },
         'devices': {
             'pl': "Urządzenia",
