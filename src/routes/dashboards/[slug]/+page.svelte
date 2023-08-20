@@ -3,7 +3,7 @@
     eventually, when released: https://github.com/cuire/svelte-grid-extended
     bindings: https://learn.svelte.dev/tutorial/text-inputs
 -->
-{#if session.logged && session.authorized && session.login!=''}
+{#if session.user.logged && session.user.authorized && session.user.login!=''}
 {#if errorMessage!=''}
 <div class="alert alert-danger" role="alert">
     {errorMessage}
@@ -207,7 +207,7 @@
         const headers = new Headers()
         let method = 'GET'
         let url = utils.getBackendUrl(location) + "/api/application/"
-        headers.set('Authentication', session.token);
+        headers.set('Authentication', session.user.token);
         let apps = fetch(
             url,
             { method: method, mode: 'cors', headers: headers }
@@ -248,7 +248,7 @@
     let interval
     afterNavigate(({ from, to }) => {
         console.log('afterNavigate', from, to);
-        if (!session.logged || !session.authorized || session.login == '') {
+        if (!session.user.logged || !session.user.authorized || session.user.login == '') {
             console.log('redirect to login');
             goto('/login');
         } else {
@@ -266,18 +266,6 @@
         clearInterval(interval);
     })
     onMount(() => {
-        // if (!session.logged || !session.authorized || session.login == '') {
-        //     console.log('redirect to login');
-        //     goto('/login');
-        // } else {
-        //     console.log('settings', data);
-        // }
-        // const interval = setInterval(() => {
-        //     invalidateAll()
-        //     show()
-        // }, getRefreshInterval());
-        // show()
-        // return () => { clearInterval(interval); }
     });
 
     const blockChanges = function (config) {

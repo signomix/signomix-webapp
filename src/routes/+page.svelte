@@ -13,13 +13,14 @@
     let session;
     userSession.subscribe(value => {
         session = value;
-        if (!session.logged) {
+        if (!session.user.logged) {
             try {
                 if (browser) {
                     if (window.localStorage.getItem('sgx.session.token') != null) {
-                        session.token = window.localStorage.getItem('sgx.session.token')
-                        session.logged = true
-                        session.authorized = true
+                        session.user={}
+                        session.user.token = window.localStorage.getItem('sgx.session.token')
+                        session.user.logged = true
+                        session.user.authorized = true
                     }
                 }
             } catch (error) {

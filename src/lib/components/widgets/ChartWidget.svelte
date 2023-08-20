@@ -37,7 +37,7 @@
     var myChart
     async function show(ctx) {
         try {
-            let promise = await sgxdata.getData(dev, apiUrl, config, filter, session.token, transform)
+            let promise = await sgxdata.getData(dev, apiUrl, config, filter, session.user.token, transform)
                 .then(function (data) {
                     if (myChart) myChart.destroy()
                     myChart = new Chart(ctx, data);

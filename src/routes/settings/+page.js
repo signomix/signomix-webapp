@@ -11,10 +11,10 @@ userSession.subscribe(value => {
 
 
 export async function load({url}) {
-    if(!session.logged || !session.authorized || session.login==''){
+    if(!session.user.logged || !session.user.authorized || session.user.login==''){
         return {}
     }
-    let apiUrl = utils.getBackendUrl(url) + '/api/core/user/'+session.login
+    let apiUrl = utils.getBackendUrl(url) + '/api/core/user/'+session.user.login
     console.log('load({url})', url)
-    return await sgxdata.getUserSettings(dev, apiUrl, session.token)
+    return await sgxdata.getUserSettings(dev, apiUrl, session.user)
 }

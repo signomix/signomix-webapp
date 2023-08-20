@@ -71,7 +71,7 @@ export const load = async ({ params, url }) => {
       try {
         let endpoint = serviceUrl + "/api/core/device/" + params.slug + "?full=true"
         let headers = new Headers();
-        headers.set('Authentication', session.token);
+        headers.set('Authentication', session.user.token);
         await fetch(endpoint, { headers: headers }).then(response => {
           if (response.status == 200) {
             config = response.json()

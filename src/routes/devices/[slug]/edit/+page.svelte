@@ -178,7 +178,7 @@
         const headers = new Headers()
         let method = 'DELETE'
         let url = utils.getBackendUrl(location) + "/api/core/v2/dashboards/" + data.id
-        headers.set('Authentication', session.token);
+        headers.set('Authentication', session.user.token);
         let response = fetch(
             url,
             { method: method, mode: 'cors', headers: headers, body: JSON.stringify(data) }
@@ -213,7 +213,7 @@
             url = url + data.id
             method = 'PUT'
         }
-        headers.set('Authentication', session.token);
+        headers.set('Authentication', session.user.token);
         headers.set('Content-Type', 'application/json');
         let response = fetch(
             url,

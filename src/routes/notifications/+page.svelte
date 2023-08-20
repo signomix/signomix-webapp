@@ -1,8 +1,8 @@
-{#if !session.logged}
+{#if !session.user.logged}
 <div class="alert alert-danger w-100 mt-2 text-center" role="alert">
     Brak dostępu
 </div>
-{:else if session.authorized}
+{:else if session.user.authorized}
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h5>Powiadomienia</h5><a href="#" on:click|preventDefault={removeAll}><i class="bi bi-trash3 h5 link-dark"></i></a>
@@ -73,12 +73,13 @@
     let session;
     userSession.subscribe(value => {
         session = value;
-        if (!session.logged) {
+        if (!session.user.logged) {
             try {
                 if (window.localStorage.getItem('sgx.session.token') != null) {
-                    session.token = window.localStorage.getItem('sgx.session.token')
-                    session.logged = true
-                    session.authorized = true
+                    session.user={}
+                    session.user.token = window.localStorage.getItem('sgx.session.token')
+                    session.user.logged = true
+                    session.user.authorized = true
                 }
             } catch (error) {
                 console.log(error)
@@ -90,7 +91,7 @@
 
     async function getAlerts() {
         let alerts = []
-        if (!session.logged) {
+        if (!session.user.logged) {
             return alerts
         }
         if (dev) {
@@ -124,7 +125,7 @@
             let headers = new Headers();
             let url = utils.getBackendUrl(location) + "/api/alert/"
             url = url + '?offset=' + offset + '&limit=' + limit
-            headers.set('Authentication', session.token);
+            headers.set('Authentication', session.user.token);
             await fetch(url, { headers: headers })
                 .then((response) => {
                     if (response.status == 200) {
@@ -172,7 +173,7 @@
         const headers = new Headers()
         let method = 'DELETE'
         let url = utils.getBackendUrl(location) + "/api/alert/" + id
-        headers.set('Authentication', session.token);
+        headers.set('Authentication', session.user.token);
         let response = fetch(
             url,
             { method: method, mode: 'cors', headers: headers }

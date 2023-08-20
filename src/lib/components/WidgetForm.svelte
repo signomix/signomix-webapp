@@ -25,7 +25,7 @@
             {#if selectedTab === 'basic'}
             <div class="p-1 mt-2">
                 <div class="mb-2">
-                    <label for="title" class="form-label">{widgets.getFieldName('title',session.language)}</label>
+                    <label for="title" class="form-label">{widgets.getFieldName('title',session.user.language)}</label>
                     <input type="text" class="form-control form-control-sm" id="title" bind:value={config[index].title}>
                 </div>
                 <div class="mb-2">

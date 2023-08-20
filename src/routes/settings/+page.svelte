@@ -24,7 +24,7 @@
     })
 
     onMount(async () => {
-        if(!session.logged || !session.authorized || session.login==''){
+        if(!session.user.logged || !session.user.authorized || session.user.login==''){
             console.log('redirect to login');
             goto('/login');
         }else{

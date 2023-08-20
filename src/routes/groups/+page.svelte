@@ -1,8 +1,8 @@
-{#if !session.logged}
+{#if !session.user.logged}
 <div class="alert alert-danger w-100 mt-2 text-center" role="alert">
     {utils.getLabel('denied', labels, session)}
 </div>
-{:else if session.authorized}
+{:else if session.user.authorized}
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h5>{utils.getLabel('title', labels, session)}</h5>
@@ -86,7 +86,7 @@
 
     async function getGroups(actualOffset) {
         let groups = []
-        if (!session.logged) {
+        if (!session.user.logged) {
             return groups
         }
         if (dev) {
@@ -116,7 +116,7 @@
             let headers = new Headers();
             let url = utils.getBackendUrl(location) + "/api/iot/group"
             url = url + '?offset=' + actualOffset + '&limit=' + limit + '&full=true'
-            headers.set('Authentication', session.token);
+            headers.set('Authentication', session.user.token);
             headers.set('Access-Control-Allow-Origin', '*');
             await fetch(url,
                 {

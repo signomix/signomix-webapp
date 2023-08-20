@@ -1,8 +1,8 @@
-{#if !session.logged}
+{#if !session.user.logged}
 <div class="alert alert-danger w-100 mt-2 text-center" role="alert">
     {text('denied')}
 </div>
-{:else if session.authorized}
+{:else if session.user.authorized}
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h5>{text('devices')}</h5>
@@ -83,17 +83,17 @@
     let promise = getDevices(offset)
 
     onMount(async () => {
-        if(!session.logged || !session.authorized || session.login==''){
+        if(!session.user.logged || !session.user.authorized || session.user.login==''){
             console.log('redirect to login');
             goto('/login');
         }else{
-            console.log('settings',data);
+            console.log('devices');
         }
     });
 
     async function getDevices(actualOffset) {
         let devcs = []
-        if (!session.logged) {
+        if (!session.user.logged) {
             return devcs
         }
         if (dev) {
@@ -116,7 +116,7 @@
             let headers = new Headers();
             let url = utils.getBackendUrl(location) + "/api/core/device"
             url = url + '?offset=' + actualOffset + '&limit=' + limit + '&full=true'
-            headers.set('Authentication', session.token);
+            headers.set('Authentication', session.user.token);
             headers.set('Access-Control-Allow-Origin', '*');
             await fetch(url,
                 {
@@ -175,7 +175,7 @@
                 'en': "Add"
             }
         }
-        return labels[name][session.language]
+        return labels[name][session.user.language]
     }
 
 

@@ -9,12 +9,13 @@ let session;
 export async function load({params,url}) {
     userSession.subscribe(value => {
         session = value;
-        if(!session.logged){
+        if(!session.user.logged){
             try{
             if(window.localStorage.getItem('sgx.session.token')!=null){
-                session.token = window.localStorage.getItem('sgx.session.token')
-                session.logged = true
-                session.authorized = true
+                session.user={}
+                session.user.token = window.localStorage.getItem('sgx.session.token')
+                session.user.logged = true
+                session.user.authorized = true
             }
             }catch(error){
                 console.log(error)
@@ -34,7 +35,7 @@ async function getUserNotifications(serviceUrl) {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authentication': session.token
+            'Authentication': session.user.token
         }
     });
     if (response.status == 200) {

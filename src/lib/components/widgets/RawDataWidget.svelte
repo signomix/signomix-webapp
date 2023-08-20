@@ -17,7 +17,7 @@
     let parentHeight = 0;
 
     console.log('RawDataWidget config', config)
-    let promise = sgxdata.getData(dev,apiUrl,config,filter,session.token);
+    let promise = sgxdata.getData(dev,apiUrl,config,filter,session.user.token);
     let front = true;
 
     function switchView() {

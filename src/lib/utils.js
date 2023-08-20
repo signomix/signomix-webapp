@@ -9,11 +9,11 @@ export const utils = {
     return url.protocol + '//' + x
   },
   setAuthorized: function (session, value) {
-    userSession.set(
+    userSession.user.set(
       {
-        logged: session.logged,
-        login: session.login,
-        password: session.password,
+        logged: session.user.logged,
+        login: session.user.login,
+        password: session.user.password,
         authorized: value
       }
     )
@@ -61,7 +61,7 @@ export const utils = {
    */
   getLabel: function (name, labels, session) {
     try{
-      return labels[name][session.language]
+      return labels[name][session.user.language]
     }catch(err){
       console.log('getLabel error: ' + err)
       return name

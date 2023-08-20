@@ -13,15 +13,15 @@
                 <div class="nav flex-column">
                     <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="h2 bi bi-person-circle me-2"></i>
-                        {#if $userSession.logged && $userSession.login!=''}
-                        <span class="lead">{$userSession.login} </span>
+                        {#if $userSession.user.logged && $userSession.user.login!=''}
+                        <span class="lead">{$userSession.user.login}</span>
                         {:else}
                         <span>{utils.getLabel('signin',labels,session)}</span>
                         {/if}
                         <i class="bi bi-caret-down-fill ms-1"></i>
                     </a>
                     <ul class="dropdown-menu">
-                        {#if !$userSession.logged || $userSession.login==''}
+                        {#if !$userSession.user.logged || $userSession.user.login==''}
                         <li><a class="dropdown-item" href="/login">
                                 <span data-bs-toggle="collapse"
                                     data-bs-target=".navbar-collapse.show">{utils.getLabel('signin',labels,session)}</span>
@@ -49,8 +49,8 @@
 
                         </a>
                     </li>
-                    {#if $userSession.logged && $userSession.login!=''}
-                    {#if $userSession.organization!=0}
+                    {#if $userSession.user.logged && $userSession.user.login!=''}
+                    {#if $userSession.user.organization!=0}
                     <li class="nav-item">
                         <a class="nav-link" class:active={false} on:click={toggleOrganization}>
                             <span><i class="bi bi-building me-2"></i><span>Organizacja</span>
@@ -122,7 +122,7 @@
                             </span>
                         </a>
                     </li>
-                    {#if $userSession.type==1}
+                    {#if $userSession.user.type==1}
                     <!-- Administration -->
                     <li class="nav-item">
                         <a class="nav-link" class:active={false} on:click={toggleAdministration}>
@@ -172,7 +172,7 @@
             </div>
         </nav>
         <main class="col-md-9 col-lg-10 ms-sm-auto px-md-4">
-            {#if ($userSession.logged && !$userSession.authorized)}
+            {#if ($userSession.user.logged && !$userSession.user.authorized)}
             <div class="alert alert-danger w-100 mt-2 text-center" role="alert">
                 {utils.getLabel('api-unavialble',labels,session)}
             </div>
@@ -194,7 +194,7 @@
 
     function logout() {
         console.log("LOGOUT")
-        userSession.set({ logged: false, login: '', password: '', language: 'en' })
+        userSession.set({user:{ logged: false, login: '', password: '', language: 'en', token:'' }, organization:{}})
         if (browser) {
             try {
                 window.localStorage.removeItem('sgx.session.token');

@@ -1,8 +1,8 @@
-{#if !session.logged}
+{#if !session.user.logged}
 <div class="alert alert-danger w-100 mt-2 text-center" role="alert">
     {utils.getLabel('denied',labels,session)}
 </div>
-{:else if session.authorized}
+{:else if session.user.authorized}
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h5>{utils.getLabel('pagetitle',labels,session)}</h5>
@@ -78,7 +78,7 @@
     })
 
     onMount(async () => {
-        if(!session.logged || !session.authorized || session.login==''){
+        if(!session.user.logged || !session.user.authorized || session.user.login==''){
             console.log('redirect to login');
             goto('/login');
         }else{
@@ -94,7 +94,7 @@
 
     async function getConfigs() {
         let configs = []
-        if (!session.logged) {
+        if (!session.user.logged) {
             return configs
         }
         if (dev) {
@@ -105,7 +105,7 @@
             let headers = new Headers();
             let url = utils.getBackendUrl(location) + "/api/core/v2/dashboards"
             url = url + '?offset=' + offset + '&limit=' + limit
-            headers.set('Authentication', session.token);
+            headers.set('Authentication', session.user.token);
             await fetch(url, { headers: headers })
                 .then((response) => {
                     if (response.status == 200) {

@@ -17,11 +17,11 @@
     let errorMessage = '';
     const apiUrl = utils.getBackendUrl(location) + '/api/provider/v2/device/'
 
-    let promise = sgxdata.getData(dev, apiUrl, config, filter, session.token);
+    let promise = sgxdata.getData(dev, apiUrl, config, filter, session.user.token);
     let front = true;
 
     afterUpdate(() => {
-        promise = sgxdata.getData(dev, apiUrl, config, filter, session.token);
+        promise = sgxdata.getData(dev, apiUrl, config, filter, session.user.token);
     });
     function recalculate(value) {
         return Number.parseFloat(value).toFixed(config.rounding);

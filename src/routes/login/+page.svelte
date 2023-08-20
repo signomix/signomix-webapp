@@ -25,7 +25,7 @@
 </form>
 
 <p>
-    {$userSession.login}
+    {$userSession.user.login}
 </p>
 <script>
     import { userSession } from '$lib/stores.js';
@@ -64,37 +64,43 @@
             if (response.ok) { // if HTTP-status is 200-299
                 // get the response body (the method explained below)
                 let text = await response.json();
-                session.logged = true
-                session.login = lg
-                session.password = pwd
-                session.authorized = true
-                session.token = text
+                session.user={}
+                session.user.logged = true
+                session.user.login = lg
+                session.user.password = pwd
+                session.user.authorized = true
+                session.user.token = text
                 userSession.set(session)
-                window.localStorage.setItem('sgx.session.token', session.token);
+                window.localStorage.setItem('sgx.session.token', session.user.token);
                 errorMessage = ''
+                getUser()
+                goto('/')
             } else {
                 errorMessage = 'Nieudane logowanie'
                 alert("HTTP-Error: " + response.status);
             }
         } else {
-            session.logged = true
-            session.login = lg
-            session.password = pwd
-            session.authorized = true
-            session.token = ''
-            session.language = 'en'
+            session.user={}
+            session.user.logged = true
+            session.user.login = lg
+            session.user.password = pwd
+            session.user.authorized = true
+            session.user.token = ''
+            session.user.language = 'en'
+            session.user.organization=session.user.login.startsWith('org')?1:0
             userSession.set(session)
-            console.log($userSession.login)
+            console.log('DEV login',$userSession.user.login)
             errorMessage = ''
+            goto('/')
         }
-        getUser()
+        
     }
 
     async function getUser() {
         if (!dev) {
-            const url = utils.getBackendUrl(location) + '/api/user/' + session.login
+            const url = utils.getBackendUrl(location) + '/api/user/' + session.user.login
             const headers = new Headers()
-            headers.set('Authentication', session.token);
+            headers.set('Authentication', session.user.token);
 
             let response = await fetch(
                 url,
@@ -109,8 +115,8 @@
                 // get the response body (the method explained below)
                 // user.type: 0 - user, 1 - owner,system admin, 9 - organization admin
                 let user = await response.json();
-                session.organization = user.organization
-                session.type = user.type
+                session.user.organization = user.organization
+                session.user.type = user.type
                 userSession.set(session)
                 errorMessage = ''
             } else {
@@ -118,22 +124,20 @@
                 alert("HTTP-Error: " + response.status);
             }
         } else {
-            session.logged = true
-            //session.login = 'user'
-            //session.password = 'user'
-            session.authorized = true
-            session.token = ''
-            session.language = 'en'
-            session.organization = 0
-            if(session.login=='admin'){
-            session.type = 1
-            session.role= 'admin'
+            session.user={}
+            session.user.logged = true
+            session.user.authorized = true
+            session.user.token = ''
+            session.user.language = 'en'
+            session.user.organization = 0
+            if(session.user.login=='admin'){
+            session.user.type = 1
+            session.user.role= 'admin'
             }else{
-            session.type = 4
+            session.user.type = 4
             }
             userSession.set(session)
             errorMessage = ''
         }
-        goto('/')
     }
 </script>

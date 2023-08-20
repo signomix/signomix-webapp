@@ -23,7 +23,7 @@ export const load = async ({ params, url }) => {
       try {
         let endpoint = serviceUrl + "/api/core/v2/dashboards/" + params.slug
         let headers = new Headers();
-        headers.set('Authentication', session.token);
+        headers.set('Authentication', session.user.token);
         await fetch(endpoint, { headers: headers }).then(response => {
           if (response.status == 200) {
             config = response.json()

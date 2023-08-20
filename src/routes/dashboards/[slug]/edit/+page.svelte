@@ -64,7 +64,7 @@
     </form>
 </div>
 <div class="demo-container size">
-    {#if session.logged && session.authorized && session.login!=''}
+    {#if session.user.logged && session.user.authorized && session.user.login!=''}
     <Grid bind:items={data.items} rowHeight={100} let:item {cols} let:index on:change={onChange}>
         <div class="demo-widget content bg-white border border-primary">
             <WidgetConfig index={index} bind:config={data.widgets} removeCallback={removeItem} setCurrentIndex={(idx)=>
@@ -111,7 +111,7 @@
         session = value;
     });
     onMount(() => {
-        if(!session.logged || !session.authorized || session.login==''){
+        if(!session.user.logged || !session.user.authorized || session.user.login==''){
             console.log('redirect to login');
             goto('/login');
         }else{
@@ -190,7 +190,7 @@
         const headers = new Headers()
         let method = 'DELETE'
         let url = utils.getBackendUrl(location) + "/api/core/v2/dashboards/" + data.id
-        headers.set('Authentication', session.token);
+        headers.set('Authentication', session.user.token);
         let response = fetch(
             url,
             { method: method, mode: 'cors', headers: headers, body: JSON.stringify(data) }
@@ -225,7 +225,7 @@
             url = url + data.id
             method = 'PUT'
         }
-        headers.set('Authentication', session.token);
+        headers.set('Authentication', session.user.token);
         headers.set('Content-Type', 'application/json');
         let response = fetch(
             url,

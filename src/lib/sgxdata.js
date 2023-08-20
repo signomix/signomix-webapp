@@ -68,14 +68,23 @@ export const sgxdata = {
     }
     //return Promise.resolve(getSgxNotifications(devMode, apiUrl, limit, offset, token)).then((result) => result);
   },
-  getUserSettings: function (devMode, apiUrl, token) {
+  getUserSettings: function (devMode, apiUrl, userData) {
     try {
-      return Promise.resolve(getSgxUserSettings(devMode, apiUrl, token)).then((result) => result);
+      return Promise.resolve(getSgxUserSettings(devMode, apiUrl, userData)).then((result) => result);
     }catch(e){
       console.log('getUserSettings', e)
       throw new Error(e);
     }
     //return Promise.resolve(getSgxUserSettings(devMode, apiUrl, token)).then((result) => result);
+  },
+  getOrganization: function (devMode, apiUrl, token) {
+    try {
+      return Promise.resolve(getSgxOrganizationData(devMode, apiUrl, token)).then((result) => result);  
+    }catch(e){
+      console.log('getNotifications', e)
+      throw new Error(e);
+    }
+    //return Promise.resolve(getSgxNotifications(devMode, apiUrl, limit, offset, token)).then((result) => result);
   }
 }
 
@@ -158,7 +167,37 @@ const getSgxNotifications = async function (devMode, apiUrl, limit, offset, toke
   }
 }
 
-const getSgxUserSettings = async function (devMode, apiUrl,token) {
+const getSgxUserSettings = async function (devMode, apiUrl,userData) {
+  if (devMode) {
+    return {
+        uid: userData.login,
+        email: 'test@localhost',
+        name: 'name',
+        surname: 'surname',
+        type: 4,
+        role: '',
+        confirmed: true,
+        preferredLanguage: 'pl',
+        organization: userData.organization,
+        createdAt: Date.now()
+    }
+  }
+  const headers = new Headers()
+  headers.set('Accept', 'application/json');
+  headers.set('Authentication', userData.token);
+  const res = await fetch(apiUrl, { mode: 'cors', headers: headers });
+  let data;
+  data = await res.json();
+  if (res.ok) {
+    return data;
+  } else {
+    throw new Error(res.statusText);
+  }
+
+
+}
+
+const getSgxOrganizationData = async function (devMode, apiUrl,token) {
   if (devMode) {
     return {
         uid: 'tester',
@@ -169,6 +208,7 @@ const getSgxUserSettings = async function (devMode, apiUrl,token) {
         role: '',
         confirmed: true,
         preferredLanguage: 'pl',
+        organization: 0,
         createdAt: Date.now()
     }
   }

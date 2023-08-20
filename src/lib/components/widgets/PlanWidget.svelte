@@ -39,11 +39,11 @@
     let errorMessage = '';
     const apiUrl = utils.getBackendUrl(location) + '/api/provider/group/'
 
-    let promise = sgxdata.getGroupData(dev, apiUrl, config, filter, session.token);
+    let promise = sgxdata.getGroupData(dev, apiUrl, config, filter, session.user.token);
     let front = true;
 
     afterUpdate(() => {
-        promise = sgxdata.getGroupData(dev, apiUrl, config, filter, session.token);
+        promise = sgxdata.getGroupData(dev, apiUrl, config, filter, session.user.token);
     });
     function recalculate(value) {
         return Number.parseFloat(value).toFixed(config.rounding);
