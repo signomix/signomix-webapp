@@ -1,11 +1,11 @@
 {#if !session.user.logged}
 <div class="alert alert-danger w-100 mt-2 text-center" role="alert">
-    {text('denied')}
+    {utils.getLabel('denied',labels,session)}
 </div>
 {:else if session.user.authorized}
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h5>{text('devices')}</h5>
+    <h5>{utils.getLabel('devices',labels,session)}</h5>
 </div>
 {#await promise}
 {:then devices}
@@ -18,8 +18,8 @@
                         <th scope="col" class="col-1">#</th>
                         <th scope="col" class="col-1"></th>
                         <th scope="col" class="col-2">EUI</th>
-                        <th scope="col" class="col-6">{text('name')}</th>
-                        <th scope="col" class="col-2">{text('type')}</th>
+                        <th scope="col" class="col-6">{utils.getLabel('name',labels,session)}</th>
+                        <th scope="col" class="col-2">{utils.getLabel('type',labels,session)}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -39,7 +39,7 @@
 </div>
 <div class="row">
     <div class="col-2">
-        <a class="btn btn-outline-primary" role="button" href="/devices/new/edit">{text('add')}</a>
+        <a class="btn btn-outline-primary" role="button" href="/devices/new/edit">{utils.getLabel('add',labels,session)}</a>
     </div>
     <div class="col-10">
         <nav aria-label="Table navigation">
@@ -83,10 +83,10 @@
     let promise = getDevices(offset)
 
     onMount(async () => {
-        if(!session.user.logged || !session.user.authorized || session.user.login==''){
+        if (!session.user.logged || !session.user.authorized || session.user.login == '') {
             console.log('redirect to login');
             goto('/login');
-        }else{
+        } else {
             console.log('devices');
         }
     });
@@ -152,31 +152,27 @@
         console.log(event)
     }
 
-    function text(name) {
-        let labels = {
-            'devices': {
-                'pl': "Urządzenia",
-                'en': "Devices"
-            },
-            'name': {
-                'pl': "Nazwa",
-                'en': "Name"
-            },
-            'type': {
-                'pl': "Typ",
-                'en': "Type"
-            },
-            'denied': {
-                'pl': "Brak dostępu",
-                'en': "Access denied"
-            },
-            'add': {
-                'pl': "Dodaj",
-                'en': "Add"
-            }
+    let labels = {
+        'devices': {
+            'pl': "Urządzenia",
+            'en': "Devices"
+        },
+        'name': {
+            'pl': "Nazwa",
+            'en': "Name"
+        },
+        'type': {
+            'pl': "Typ",
+            'en': "Type"
+        },
+        'denied': {
+            'pl': "Brak dostępu",
+            'en': "Access denied"
+        },
+        'add': {
+            'pl': "Dodaj",
+            'en': "Add"
         }
-        return labels[name][session.user.language]
     }
-
 
 </script>

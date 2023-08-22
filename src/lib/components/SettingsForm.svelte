@@ -225,7 +225,7 @@
         alert('Not implemented yet')
     }
 
-    const apiUrl = utils.getBackendUrl(location) + '/api/core/organization/'
+    const apiUrl = utils.getBackendUrl(location) + '/api/core/organization/'+session.user.organization
     let promise = sgxdata.getOrganization(dev,apiUrl,session.user.token);
 
     //function getOrganizationName(orgID) {

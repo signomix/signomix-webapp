@@ -200,16 +200,10 @@ const getSgxUserSettings = async function (devMode, apiUrl,userData) {
 const getSgxOrganizationData = async function (devMode, apiUrl,token) {
   if (devMode) {
     return {
-        uid: 'tester',
-        email: 'test@localhost',
-        name: 'Test name',
-        surname: 'Test surname',
-        type: 4,
-        role: '',
-        confirmed: true,
-        preferredLanguage: 'pl',
-        organization: 0,
-        createdAt: Date.now()
+        id: 0,
+        name: 'Default organization',
+        code: '',
+        description: ''
     }
   }
   const headers = new Headers()
@@ -223,8 +217,6 @@ const getSgxOrganizationData = async function (devMode, apiUrl,token) {
   } else {
     throw new Error(res.statusText);
   }
-
-
 }
 
 

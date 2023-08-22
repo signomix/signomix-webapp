@@ -1,13 +1,6 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h5>Ustawienia</h5><a href="/settings/edit" title="Edit"><i class="bi bi-gear h5 me-2 link-dark"></i></a>
+    <h5>{utils.getLabel('title',labels, session)}</h5><a href="/settings/edit" title="Edit"><i class="bi bi-gear h5 me-2 link-dark"></i></a>
 </div>
-<!--
-<div class="row">
-    <div class="col-12">
-        Not implemented yet
-    </div>
-</div>
--->
 {#await data}
 {:then data}
 <SettingsForm config={data} callback={saveSettings} readonly={true} />
@@ -17,6 +10,7 @@
     import { userSession } from '$lib/stores.js';
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
+    import { utils } from '$lib/utils.js';
 
     let session;
     userSession.subscribe(value => {
@@ -88,6 +82,13 @@
             console.error('Error:', error);
         });
         */
+    }
+
+    let labels = {
+        'title': {
+            'pl': "Ustawienia konta",
+            'en': "Account settings"
+        }
     }
 
 </script>

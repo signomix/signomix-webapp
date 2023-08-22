@@ -117,6 +117,7 @@
                 let user = await response.json();
                 session.user.organization = user.organization
                 session.user.type = user.type
+                session.user.language = user.preferredLanguage
                 userSession.set(session)
                 errorMessage = ''
             } else {

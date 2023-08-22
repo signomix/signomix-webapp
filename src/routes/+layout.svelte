@@ -53,7 +53,7 @@
                     {#if $userSession.user.organization!=0}
                     <li class="nav-item">
                         <a class="nav-link" class:active={false} on:click={toggleOrganization}>
-                            <span><i class="bi bi-building me-2"></i><span>Organizacja</span>
+                            <span><i class="bi bi-building me-2"></i><span>{utils.getLabel('organization',labels,session)}</span>
                         </a>
                     </li>
                     {#if organizationExpanded}
@@ -212,9 +212,10 @@
             try {
                 if (browser) {
                     if (window.localStorage.getItem('sgx.session.token') != null) {
-                        session.token = window.localStorage.getItem('sgx.session.token')
-                        session.logged = true
-                        session.authorized = true
+                        session.user.token = window.localStorage.getItem('sgx.session.token')
+                        session.user.logged = true
+                        session.user.authorized = true
+                        //TODO: get user data?
                     } else {
                         console.log("NO TOKEN")
                     }
@@ -240,14 +241,14 @@
 
     function setLanguagePl(event) {
         console.log("SET LANGUAGE PL")
-        session.language = 'pl';
+        session.user.language = 'pl';
         userSession.set(session);
         goto('/')
         return true
     }
     function setLanguageEn(event) {
         console.log("SET LANGUAGE EN")
-        session.language = 'en';
+        session.user.language = 'en';
         userSession.set(session);
         goto('/')
         return true
@@ -256,27 +257,20 @@
     poll(async function fetchData() {
         //try {
         // your implementation goes here
-        if (session.logged && session.authorized && session.login != '') {
+        if (session.user.logged && session.user.authorized && session.user.login != '') {
             let url = utils.getBackendUrl(location) + "/api/alert/"
             console.log("POLL")
-            await sgxdata.getNotifications(dev, url, 0, 0, session.token)
+            await sgxdata.getNotifications(dev, url, 0, 0, session.user.token)
                 .then((data) => {
                     alertCounter.value = data.value
                 }).catch((error) => {
                     console.log('POLL ERROR', error)
-                    session.authorized = false;
-                    session.logged = false;
-                    session.login = '';
+                    session.user.authorized = false;
+                    session.user.logged = false;
+                    session.user.login = '';
                     userSession.set(session);
                 })
         }
-        /* } catch (error) {
-            console.log('POLL ERROR2', error)
-            session.authorized = false;
-            session.logged = false;
-            session.login = '';
-            userSession.set(session);
-        } */
     }, dev ? 10000 : 60000);
 
     let labels = {
@@ -303,6 +297,10 @@
         'organizations': {
             'pl': "Organizacje",
             'en': "Organizations"
+        },
+        'orgsettings': {
+            'pl': "Dane",
+            'en': "Data"
         },
         'devices': {
             'pl': "Urządzenia",
@@ -347,6 +345,10 @@
         'api-unaviable': {
             'pl': "Brak dostępu do API serwisu",
             'en': "Service API unaviable"
+        },
+        'applications': {
+            'pl': 'Aplikacje',
+            'en': 'Applications'
         }
     }
 </script>
