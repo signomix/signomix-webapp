@@ -2,8 +2,10 @@
     responsive grid: https://svelte-grid.vercel.app/examples/responsive
     bindings: https://learn.svelte.dev/tutorial/text-inputs
 -->
-<div class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-2 border-bottom">
-    <h5>{utils.getLabel('title',labels,session)}</h5><a href="/dashboards/{data.id}" title="{utils.getLabel('view',labels,session)}"><i class="bi bi-eye h5 me-2 link-dark"></i></a>
+<div
+    class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-2 border-bottom">
+    <h5>{utils.getLabel('title',labels,session)}</h5><a href="/dashboards/{data.id}"
+        title="{utils.getLabel('view',labels,session)}"><i class="bi bi-eye h5 me-2 link-dark"></i></a>
 </div>
 <div class="container border-bottom pb-2">
     <form>
@@ -13,7 +15,7 @@
             </div>
             <div class="col-md-3">
                 <input disabled type="text" class="form-control" id="input-id" bind:value={data.id}>
-            </div> 
+            </div>
             <div class="col-md-1 col-form-label">
                 <label for="input-userid" class="form-label">{utils.getLabel('owner',labels,session)}</label>
             </div>
@@ -21,13 +23,26 @@
                 <input disabled type="text" class="form-control" id="input-userid" bind:value={data.userID}>
             </div>
             <div class="col-md-4">
-                <input type="checkbox" class="form-check-input me-2" id="input-shared" bind:checked={data.shared} on:change={onChange}>
+                <input type="checkbox" class="form-check-input me-2" id="input-shared" bind:checked={data.shared}
+                    on:change={onChange}>
                 <label class="form-check-label" for="input-shared">{utils.getLabel('shared',labels,session)}</label>
             </div>
         </div>
+        {#if data.organizationId!=0}
         <div class="row">
             <div class="col-md-1 col-form-label">
-                <label for="input-title" class="form-label">{utils.getLabel('widget_title',labels,session)}</label>
+                <label for="input-organization"
+                    class="form-label">{utils.getLabel('organization',labels,session)}</label>
+            </div>
+            <div class="col-md-11">
+                <input type="text" disabled class="form-control" id="input-organization"
+                    value={data.organizationName}>
+            </div>
+        </div>
+        {/if}
+        <div class="row">
+            <div class="col-md-1 col-form-label">
+                <label for="input-title" class="form-label">{utils.getLabel('dashboard_title',labels,session)}</label>
             </div>
             <div class="col-md-11">
                 <input type="text" class="form-control" id="input-name" bind:value={data.title}>
@@ -49,7 +64,8 @@
         </div>
         <div class="row">
             <div class="col-form-label">
-                <button class="btn btn-outline-secondary mt-1" on:click={goBack}>{utils.getLabel('cancel',labels,session)}</button>
+                <button class="btn btn-outline-secondary mt-1"
+                    on:click={goBack}>{utils.getLabel('cancel',labels,session)}</button>
                 <button class="btn btn-outline-primary me-4 mt-1" on:click={saveDashboard} disabled={modified==false}><i
                         class="bi bi-save me-2"></i> {utils.getLabel('save',labels,session)}
                 </button>
@@ -98,6 +114,7 @@
     import { base } from '$app/paths'
     import { goto, afterNavigate } from '$app/navigation'
     import { onMount } from 'svelte';
+    import { sgxdata } from '$lib/sgxdata.js';
 
     import WidgetConfig from '$lib/components/WidgetConfig.svelte';
     import WidgetForm from '$lib/components/WidgetForm.svelte';
@@ -111,14 +128,14 @@
         session = value;
     });
     onMount(() => {
-        if(!session.user.logged || !session.user.authorized || session.user.login==''){
+        if (!session.user.logged || !session.user.authorized || session.user.login == '') {
             console.log('redirect to login');
             goto('/login');
-        }else{
-            console.log('settings',data);
+        } else {
+            console.log('settings', data);
         }
     });
-    
+
     let previousPage = base;
     afterNavigate(({ from }) => {
         previousPage = from?.url.pathname || previousPage
@@ -130,6 +147,7 @@
 
     let currentConfigureIndex = -1;
     let modified = false;
+    let defaultOrganizationId = 0
 
     const cols = [
         [1500, 10],
@@ -142,7 +160,7 @@
     }
     const COLS = WIDTH > 500 ? 10 : 1;
     //console.log("screen width: ", WIDTH, ", cols size: ", COLS);
-    
+
 
     const id = () => "_" + Math.random().toString(36).substr(2, 9);
 
@@ -245,8 +263,8 @@
             }
         }).catch((error) => {
             errorMessage = error.message
-            if (errorMessage == utils.getLabel('fetcherror',labels,session) && location.protocol.toLowerCase() == 'https') {
-                errorMessage = errorMessage + ' '+utils.getLabel('fetcherror_message',labels,session)
+            if (errorMessage == utils.getLabel('fetcherror', labels, session) && location.protocol.toLowerCase() == 'https') {
+                errorMessage = errorMessage + ' ' + utils.getLabel('fetcherror_message', labels, session)
             }
             console.log(error)
         });
@@ -342,48 +360,69 @@
         modified = true;
     }
 
-    let labels={
+    async function getOrganization(id) {
+        let apiUrl = utils.getBackendUrl(location) + '/api/core/organization/' + id
+        await sgxdata.getOrganization(dev, apiUrl, session.user.token)
+        .then((response) => {
+            if (response.status == 200) {
+                return response.data.name
+            }
+        }).catch((error) => {
+            console.log(error)
+        });
+        return ''
+    }
+
+    let labels = {
         'title': {
             'pl': "Konfiguracja pulpitu",
             'en': "Dashboard configuration"
         },
-        'view':{
+        'view': {
             'pl': "Pokaż pulpit",
             'en': "Show dashboard"
         },
-        'id':{
+        'id': {
             'pl': "Identyfikator",
             'en': "Identifier"
         },
-        'owner':{
+        'owner': {
             'pl': "Właściciel",
             'en': "Owner"
         },
-        'shared':{
+        'shared': {
             'pl': "Udostępniony",
             'en': "Shared"
         },
-        'widget_title':{
+        'dashboard_title': {
+            'pl': "Tytuł",
+            'en': "Title"
+        },
+        'organization': {
+            'pl': "Organizacja",
+            'en': "Organization"
+        },
+        'widget_title': {
             'pl': "Tytuł kontrolki",
             'en': "Widget title"
         },
-        'widget_team':{
+        'widget_team': {
             'pl': "Zespół",
             'en': "Team"
         },
-        'widget_admins':{
+        'widget_admins': {
             'pl': "Administratorzy",
             'en': "Administrators"
         },
-        'cancel':{
+        'cancel': {
             'pl': "Anuluj",
             'en': "Cancel"
         },
-        'save':{
+        'save': {
             'pl': "Zapisz",
             'en': "Save"
         },
-        'remove':{
+        'remove': {
             'pl': "Usuń",
             'en': "Remove"
         },
@@ -395,8 +434,8 @@
             'pl': " Możliwa przyczyna: sertyfikaty self signed nie są obsługiwane.",
             'en': " Possible cause: self signed certificates are not supported."
         }
-        }
-        
+    }
+
 
 </script>
 <style>

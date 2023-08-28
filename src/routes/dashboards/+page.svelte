@@ -104,7 +104,7 @@
         } else {
             let headers = new Headers();
             let url = utils.getBackendUrl(location) + "/api/core/v2/dashboards"
-            url = url + '?offset=' + offset + '&limit=' + limit
+            url = url + '?offset=' + offset + '&limit=' + limit+'&shared=true'
             headers.set('Authentication', session.user.token);
             await fetch(url, { headers: headers })
                 .then((response) => {
