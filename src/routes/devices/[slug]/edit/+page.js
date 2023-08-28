@@ -10,31 +10,62 @@ export const load = async ({ params, url }) => {
     session = value;
   });
 
-  const newDashboard = {
-    id: params.slug,
+  const newDevice = {
+    template: null,
+    name: "",
+    applicationEUI: null,
+    applicationID: null,
+    key: "",
     userID: session.user.login,
-    title: 'My Dasboard',
-    team: '',
-    administrators: '',
-    shared: false,  // true if shared with other users
-    items: [],
-    widgets: [],
-    createdAt: new Date(),
-    updatedAt: new Date()
+    type: "GENERIC",
+    team: ",",
+    channels: {
+    },
+    code: "",
+    encoder: "",
+    description: "                  ",
+    lastSeen: -1,
+    transmissionInterval: 0,
+    lastFrame: -1,
+    checkFrames: false,
+    pattern: null,
+    downlink: null,
+    commandScript: null,
+    groups: ",",
+    alertStatus: 0,
+    deviceID: "",
+    active: true,
+    project: "",
+    latitude: 0.0,
+    longitude: 0.0,
+    altitude: 0.0,
+    state: 0.0,
+    retentionTime: 0,
+    administrators: ",",
+    configuration: "",
+    orgApplicationId: 0,
+    applicationConfig: null,
+    organizationId: 0,
+    writable: true,
+    virtual: false,
+    eui: "new",
+    channelsAsString: "",
+    codeUnescaped: "",
+    encoderUnescaped: "",
+    configurationMap: {}
   }
   const getSelectedConfig = async (serviceUrl) => {
     let config = null
     if (params.slug == 'new') {
-      config = newDashboard
+      config = newDevice
     } else {
       if (dev) {
         if (browser) {
-          console.log(window.localStorage.getItem(params.slug))
-          config = JSON.parse(window.localStorage.getItem(params.slug))
+          config = newDevice
         }
       } else {
         try {
-          let endpoint = serviceUrl + "/api/core/v2/dashboards/" + params.slug
+          let endpoint = serviceUrl + "/api/core/device/" + params.slug
           let headers = new Headers();
           headers.set('Authentication', session.user.token);
           await fetch(endpoint, { headers: headers }).then(response => {
@@ -60,25 +91,5 @@ export const load = async ({ params, url }) => {
     return config
   }
 
-  async function transform() {
-    let cfg = await getSelectedConfig(utils.getBackendUrl(url))
-    console.log("TRANSFORM " + JSON.stringify(cfg))
-    for (let i = 0; i < cfg.items.length; i++) {
-      console.log(cfg.items[i])
-      let item = cfg.items[i]
-      if (item['1'] !== null) {
-        item['1'] = item['_el1']
-        delete item['_el1']
-      }
-      if (item['10'] !== null) {
-        item['10'] = item['_el10']
-        delete item['_el10']
-      }
-    }
-    console.log(cfg)
-    return cfg
-  }
-
-  //return await getSelectedConfig(utils.getBackendUrl(url))
-  return await transform()
+  return await getSelectedConfig(utils.getBackendUrl(url))
 }

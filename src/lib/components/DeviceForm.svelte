@@ -289,7 +289,7 @@
     {#if !readonly}
     <div class="row">
         <div class="col-form-label">
-            <a href="/settings" class="btn btn-outline-secondary mt-1" on:click={handleCancel}>Cancel</a>
+            <a href="/devices" class="btn btn-outline-secondary mt-1" on:click|preventDefault={handleCancel}>Cancel</a>
             <button class="btn btn-outline-primary me-4 mt-1" on:click={handleSave}>Save</button>
         </div>
     </div>
