@@ -206,7 +206,7 @@
     let getApplications = function () {
         const headers = new Headers()
         let method = 'GET'
-        let url = utils.getBackendUrl(location) + "/api/application/"
+        let url = utils.getBackendUrl(location) + "/api/core/application/"
         headers.set('Authentication', session.user.token);
         let apps = fetch(
             url,

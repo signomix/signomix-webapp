@@ -98,7 +98,7 @@
 
     async function getUser() {
         if (!dev) {
-            const url = utils.getBackendUrl(location) + '/api/user/' + session.user.login
+            const url = utils.getBackendUrl(location) + '/api/core/user/' + session.user.login
             const headers = new Headers()
             headers.set('Authentication', session.user.token);
 
