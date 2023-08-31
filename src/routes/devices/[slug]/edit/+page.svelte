@@ -1,7 +1,3 @@
-<!--
-    responsive grid: https://svelte-grid.vercel.app/examples/responsive
-    bindings: https://learn.svelte.dev/tutorial/text-inputs
--->
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-2 border-bottom">
     <h5>Konfiguracja urządzenia</h5>

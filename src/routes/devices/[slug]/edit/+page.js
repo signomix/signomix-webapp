@@ -24,7 +24,7 @@ export const load = async ({ params, url }) => {
     code: "",
     encoder: "",
     description: "                  ",
-    lastSeen: -1,
+    lastSeen: 1693516148,
     transmissionInterval: 0,
     lastFrame: -1,
     checkFrames: false,

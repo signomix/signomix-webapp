@@ -49,6 +49,28 @@ export const utils = {
     //
     return dateString + ':00' + timeOffsetStr
   },
+  getLocalDateFormatFromTimestamp(timestamp) {
+    var dt = new Date(timestamp),
+      current_date = dt.getDate(),
+      current_month = dt.getMonth() + 1,
+      current_year = dt.getFullYear(),
+      current_hrs = dt.getHours(),
+      current_mins = dt.getMinutes(),
+      current_secs = dt.getSeconds(),
+      current_datetime;
+
+    // Add 0 before date, month, hrs, mins or secs if they are less than 0
+    current_date = current_date < 10 ? '0' + current_date : current_date;
+    current_month = current_month < 10 ? '0' + current_month : current_month;
+    current_hrs = current_hrs < 10 ? '0' + current_hrs : current_hrs;
+    current_mins = current_mins < 10 ? '0' + current_mins : current_mins;
+    current_secs = current_secs < 10 ? '0' + current_secs : current_secs;
+
+    // Current datetime
+    // String such as 2016-07-16T19:20:30
+    current_datetime = current_year + '-' + current_month + '-' + current_date + 'T' + current_hrs + ':' + current_mins + ':' + current_secs;
+    return current_datetime;
+  },
   getText: function (name, language, texts) {
     return texts[name][language]
   },
@@ -60,9 +82,9 @@ export const utils = {
    * @returns text of label name for given language
    */
   getLabel: function (name, labels, session) {
-    try{
+    try {
       return labels[name][session.user.language]
-    }catch(err){
+    } catch (err) {
       console.log('getLabel error: ' + err)
       return name
     }
