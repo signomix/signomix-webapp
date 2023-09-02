@@ -1,6 +1,9 @@
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h5>{data.name}</h5><a href="/devices/{data.eui}/edit">Configure</a>
+    <h5>{data.name}</h5>
+    {#if (utils.isObjectAdmin(session, data.userID))}
+    <a href="/devices/{data.eui}/edit">Configure</a>
+    {/if}
 </div>
 {#await data}
 {:then data}
@@ -29,6 +32,7 @@
             goto('/login');
         }else{
             console.log('settings',data);
+            console.log('session',session);
         }
     });
 

@@ -33,79 +33,77 @@
         goto("/devices");
     }
 
-    function saveSettings(config){
-        //TODO: save settings
+    function saveSettings(config, callback) {
+        if (config != null) {
+            let cfg = config
+            cfg.channels = "{}"
+            cfg.applicationConfig = "{}"
+            sendForm(cfg, true, callback)
+        }
         goBack()
     }
 
-    function saveDashboard() {
-        data.items = gridHelp.normalize(data.items, COLS);
-        console.log(data)
-        if (data.version == 1) {
-            if (!confirm('Zapisana konfiguracja pulpitu jest w wersji 1.0. \nPo zaktualizowaniu do wersji 2 nie będzie możliwe wyświetlenie go w starszej wersji aplikacji?\n Zapisać?')) {
-                return;
+    function sendForm(data, silent, callback) {
+        try {
+            let result = ''
+            const headers = new Headers()
+            let method = 'POST'
+            let url = utils.getBackendUrl(location) + "/api/core/device/"
+            if (!(data.eui === 'new' || data.eui == null || data.eui == '' || data.eui == undefined)) {
+                url = url + data.eui
+                method = 'PUT'
             }
+            headers.set('Authentication', session.user.token);
+            headers.set('Content-Type', 'application/json');
+            let response = fetch(
+                url,
+                { method: method, mode: 'cors', headers: headers, body: JSON.stringify(data) }
+            )
+                .then((response) => {
+                    if (response.status == 200) {
+                        goto('/devices')
+                        return ''
+                    } else if (response.status == 401 || response.status == 403 || response.status == 404) {
+                        utils.setAuthorized(session, false)
+                    } else if (response.status == 400) {
+                    } else {
+                        if (!silent) {
+                            alert(
+                                utils.getMessage(utils.FETCH_STATUS)
+                                    .replace('%1', response.status)
+                                    .replace('%2', response.statusText)
+                            )
+                        }
+                    }
+                    return response.text()
+                })
+                .then((text) => {
+                    if (text != '') {
+                        callback(text)
+                    }
+                })
+                .catch((error) => {
+                    if (!silent) {
+                        errorMessage = error.message
+                        if (errorMessage == 'Failed to fetch' && location.protocol.toLowerCase() == 'https') {
+                            errorMessage = errorMessage + ' Możliwa przyczyna: self signed nie są obsługiwane.'
+                        }
+                    }
+                    if(error.message=='Failed to fetch'){
+                        error.message = utils.getLabel('failToFetch',labels,session)
+                    }
+                    callback(error.message)
+                });
+        } catch (error) {
+            callback(error.message)
         }
-        if (dev) {
-            if (browser) {
-                if (data.id == 'new') {
-                    data.id = new Date().getTime();
-                }
-                data.updatedAt = new Date();
-                window.localStorage.setItem(data.id, JSON.stringify(transformBack(data)));
-            }
-        } else {
-            sendForm(data);
-        }
-        modified = false;
     }
 
-
-    function sendForm(data) {
-        data = transformBack(data)
-        const headers = new Headers()
-        let method = 'POST'
-        let url = utils.getBackendUrl(location) + "/api/core/device/"
-        if (!(data.id === 'new' || data.id == null || data.id == '' || data.id == undefined)) {
-            url = url + data.id
-            method = 'PUT'
+    let labels = {
+        'failToFetch': {
+            'pl': "Problem z połączeniem internetowym",
+            'en': "Internet connection problem"
         }
-        headers.set('Authentication', session.user.token);
-        headers.set('Content-Type', 'application/json');
-        let response = fetch(
-            url,
-            { method: method, mode: 'cors', headers: headers, body: JSON.stringify(data) }
-        ).then((response) => {
-            if (response.status == 200) {
-                errorMessage = ''
-                goto('/dashboards')
-            } else if (response.status == 401 || response.status == 403 || response.status == 404) {
-                utils.setAuthorized(session, false)
-            } else {
-                alert(
-                    utils.getMessage(utils.FETCH_STATUS)
-                        .replace('%1', response.status)
-                        .replace('%2', response.statusText)
-                )
-            }
-        }).catch((error) => {
-            errorMessage = error.message
-            if (errorMessage == 'Failed to fetch' && location.protocol.toLowerCase() == 'https') {
-                errorMessage = errorMessage + ' Możliwa przyczyna: self signed nie są obsługiwane.'
-            }
-            console.log(error)
-        });
-    }
-
-
-    function setCurrentConfigureIndex(idx) {
-        currentConfigureIndex = idx;
-        console.log('New currentConfigureIndex: ', currentConfigureIndex);
-    }
-
-    function widgetFormCallback(idx, cfg) {
-        console.log('testCallback ', idx, cfg);
-        modified = true
     }
 
 </script>

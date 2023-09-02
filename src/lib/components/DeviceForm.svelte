@@ -21,10 +21,11 @@
         </div>
         <div class="col-md-10">
             <select class="form-select" id="input-type" bind:value={config.type} disabled={readonly}>
+                <option value="GENERIC">Direct</option>
                 <option value="TTN">TTN device</option>
-                <option value="CHIRPSTACK">ChirpStack device</option>
+                <option value="LORA">ChirpStack device</option>
                 <option value="VIRTUAL">Virtual device</option>
-                <option value="GENERIC">Generic</option>
+                <option value="EXTERNAL">EXTERNAL</option>
             </select>
         </div>
     </div>
@@ -118,8 +119,7 @@
             <label for="input-interval" class="form-label">Transmission interval</label>
         </div>
         <div class="col-md-9">
-            <input type="number" class="form-control" id="input-interval" bind:value={config.transmissionInterval}
-                readonly={readonly}>
+            <input type="number" class="form-control" id="input-interval" bind:value={interval} readonly={readonly}>
         </div>
     </div>
     <div class="row">
@@ -127,7 +127,7 @@
             <label for="input-interval" class="form-label">Description</label>
         </div>
         <div class="col-md-9">
-            <textarea class="form-control mb-1" id="input-description" rows="3" value="{config.description}"
+            <textarea class="form-control mb-1" id="input-description" rows="3" bind:value="{config.description}"
                 readonly={readonly} />
         </div>
     </div>
@@ -136,7 +136,7 @@
             <label for="input-decoder" class="form-label">Payload decoder script</label>
         </div>
         <div class="col-md-9">
-            <textarea class="form-control mb-1" id="input-decoder" rows="3" value="{config.encoder}"
+            <textarea class="form-control mb-1" id="input-decoder" rows="3" bind:value="{config.encoder}"
                 readonly={readonly} />
         </div>
     </div>
@@ -145,7 +145,7 @@
             <label for="input-processor" class="form-label">Data processor script</label>
         </div>
         <div class="col-md-9">
-            <textarea class="form-control mb-1" id="input-processor" rows="3" value="{config.code}"
+            <textarea class="form-control mb-1" id="input-processor" rows="3" bind:value="{config.code}"
                 readonly={readonly} />
         </div>
     </div>
@@ -154,19 +154,21 @@
             <label for="input-config" class="form-label">Configuration</label>
         </div>
         <div class="col-md-9">
-            <textarea class="form-control mb-1" id="input-config" rows="3" value="{config.configuration}"
+            <textarea class="form-control mb-1" id="input-config" rows="3" bind:value="{config.configuration}"
                 readonly={readonly} />
         </div>
     </div>
+    {#if config.organizationId>0}
     <div class="row">
         <div class="col-md-2 col-form-label">
             <label for="input-application" class="form-label">Application ID</label>
         </div>
         <div class="col-md-9">
-            <input type="number" class="form-control" id="input-application" bind:value={config.applicationID}
+            <input type="number" class="form-control" id="input-application" bind:value={config.orgApplicationId}
                 readonly={readonly}>
         </div>
     </div>
+    {/if}
     <div class="row">
         <div class="col-md-2 col-form-label">
             <label for="input-status" class="form-label">Status</label>
@@ -180,7 +182,8 @@
             <label for="input-lastseen" class="form-label">Last seen</label>
         </div>
         <div class="col-md-9">
-            <input disabled type="datetime-local" class="form-control" id="input-lastseen" value={utils.getLocalDateFormatFromTimestamp(config.lastSeen)}>
+            <input disabled type="datetime-local" class="form-control" id="input-lastseen"
+                value={utils.getLocalDateFormatFromTimestamp(config.lastSeen)}>
         </div>
     </div>
     {#if !readonly}
@@ -200,14 +203,25 @@
     export let readonly
 
     console.log('config', config);
-
-
+    let interval = config.transmissionInterval / 60000
     function handleSave(event) {
-        callback(config)
+        config.transmissionInterval = interval * 60000
+        callback(config, handleCallbackResponse)
     }
     function handleCancel(event) {
         callback(null)
     }
-
-    
+    async function handleCallbackResponse(promise) {
+        if (promise instanceof Promise || promise instanceof Response) {
+            Promise.resolve(promise).then(response => {
+                response.json()
+            }).then(text => {
+                alert(text)
+            }).catch(error => {
+                alert('handleCallbackResponse1 ' + error.message)
+            })
+        } else {
+            alert('handleCallbackResponse2 ' + promise)
+        }
+    }
 </script>

@@ -104,9 +104,96 @@ export const utils = {
     }
 
   },
+  isObjectAdmin: function (session, objectOwner) {
+    if (session.user.organization == 0) {
+      return session.user.type == 1 || session.user.login == objectOwner
+    } else {
+      return session.user.type == 9 || session.user.type == 1 || session.user.type == 0
+    }
+  },
+  getUserType: function (name) {
+    switch (name) {
+      case 'user': // default type, standard user
+        return 0
+      case 'owner': // owner, service admin
+        return 1
+      case 'application':
+        return 2
+      case 'demo':
+        return 3
+      case 'free':  // free account
+        return 4
+      case 'primary': // primary account
+        return 5
+      case 'readonly':
+        return 6
+      case 'extended':
+        return 7
+      case 'superuser': // superuser
+        return 8
+      case 'admin': // organization admin
+        return 9
+      case 'anonymous':
+        return 10
+      case 'subscriber':
+        return 100
+      case 'any':
+        return 1000
+      default:
+        return -1
+    }
+  },
+  getUserTypeName: function (type) {
+    switch (type) {
+      case 0:
+        return 'user'
+      case 1:
+        return 'owner'
+      case 2:
+        return 'application'
+      case 3:
+        return 'demo'
+      case 4:
+        return 'free'
+      case 5:
+        return 'primary'
+      case 6:
+        return 'readonly'
+      case 7:
+        return 'extended'
+      case 8:
+        return 'superuser'
+      case 9:
+        return 'admin'
+      case 10:
+        return 'anonymous'
+      case 100:
+        return 'subscriber'
+      case 1000:
+        return 'any'
+      default:
+        return 'unknown'
+    }
+  },
   AUTHORIZATION_FAILED: 0,
   AUTHENTICATION_FAILED: 1,
   FETCH: 3,
   FETCH_STATUS: 4
 
 }
+
+/*
+public static final int USER = 0; // default type, standard user
+    public static final int OWNER = 1; // owner, service admin
+    public static final int APPLICATION = 2; // application
+    public static final int DEMO = 3;
+    public static final int FREE = 4; // registered, free account
+    public static final int PRIMARY = 5; // primary account
+    public static final int READONLY = 6;
+    public static final int EXTENDED = 7; // students, scientists, nonprofits
+    public static final int SUPERUSER = 8;
+    public static final int ADMIN = 9; // organization admin
+    public static final int ANONYMOUS = 10;
+    public static final int SUBSCRIBER = 100;
+    public static final int ANY = 1000;
+    */
