@@ -16,20 +16,23 @@
                 <thead class="table-light">
                     <tr>
                         <th scope="col" class="col-1">#</th>
-                        <th scope="col" class="col-1"></th>
                         <th scope="col" class="col-2">EUI</th>
                         <th scope="col" class="col-6">{utils.getLabel('name',labels,session)}</th>
                         <th scope="col" class="col-2">{utils.getLabel('type',labels,session)}</th>
+                        <th scope="col" class="col-1">{utils.getLabel('actions',labels,session)}</th>
                     </tr>
                 </thead>
                 <tbody>
                     {#each devices as config, index}
                     <tr>
                         <th scope="row" class="col-1">{offset+1+index}</th>
-                        <td class="col-1">&nbsp;</td>
                         <td class="col-2"><a href="/devices/{config.eui}">{config.eui}</a></td>
                         <td class="col-6">{config.name}</td>
                         <td class="col-2">{config.type}</td>
+                        <td class="col-1">
+                            <a href="/devices/{config.eui}/edit" title={utils.getLabel('configure',labels,session)}><i
+                                class="bi bi-gear h5 me-2 link-dark"></i></a>
+                        </td>
                     </tr>
                     {/each}
                 </tbody>
@@ -172,6 +175,14 @@
         'add': {
             'pl': "Dodaj",
             'en': "Add"
+        },
+        'actions': {
+            'pl': "Akcje",
+            'en': "Actions"
+        },
+        'configure': {
+            'pl': "Konfiguruj",
+            'en': "Configure"
         }
     }
 

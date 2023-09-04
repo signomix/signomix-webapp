@@ -206,11 +206,9 @@
     let getApplications = function () {
         const headers = new Headers()
         let method = 'GET'
-        let url = utils.getBackendUrl(location) + "/api/core/application/"
+        let url = utils.getBackendUrl(location) + "/api/core/application?offset=0&limit=1000"
         headers.set('Authentication', session.user.token);
-        let apps = fetch(
-            url,
-            { method: method, mode: 'cors', headers: headers }
+        let apps = fetch(url,{ headers: headers }
         ).then((response) => {
             if (response.status == 200) {
                 errorMessage = ''

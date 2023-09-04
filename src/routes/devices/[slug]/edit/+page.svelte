@@ -1,7 +1,8 @@
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-2 border-bottom">
     <h5>Konfiguracja urządzenia</h5>
-    {#if data.eui!='new'}<a href="/devices/{data.eui}">Show</a>{/if}
+    {#if data.eui!='new'}<a href="/devices/{data.eui}"
+    title="{utils.getLabel('view',labels,session)}"><i class="bi bi-eye h5 me-2 link-dark"></i></a>{/if}
 </div>
 {#await data}
 {:then data}
@@ -103,6 +104,10 @@
         'failToFetch': {
             'pl': "Problem z połączeniem internetowym",
             'en': "Internet connection problem"
+        },
+        'view': {
+            'pl': "Pokaż",
+            'en': "View"
         }
     }
 

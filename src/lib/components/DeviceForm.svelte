@@ -1,7 +1,7 @@
 <form class="mb-2">
     <div class="row">
         <div class="col-md-1 col-form-label">
-            <label for="input-uid" class="form-label">EUI</label>
+            <label for="input-uid" class="form-label">{utils.getLabel('eui',labels,session)}</label>
         </div>
         <div class="col-md-10">
             <input disabled type="text" class="form-control" id="input-uid" bind:value={config.eui}>
@@ -9,7 +9,7 @@
     </div>
     <div class="row">
         <div class="col-md-1 col-form-label">
-            <label for="input-name" class="form-label">Name</label>
+            <label for="input-name" class="form-label">{utils.getLabel('name',labels,session)}</label>
         </div>
         <div class="col-md-10">
             <input type="text" class="form-control" id="input-name" bind:value={config.name} disabled={readonly}>
@@ -17,7 +17,7 @@
     </div>
     <div class="row">
         <div class="col-md-1 col-form-label">
-            <label for="input-type" class="form-label">Type</label>
+            <label for="input-type" class="form-label">{utils.getLabel('type',labels,session)}</label>
         </div>
         <div class="col-md-10">
             <select class="form-select" id="input-type" bind:value={config.type} disabled={readonly}>
@@ -31,7 +31,7 @@
     </div>
     <div class="row">
         <div class="col-md-1 col-form-label">
-            <label for="input-owner" class="form-label">Owner</label>
+            <label for="input-owner" class="form-label">{utils.getLabel('owner',labels,session)}</label>
         </div>
         <div class="col-md-10">
             <input type="text" class="form-control" id="input-owner" bind:value={config.userID} readonly={readonly}>
@@ -39,7 +39,7 @@
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-team" class="form-label">Team</label>
+            <label for="input-team" class="form-label">{utils.getLabel('team',labels,session)}</label>
         </div>
         <div class="col-md-9">
             <input type="text" class="form-control" id="input-team" bind:value={config.team} readonly={readonly}>
@@ -47,7 +47,7 @@
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-admins" class="form-label">Administrators</label>
+            <label for="input-admins" class="form-label">{utils.getLabel('administrators',labels,session)}</label>
         </div>
         <div class="col-md-9">
             <input type="text" class="form-control" id="input-admins" bind:value={config.administrators}
@@ -56,7 +56,7 @@
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-key" class="form-label">Key</label>
+            <label for="input-key" class="form-label">{utils.getLabel('key',labels,session)}</label>
         </div>
         <div class="col-md-9">
             <input type="text" class="form-control" id="input-key" bind:value={config.key} readonly={readonly}>
@@ -64,7 +64,7 @@
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-channels" class="form-label">Measurements</label>
+            <label for="input-channels" class="form-label">{utils.getLabel('measurements',labels,session)}</label>
         </div>
         <div class="col-md-9">
             <input type="text" class="form-control" id="input-channels" bind:value={config.channelsAsString}
@@ -73,7 +73,7 @@
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-groups" class="form-label">Groups</label>
+            <label for="input-groups" class="form-label">{utils.getLabel('groups',labels,session)}</label>
         </div>
         <div class="col-md-9">
             <input type="text" class="form-control" id="input-groups" bind:value={config.groups} readonly={readonly}>
@@ -81,7 +81,7 @@
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-project" class="form-label">Project</label>
+            <label for="input-project" class="form-label">{utils.getLabel('project',labels,session)}</label>
         </div>
         <div class="col-md-9">
             <input type="text" class="form-control" id="input-project" bind:value={config.project} readonly={readonly}>
@@ -89,34 +89,34 @@
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-latitude" class="form-label">Latitude</label>
+            <label for="input-latitude" class="form-label">{utils.getLabel('latitude',labels,session)}</label>
         </div>
         <div class="col-md-9">
-            <input type="text" class="form-control" id="input-latitude" bind:value={config.latitude}
+            <input type="number" class="form-control" id="input-latitude" bind:value={config.latitude}
                 readonly={readonly}>
         </div>
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-longitude" class="form-label">Longitude</label>
+            <label for="input-longitude" class="form-label">{utils.getLabel('longitude',labels,session)}</label>
         </div>
         <div class="col-md-9">
-            <input type="text" class="form-control" id="input-longitude" bind:value={config.longitude}
+            <input type="number" class="form-control" id="input-longitude" bind:value={config.longitude}
                 readonly={readonly}>
         </div>
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-altitude" class="form-label">Altitude</label>
+            <label for="input-altitude" class="form-label">{utils.getLabel('altitude',labels,session)}</label>
         </div>
         <div class="col-md-9">
-            <input type="text" class="form-control" id="input-altitude" bind:value={config.altitude}
+            <input type="number" class="form-control" id="input-altitude" bind:value={config.altitude}
                 readonly={readonly}>
         </div>
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-interval" class="form-label">Transmission interval</label>
+            <label for="input-interval" class="form-label">{utils.getLabel('interval',labels,session)}</label>
         </div>
         <div class="col-md-9">
             <input type="number" class="form-control" id="input-interval" bind:value={interval} readonly={readonly}>
@@ -124,7 +124,7 @@
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-interval" class="form-label">Description</label>
+            <label for="input-interval" class="form-label">{utils.getLabel('description',labels,session)}</label>
         </div>
         <div class="col-md-9">
             <textarea class="form-control mb-1" id="input-description" rows="3" bind:value="{config.description}"
@@ -133,25 +133,25 @@
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-decoder" class="form-label">Payload decoder script</label>
+            <label for="input-decoder" class="form-label">{utils.getLabel('decoder',labels,session)}</label>
         </div>
         <div class="col-md-9">
-            <textarea class="form-control mb-1" id="input-decoder" rows="3" bind:value="{config.encoder}"
+            <textarea class="form-control mb-1" id="input-decoder" rows="3" bind:value="{decoderScript}"
                 readonly={readonly} />
         </div>
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-processor" class="form-label">Data processor script</label>
+            <label for="input-processor" class="form-label">{utils.getLabel('processor',labels,session)}</label>
         </div>
         <div class="col-md-9">
-            <textarea class="form-control mb-1" id="input-processor" rows="3" bind:value="{config.code}"
+            <textarea class="form-control mb-1" id="input-processor" rows="3" bind:value="{processorScript}"
                 readonly={readonly} />
         </div>
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-config" class="form-label">Configuration</label>
+            <label for="input-config" class="form-label">{utils.getLabel('configuration',labels,session)}</label>
         </div>
         <div class="col-md-9">
             <textarea class="form-control mb-1" id="input-config" rows="3" bind:value="{config.configuration}"
@@ -161,7 +161,7 @@
     {#if config.organizationId>0}
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-application" class="form-label">Application ID</label>
+            <label for="input-application" class="form-label">{utils.getLabel('application',labels,session)}</label>
         </div>
         <div class="col-md-9">
             <input type="number" class="form-control" id="input-application" bind:value={config.orgApplicationId}
@@ -171,7 +171,7 @@
     {/if}
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-status" class="form-label">Status</label>
+            <label for="input-status" class="form-label">{utils.getLabel('status',labels,session)}</label>
         </div>
         <div class="col-md-9">
             <input disabled type="number" class="form-control" id="input-status" bind:value={config.state}>
@@ -179,7 +179,7 @@
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-lastseen" class="form-label">Last seen</label>
+            <label for="input-lastseen" class="form-label">{utils.getLabel('seen',labels,session)}</label>
         </div>
         <div class="col-md-9">
             <input disabled type="datetime-local" class="form-control" id="input-lastseen"
@@ -189,39 +189,186 @@
     {#if !readonly}
     <div class="row">
         <div class="col-form-label">
-            <a href="/devices" class="btn btn-outline-secondary mt-1" on:click|preventDefault={handleCancel}>Cancel</a>
-            <button class="btn btn-outline-primary me-4 mt-1" on:click={handleSave}>Save</button>
+            <a href="/devices" class="btn btn-outline-secondary mt-1"
+                on:click|preventDefault={handleCancel}>{utils.getLabel('cancel',labels,session)}</a>
+            <button class="btn btn-outline-primary me-4 mt-1"
+                on:click={handleSave}>{utils.getLabel('save',labels,session)}</button>
         </div>
     </div>
     {/if}
 </form>
 <script>
     import { utils } from '$lib/utils.js';
+    import { userSession } from '$lib/stores.js';
 
     export let config
     export let callback
     export let readonly
 
-    console.log('config', config);
+    let session;
+    userSession.subscribe(value => {
+        session = value;
+    });
+
     let interval = config.transmissionInterval / 60000
+    let decoderScript = unescape(config.encoder)
+    let processorScript = unescape(config.code)
+
     function handleSave(event) {
+
         config.transmissionInterval = interval * 60000
+        config.encoder = decoderScript.trim()
+        config.code = processorScript.trim()
+        config.configuration = config.configuration.trim()
+
+        let errMessage = validate()
+        if (errMessage != '') {
+            alert(utils.getLabel(errMessage, labels, session))
+            return
+        }
         callback(config, handleCallbackResponse)
     }
     function handleCancel(event) {
         callback(null)
     }
+    function validate() {
+        if (config.configuration != '') {
+            try {
+                JSON.parse(config.configuration)
+            } catch (error) {
+                return 'error.configuration'
+            }
+        }
+        return ''
+    }
     async function handleCallbackResponse(promise) {
         if (promise instanceof Promise || promise instanceof Response) {
             Promise.resolve(promise).then(response => {
                 response.json()
-            }).then(text => {
+            }).then(data => {
+                let errTxt = null
+                let text = data.toLowerCase()
+                if (text.contains('constraint') && text.contains('organizationapp')) {
+                    errTxt = 'error.applicationid'
+                }
+                if (errTxt != null) {
+                    alert(utils.getLabel(errTxt, labels, session))
+                } else {
+                    alert(data)
+                }
                 alert(text)
             }).catch(error => {
-                alert('handleCallbackResponse1 ' + error.message)
+                alert(utils.getLabel('error', labels, session) + ': ' + error.message)
             })
         } else {
-            alert('handleCallbackResponse2 ' + promise)
+            alert(utils.getLabel('error', labels, session) + ': ' + promise)
+        }
+    }
+
+    let labels = {
+        'eui': {
+            'pl': "EUI",
+            'en': "EUI"
+        },
+        'name': {
+            'pl': "Nazwa",
+            'en': "Name"
+        },
+        'type': {
+            'pl': "Typ",
+            'en': "Type"
+        },
+        'owner': {
+            'pl': "Właściciel",
+            'en': "Owner"
+        },
+        'team': {
+            'pl': "Zespół",
+            'en': "Team"
+        },
+        'administrators': {
+            'pl': "Administratorzy",
+            'en': "Administrators"
+        },
+        'key': {
+            'pl': "Klucz autoryzacyjny",
+            'en': "Authorization key"
+        },
+        'measurements': {
+            'pl': "Pomiary",
+            'en': "Measurements"
+        },
+        'groups': {
+            'pl': "Grupy",
+            'en': "Groups"
+        },
+        'project': {
+            'pl': "Projekt",
+            'en': "Project"
+        },
+        'latitude': {
+            'pl': "Szerokość geograficzna",
+            'en': "Latitude"
+        },
+        'longitude': {
+            'pl': "Długość geograficzna",
+            'en': "Longitude"
+        },
+        'altitude': {
+            'pl': "Wysokość",
+            'en': "Altitude"
+        },
+        'interval': {
+            'pl': "Interwał transmisji (min)",
+            'en': "Transmission interval (min)"
+        },
+        'description': {
+            'pl': "Opis",
+            'en': "Description"
+        },
+        'decoder': {
+            'pl': "Skrypt dekodera danych",
+            'en': "Data decoder script"
+        },
+        'processor': {
+            'pl': "Skrypt procesora danych",
+            'en': "Data processor script"
+        },
+        'configuration': {
+            'pl': "Konfiguracja",
+            'en': "Configuration"
+        },
+        'application': {
+            'pl': "Aplikacja",
+            'en': "Application"
+        },
+        'status': {
+            'pl': "Status",
+            'en': "Status"
+        },
+        'seen': {
+            'pl': "Ostatnio widziany",
+            'en': "Last seen"
+        },
+        'cancel': {
+            'pl': "Anuluj",
+            'en': "Cancel"
+        },
+        'save': {
+            'pl': "Zapisz",
+            'en': "Save"
+        },
+        'error.applicationid': {
+            'pl': "Niewłaściwe ID aplikacji",
+            'en': "Wrong application ID"
+        },
+        'error.configuration': {
+            'pl': "Tekst konfiguracji nie jest poprawnym JSONem",
+            'en': "Configuration text is not a valid JSON"
+        },
+        'error': {
+            'pl': "Błąd",
+            'en': "Error"
         }
     }
 </script>

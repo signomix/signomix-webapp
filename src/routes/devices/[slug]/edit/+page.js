@@ -1,14 +1,44 @@
 // @ts-nocheck
-import { browser, building, dev, version } from '$app/environment';
-import { error } from '@sveltejs/kit';
+import { browser, dev } from '$app/environment';
 import { userSession } from '$lib/stores.js';
 import { utils } from '$lib/utils.js';
 
 export const load = async ({ params, url }) => {
+
   let session;
   userSession.subscribe(value => {
     session = value;
   });
+
+  const getSelectedConfig = async (serviceUrl) => {
+    let config = null
+    if (params.slug == 'new' || (dev && browser)) {
+      config = newDevice
+    } else {
+      try {
+        let endpoint = serviceUrl + "/api/core/device/" + params.slug + "?full=true"
+        let headers = new Headers();
+        headers.set('Authentication', session.user.token);
+        await fetch(endpoint, { headers: headers }).then(response => {
+          if (response.status == 200) {
+            config = response.json()
+          } else if (response.status == 401 || response.status == 403) {
+            utils.setAuthorized(session, false)
+          } else {
+            alert(
+              utils.getMessage(utils.FETCH_STATUS)
+                .replace('%1', response.status)
+                .replace('%2', response.statusText)
+            )
+          }
+        })
+      } catch (error) {
+        console.log('ERROR')
+        console.log(error)
+      }
+    }
+    return config
+  }
 
   const newDevice = {
     template: null,
@@ -53,42 +83,6 @@ export const load = async ({ params, url }) => {
     codeUnescaped: "",
     encoderUnescaped: "",
     configurationMap: {}
-  }
-  const getSelectedConfig = async (serviceUrl) => {
-    let config = null
-    if (params.slug == 'new') {
-      config = newDevice
-    } else {
-      if (dev) {
-        if (browser) {
-          config = newDevice
-        }
-      } else {
-        try {
-          let endpoint = serviceUrl + "/api/core/device/" + params.slug
-          let headers = new Headers();
-          headers.set('Authentication', session.user.token);
-          await fetch(endpoint, { headers: headers }).then(response => {
-            if (response.status == 200) {
-              config = response.json()
-            } else if (response.status == 401 || response.status == 403) {
-              utils.setAuthorized(session, false)
-            } else {
-              alert(
-                utils.getMessage(utils.FETCH_STATUS)
-                  .replace('%1', response.status)
-                  .replace('%2', response.statusText)
-              )
-            }
-          })
-        } catch (error) {
-          console.log('ERROR')
-          console.log(error)
-        }
-
-      }
-    }
-    return config
   }
 
   return await getSelectedConfig(utils.getBackendUrl(url))

@@ -1,9 +1,7 @@
 // @ts-nocheck
-import { browser, building, dev, version } from '$app/environment';
-import { error } from '@sveltejs/kit';
+import { dev } from '$app/environment';
 import { userSession } from '$lib/stores.js';
 import { utils } from '$lib/utils.js';
-import { transform } from 'svelte-preprocess/dist/autoProcess.js';
 
 export const load = async ({ params, url }) => {
 
@@ -15,58 +13,7 @@ export const load = async ({ params, url }) => {
   const getSelectedConfig = async (serviceUrl) => {
     let config = null
     if (dev) {
-      config = {
-        template: null,
-        name: "device01",
-        applicationEUI: null,
-        applicationID: null,
-        key: "LTcwNjYwMTcwMDAwNjM3MjU2NTE",
-        userID: "tester1",
-        type: "GENERIC",
-        team: ",",
-        channels: {
-          temperature: {
-            name: "temperature",
-            type: null
-          },
-          humidity: {
-            name: "humidity",
-            type: null
-          }
-        },
-        code: "",
-        encoder: "",
-        description: "                  ",
-        lastSeen: 1693516148000,
-        transmissionInterval: 0,
-        lastFrame: -1,
-        checkFrames: true,
-        pattern: null,
-        downlink: null,
-        commandScript: null,
-        groups: ",",
-        alertStatus: 0,
-        deviceID: "",
-        active: true,
-        project: "",
-        latitude: 0.0,
-        longitude: 0.0,
-        altitude: 0.0,
-        state: 0.0,
-        retentionTime: 0,
-        administrators: ",",
-        configuration: "",
-        orgApplicationId: 0,
-        applicationConfig: null,
-        organizationId: 0,
-        writable: true,
-        virtual: false,
-        eui: "S-16-EA-1C-23-21",
-        channelsAsString: "temperature,humidity",
-        codeUnescaped: "",
-        encoderUnescaped: "",
-        configurationMap: {}
-      }
+      config = newDevice
     } else {
       try {
         let endpoint = serviceUrl + "/api/core/device/" + params.slug + "?full=true"
@@ -89,9 +36,61 @@ export const load = async ({ params, url }) => {
         console.log('ERROR')
         console.log(error)
       }
-
     }
     return config
+  }
+
+  const newDevice = {
+    template: null,
+    name: "device01",
+    applicationEUI: null,
+    applicationID: null,
+    key: "LTcwNjYwMTcwMDAwNjM3MjU2NTE",
+    userID: "tester1",
+    type: "GENERIC",
+    team: ",",
+    channels: {
+      temperature: {
+        name: "temperature",
+        type: null
+      },
+      humidity: {
+        name: "humidity",
+        type: null
+      }
+    },
+    code: "",
+    encoder: "",
+    description: "                  ",
+    lastSeen: 1693516148000,
+    transmissionInterval: 0,
+    lastFrame: -1,
+    checkFrames: true,
+    pattern: null,
+    downlink: null,
+    commandScript: null,
+    groups: ",",
+    alertStatus: 0,
+    deviceID: "",
+    active: true,
+    project: "",
+    latitude: 0.0,
+    longitude: 0.0,
+    altitude: 0.0,
+    state: 0.0,
+    retentionTime: 0,
+    administrators: ",",
+    configuration: "",
+    orgApplicationId: 0,
+    applicationConfig: null,
+    organizationId: 0,
+    writable: true,
+    virtual: false,
+    eui: "S-16-EA-1C-23-21",
+    channelsAsString: "temperature,humidity",
+    codeUnescaped: "",
+    encoderUnescaped: "",
+    configurationMap: {}
   }
 
   return await getSelectedConfig(utils.getBackendUrl(url))
