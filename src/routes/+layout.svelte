@@ -160,13 +160,14 @@
                             </span>
                         </a>
                     </li>
-                    <li class="nav-item">
+<!--                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/about' } href="/about">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i class="bi bi-question-circle me-2"></i>{utils.getLabel('about',labels,session)}
                             </span>
                         </a>
-                    </li>
+                    </li> 
+                -->
                     <li class="nav-item text-end mt-2 me-2"><span>ver. 2.0.0</span></li>
                 </ul>
             </div>

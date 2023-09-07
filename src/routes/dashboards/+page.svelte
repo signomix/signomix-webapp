@@ -18,7 +18,7 @@
                         <th scope="col" class="col-1">#</th>
                         <th scope="col" class="col-4">{utils.getLabel('id',labels,session)}</th>
                         <th scope="col" class="col-5">{utils.getLabel('title',labels,session)}</th>
-                        <th scope="col" class="col-2">{utils.getLabel('config',labels,session)}</th>
+                        <th scope="col" class="col-2">{utils.getLabel('action',labels,session)}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -29,6 +29,11 @@
                         <td class="col-5">{config.title}</td>
                         <td class="col-2">
                             <a href="/dashboards/{config.id}/edit"><i class="bi bi-pencil-square"></i></a>
+                            {#if config.favorite}
+                            <a href="" on:click|preventDefault={toggleFav(config.id,false)}><i class="bi bi-star-fill ms-2 text-danger"></i></a>
+                            {:else}
+                            <a href="" on:click|preventDefault={toggleFav(config.id,true)}><i class="bi bi-star ms-2"></i></a>
+                            {/if}
                         </td>
                     </tr>
                     {/each}
@@ -82,11 +87,11 @@
             console.log('redirect to login');
             goto('/login');
         }else{
-            console.log('settings',data);
+            //console.log('settings',data);
         }
     });
 
-    export let data
+    //export let data
     let offset = 0
     let limit = 10
 
@@ -134,6 +139,14 @@
         console.log(event)
     }
 
+    function toggleFav(id, favorite) {
+        return function (event) {
+            event.preventDefault();
+            console.log('toggle fav', id, favorite)
+            promise = getConfigs()
+        }
+    }
+
     let labels = {
         'pagetitle': {
             'pl': "Pulpity",
@@ -151,9 +164,9 @@
             'pl': "Tytuł",
             'en': "Title"
         },
-        'config': {
-            'pl': "Konfiguracja",
-            'en': "Config"
+        'action': {
+            'pl': "Akcje",
+            'en': "Actions"
         },
         'add': {
             'pl': "Dodaj",
