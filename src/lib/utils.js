@@ -78,12 +78,12 @@ export const utils = {
    * Returns text for given name and language
    * @param {*} name - label name
    * @param {*} labels - object with labels for each language
-   * @param {*} session - user session
+   * @param {*} language - selected language
    * @returns text of label name for given language
    */
-  getLabel: function (name, labels, session) {
+  getLabel: function (name, labels, language) {
     try {
-      return labels[name][session.user.language]
+      return labels[name][language]
     } catch (err) {
       console.log('getLabel error: ' + err)
       return name

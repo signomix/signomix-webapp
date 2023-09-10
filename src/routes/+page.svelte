@@ -1,20 +1,19 @@
-{#if !session.user.logged}
+{#if !$isAuthenticated}
 <div class="alert  w-100 mt-2 text-center" role="alert">
-    {utils.getLabel('notlogged',labels,session)}
+    {utils.getLabel('notlogged',labels,$language)}
 </div>
-{:else if session.user.authorized}
-
+{:else}
 {#await promise}
 {:then dashboards}
 <div class="row mt-4">
     <div class="col-12">
-        <h5>{utils.getLabel('favourite',labels,session)}</h5>
+        <h5>{utils.getLabel('favourite',labels,$language)}</h5>
         <ul>
             {#if dashboards.length == 0}
-            <li class="list-group-item">{utils.getLabel('nofav',labels,session)}</li>
+            <li class="list-group-item">{utils.getLabel('nofav',labels,$language)}</li>
             {:else}
             {#each dashboards as dashboard}
-            <li class="list-group-item"><i class="bi bi-star-fill me-2 text-warning"></i><a href="/dashboards/{dashboard.uid}">{dashboard.title}</a></li>
+            <li class="list-group-item"><i class="bi bi-star-fill me-2 text-warning"></i><a href="/dashboards/{dashboard.id}">{dashboard.title}</a></li>
             {/each}
             {/if}
         </ul>
@@ -24,45 +23,22 @@
 <div class="row mt-4">
     <div class="col-12">
         <hr>
-        <p>{utils.getLabel('info',labels,session)}<br>
-        <p>{utils.getLabel('info2',labels,session)}</p>
+        <p>{utils.getLabel('info',labels,$language)}<br>
+        <p>{utils.getLabel('info2',labels,$language)}</p>
     </div>
 </div>
 {/if}
 <script>
-    import { userSession } from '$lib/stores.js';
+    import { profile,token, language, isAuthenticated } from '$lib/usersession.js';
     import { utils } from '$lib/utils.js';
     import { browser, dev } from '$app/environment'
     import { redirects } from '$lib/redirects.js';
-
-    //export let data
-
-    let session;
-    userSession.subscribe(value => {
-        session = value;
-        if (!session.user.logged) {
-            try {
-                if (browser) {
-                    if (window.localStorage.getItem('sgx.session.token') != null) {
-                        session.user = {}
-                        session.user.token = window.localStorage.getItem('sgx.session.token')
-                        session.user.logged = true
-                        session.user.authorized = true
-                    }
-                }
-            } catch (error) {
-                console.log(error)
-            }
-        }
-    });
 
     let promise = getConfigs()
 
     async function getConfigs() {
         let configs = []
-        if (!session.user.logged) {
-            return configs
-        }
+        if(!$isAuthenticated) return configs
         if (dev) {
             return [
                 {
@@ -77,13 +53,12 @@
         } else {
             let headers = new Headers();
             let url = utils.getBackendUrl(location) + "/api/core/favourite/dashboards"
-            headers.set('Authentication', session.user.token);
+            headers.set('Authentication', $token);
             await fetch(url, { headers: headers })
                 .then((response) => {
                     if (response.status == 200) {
                         configs = response.json();
                     } else if (response.status == 401 || response.status == 403) {
-                        utils.setAuthorized(session, false)
                     } else {
                         alert(alertMessage.replace('%1', response.status).replace('%2', response.statusText))
                     }
@@ -95,6 +70,8 @@
     }
 
     redirects.handleOriginalUri();
+
+    let alertMessage = "HTTP-Error: %1 %2"
 
     let labels = {
         'notlogged': {
@@ -118,4 +95,5 @@
             'en': ""
         }
     }
+
 </script>

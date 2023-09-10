@@ -1,27 +1,12 @@
 
-import { userSession } from '$lib/stores.js';
+import { token } from '$lib/usersession.js';
 import { dev } from '$app/environment';
 import { utils } from '$lib/utils.js';
 
-let session;
-
+let usertoken
+token.subscribe((value)=> usertoken=value)
 
 export async function load({params,url}) {
-    userSession.subscribe(value => {
-        session = value;
-        if(!session.user.logged){
-            try{
-            if(window.localStorage.getItem('sgx.session.token')!=null){
-                session.user={}
-                session.user.token = window.localStorage.getItem('sgx.session.token')
-                session.user.logged = true
-                session.user.authorized = true
-            }
-            }catch(error){
-                console.log(error)
-            }
-        }
-    });
     return {
         notifications: await getUserNotifications(utils.getBackendUrl(url))
     };
@@ -35,7 +20,7 @@ async function getUserNotifications(serviceUrl) {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authentication': session.user.token
+            'Authentication': usertoken
         }
     });
     if (response.status == 200) {

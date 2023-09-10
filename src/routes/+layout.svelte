@@ -13,23 +13,23 @@
                 <div class="nav flex-column">
                     <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="h2 bi bi-person-circle me-2"></i>
-                        {#if $userSession.user.logged && $userSession.user.login!=''}
-                        <span class="lead">{$userSession.user.login}</span>
+                        {#if $isAuthenticated}
+                        <span class="lead">{$profile.uid}</span>
                         {:else}
-                        <span>{utils.getLabel('signin',labels,session)}</span>
+                        <span>{utils.getLabel('signin',labels,$language)}</span>
                         {/if}
                         <i class="bi bi-caret-down-fill ms-1"></i>
                     </a>
                     <ul class="dropdown-menu">
-                        {#if !$userSession.user.logged || $userSession.user.login==''}
+                        {#if !$isAuthenticated}
                         <li><a class="dropdown-item" href="/login">
                                 <span data-bs-toggle="collapse"
-                                    data-bs-target=".navbar-collapse.show">{utils.getLabel('signin',labels,session)}</span>
+                                    data-bs-target=".navbar-collapse.show">{utils.getLabel('signin',labels,$language)}</span>
                             </a></li>
                         {:else}
                         <li><a class="dropdown-item" href="/" on:click={logout}>
                                 <span data-bs-toggle="collapse"
-                                    data-bs-target=".navbar-collapse.show">{utils.getLabel('signout',labels,session)}</span></a>
+                                    data-bs-target=".navbar-collapse.show">{utils.getLabel('signout',labels,$language)}</span></a>
                         </li>
                         {/if}
                         <li><a class="dropdown-item" href="/" on:click|preventDefault={setLanguagePl}>
@@ -44,16 +44,16 @@
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/' } href="/">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-house me-2"></i>{utils.getLabel('home',labels,session)}
+                                <i class="bi bi-house me-2"></i>{utils.getLabel('home',labels,$language)}
                             </span>
 
                         </a>
                     </li>
-                    {#if $userSession.user.logged && $userSession.user.login!=''}
-                    {#if $userSession.user.organization!=0}
+                    {#if $isAuthenticated}
+                    {#if $profile && $profile.organization!=0}
                     <li class="nav-item">
                         <a class="nav-link" class:active={false} on:click={toggleOrganization}>
-                            <span><i class="bi bi-building me-2"></i><span>{utils.getLabel('organization',labels,session)}</span>
+                            <span><i class="bi bi-building me-2"></i><span>{utils.getLabel('organization',labels,$language)}</span>
                         </a>
                     </li>
                     {#if organizationExpanded}
@@ -62,14 +62,14 @@
                             href="/organization/settings">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i
-                                    class="bi bi-building-gear me-2"></i><span>{utils.getLabel('orgsettings',labels,session)}</span>
+                                    class="bi bi-building-gear me-2"></i><span>{utils.getLabel('orgsettings',labels,$language)}</span>
                         </a>
                     </li>
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/organization/applications' }
                             href="/organization/applications">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-box me-2"></i>{utils.getLabel('applications',labels,session)}
+                                <i class="bi bi-box me-2"></i>{utils.getLabel('applications',labels,$language)}
                             </span>
                         </a>
                     </li>
@@ -78,7 +78,7 @@
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/dashboards' } href="/dashboards">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-columns-gap me-2"></i>{utils.getLabel('dashboards',labels,session)}
+                                <i class="bi bi-columns-gap me-2"></i>{utils.getLabel('dashboards',labels,$language)}
                             </span>
                         </a>
                     </li>
@@ -86,7 +86,7 @@
                     <li class="nav-item">
                         <a class="nav-link" class:active={false} on:click={toggleStructure}>
                             <span><i
-                                    class="bi bi-diagram-3 me-2"></i><span>{utils.getLabel('structure',labels,session)}</span>
+                                    class="bi bi-diagram-3 me-2"></i><span>{utils.getLabel('structure',labels,$language)}</span>
                         </a>
                     </li>
                     {#if structureExpanded}
@@ -94,21 +94,21 @@
                         <a class="nav-link" class:active={$page.url.pathname==='/devices' } href="/devices">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i
-                                    class="bi bi-hdd-network me-2"></i><span>{utils.getLabel('devices',labels,session)}</span>
+                                    class="bi bi-hdd-network me-2"></i><span>{utils.getLabel('devices',labels,$language)}</span>
                         </a>
                     </li>
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/groups' } href="/groups">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i
-                                    class="bi bi-hdd-stack me-2"></i><span>{utils.getLabel('groups',labels,session)}</span>
+                                    class="bi bi-hdd-stack me-2"></i><span>{utils.getLabel('groups',labels,$language)}</span>
                         </a>
                     </li>
                     {/if}
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/notifications' } href="/notifications">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-megaphone me-2"></i>{utils.getLabel('notifications',labels,session)}
+                                <i class="bi bi-megaphone me-2"></i>{utils.getLabel('notifications',labels,$language)}
                             </span>
                             {#if alertCounter.value>0}
                             <span class="badge rounded-pill text-bg-danger ms-2">{alertCounter.value}</span>
@@ -118,16 +118,16 @@
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/settings' } href="/settings">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-sliders me-2"></i>{utils.getLabel('settings',labels,session)}
+                                <i class="bi bi-sliders me-2"></i>{utils.getLabel('settings',labels,$language)}
                             </span>
                         </a>
                     </li>
-                    {#if $userSession.user.type==1}
+                    {#if $profile.type==1}
                     <!-- Administration -->
                     <li class="nav-item">
                         <a class="nav-link" class:active={false} on:click={toggleAdministration}>
                             <span><i
-                                    class="bi bi-tools me-2"></i><span>{utils.getLabel('administration',labels,session)}</span>
+                                    class="bi bi-tools me-2"></i><span>{utils.getLabel('administration',labels,$language)}</span>
                         </a>
                     </li>
                     {#if administrationExpanded}
@@ -136,14 +136,14 @@
                         <a class="nav-link" class:active={$page.url.pathname==='/admin/applications' } href="/admin/applications">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i
-                                    class="bi bi-code-square me-2"></i><span>{utils.getLabel('apps',labels,session)}</span>
+                                    class="bi bi-code-square me-2"></i><span>{utils.getLabel('apps',labels,$language)}</span>
                         </a>
                     </li>
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/admin/organizations' } href="/admin/organizations">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i
-                                    class="bi bi-building me-2"></i><span>{utils.getLabel('organizations',labels,session)}</span>
+                                    class="bi bi-building me-2"></i><span>{utils.getLabel('organizations',labels,$language)}</span>
                         </a>
                     </li>
                     {/if}
@@ -156,35 +156,21 @@
                             href="https://documentation.signomix.com" target="_blank">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i
-                                    class="bi bi-question-circle me-2"></i>{utils.getLabel('documentation',labels,session)}
+                                    class="bi bi-question-circle me-2"></i>{utils.getLabel('documentation',labels,$language)}
                             </span>
                         </a>
                     </li>
-<!--                     <li class="nav-item">
-                        <a class="nav-link" class:active={$page.url.pathname==='/about' } href="/about">
-                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-question-circle me-2"></i>{utils.getLabel('about',labels,session)}
-                            </span>
-                        </a>
-                    </li> 
-                -->
                     <li class="nav-item text-end mt-2 me-2"><span>ver. 2.0.0</span></li>
                 </ul>
             </div>
         </nav>
         <main class="col-md-9 col-lg-10 ms-sm-auto px-md-4">
-            {#if ($userSession.user.logged && !$userSession.user.authorized)}
-            <div class="alert alert-danger w-100 mt-2 text-center" role="alert">
-                {utils.getLabel('api-unavialble',labels,session)}
-            </div>
-            {/if}
             <slot></slot>
         </main>
     </div>
 </div>
 <script>
     import { page } from '$app/stores';
-    import { userSession } from '$lib/stores.js';
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
     import { utils } from '$lib/utils.js';
@@ -192,40 +178,13 @@
     import { poll } from '$lib/poll.js';
     import { dev } from '$app/environment';
     import { sgxdata } from '$lib/sgxdata.js';
+    import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
 
     function logout() {
         console.log("LOGOUT")
-        userSession.set({user:{ logged: false, login: '', password: '', language: 'en', token:'' }, organization:{}})
-        if (browser) {
-            try {
-                window.localStorage.removeItem('sgx.session.token');
-            } catch (error) {
-                console.log(error)
-            }
-        }
+        token.set(null)
         return true
     }
-
-    let session;
-    userSession.subscribe(value => {
-        session = value;
-        if (!session.logged) {
-            try {
-                if (browser) {
-                    if (window.localStorage.getItem('sgx.session.token') != null) {
-                        session.user.token = window.localStorage.getItem('sgx.session.token')
-                        session.user.logged = true
-                        session.user.authorized = true
-                        //TODO: get user data?
-                    } else {
-                        console.log("NO TOKEN")
-                    }
-                }
-            } catch (error) {
-                console.log(error)
-            }
-        }
-    });
 
     let structureExpanded = false;
     function toggleStructure(event) {
@@ -241,35 +200,24 @@
     }
 
     function setLanguagePl(event) {
-        console.log("SET LANGUAGE PL")
-        session.user.language = 'pl';
-        userSession.set(session);
-        goto('/')
+        language.set('pl')
         return true
     }
     function setLanguageEn(event) {
-        console.log("SET LANGUAGE EN")
-        session.user.language = 'en';
-        userSession.set(session);
-        goto('/')
+        language.set('en')
         return true
     }
     let alertCounter = { value: 0 }
     poll(async function fetchData() {
-        //try {
-        // your implementation goes here
-        if (session.user.logged && session.user.authorized && session.user.login != '') {
+        if ($isAuthenticated) {
             let url = utils.getBackendUrl(location) + "/api/alert/"
             console.log("POLL")
-            await sgxdata.getNotifications(dev, url, 0, 0, session.user.token)
+            await sgxdata.getNotifications(dev, url, 0, 0, $token)
                 .then((data) => {
                     alertCounter.value = data.value
                 }).catch((error) => {
                     console.log('POLL ERROR', error)
-                    session.user.authorized = false;
-                    session.user.logged = false;
-                    session.user.login = '';
-                    userSession.set(session);
+                    token.set(null)
                 })
         }
     }, dev ? 10000 : 60000);

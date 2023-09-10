@@ -29,10 +29,12 @@
                         <td class="col-5">{config.title}</td>
                         <td class="col-2">
                             <a href="/dashboards/{config.id}/edit"><i class="bi bi-pencil-square"></i></a>
-                            {#if config.favorite}
-                            <a href="" on:click|preventDefault={toggleFav(config.id,false)}><i class="bi bi-star-fill ms-2 text-danger"></i></a>
+                            {#if config.favourite}
+                            <a href="" on:click|preventDefault={toggleFav(config.id,false)}><i
+                                    class="bi bi-star-fill ms-2 text-warning"></i></a>
                             {:else}
-                            <a href="" on:click|preventDefault={toggleFav(config.id,true)}><i class="bi bi-star ms-2"></i></a>
+                            <a href="" on:click|preventDefault={toggleFav(config.id,true)}><i
+                                    class="bi bi-star ms-2"></i></a>
                             {/if}
                         </td>
                     </tr>
@@ -44,7 +46,8 @@
 </div>
 <div class="row">
     <div class="col-2">
-        <a class="btn btn-outline-primary" role="button" href="/dashboards/new/edit">{utils.getLabel('add',labels,session)}</a>
+        <a class="btn btn-outline-primary" role="button"
+            href="/dashboards/new/edit">{utils.getLabel('add',labels,session)}</a>
     </div>
     <div class="col-10">
         <nav aria-label="Table navigation">
@@ -83,10 +86,10 @@
     })
 
     onMount(async () => {
-        if(!session.user.logged || !session.user.authorized || session.user.login==''){
+        if (!session.user.logged || !session.user.authorized || session.user.login == '') {
             console.log('redirect to login');
             goto('/login');
-        }else{
+        } else {
             //console.log('settings',data);
         }
     });
@@ -109,7 +112,7 @@
         } else {
             let headers = new Headers();
             let url = utils.getBackendUrl(location) + "/api/core/v2/dashboards"
-            url = url + '?offset=' + offset + '&limit=' + limit+'&shared=true'
+            url = url + '?offset=' + offset + '&limit=' + limit + '&shared=true'
             headers.set('Authentication', session.user.token);
             await fetch(url, { headers: headers })
                 .then((response) => {
@@ -139,11 +142,21 @@
         console.log(event)
     }
 
-    function toggleFav(id, favorite) {
+    function toggleFav(id, favourite) {
         return function (event) {
             event.preventDefault();
-            console.log('toggle fav', id, favorite)
-            promise = getConfigs()
+            console.log('toggle fav', id, favourite)
+            let headers = new Headers();
+            headers.set('Authentication', session.user.token);
+            promise = fetch(utils.getBackendUrl(location) + '/api/core/favourite/dashboards/' + id, {headers: headers, method: favourite ? 'POST' : 'DELETE' })
+                .then(response => response.text()) // pass the data as promise to next then block
+                .then(data => {
+                    return getConfigs()
+                })
+                //.then(response => response.json())
+                .catch(err => {
+                    console.error('Request failed', err)
+                })
         }
     }
 

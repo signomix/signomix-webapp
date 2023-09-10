@@ -1,8 +1,8 @@
-{#if !session.user.logged}
+{#if !$isAuthenticated}
 <div class="alert alert-danger w-100 mt-2 text-center" role="alert">
     Brak dostępu
 </div>
-{:else if session.user.authorized}
+{:else}
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h5>Powiadomienia</h5><a href="#" on:click|preventDefault={removeAll}><i class="bi bi-trash3 h5 link-dark"></i></a>
@@ -63,35 +63,19 @@
 {/await}
 {/if}
 <script>
-    import { userSession } from '$lib/stores.js';
+    import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { utils } from '$lib/utils.js';
     import { dev } from '$app/environment';
 
     export let data
     let offset = 0
     let limit = 20
-    let session;
-    userSession.subscribe(value => {
-        session = value;
-        if (!session.user.logged) {
-            try {
-                if (window.localStorage.getItem('sgx.session.token') != null) {
-                    session.user={}
-                    session.user.token = window.localStorage.getItem('sgx.session.token')
-                    session.user.logged = true
-                    session.user.authorized = true
-                }
-            } catch (error) {
-                console.log(error)
-            }
-        }
-    });
 
     let promise = getAlerts()
 
     async function getAlerts() {
         let alerts = []
-        if (!session.user.logged) {
+        if (!$isAuthenticated) {
             return alerts
         }
         if (dev) {
@@ -125,13 +109,13 @@
             let headers = new Headers();
             let url = utils.getBackendUrl(location) + "/api/alert/"
             url = url + '?offset=' + offset + '&limit=' + limit
-            headers.set('Authentication', session.user.token);
+            headers.set('Authentication', $token);
             await fetch(url, { headers: headers })
                 .then((response) => {
                     if (response.status == 200) {
                         alerts = response.json();
                     } else if (response.status == 401 || response.status == 403) {
-                        utils.setAuthorized(session, false)
+                        token.set(null)
                     } else {
                         alert(alertMessage.replace('%1', response.status).replace('%2', response.statusText))
                     }
@@ -173,7 +157,7 @@
         const headers = new Headers()
         let method = 'DELETE'
         let url = utils.getBackendUrl(location) + "/api/alert/" + id
-        headers.set('Authentication', session.user.token);
+        headers.set('Authentication', $token);
         let response = fetch(
             url,
             { method: method, mode: 'cors', headers: headers }
@@ -182,7 +166,7 @@
                 errorMessage = ''
                 goto('/notifications')
             } else if (response.status == 401 || response.status == 403 || response.status == 404) {
-                utils.setAuthorized(session, false)
+                token.set(null)
             } else {
                 alert(
                     utils.getMessage(utils.FETCH_STATUS)
