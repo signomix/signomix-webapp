@@ -1,7 +1,7 @@
 <form class="mb-2">
     <div class="row">
         <div class="col-md-1 col-form-label">
-            <label for="input-uid" class="form-label">{utils.getLabel('eui',labels,session)}</label>
+            <label for="input-uid" class="form-label">{utils.getLabel('eui',labels,$language)}</label>
         </div>
         <div class="col-md-10">
             <input disabled type="text" class="form-control" id="input-uid" bind:value={config.eui}>
@@ -9,7 +9,7 @@
     </div>
     <div class="row">
         <div class="col-md-1 col-form-label">
-            <label for="input-name" class="form-label">{utils.getLabel('name',labels,session)}</label>
+            <label for="input-name" class="form-label">{utils.getLabel('name',labels,$language)}</label>
         </div>
         <div class="col-md-10">
             <input type="text" class="form-control" id="input-name" bind:value={config.name} disabled={readonly}>
@@ -17,7 +17,7 @@
     </div>
     <div class="row">
         <div class="col-md-1 col-form-label">
-            <label for="input-type" class="form-label">{utils.getLabel('type',labels,session)}</label>
+            <label for="input-type" class="form-label">{utils.getLabel('type',labels,$language)}</label>
         </div>
         <div class="col-md-10">
             <select class="form-select" id="input-type" bind:value={config.type} disabled={readonly}>
@@ -31,7 +31,7 @@
     </div>
     <div class="row">
         <div class="col-md-1 col-form-label">
-            <label for="input-owner" class="form-label">{utils.getLabel('owner',labels,session)}</label>
+            <label for="input-owner" class="form-label">{utils.getLabel('owner',labels,$language)}</label>
         </div>
         <div class="col-md-10">
             <input type="text" class="form-control" id="input-owner" bind:value={config.userID} readonly={readonly}>
@@ -39,7 +39,7 @@
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-team" class="form-label">{utils.getLabel('team',labels,session)}</label>
+            <label for="input-team" class="form-label">{utils.getLabel('team',labels,$language)}</label>
         </div>
         <div class="col-md-9">
             <input type="text" class="form-control" id="input-team" bind:value={config.team} readonly={readonly}>
@@ -47,7 +47,7 @@
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-admins" class="form-label">{utils.getLabel('administrators',labels,session)}</label>
+            <label for="input-admins" class="form-label">{utils.getLabel('administrators',labels,$language)}</label>
         </div>
         <div class="col-md-9">
             <input type="text" class="form-control" id="input-admins" bind:value={config.administrators}
@@ -56,7 +56,7 @@
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-key" class="form-label">{utils.getLabel('key',labels,session)}</label>
+            <label for="input-key" class="form-label">{utils.getLabel('key',labels,$language)}</label>
         </div>
         <div class="col-md-9">
             <input type="text" class="form-control" id="input-key" bind:value={config.key} readonly={readonly}>
@@ -64,7 +64,7 @@
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-channels" class="form-label">{utils.getLabel('measurements',labels,session)}</label>
+            <label for="input-channels" class="form-label">{utils.getLabel('measurements',labels,$language)}</label>
         </div>
         <div class="col-md-9">
             <input type="text" class="form-control" id="input-channels" bind:value={config.channelsAsString}
@@ -73,7 +73,7 @@
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-groups" class="form-label">{utils.getLabel('groups',labels,session)}</label>
+            <label for="input-groups" class="form-label">{utils.getLabel('groups',labels,$language)}</label>
         </div>
         <div class="col-md-9">
             <input type="text" class="form-control" id="input-groups" bind:value={config.groups} readonly={readonly}>
@@ -81,7 +81,7 @@
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-project" class="form-label">{utils.getLabel('project',labels,session)}</label>
+            <label for="input-project" class="form-label">{utils.getLabel('project',labels,$language)}</label>
         </div>
         <div class="col-md-9">
             <input type="text" class="form-control" id="input-project" bind:value={config.project} readonly={readonly}>
@@ -89,7 +89,7 @@
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-latitude" class="form-label">{utils.getLabel('latitude',labels,session)}</label>
+            <label for="input-latitude" class="form-label">{utils.getLabel('latitude',labels,$language)}</label>
         </div>
         <div class="col-md-9">
             <input type="number" class="form-control" id="input-latitude" bind:value={config.latitude}
@@ -98,7 +98,7 @@
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-longitude" class="form-label">{utils.getLabel('longitude',labels,session)}</label>
+            <label for="input-longitude" class="form-label">{utils.getLabel('longitude',labels,$language)}</label>
         </div>
         <div class="col-md-9">
             <input type="number" class="form-control" id="input-longitude" bind:value={config.longitude}
@@ -107,7 +107,7 @@
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-altitude" class="form-label">{utils.getLabel('altitude',labels,session)}</label>
+            <label for="input-altitude" class="form-label">{utils.getLabel('altitude',labels,$language)}</label>
         </div>
         <div class="col-md-9">
             <input type="number" class="form-control" id="input-altitude" bind:value={config.altitude}
@@ -116,7 +116,7 @@
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-interval" class="form-label">{utils.getLabel('interval',labels,session)}</label>
+            <label for="input-interval" class="form-label">{utils.getLabel('interval',labels,$language)}</label>
         </div>
         <div class="col-md-9">
             <input type="number" class="form-control" id="input-interval" bind:value={interval} readonly={readonly}>
@@ -124,7 +124,7 @@
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-interval" class="form-label">{utils.getLabel('description',labels,session)}</label>
+            <label for="input-interval" class="form-label">{utils.getLabel('description',labels,$language)}</label>
         </div>
         <div class="col-md-9">
             <textarea class="form-control mb-1" id="input-description" rows="3" bind:value="{config.description}"
@@ -133,7 +133,7 @@
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-decoder" class="form-label">{utils.getLabel('decoder',labels,session)}</label>
+            <label for="input-decoder" class="form-label">{utils.getLabel('decoder',labels,$language)}</label>
         </div>
         <div class="col-md-9">
             <textarea class="form-control mb-1" id="input-decoder" rows="3" bind:value="{decoderScript}"
@@ -142,7 +142,7 @@
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-processor" class="form-label">{utils.getLabel('processor',labels,session)}</label>
+            <label for="input-processor" class="form-label">{utils.getLabel('processor',labels,$language)}</label>
         </div>
         <div class="col-md-9">
             <textarea class="form-control mb-1" id="input-processor" rows="3" bind:value="{processorScript}"
@@ -151,7 +151,7 @@
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-config" class="form-label">{utils.getLabel('configuration',labels,session)}</label>
+            <label for="input-config" class="form-label">{utils.getLabel('configuration',labels,$language)}</label>
         </div>
         <div class="col-md-9">
             <textarea class="form-control mb-1" id="input-config" rows="3" bind:value="{config.configuration}"
@@ -161,7 +161,7 @@
     {#if config.organizationId>0}
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-application" class="form-label">{utils.getLabel('application',labels,session)}</label>
+            <label for="input-application" class="form-label">{utils.getLabel('application',labels,$language)}</label>
         </div>
         <div class="col-md-9">
             <input type="number" class="form-control" id="input-application" bind:value={config.orgApplicationId}
@@ -171,7 +171,7 @@
     {/if}
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-status" class="form-label">{utils.getLabel('status',labels,session)}</label>
+            <label for="input-status" class="form-label">{utils.getLabel('status',labels,$language)}</label>
         </div>
         <div class="col-md-9">
             <input disabled type="number" class="form-control" id="input-status" bind:value={config.state}>
@@ -179,7 +179,7 @@
     </div>
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-lastseen" class="form-label">{utils.getLabel('seen',labels,session)}</label>
+            <label for="input-lastseen" class="form-label">{utils.getLabel('seen',labels,$language)}</label>
         </div>
         <div class="col-md-9">
             <input disabled type="datetime-local" class="form-control" id="input-lastseen"
@@ -190,25 +190,20 @@
     <div class="row">
         <div class="col-form-label">
             <a href="/devices" class="btn btn-outline-secondary mt-1"
-                on:click|preventDefault={handleCancel}>{utils.getLabel('cancel',labels,session)}</a>
+                on:click|preventDefault={handleCancel}>{utils.getLabel('cancel',labels,$language)}</a>
             <button class="btn btn-outline-primary me-4 mt-1"
-                on:click={handleSave}>{utils.getLabel('save',labels,session)}</button>
+                on:click={handleSave}>{utils.getLabel('save',labels,$language)}</button>
         </div>
     </div>
     {/if}
 </form>
 <script>
     import { utils } from '$lib/utils.js';
-    import { userSession } from '$lib/stores.js';
+    import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
 
     export let config
     export let callback
     export let readonly
-
-    let session;
-    userSession.subscribe(value => {
-        session = value;
-    });
 
     let interval = config.transmissionInterval / 60000
     let decoderScript = unescape(config.encoder)
@@ -223,7 +218,7 @@
 
         let errMessage = validate()
         if (errMessage != '') {
-            alert(utils.getLabel(errMessage, labels, session))
+            alert(utils.getLabel(errMessage, labels, $language))
             return
         }
         callback(config, handleCallbackResponse)
@@ -252,16 +247,16 @@
                     errTxt = 'error.applicationid'
                 }
                 if (errTxt != null) {
-                    alert(utils.getLabel(errTxt, labels, session))
+                    alert(utils.getLabel(errTxt, labels, $language))
                 } else {
                     alert(data)
                 }
                 alert(text)
             }).catch(error => {
-                alert(utils.getLabel('error', labels, session) + ': ' + error.message)
+                alert(utils.getLabel('error', labels, $language) + ': ' + error.message)
             })
         } else {
-            alert(utils.getLabel('error', labels, session) + ': ' + promise)
+            alert(utils.getLabel('error', labels, $language) + ': ' + promise)
         }
     }
 

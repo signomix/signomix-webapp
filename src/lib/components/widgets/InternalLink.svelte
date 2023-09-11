@@ -11,7 +11,6 @@
 
     function displayDashboard() {
         goto('/dashboards/'+dashboardID, { replaceState: true })
-        //console.log('displayDashboard: ' + config.dashboardID);
     }
 </script>
 <div class="container p-1">

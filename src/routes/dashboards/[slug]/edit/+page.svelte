@@ -4,20 +4,20 @@
 -->
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-2 border-bottom">
-    <h5>{utils.getLabel('title',labels,session)}</h5><a href="/dashboards/{data.id}"
-        title="{utils.getLabel('view',labels,session)}"><i class="bi bi-eye h5 me-2 link-dark"></i></a>
+    <h5>{utils.getLabel('title',labels,$language)}</h5><a href="/dashboards/{data.id}"
+        title="{utils.getLabel('view',labels,$language)}"><i class="bi bi-eye h5 me-2 link-dark"></i></a>
 </div>
 <div class="container border-bottom pb-2">
     <form>
         <div class="row">
             <div class="col-md-1 col-form-label">
-                <label for="input-id" class="form-label">{utils.getLabel('id',labels,session)}</label>
+                <label for="input-id" class="form-label">{utils.getLabel('id',labels,$language)}</label>
             </div>
             <div class="col-md-3">
                 <input disabled type="text" class="form-control" id="input-id" bind:value={data.id}>
             </div>
             <div class="col-md-1 col-form-label">
-                <label for="input-userid" class="form-label">{utils.getLabel('owner',labels,session)}</label>
+                <label for="input-userid" class="form-label">{utils.getLabel('owner',labels,$language)}</label>
             </div>
             <div class="col-md-3">
                 <input disabled type="text" class="form-control" id="input-userid" bind:value={data.userID}>
@@ -25,14 +25,14 @@
             <div class="col-md-4">
                 <input type="checkbox" class="form-check-input me-2" id="input-shared" bind:checked={data.shared}
                     on:change={onChange}>
-                <label class="form-check-label" for="input-shared">{utils.getLabel('shared',labels,session)}</label>
+                <label class="form-check-label" for="input-shared">{utils.getLabel('shared',labels,$language)}</label>
             </div>
         </div>
         {#if data.organizationId!=0}
         <div class="row">
             <div class="col-md-1 col-form-label">
                 <label for="input-organization"
-                    class="form-label">{utils.getLabel('organization',labels,session)}</label>
+                    class="form-label">{utils.getLabel('organization',labels,$language)}</label>
             </div>
             <div class="col-md-11">
                 <input type="text" disabled class="form-control" id="input-organization"
@@ -42,7 +42,7 @@
         {/if}
         <div class="row">
             <div class="col-md-1 col-form-label">
-                <label for="input-title" class="form-label">{utils.getLabel('dashboard_title',labels,session)}</label>
+                <label for="input-title" class="form-label">{utils.getLabel('dashboard_title',labels,$language)}</label>
             </div>
             <div class="col-md-11">
                 <input type="text" class="form-control" id="input-name" bind:value={data.title}>
@@ -50,13 +50,13 @@
         </div>
         <div class="row">
             <div class="col-md-1 col-form-label">
-                <label for="input-team" class="form-label">{utils.getLabel('widget_team',labels,session)}</label>
+                <label for="input-team" class="form-label">{utils.getLabel('widget_team',labels,$language)}</label>
             </div>
             <div class="col-md-4">
                 <input type="text" class="form-control" id="input-team" bind:value={data.team}>
             </div>
             <div class="col-md-2 col-form-label">
-                <label for="input-admins" class="form-label">{utils.getLabel('widget_admins',labels,session)}</label>
+                <label for="input-admins" class="form-label">{utils.getLabel('widget_admins',labels,$language)}</label>
             </div>
             <div class="col-md-5">
                 <input type="text" class="form-control" id="input-admins" bind:value={data.administrators}>
@@ -65,12 +65,12 @@
         <div class="row">
             <div class="col-form-label">
                 <button class="btn btn-outline-secondary mt-1"
-                    on:click={goBack}>{utils.getLabel('cancel',labels,session)}</button>
+                    on:click={goBack}>{utils.getLabel('cancel',labels,$language)}</button>
                 <button class="btn btn-outline-primary me-4 mt-1" on:click={saveDashboard} disabled={modified==false}><i
-                        class="bi bi-save me-2"></i> {utils.getLabel('save',labels,session)}
+                        class="bi bi-save me-2"></i> {utils.getLabel('save',labels,$language)}
                 </button>
                 <button class="btn btn-outline-primary me-4 mt-1" on:click|preventDefault={removeDashboard}>
-                    <i class="bi bi-trash me-2"></i> {utils.getLabel('remove',labels,session)}
+                    <i class="bi bi-trash me-2"></i> {utils.getLabel('remove',labels,$language)}
                 </button>
                 <button class="btn btn-outline-primary mt-1 me-4" on:click={addWidget}><i
                         class="bi bi-plus-lg"></i></button>
@@ -80,7 +80,7 @@
     </form>
 </div>
 <div class="demo-container size">
-    {#if session.user.logged && session.user.authorized && session.user.login!=''}
+    {#if $isAuthenticated}
     <Grid bind:items={data.items} rowHeight={100} let:item {cols} let:index on:change={onChange}>
         <div class="demo-widget content bg-white border border-primary">
             <WidgetConfig index={index} bind:config={data.widgets} removeCallback={removeItem} setCurrentIndex={(idx)=>
@@ -110,7 +110,7 @@
     import { browser } from '$app/environment'
     import { dev } from '$app/environment';
     import { utils } from '$lib/utils.js';
-    import { userSession } from '$lib/stores.js';
+    import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { base } from '$app/paths'
     import { goto, afterNavigate } from '$app/navigation'
     import { onMount } from 'svelte';
@@ -123,12 +123,8 @@
     export let data
     let errorMessage = ''
 
-    let session;
-    userSession.subscribe(value => {
-        session = value;
-    });
     onMount(() => {
-        if (!session.user.logged || !session.user.authorized || session.user.login == '') {
+        if (!$isAuthenticated) {
             console.log('redirect to login');
             goto('/login');
         } else {
@@ -208,7 +204,7 @@
         const headers = new Headers()
         let method = 'DELETE'
         let url = utils.getBackendUrl(location) + "/api/core/v2/dashboards/" + data.id
-        headers.set('Authentication', session.user.token);
+        headers.set('Authentication', $token);
         let response = fetch(
             url,
             { method: method, mode: 'cors', headers: headers, body: JSON.stringify(data) }
@@ -217,7 +213,7 @@
                 errorMessage = ''
                 goto('/dashboards')
             } else if (response.status == 401 || response.status == 403 || response.status == 404) {
-                utils.setAuthorized(session, false)
+                token.set(null)
             } else {
                 alert(
                     utils.getMessage(utils.FETCH_STATUS)
@@ -243,7 +239,7 @@
             url = url + data.id
             method = 'PUT'
         }
-        headers.set('Authentication', session.user.token);
+        headers.set('Authentication', $token);
         headers.set('Content-Type', 'application/json');
         let response = fetch(
             url,
@@ -253,7 +249,7 @@
                 errorMessage = ''
                 goto('/dashboards')
             } else if (response.status == 401 || response.status == 403 || response.status == 404) {
-                utils.setAuthorized(session, false)
+                token.set(null)
             } else {
                 alert(
                     utils.getMessage(utils.FETCH_STATUS)
@@ -263,8 +259,8 @@
             }
         }).catch((error) => {
             errorMessage = error.message
-            if (errorMessage == utils.getLabel('fetcherror', labels, session) && location.protocol.toLowerCase() == 'https') {
-                errorMessage = errorMessage + ' ' + utils.getLabel('fetcherror_message', labels, session)
+            if (errorMessage == 'Failed to fetch' && location.protocol.toLowerCase() == 'https') {
+                errorMessage = errorMessage + ' ' + utils.getLabel('fetcherror_message', labels, $language)
             }
             console.log(error)
         });
@@ -362,7 +358,7 @@
 
     async function getOrganization(id) {
         let apiUrl = utils.getBackendUrl(location) + '/api/core/organization/' + id
-        await sgxdata.getOrganization(dev, apiUrl, session.user.token)
+        await sgxdata.getOrganization(dev, apiUrl, $token)
         .then((response) => {
             if (response.status == 200) {
                 return response.data.name

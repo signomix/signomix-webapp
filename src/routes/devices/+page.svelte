@@ -1,11 +1,11 @@
-{#if !session.user.logged}
+{#if !$isAuthenticated}
 <div class="alert alert-danger w-100 mt-2 text-center" role="alert">
-    {utils.getLabel('denied',labels,session)}
+    {utils.getLabel('denied',labels,$language)}
 </div>
-{:else if session.user.authorized}
+{:else}
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h5>{utils.getLabel('devices',labels,session)}</h5>
+    <h5>{utils.getLabel('devices',labels,$language)}</h5>
 </div>
 {#await promise}
 {:then devices}
@@ -17,9 +17,9 @@
                     <tr>
                         <th scope="col" class="col-1">#</th>
                         <th scope="col" class="col-2">EUI</th>
-                        <th scope="col" class="col-6">{utils.getLabel('name',labels,session)}</th>
-                        <th scope="col" class="col-2">{utils.getLabel('type',labels,session)}</th>
-                        <th scope="col" class="col-1">{utils.getLabel('actions',labels,session)}</th>
+                        <th scope="col" class="col-6">{utils.getLabel('name',labels,$language)}</th>
+                        <th scope="col" class="col-2">{utils.getLabel('type',labels,$language)}</th>
+                        <th scope="col" class="col-1">{utils.getLabel('actions',labels,$language)}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -30,7 +30,7 @@
                         <td class="col-6">{config.name}</td>
                         <td class="col-2">{config.type}</td>
                         <td class="col-1">
-                            <a href="/devices/{config.eui}/edit" title={utils.getLabel('configure',labels,session)}><i
+                            <a href="/devices/{config.eui}/edit" title={utils.getLabel('configure',labels,$language)}><i
                                 class="bi bi-gear h5 me-2 link-dark"></i></a>
                         </td>
                     </tr>
@@ -42,7 +42,7 @@
 </div>
 <div class="row">
     <div class="col-2">
-        <a class="btn btn-outline-primary" role="button" href="/devices/new/edit">{utils.getLabel('add',labels,session)}</a>
+        <a class="btn btn-outline-primary" role="button" href="/devices/new/edit">{utils.getLabel('add',labels,$language)}</a>
     </div>
     <div class="col-10">
         <nav aria-label="Table navigation">
@@ -69,7 +69,7 @@
 {/await}
 {/if}
 <script>
-    import { userSession } from '$lib/stores.js';
+    import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { utils } from '$lib/utils.js';
     import { dev } from '$app/environment';
     import { onMount } from 'svelte';
@@ -78,25 +78,19 @@
     //export let data
     let offset = 0
     let limit = 10
-    let session;
-    userSession.subscribe(value => {
-        session = value;
-    });
 
     let promise = getDevices(offset)
 
     onMount(async () => {
-        if (!session.user.logged || !session.user.authorized || session.user.login == '') {
+        if (!$isAuthenticated) {
             console.log('redirect to login');
             goto('/login');
-        } else {
-            console.log('devices');
         }
     });
 
     async function getDevices(actualOffset) {
         let devcs = []
-        if (!session.user.logged) {
+        if (!$isAuthenticated) {
             return devcs
         }
         if (dev) {
@@ -115,11 +109,10 @@
             }
             console.log(devcs)
         } else {
-            console.log(session)
             let headers = new Headers();
             let url = utils.getBackendUrl(location) + "/api/core/device"
             url = url + '?offset=' + actualOffset + '&limit=' + limit + '&full=true'
-            headers.set('Authentication', session.user.token);
+            headers.set('Authentication', $token);
             headers.set('Access-Control-Allow-Origin', '*');
             await fetch(url,
                 {
@@ -132,7 +125,7 @@
                     if (response.status == 200) {
                         devcs = response.json();
                     } else if (response.status == 401 || response.status == 403) {
-                        utils.setAuthorized(session, false)
+                        token.set(null)
                     } else {
                         alert(alertMessage.replace('%1', response.status).replace('%2', response.statusText))
                     }

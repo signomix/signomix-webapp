@@ -1,8 +1,8 @@
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h5>{data.name}</h5>
-    {#if (utils.isObjectAdmin(session, data.userID))}
-    <a href="/devices/{data.eui}/edit" title={utils.getLabel('configure',labels,session)}><i
+    {#if (utils.isObjectAdmin($profile, data.userID))}
+    <a href="/devices/{data.eui}/edit" title={utils.getLabel('configure',labels,$language)}><i
         class="bi bi-gear h5 me-2 link-dark"></i></a>
     {/if}
 </div>
@@ -17,23 +17,16 @@
     import { dev } from '$app/environment';
     import { utils } from '$lib/utils.js';
     import { goto } from '$app/navigation';
-    import { userSession } from '$lib/stores.js';
+    import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import DeviceForm from '$lib/components/DeviceForm.svelte';
 
     export let data
     let errorMessage = ''
-    let session;
-    userSession.subscribe(value => {
-        session = value;
-    })
 
     onMount(async () => {
-        if(!session.user.logged || !session.user.authorized || session.user.login==''){
+        if(!$isAuthenticated){  
             console.log('redirect to login');
             goto('/login');
-        }else{
-            console.log('settings',data);
-            console.log('session',session);
         }
     });
 

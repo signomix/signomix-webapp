@@ -104,11 +104,11 @@ export const utils = {
     }
 
   },
-  isObjectAdmin: function (session, objectOwner) {
-    if (session.user.organization == 0) {
-      return session.user.type == 1 || session.user.login == objectOwner
+  isObjectAdmin: function (userProfile, objectOwner) {
+    if (userProfile.organization == 0) {
+      return userProfile.type == 1 || userProfile.uid == objectOwner
     } else {
-      return session.user.type == 9 || session.user.type == 1 || session.user.type == 0
+      return userProfile.type == 9 || userProfile.type == 1 || userProfile.type == 0
     }
   },
   getUserType: function (name) {

@@ -1,5 +1,5 @@
 <script>
-    import { userSession } from '$lib/stores.js';
+    import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { utils } from '$lib/utils.js';
     import { sgxdata } from '$lib/sgxdata.js';
     import { sgxhelper } from '$lib/sgxhelper.js';
@@ -10,20 +10,16 @@
     export let config
     export let filter
 
-    let session;
-    userSession.subscribe(value => {
-        session = value;
-    });
     let errorMessage = '';
     const apiUrl = utils.getBackendUrl(location) + '/api/provider/v2/device/'
     let parentHeight = 0;
     let alertLevel = 3;
 
-    let promise = sgxdata.getData(dev, apiUrl, config, filter, session.user.token);
+    let promise = sgxdata.getData(dev, apiUrl, config, filter, $token);
     let front = true;
 
     afterUpdate(() => {
-        promise = sgxdata.getData(dev, apiUrl, config, filter, session.user.token);
+        promise = sgxdata.getData(dev, apiUrl, config, filter, $token);
     });
     function recalculate(value) {
         return Number.parseFloat(value).toFixed(config.rounding);
@@ -67,9 +63,7 @@
     <div class="row text-center">
         <div class="col-12 mt-1">
             {#await promise}
-            <div class="spinner-border spinner-border-sm" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
+            <div class="spinner-border spinner-border-sm" role="status"></div>
             {:then data}
             {#if isCalculated(data[0][0])}
             {#if alertLevel==0}

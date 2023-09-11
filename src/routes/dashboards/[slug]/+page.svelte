@@ -3,7 +3,11 @@
     eventually, when released: https://github.com/cuire/svelte-grid-extended
     bindings: https://learn.svelte.dev/tutorial/text-inputs
 -->
-{#if session.user.logged && session.user.authorized && session.user.login!=''}
+{#if !$isAuthenticated}
+<div class="alert alert-danger" role="alert">
+    {utils.getLabel('denied',labels,$language)}
+</div>
+{:else}
 {#if errorMessage!=''}
 <div class="alert alert-danger" role="alert">
     {errorMessage}
@@ -19,7 +23,7 @@
             <i class="bi  bi-link-45deg h4 me-2 link-dark"></i>
         </a>
         {/if}
-        <a title={utils.getLabel('filter',labels,session)} data-bs-toggle="modal" data-bs-target="#filterModal"
+        <a title={utils.getLabel('filter',labels,$language)} data-bs-toggle="modal" data-bs-target="#filterModal"
             on:click|preventDefault={setFilter}>
             {#if isFilterSet(dashboardFilter)}
             <i class="bi bi-funnel-fill h5 me-2 link-dark"></i>
@@ -27,7 +31,7 @@
             <i class="bi bi-funnel h5 me-2 link-dark"></i>
             {/if}
         </a>
-        <a href="/dashboards/{data.id}/edit" title={utils.getLabel('configure',labels,session)}><i
+        <a href="/dashboards/{data.id}/edit" title={utils.getLabel('configure',labels,$language)}><i
                 class="bi bi-gear h5 me-2 link-dark"></i></a>
     </span>
 </div>
@@ -70,7 +74,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalLabel">{utils.getLabel('filter',labels,session)}</h5>
+                <h5 class="modal-title" id="modalLabel">{utils.getLabel('filter',labels,$language)}</h5>
             </div>
             <div class="modal-body">
                 <DashboardFilterForm bind:config={editedFilter} callbackSave={filterFormCallback}
@@ -84,7 +88,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalLabel">{utils.getLabel('link',labels,session)}</h5>
+                <h5 class="modal-title" id="modalLabel">{utils.getLabel('link',labels,$language)}</h5>
             </div>
             <div class="modal-body">
                 <DashboardLinkForm bind:config={ dashboardLinkConfig } callbackClose={linkFormCallback} />
@@ -92,10 +96,7 @@
         </div>
     </div>
 </div>
-{:else}
-<div class="alert alert-danger" role="alert">
-    {utils.getLabel('denied',labels,session)}
-</div>
+
 {/if}
 <script>
     import { onMount } from 'svelte';
@@ -104,8 +105,8 @@
     import { dev } from '$app/environment';
     import { utils } from '$lib/utils.js';
     import { goto, afterNavigate, beforeNavigate } from '$app/navigation';
-    import { userSession } from '$lib/stores.js';
     import { invalidateAll } from '$app/navigation';
+    import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
 
     import DashboardFilterForm from '$lib/components/DashboardFilterForm.svelte';
     import DashboardLinkForm from '$lib/components/DashboardLinkForm.svelte';
@@ -142,13 +143,6 @@
     // Documentation of cols
     // https://github.com/vaheqelyan/svelte-grid/issues/140
     let cols = {}
-
-    let session;
-    userSession.subscribe(value => {
-        session = value;
-    });
-
-    //let interval
 
     let getWidgetType = function (idx) {
         try {
@@ -199,7 +193,6 @@
         } catch (e) {
             console.log(e)
         }
-        //console.log('refresh interval: ', interval)
         return interval * 1000 // in ms
     }
 
@@ -207,14 +200,14 @@
         const headers = new Headers()
         let method = 'GET'
         let url = utils.getBackendUrl(location) + "/api/core/application?offset=0&limit=1000"
-        headers.set('Authentication', session.user.token);
+        headers.set('Authentication', $token);
         let apps = fetch(url,{ headers: headers }
         ).then((response) => {
             if (response.status == 200) {
                 errorMessage = ''
                 return response.json()
             } else if (response.status == 401 || response.status == 403 || response.status == 404) {
-                utils.setAuthorized(session, false)
+                token.set(null)
             } else {
                 alert(
                     utils.getMessage(utils.FETCH_STATUS)
@@ -223,9 +216,9 @@
                 )
             }
         }).catch((error) => {
-            errorMessage = error.message
-            if (errorMessage == utils.getLabel('fetcherror', labels, session) && location.protocol.toLowerCase() == 'https') {
-                errorMessage = errorMessage + utils.getLabel('fetcherror_message', labels, session)
+            errorMessage = error.getMessage
+            if (errorMessage == 'Failed to fetch' && location.protocol.toLowerCase() == 'https') {
+                errorMessage = errorMessage + utils.getLabel('fetcherror_message', labels, $language)
             }
             console.log(error)
         });
@@ -246,7 +239,7 @@
     let interval
     afterNavigate(({ from, to }) => {
         console.log('afterNavigate', from, to);
-        if (!session.user.logged || !session.user.authorized || session.user.login == '') {
+        if (!$isAuthenticated) {
             console.log('redirect to login');
             goto('/login');
         } else {

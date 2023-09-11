@@ -68,9 +68,9 @@ export const sgxdata = {
     }
     //return Promise.resolve(getSgxNotifications(devMode, apiUrl, limit, offset, token)).then((result) => result);
   },
-  getUserSettings: function (devMode, apiUrl, userData) {
+  getUserSettings: function (devMode, apiUrl, userData, token) {
     try {
-      return Promise.resolve(getSgxUserSettings(devMode, apiUrl, userData)).then((result) => result);
+      return Promise.resolve(getSgxUserSettings(devMode, apiUrl, userData, token)).then((result) => result);
     }catch(e){
       console.log('getUserSettings', e)
       throw new Error(e);
@@ -167,10 +167,10 @@ const getSgxNotifications = async function (devMode, apiUrl, limit, offset, toke
   }
 }
 
-const getSgxUserSettings = async function (devMode, apiUrl,userData) {
+const getSgxUserSettings = async function (devMode, apiUrl,userData,token) {
   if (devMode) {
     return {
-        uid: userData.login,
+        uid: userData.uid,
         email: 'test@localhost',
         name: 'name',
         surname: 'surname',
@@ -184,7 +184,7 @@ const getSgxUserSettings = async function (devMode, apiUrl,userData) {
   }
   const headers = new Headers()
   headers.set('Accept', 'application/json');
-  headers.set('Authentication', userData.token);
+  headers.set('Authentication', token);
   const res = await fetch(apiUrl, { mode: 'cors', headers: headers });
   let data;
   data = await res.json();

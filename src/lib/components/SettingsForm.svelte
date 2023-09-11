@@ -1,28 +1,28 @@
 <form>
     <div class="row">
         <div class="col-md-1 col-form-label">
-            <label for="input-uid" class="form-label">{utils.getLabel('login',labels,session)}</label>
+            <label for="input-uid" class="form-label">{utils.getLabel('login',labels,$language)}</label>
         </div>
         <div class="col-md-5">
             <input disabled type="text" class="form-control" id="input-uid" bind:value={config.uid}>
         </div>
         <div class="col-md-1 col-form-label">
-            <label for="input-account" class="form-label">{utils.getLabel('account',labels,session)}</label>
+            <label for="input-account" class="form-label">{utils.getLabel('account',labels,$language)}</label>
         </div>
         <div class="col-md-5">
             <input disabled type="text" class="form-control" id="input-account"
-                value={sgxhelper.getAccountTypeName(config.type,session.user.language).toUpperCase()}>
+                value={sgxhelper.getAccountTypeName(config.type,$language).toUpperCase()}>
         </div>
     </div>
     <div class="row">
         <div class="col-md-1 col-form-label">
-            <label for="input-name" class="form-label">{utils.getLabel('name',labels,session)}</label>
+            <label for="input-name" class="form-label">{utils.getLabel('name',labels,$language)}</label>
         </div>
         <div class="col-md-5">
             <input type="text" class="form-control" id="input-name" bind:value={config.name} readonly={readonly}>
         </div>
         <div class="col-md-1 col-form-label">
-            <label for="input-surname" class="form-label">{utils.getLabel('surname',labels,session)}</label>
+            <label for="input-surname" class="form-label">{utils.getLabel('surname',labels,$language)}</label>
         </div>
         <div class="col-md-5">
             <input type="text" class="form-control" id="input-surname" bind:value={config.surname} readonly={readonly}>
@@ -30,13 +30,13 @@
     </div>
     <div class="row">
         <div class="col-md-1 col-form-label">
-            <label for="input-email" class="form-label">{utils.getLabel('email',labels,session)}</label>
+            <label for="input-email" class="form-label">{utils.getLabel('email',labels,$language)}</label>
         </div>
         <div class="col-md-5">
             <input type="text" class="form-control" id="input-email" bind:value={config.email} readonly={readonly}>
         </div>
         <div class="col-md-2 col-form-label">
-            <label for="input-email" class="form-label">{utils.getLabel('phone_prefix',labels,session)}</label>
+            <label for="input-email" class="form-label">{utils.getLabel('phone_prefix',labels,$language)}</label>
         </div>
         <div class="col-md-4">
             <input type="text" class="form-control" id="input-email" bind:value={config.phonePrefix}
@@ -45,7 +45,7 @@
     </div>
     <div class="row">
         <div class="col-md-1 col-form-label">
-            <label for="input-role" class="form-label">{utils.getLabel('roles',labels,session)}</label>
+            <label for="input-role" class="form-label">{utils.getLabel('roles',labels,$language)}</label>
         </div>
         <div class="col-md-5">
             <input disabled type="text" class="form-control" id="input-role" bind:value={config.role}
@@ -53,7 +53,7 @@
         </div>
 
         <div class="col-md-2 col-form-label">
-            <label for="input-language" class="form-label">{utils.getLabel('language',labels,session)}</label>
+            <label for="input-language" class="form-label">{utils.getLabel('language',labels,$language)}</label>
         </div>
         <div class="col-md-4">
             <input type="text" class="form-control" id="input-language" bind:value={config.preferredLanguage}
@@ -66,7 +66,7 @@
     {:then data}
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-organization" class="form-label">{utils.getLabel('organization',labels,session)}</label>
+            <label for="input-organization" class="form-label">{utils.getLabel('organization',labels,$language)}</label>
         </div>
         <div class="col-md-10">
             <input type="text" class="form-control" id="input-organization"
@@ -77,7 +77,7 @@
     {/if}
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-createdAt" class="form-label">{utils.getLabel('registration',labels,session)}</label>
+            <label for="input-createdAt" class="form-label">{utils.getLabel('registration',labels,$language)}</label>
         </div>
         <div class="col-md-10">
             <input type="text" class="form-control" id="input-createdAt" value={new Date(config.createdAt).toISOString()
@@ -89,20 +89,20 @@
 
     <div class="row">
         <div class="col">
-            <h6>{utils.getLabel('notyfication_methods',labels,session)}</h6>
+            <h6>{utils.getLabel('notyfication_methods',labels,$language)}</h6>
         </div>
     </div>
     <div class="row">
         <div class="col-md-1 col-form-label">
             <label for="input-generalNotificationChannel"
-                class="form-label">{utils.getLabel('general_notifications',labels,session)}</label>
+                class="form-label">{utils.getLabel('general_notifications',labels,$language)}</label>
         </div>
         <div class="col-md-3">
             <select class="form-select" id="input-generalNotificationChannel"
                 bind:value={config.generalNotificationChannel} readonly={readonly}>
-                <option value="SIGNOMIX">{utils.getLabel('in_app',labels,session)}</option>
-                <option value="SMTP">{utils.getLabel('email',labels,session)}</option>
-                <option value="WEBHOOK">{utils.getLabel('webhook',labels,session)}</option>
+                <option value="SIGNOMIX">{utils.getLabel('in_app',labels,$language)}</option>
+                <option value="SMTP">{utils.getLabel('email',labels,$language)}</option>
+                <option value="WEBHOOK">{utils.getLabel('webhook',labels,$language)}</option>
             </select>
         </div>
         <div class="col-md-8">
@@ -113,14 +113,14 @@
     <div class="row">
         <div class="col-md-1 col-form-label">
             <label for="input-infoNotificationChannel"
-                class="form-label">{utils.getLabel('info_notifications',labels,session)}</label>
+                class="form-label">{utils.getLabel('info_notifications',labels,$language)}</label>
         </div>
         <div class="col-md-3">
             <select class="form-select" id="input-infoNotificationChannel" bind:value={config.infoNotificationChannel}
                 readonly={readonly}>
-                <option value="SIGNOMIX">{utils.getLabel('in_app',labels,session)}</option>
-                <option value="SMTP">{utils.getLabel('email',labels,session)}</option>
-                <option value="WEBHOOK">Web{utils.getLabel('webhook',labels,session)}hook</option>
+                <option value="SIGNOMIX">{utils.getLabel('in_app',labels,$language)}</option>
+                <option value="SMTP">{utils.getLabel('email',labels,$language)}</option>
+                <option value="WEBHOOK">Web{utils.getLabel('webhook',labels,$language)}hook</option>
             </select>
         </div>
         <div class="col-md-8">
@@ -131,14 +131,14 @@
     <div class="row">
         <div class="col-md-1 col-form-label">
             <label for="input-warningNotificationChannel"
-                class="form-label">{utils.getLabel('warning_notifications',labels,session)}</label>
+                class="form-label">{utils.getLabel('warning_notifications',labels,$language)}</label>
         </div>
         <div class="col-md-3">
             <select class="form-select" id="input-warningNotificationChannel"
                 bind:value={config.warningNotificationChannel} readonly={readonly}>
-                <option value="SIGNOMIX">{utils.getLabel('in_app',labels,session)}</option>
-                <option value="SMTP">{utils.getLabel('email',labels,session)}</option>
-                <option value="WEBHOOK">{utils.getLabel('webhook',labels,session)}</option>
+                <option value="SIGNOMIX">{utils.getLabel('in_app',labels,$language)}</option>
+                <option value="SMTP">{utils.getLabel('email',labels,$language)}</option>
+                <option value="WEBHOOK">{utils.getLabel('webhook',labels,$language)}</option>
             </select>
         </div>
         <div class="col-md-8">
@@ -149,14 +149,14 @@
     <div class="row">
         <div class="col-md-1 col-form-label">
             <label for="input-alertNotificationChannel"
-                class="form-label">{utils.getLabel('alert_notifications',labels,session)}</label>
+                class="form-label">{utils.getLabel('alert_notifications',labels,$language)}</label>
         </div>
         <div class="col-md-3">
             <select class="form-select" id="input-alertNotificationChannel" bind:value={config.alertNotificationChannel}
                 readonly={readonly}>
-                <option value="SIGNOMIX">{utils.getLabel('in_app',labels,session)}</option>
-                <option value="SMTP">{utils.getLabel('email',labels,session)}</option>
-                <option value="WEBHOOK">{utils.getLabel('webhook',labels,session)}</option>
+                <option value="SIGNOMIX">{utils.getLabel('in_app',labels,$language)}</option>
+                <option value="SMTP">{utils.getLabel('email',labels,$language)}</option>
+                <option value="WEBHOOK">{utils.getLabel('webhook',labels,$language)}</option>
             </select>
         </div>
         <div class="col-md-8">
@@ -171,13 +171,13 @@
         <div class="col">
             <div class="col-form-label  text-center">
                 <button class="btn btn-outline-danger mt-1"
-                    on:click={handlePassword}>{utils.getLabel('changePassword',labels,session)}</button>
+                    on:click={handlePassword}>{utils.getLabel('changePassword',labels,$language)}</button>
             </div>
         </div>
         <div class="col">
             <div class="col-form-label text-center">
                 <button class="btn btn-outline-danger mt-1"
-                    on:click={handleRemove}>{utils.getLabel('deleteAccount',labels,session)}</button>
+                    on:click={handleRemove}>{utils.getLabel('deleteAccount',labels,$language)}</button>
             </div>
         </div>
     </div> 
@@ -188,9 +188,9 @@
     <div class="row">
         <div class="col-form-label">
             <a href="/settings" class="btn btn-outline-secondary mt-1"
-                on:click={handleCancel}>{utils.getLabel('cancel',labels,session)}</a>
+                on:click={handleCancel}>{utils.getLabel('cancel',labels,$language)}</a>
             <button class="btn btn-outline-primary me-4 mt-1"
-                on:click={handleSave}>{utils.getLabel('save',labels,session)}</button>
+                on:click={handleSave}>{utils.getLabel('save',labels,$language)}</button>
         </div>
     </div>
     {/if}
@@ -199,7 +199,7 @@
     import { sgxhelper } from '$lib/sgxhelper.js';
     import { sgxdata } from '$lib/sgxdata.js';
     import { utils } from '$lib/utils.js';
-    import { userSession } from '$lib/stores.js';
+    import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { dev } from '$app/environment';
 
     export let config
@@ -207,10 +207,6 @@
     export let readonly
 
     console.log('config', config);
-    let session;
-    userSession.subscribe(value => {
-        session = value;
-    });
 
     function handleSave(event) {
         callback(config)
@@ -225,12 +221,9 @@
         alert('Not implemented yet')
     }
 
-    const apiUrl = utils.getBackendUrl(location) + '/api/core/organization/'+session.user.organization
-    let promise = sgxdata.getOrganization(dev,apiUrl,session.user.token);
+    const apiUrl = utils.getBackendUrl(location) + '/api/core/organization/'+$profile.organization
+    let promise = sgxdata.getOrganization(dev,apiUrl,$token);
 
-    //function getOrganizationName(orgID) {
-    //    return ''
-    //}
 
     let labels = {
         'login': {

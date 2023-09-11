@@ -2,7 +2,7 @@
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-2 border-bottom">
     <h5>Konfiguracja urządzenia</h5>
     {#if data.eui!='new'}<a href="/devices/{data.eui}"
-    title="{utils.getLabel('view',labels,session)}"><i class="bi bi-eye h5 me-2 link-dark"></i></a>{/if}
+    title="{utils.getLabel('view',labels,$language)}"><i class="bi bi-eye h5 me-2 link-dark"></i></a>{/if}
 </div>
 {#await data}
 {:then data}
@@ -14,7 +14,7 @@
     import { browser } from '$app/environment'
     import { dev } from '$app/environment';
     import { utils } from '$lib/utils.js';
-    import { userSession } from '$lib/stores.js';
+    import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { base } from '$app/paths'
     import { goto, afterNavigate } from '$app/navigation'
     import DeviceForm from '$lib/components/DeviceForm.svelte';
@@ -22,10 +22,6 @@
     export let data
     let errorMessage = ''
 
-    let session;
-    userSession.subscribe(value => {
-        session = value;
-    });
     let previousPage = base;
     afterNavigate(({ from }) => {
         previousPage = from?.url.pathname || previousPage
@@ -54,7 +50,7 @@
                 url = url + data.eui
                 method = 'PUT'
             }
-            headers.set('Authentication', session.user.token);
+            headers.set('Authentication', $token);
             headers.set('Content-Type', 'application/json');
             let response = fetch(
                 url,
@@ -65,7 +61,7 @@
                         goto('/devices')
                         return ''
                     } else if (response.status == 401 || response.status == 403 || response.status == 404) {
-                        utils.setAuthorized(session, false)
+                        token.set(null)
                     } else if (response.status == 400) {
                     } else {
                         if (!silent) {
@@ -91,7 +87,7 @@
                         }
                     }
                     if(error.message=='Failed to fetch'){
-                        error.message = utils.getLabel('failToFetch',labels,session)
+                        error.message = utils.getLabel('failToFetch',labels,$language)
                     }
                     callback(error.message)
                 });

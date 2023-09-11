@@ -1,14 +1,11 @@
-// @ts-nocheck
 import { dev } from '$app/environment';
-import { userSession } from '$lib/stores.js';
+import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
 import { utils } from '$lib/utils.js';
 
 export const load = async ({ params, url }) => {
 
-  let session;
-  userSession.subscribe(value => {
-    session = value;
-  });
+  let usertoken
+  token.subscribe((value) => usertoken = value)
 
   const getSelectedConfig = async (serviceUrl) => {
     let config = null
@@ -18,12 +15,12 @@ export const load = async ({ params, url }) => {
       try {
         let endpoint = serviceUrl + "/api/core/device/" + params.slug + "?full=true"
         let headers = new Headers();
-        headers.set('Authentication', session.user.token);
+        headers.set('Authentication', usertoken);
         await fetch(endpoint, { headers: headers }).then(response => {
           if (response.status == 200) {
             config = response.json()
           } else if (response.status == 401 || response.status == 403) {
-            utils.setAuthorized(session, false)
+            token.set(null)
           } else {
             alert(
               utils.getMessage(utils.FETCH_STATUS)

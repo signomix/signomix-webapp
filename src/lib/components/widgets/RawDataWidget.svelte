@@ -1,5 +1,5 @@
 <script>
-    import { userSession } from '$lib/stores.js';
+    import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { utils } from '$lib/utils.js';
     import { sgxdata } from '$lib/sgxdata.js';
     import { sgxhelper } from '$lib/sgxhelper.js';
@@ -8,16 +8,13 @@
 
     export let config
     export let filter
-    let session;
-    userSession.subscribe(value => {
-        session = value;
-    });
+
     let errorMessage = '';
     const apiUrl = utils.getBackendUrl(location) + '/api/provider/v2/device/'
     let parentHeight = 0;
 
     console.log('RawDataWidget config', config)
-    let promise = sgxdata.getData(dev,apiUrl,config,filter,session.user.token);
+    let promise = sgxdata.getData(dev,apiUrl,config,filter,$token);
     let front = true;
 
     function switchView() {
@@ -35,9 +32,7 @@
     <div class="row text-left">
         <div class="col-12" >
             {#await promise}
-            <div class="spinner-border spinner-border-sm" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
+            <div class="spinner-border spinner-border-sm" role="status"></div>
             {:then data}
             {#if front}
             <pre style="height: auto; max-height: {parentHeight-32}px; overflow: auto;">{JSON.stringify(data, null, 2)}</pre>

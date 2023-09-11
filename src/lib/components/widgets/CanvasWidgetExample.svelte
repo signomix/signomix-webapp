@@ -50,13 +50,7 @@
     }
 
     let show = function () {
-        //console.log('SHOW')
         jsonData = JSON.parse(rawdata)
-        //console.log(jsonData)
-        //if (jsonData.length == 0 || jsonData[0].length == 0) {
-        //    dataAvailable = false;
-        //    return;
-        //}
         dataAvailable = true;
         drawContent()
     }
@@ -70,15 +64,10 @@
 
     function drawDedicated(list, unitName, rounding) {
         //put your code here and return true
-        //console.log('drawDedicated() is not used')
-        //console.log(devConfigs)
-        //console.log(appConfigs)
         return false;
     }
 
     function drawDefault() {
-        //console.log('drawDefault')
-        //console.log(ctx)
         ctx.clearRect(0, 0, canvas.width, canvas.height)
         ctx.fillStyle = 'rgb(255, 255, 255)';
         ctx.fillRect(0, 0, canvas.width, canvas.height)

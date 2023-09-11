@@ -73,17 +73,12 @@
 {/await}
 <script>
     import SettingsForm from '$lib/components/SettingsForm.svelte';
-    import { userSession } from '$lib/stores.js';
+    import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
 
-    let session;
-    userSession.subscribe(value => {
-        session = value;
-    })
-
     onMount(async () => {
-        if(!session.user.logged || !session.user.authorized || session.user.login==''){
+        if(!$isAuthenticated){
             console.log('redirect to login');
             goto('/login');
         }else{

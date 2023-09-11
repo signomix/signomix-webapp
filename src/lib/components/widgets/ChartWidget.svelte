@@ -1,5 +1,5 @@
 <script>
-    import { userSession } from '$lib/stores.js';
+    import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { utils } from '$lib/utils.js';
     import { sgxdata } from '$lib/sgxdata.js';
     import { sgxhelper } from '$lib/sgxhelper.js';
@@ -9,15 +9,9 @@
     import 'chartjs-adapter-moment';
     import { afterUpdate } from 'svelte';
 
-
-
     export let config
     export let filter
 
-    let session;
-    userSession.subscribe(value => {
-        session = value;
-    });
     let errorMessage = '';
     const apiUrl = utils.getBackendUrl(location) + '/api/provider/v2/device/'
 
@@ -37,7 +31,7 @@
     var myChart
     async function show(ctx) {
         try {
-            let promise = await sgxdata.getData(dev, apiUrl, config, filter, session.user.token, transform)
+            let promise = await sgxdata.getData(dev, apiUrl, config, filter, $token, transform)
                 .then(function (data) {
                     if (myChart) myChart.destroy()
                     myChart = new Chart(ctx, data);

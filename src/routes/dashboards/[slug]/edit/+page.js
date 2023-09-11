@@ -1,24 +1,26 @@
 // @ts-nocheck
 import { browser, building, dev, version } from '$app/environment';
 import { error } from '@sveltejs/kit';
-import { userSession } from '$lib/stores.js';
+import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
 import { utils } from '$lib/utils.js';
 import { sgxdata } from '$lib/sgxdata.js';
 
 export const load = async ({ params, url }) => {
-  let session;
-  userSession.subscribe(value => {
-    session = value;
-  });
+let usertoken
+token.subscribe((value)=> usertoken=value)
+let userprofile
+profile.subscribe((value)=>userprofile=value)
+let userAuthenticated
+isAuthenticated.subscribe((value)=>userAuthenticated=value)
 
   const newDashboard = {
     id: params.slug,
-    userID: session.user.login,
+    userID: userprofile.uid,
     title: 'My Dasboard',
     team: '',
     administrators: '',
     shared: false,  // true if shared with other users
-    organizationId: session.user.organization,
+    organizationId: userprofile.organization,
     organizationName: '',
     items: [],
     widgets: [],
@@ -38,12 +40,12 @@ export const load = async ({ params, url }) => {
         try {
           let endpoint = serviceUrl + "/api/core/v2/dashboards/" + params.slug
           let headers = new Headers();
-          headers.set('Authentication', session.user.token);
+          headers.set('Authentication', usertoken);
           await fetch(endpoint, { headers: headers }).then(response => {
             if (response.status == 200) {
               config = response.json()
             } else if (response.status == 401 || response.status == 403) {
-              utils.setAuthorized(session, false)
+              token.set(null)
             } else {
               alert(
                 utils.getMessage(utils.FETCH_STATUS)
@@ -72,13 +74,13 @@ export const load = async ({ params, url }) => {
     let config = null
     const headers = new Headers()
     headers.set('Accept', 'application/json');
-    headers.set('Authentication', session.user.token);
+    headers.set('Authentication', usertoken);
     await fetch(utils.getBackendUrl(url) + '/api/core/organization/' + id, { mode: 'cors', headers: headers })
       .then(response => {
         if (response.status == 200) {
           config = response.json()
         } else if (response.status == 401 || response.status == 403) {
-          utils.setAuthorized(session, false)
+          token.set(null)
         } else {
           alert(
             utils.getMessage(utils.FETCH_STATUS)
@@ -91,8 +93,7 @@ export const load = async ({ params, url }) => {
   }
 
   async function transform() {
-    if (session == null || session == undefined
-      || session.user.login == null || session.user.login == undefined || session.user.login == '') { // not logged in
+    if (!userAuthenticated) { // not logged in
       return newDashboard
     }
     let config = null
@@ -125,19 +126,6 @@ export const load = async ({ params, url }) => {
     })
     return config
   }
-
-  /*
-    async function transform2() {
-    Promise.all([
-      getSelectedConfig(utils.getBackendUrl(url)),
-      getOrganization(1)
-    ]).then((values) => {
-      console.log('VALUES', values)
-    }).catch((error) => {
-      console.log(error)
-    })
-  }
-  */
 
   return await transform()
 }

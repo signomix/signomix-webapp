@@ -1,20 +1,21 @@
-import { userSession } from '$lib/stores.js';
+import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
 import { dev } from '$app/environment';
 import { utils } from '$lib/utils.js';
 import { sgxdata } from '$lib/sgxdata.js';
-import { goto } from '$app/navigation';
 
-let session;
-userSession.subscribe(value => {
-    session = value;
-});
+let usertoken
+token.subscribe((value)=> usertoken=value)
+let userprofile
+profile.subscribe((value)=>userprofile=value)
+let userAuthenticated
+isAuthenticated.subscribe((value)=>userAuthenticated=value)
 
 
 export async function load({url}) {
-    if(!session.user.logged || !session.user.authorized || session.user.login==''){
+    if(!userAuthenticated){
         return {}
     }
-    let apiUrl = utils.getBackendUrl(url) + '/api/core/user/'+session.user.login
+    let apiUrl = utils.getBackendUrl(url) + '/api/core/user/'+userprofile.uid
     console.log('load({url})', url)
-    return await sgxdata.getUserSettings(dev, apiUrl, session.user.token)
+    return await sgxdata.getUserSettings(dev, apiUrl, userprofile, usertoken)
 }

@@ -1,34 +1,28 @@
-// @ts-nocheck
 import { browser, dev, } from '$app/environment';
-//import { error } from '@sveltejs/kit';
-import { userSession } from '$lib/stores.js';
 import { utils } from '$lib/utils.js';
-//import { transform } from 'svelte-preprocess/dist/autoProcess.js';
+import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
+
+let usertoken
+token.subscribe((value)=> usertoken=value)
 
 export const load = async ({ params, url }) => {
-
-  let session;
-  userSession.subscribe(value => {
-    session = value;
-  });
 
   const getSelectedConfig = async (serviceUrl) => {
     let config = null
     if (dev) {
       if (browser) {
-        //console.log(window.localStorage.getItem(params.slug))
         config = JSON.parse(window.localStorage.getItem(params.slug))
       }
     } else {
       try {
         let endpoint = serviceUrl + "/api/core/v2/dashboards/" + params.slug
         let headers = new Headers();
-        headers.set('Authentication', session.user.token);
+        headers.set('Authentication', usertoken);
         await fetch(endpoint, { headers: headers }).then(response => {
           if (response.status == 200) {
             config = response.json()
           } else if (response.status == 401 || response.status == 403) {
-            utils.setAuthorized(session, false)
+            token.set(null)
           } else {
             alert(
               utils.getMessage(utils.FETCH_STATUS)
@@ -38,8 +32,6 @@ export const load = async ({ params, url }) => {
           }
         })
       } catch (error) {
-        //console.log('ERROR')
-        //console.log(error)
       }
 
     }
@@ -49,9 +41,7 @@ export const load = async ({ params, url }) => {
   async function transform() {
     let cfg = await getSelectedConfig(utils.getBackendUrl(url))
     if (!dev) {
-      //console.log("TRANSFORM " + JSON.stringify(cfg))
       for (let i = 0; i < cfg.items.length; i++) {
-        //console.log(cfg.items[i])
         let item = cfg.items[i]
         if (item['1'] !== null) {
           item['1'] = item['_el1']
@@ -63,7 +53,6 @@ export const load = async ({ params, url }) => {
         }
       }
     }
-    //console.log(cfg)
     return cfg
   }
 
