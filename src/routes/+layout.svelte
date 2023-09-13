@@ -160,7 +160,7 @@
                             </span>
                         </a>
                     </li>
-                    <li class="nav-item text-end mt-2 me-2"><span>ver. 2.0.0</span></li>
+                    <!--<li class="nav-item text-end mt-2 me-2"><span>ver. 2.0.0</span></li>-->
                 </ul>
             </div>
         </nav>
@@ -210,7 +210,7 @@
     let alertCounter = { value: 0 }
     poll(async function fetchData() {
         if ($isAuthenticated) {
-            let url = utils.getBackendUrl(location) + "/api/alert/"
+            let url = utils.getBackendUrl(location) + "/api/alert"
             console.log("POLL")
             await sgxdata.getNotifications(dev, url, 0, 0, $token)
                 .then((data) => {

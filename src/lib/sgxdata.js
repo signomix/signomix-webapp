@@ -153,7 +153,11 @@ const getSgxNotifications = async function (devMode, apiUrl, limit, offset, toke
     headers.set('Accept', 'application/json');
     headers.set('Authentication', token);
     const endpoint = apiUrl + "?limit=" + limit + "&offset=" + offset;
-    const res = await fetch(endpoint, { mode: 'cors', headers: headers });
+    const res = await fetch(endpoint, {
+       mode: 'cors', 
+      referrerPolicy: 'origin-when-cross-origin',
+      headers: headers 
+    });
     let data;
     data = await res.json();
     if (res.ok) {

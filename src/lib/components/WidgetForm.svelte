@@ -25,7 +25,7 @@
             {#if selectedTab === 'basic'}
             <div class="p-1 mt-2">
                 <div class="mb-2">
-                    <label for="title" class="form-label">{widgets.getFieldName('title',session.user.language)}</label>
+                    <label for="title" class="form-label">{widgets.getFieldName('title',$language)}</label>
                     <input type="text" class="form-control form-control-sm" id="title" bind:value={config[index].title}>
                 </div>
                 <div class="mb-2">
@@ -225,15 +225,10 @@
 </div>
 <script>
     import widgets from '$lib/widgets.js';
-    import { userSession } from '$lib/stores.js';
+    import { profile,token, language, isAuthenticated } from '$lib/usersession.js';
     export let index
     export let config
     export let callback
-
-    let session;
-    userSession.subscribe(value => {
-        session = value;
-    });
 
     let selectedTab = 'basic'
     function handleClick(event) {

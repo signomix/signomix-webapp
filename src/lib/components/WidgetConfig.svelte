@@ -14,6 +14,10 @@
         on:click={setCurrentIndex(index)}><i class="bi bi-gear"></i>
     </button>
     <button class="btn btn-outline-primary btn-sm p-1" on:pointerdown={e=> e.stopPropagation()}
+        on:click={doCopy(index)}>
+        <i class="bi bi-copy"></i>
+    </button>
+    <button class="btn btn-outline-primary btn-sm p-1" on:pointerdown={e=> e.stopPropagation()}
         on:click={() => showAlert()} >
         <i class="bi bi-trash3"></i>
     </button>
@@ -25,6 +29,7 @@
     export let config
     export let removeCallback = () => { }
     export let setCurrentIndex = () => { }
+    export let copyCallback = () => { }
 
     let alertVisible = false;
 
@@ -33,5 +38,8 @@
         if(confirm("Usunąć wybraną kontrolkę?")){
             removeCallback(index)
         }
+    }
+    function doCopy(show) {
+        copyCallback(index)
     }
 </script>

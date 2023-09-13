@@ -107,7 +107,7 @@
             }
         } else {
             let headers = new Headers();
-            let url = utils.getBackendUrl(location) + "/api/alert/"
+            let url = utils.getBackendUrl(location) + "/api/alert"
             url = url + '?offset=' + offset + '&limit=' + limit
             headers.set('Authentication', $token);
             await fetch(url, { headers: headers })

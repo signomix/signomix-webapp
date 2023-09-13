@@ -52,7 +52,7 @@
             ]
         } else {
             let headers = new Headers();
-            let url = utils.getBackendUrl(location) + "/api/core/favourite/dashboards"
+            let url = utils.getBackendUrl(location) + "/api/core/favourite/dashboards?offset=0&limit=100"
             headers.set('Authentication', $token);
             await fetch(url, { headers: headers })
                 .then((response) => {

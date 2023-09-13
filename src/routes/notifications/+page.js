@@ -1,5 +1,5 @@
 
-import { token } from '$lib/usersession.js';
+import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
 import { dev } from '$app/environment';
 import { utils } from '$lib/utils.js';
 
@@ -18,6 +18,7 @@ async function getUserNotifications(serviceUrl) {
     }
     const response = await fetch(serviceUrl+'/api/alert', {
         method: 'GET',
+        mode: 'cors',
         headers: {
             'Content-Type': 'application/json',
             'Authentication': usertoken

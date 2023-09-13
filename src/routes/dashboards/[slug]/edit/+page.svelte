@@ -83,7 +83,7 @@
     {#if $isAuthenticated}
     <Grid bind:items={data.items} rowHeight={100} let:item {cols} let:index on:change={onChange}>
         <div class="demo-widget content bg-white border border-primary">
-            <WidgetConfig index={index} bind:config={data.widgets} removeCallback={removeItem} setCurrentIndex={(idx)=>
+            <WidgetConfig index={index} bind:config={data.widgets} removeCallback={removeItem} copyCallback={copyItem} setCurrentIndex={(idx)=>
                 setCurrentConfigureIndex(idx)}/>
         </div>
     </Grid>
@@ -367,6 +367,44 @@
             console.log(error)
         });
         return ''
+    }
+
+    function copyItem(index) {
+        modified = true
+        let newWidget=structuredClone(data.widgets[index])
+        newWidget.name = 'w'+data.widgets.length.toString()
+        newWidget.title = newWidget.title + ' copy'
+        data.widgets.push(newWidget);
+
+        let newItem = {
+            id: id(),
+            10: gridHelp.item({
+                w: 2,
+                h: 2,
+                x: 0,
+                y: 0,
+                draggable: true, resizable: true
+            }),
+            1: gridHelp.item({
+                w: 1,
+                h: 1,
+                x: 0,
+                y: 0,
+                draggable: true, resizable: true
+            }),
+        };
+
+        let findOutPosition = gridHelp.findSpace(newItem, data.items, COLS);
+
+        newItem = {
+            ...newItem,
+            [COLS]: {
+                ...newItem[COLS],
+                ...findOutPosition,
+            },
+        };
+
+        data.items = [...data.items, ...[newItem]];
     }
 
     let labels = {

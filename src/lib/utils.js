@@ -8,7 +8,7 @@ export const utils = {
     }
     return url.protocol + '//' + x
   },
-  setAuthorized: function (session, value) {
+  setAuthorized: function (session, value) { //TODO: remove
     userSession.user.set(
       {
         logged: session.user.logged,
@@ -173,6 +173,16 @@ export const utils = {
         return 'any'
       default:
         return 'unknown'
+    }
+  },
+  isUserRole: function (userProfile, roleName) {
+    let roles
+    try {
+      roles = userProfile.roles.toLowerCase().split(',')
+      return roles.includes(roleName.toLowerCase())
+    } catch (err) {
+      console.log('isUserRole error: ' + err)
+      return false
     }
   },
   AUTHORIZATION_FAILED: 0,

@@ -1,19 +1,12 @@
-{#if !session.user.logged}
+{#if !$isAuthenticated}
 <div class="alert alert-danger w-100 mt-2 text-center" role="alert">
-    {utils.getLabel('denied', labels, session)}
+    {utils.getLabel('denied', labels, $language)}
 </div>
-{:else if session.user.authorized}
+{:else}
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h5>{utils.getLabel('title', labels, session)}</h5>
+    <h5>{utils.getLabel('title', labels, $language)}</h5>
 </div>
-<!--
-<div class="row">
-    <div class="col-12">
-        {utils.getLabel('not_implemented', labels, session)}
-    </div>
-</div>
--->
 {#await promise}
 {:then groups}
 <div class="row">
@@ -24,7 +17,7 @@
                     <tr>
                         <th scope="col" class="col-1">#</th>
                         <th scope="col" class="col-2">EUI</th>
-                        <th scope="col" class="col-9">{utils.getLabel('name', labels, session)}</th>
+                        <th scope="col" class="col-9">{utils.getLabel('name', labels, $language)}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -42,7 +35,7 @@
 </div>
 <div class="row">
     <div class="col-2">
-        <a class="btn btn-outline-primary" role="button" href="/groups/new/edit">{utils.getLabel('add', labels, session)}</a>
+        <a class="btn btn-outline-primary" role="button" href="/groups/new/edit">{utils.getLabel('add', labels, $language)}</a>
     </div>
     <div class="col-10">
         <nav aria-label="Table navigation">
@@ -70,23 +63,19 @@
 
 {/if}
 <script>
-    import { userSession } from '$lib/stores.js';
+    import { profile,token, language, isAuthenticated } from '$lib/usersession.js';
     import { utils } from '$lib/utils.js';
     import { dev } from '$app/environment';
 
     //export let data
     let offset = 0
     let limit = 10
-    let session;
-    userSession.subscribe(value => {
-        session = value;
-    });
 
     let promise = getGroups(offset)
 
     async function getGroups(actualOffset) {
         let groups = []
-        if (!session.user.logged) {
+        if (!$isAuthenticated) {
             return groups
         }
         if (dev) {
@@ -112,11 +101,10 @@
             }
             console.log(groups)
         } else {
-            console.log(session)
             let headers = new Headers();
             let url = utils.getBackendUrl(location) + "/api/iot/group"
             url = url + '?offset=' + actualOffset + '&limit=' + limit + '&full=true'
-            headers.set('Authentication', session.user.token);
+            headers.set('Authentication', $token);
             headers.set('Access-Control-Allow-Origin', '*');
             await fetch(url,
                 {
@@ -129,7 +117,7 @@
                     if (response.status == 200) {
                         groups = response.json();
                     } else if (response.status == 401 || response.status == 403) {
-                        utils.setAuthorized(session, false)
+                        token.set(null)
                     } else {
                         alert(alertMessage.replace('%1', response.status).replace('%2', response.statusText))
                     }

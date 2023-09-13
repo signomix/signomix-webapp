@@ -1,13 +1,13 @@
 <form>
     <div class="row">
         <div class="col-md-1 col-form-label">
-            <label for="input-id" class="form-label">{utils.getLabel('id',labels,session)}</label>
+            <label for="input-id" class="form-label">{utils.getLabel('id',labels,$language)}</label>
         </div>
         <div class="col-md-5">
             <input disabled type="text" class="form-control" id="input-id" bind:value={config.id}>
         </div>
         <div class="col-md-1 col-form-label">
-            <label for="input-code" class="form-label">{utils.getLabel('code',labels,session)}</label>
+            <label for="input-code" class="form-label">{utils.getLabel('code',labels,$language)}</label>
         </div>
         <div class="col-md-5">
             <input type="text" class="form-control" id="input-code" bind:value={config.code} readonly={readonly}>
@@ -16,7 +16,7 @@
     
     <div class="row">
         <div class="col-md-1 col-form-label">
-            <label for="input-name" class="form-label">{utils.getLabel('name',labels,session)}</label>
+            <label for="input-name" class="form-label">{utils.getLabel('name',labels,$language)}</label>
         </div>
         <div class="col-md-11">
             <input type="text" class="form-control" id="input-name" bind:value={config.name} readonly={readonly}>
@@ -31,9 +31,9 @@
     <div class="row">
         <div class="col-form-label">
             <a href="/settings" class="btn btn-outline-secondary mt-1"
-                on:click={handleCancel}>{utils.getLabel('cancel',labels,session)}</a>
+                on:click={handleCancel}>{utils.getLabel('cancel',labels,$language)}</a>
             <button class="btn btn-outline-primary me-4 mt-1"
-                on:click={handleSave}>{utils.getLabel('save',labels,session)}</button>
+                on:click={handleSave}>{utils.getLabel('save',labels,$language)}</button>
         </div>
     </div>
     {/if}
@@ -42,7 +42,7 @@
     import { sgxhelper } from '$lib/sgxhelper.js';
     import { sgxdata } from '$lib/sgxdata.js';
     import { utils } from '$lib/utils.js';
-    import { userSession } from '$lib/stores.js';
+    import { profile,token, language, isAuthenticated } from '$lib/usersession.js';
     import { dev } from '$app/environment';
 
     export let config
@@ -50,10 +50,6 @@
     export let readonly
 
     console.log('config', config);
-    let session;
-    userSession.subscribe(value => {
-        session = value;
-    });
 
     function handleSave(event) {
         callback(config)
@@ -62,8 +58,8 @@
         callback(null)
     }
 
-    const apiUrl = utils.getBackendUrl(location) + '/api/core/organization/'+session.user.organization
-    let promise = sgxdata.getOrganization(dev,apiUrl,session.user.token);
+    const apiUrl = utils.getBackendUrl(location) + '/api/core/organization/'+$profile.organization
+    let promise = sgxdata.getOrganization(dev,apiUrl,$token);
 
     let labels = {
         'id': {
