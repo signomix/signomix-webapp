@@ -16,7 +16,8 @@ async function getUserNotifications(serviceUrl) {
     if(dev){
         return nots;
     }
-    const response = await fetch(serviceUrl+'/api/alert', {
+    //const response = await fetch(serviceUrl+'/api/alert', {
+    const response = await fetch(serviceUrl+'/api/core/notifications', {
         method: 'GET',
         mode: 'cors',
         headers: {

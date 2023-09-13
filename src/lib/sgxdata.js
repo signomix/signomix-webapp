@@ -12,20 +12,20 @@ export const sgxdata = {
     let measurement = {}
     let channels = []
     let tmpD
-    for (let i = count-1; i >=0; i--) {
+    for (let i = count - 1; i >= 0; i--) {
       tmpD = new Date() - 60000 * i
       channels = []
       measurement = {
         deviceEUI: eui,
         name: channelName,
-        value: i!=3?Math.random() * 100:null,
+        value: i != 3 ? Math.random() * 100 : null,
         timestamp: tmpD,
         stringValue: null
       }
       channels.push(measurement)
       timestamps.push(channels)
     }
-    let result={timestamps:timestamps}
+    let result = { timestamps: timestamps }
     console.log('timestamps', JSON.stringify(result))
     return timestamps
   },
@@ -35,14 +35,14 @@ export const sgxdata = {
     let channelNames = channelNamesString.split(",");
     let measurement = {}
     let tmpD
-    for (let i = count-1; i>=0; i--) {
+    for (let i = count - 1; i >= 0; i--) {
       tmpD = new Date() - 60000 * i
       channels = []
       for (let j = 0; j < channelNames.length; j++) {
         measurement = {
           deviceEUI: eui,
           name: channelNames[j],
-          value: (i==3&&j==1)?null:Math.random() * 100,
+          value: (i == 3 && j == 1) ? null : Math.random() * 100,
           timestamp: tmpD,
           stringValue: null
         }
@@ -61,8 +61,8 @@ export const sgxdata = {
   },
   getNotifications: function (devMode, apiUrl, limit, offset, token) {
     try {
-      return Promise.resolve(getSgxNotifications(devMode, apiUrl, limit, offset, token)).then((result) => result);  
-    }catch(e){
+      return Promise.resolve(getSgxNotifications(devMode, apiUrl, limit, offset, token)).then((result) => result);
+    } catch (e) {
       console.log('getNotifications', e)
       throw new Error(e);
     }
@@ -71,7 +71,7 @@ export const sgxdata = {
   getUserSettings: function (devMode, apiUrl, userData, token) {
     try {
       return Promise.resolve(getSgxUserSettings(devMode, apiUrl, userData, token)).then((result) => result);
-    }catch(e){
+    } catch (e) {
       console.log('getUserSettings', e)
       throw new Error(e);
     }
@@ -79,8 +79,8 @@ export const sgxdata = {
   },
   getOrganization: function (devMode, apiUrl, token) {
     try {
-      return Promise.resolve(getSgxOrganizationData(devMode, apiUrl, token)).then((result) => result);  
-    }catch(e){
+      return Promise.resolve(getSgxOrganizationData(devMode, apiUrl, token)).then((result) => result);
+    } catch (e) {
       console.log('getNotifications', e)
       throw new Error(e);
     }
@@ -100,8 +100,8 @@ const getSgxData2 = async function (devMode, apiUrl, config, filter, token, tran
   headers.set('Accept', 'application/json');
   headers.set('Authentication', token);
   var query = config.query;
-  if(query == null || query == undefined || query == "undefined"){
-    query="";
+  if (query == null || query == undefined || query == "undefined") {
+    query = "";
   }
   const endpoint = apiUrl + config.dev_id + "/" + config.channel + "?query=" + query;
   const res = await fetch(endpoint, { mode: 'cors', headers: headers });
@@ -152,11 +152,15 @@ const getSgxNotifications = async function (devMode, apiUrl, limit, offset, toke
     const headers = new Headers()
     headers.set('Accept', 'application/json');
     headers.set('Authentication', token);
-    const endpoint = apiUrl + "?limit=" + limit + "&offset=" + offset;
+    let endpoint = apiUrl;
+    if (limit != null && limit != undefined && limit != "undefined"
+      && offset != null && offset != undefined && offset != "undefined") {
+      endpoint = endpoint + "?limit=" + limit + "&offset=" + offset;
+    }
     const res = await fetch(endpoint, {
-       mode: 'cors', 
+      mode: 'cors',
       referrerPolicy: 'origin-when-cross-origin',
-      headers: headers 
+      headers: headers
     });
     let data;
     data = await res.json();
@@ -171,19 +175,19 @@ const getSgxNotifications = async function (devMode, apiUrl, limit, offset, toke
   }
 }
 
-const getSgxUserSettings = async function (devMode, apiUrl,userData,token) {
+const getSgxUserSettings = async function (devMode, apiUrl, userData, token) {
   if (devMode) {
     return {
-        uid: userData.uid,
-        email: 'test@localhost',
-        name: 'name',
-        surname: 'surname',
-        type: 4,
-        role: '',
-        confirmed: true,
-        preferredLanguage: 'pl',
-        organization: userData.organization,
-        createdAt: Date.now()
+      uid: userData.uid,
+      email: 'test@localhost',
+      name: 'name',
+      surname: 'surname',
+      type: 4,
+      role: '',
+      confirmed: true,
+      preferredLanguage: 'pl',
+      organization: userData.organization,
+      createdAt: Date.now()
     }
   }
   const headers = new Headers()
@@ -201,13 +205,13 @@ const getSgxUserSettings = async function (devMode, apiUrl,userData,token) {
 
 }
 
-const getSgxOrganizationData = async function (devMode, apiUrl,token) {
+const getSgxOrganizationData = async function (devMode, apiUrl, token) {
   if (devMode) {
     return {
-        id: 0,
-        name: 'Default organization',
-        code: '',
-        description: ''
+      id: 0,
+      name: 'Default organization',
+      code: '',
+      description: ''
     }
   }
   const headers = new Headers()
@@ -224,68 +228,68 @@ const getSgxOrganizationData = async function (devMode, apiUrl,token) {
 }
 
 
-const groupDataExample=[
+const groupDataExample = [
   [
     [
       {
-        deviceEUI:"0003230F013A2EDE",
-        name:"temperature",
-        value:16.9,
-        timestamp:1690440834455,
-        stringValue:null
+        deviceEUI: "0003230F013A2EDE",
+        name: "temperature",
+        value: 16.9,
+        timestamp: 1690440834455,
+        stringValue: null
       },
       {
-        deviceEUI:"0003230F013A2EDE",
-        name:"humidity",
-        value:99.0,
-        timestamp:1690440834455,
-        stringValue:null
+        deviceEUI: "0003230F013A2EDE",
+        name: "humidity",
+        value: 99.0,
+        timestamp: 1690440834455,
+        stringValue: null
       },
       {
-        deviceEUI:"0003230F013A2EDE",
-        name:"latitude",
-        value:100,
-        timestamp:1690440834455,
-        stringValue:null
+        deviceEUI: "0003230F013A2EDE",
+        name: "latitude",
+        value: 100,
+        timestamp: 1690440834455,
+        stringValue: null
       },
       {
-        deviceEUI:"0003230F013A2EDE",
-        name:"longitude",
-        value:100,
-        timestamp:1690440834455,
-        stringValue:null
+        deviceEUI: "0003230F013A2EDE",
+        name: "longitude",
+        value: 100,
+        timestamp: 1690440834455,
+        stringValue: null
       }
     ]
   ],
   [
     [
       {
-        deviceEUI:"00033728193A26DB",
-        name:"temperature",
-        value:16.6,
-        timestamp:1690440654408,
-        stringValue:null
+        deviceEUI: "00033728193A26DB",
+        name: "temperature",
+        value: 16.6,
+        timestamp: 1690440654408,
+        stringValue: null
       },
       {
-        deviceEUI:"00033728193A26DB",
-        name:"humidity",
-        value:60.0,
-        timestamp:1690440654408,
-        stringValue:null
+        deviceEUI: "00033728193A26DB",
+        name: "humidity",
+        value: 60.0,
+        timestamp: 1690440654408,
+        stringValue: null
       },
       {
-        deviceEUI:"00033728193A26DB",
-        name:"latitude",
-        value:200,
-        timestamp:1690440654408,
-        stringValue:null
+        deviceEUI: "00033728193A26DB",
+        name: "latitude",
+        value: 200,
+        timestamp: 1690440654408,
+        stringValue: null
       },
       {
-        deviceEUI:"00033728193A26DB",
-        name:"longitude",
-        value:200,
-        timestamp:1690440654408,
-        stringValue:null
+        deviceEUI: "00033728193A26DB",
+        name: "longitude",
+        value: 200,
+        timestamp: 1690440654408,
+        stringValue: null
       }
     ]
   ]

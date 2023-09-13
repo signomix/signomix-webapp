@@ -175,14 +175,14 @@ export const utils = {
         return 'unknown'
     }
   },
-  isUserRole: function (userProfile, roleName) {
+  isUserRole: function (userProfile, roleName, defaultResult) {
     let roles
     try {
-      roles = userProfile.roles.toLowerCase().split(',')
+      roles = userProfile.role.toLowerCase().split(',')
       return roles.includes(roleName.toLowerCase())
     } catch (err) {
       console.log('isUserRole error: ' + err)
-      return false
+      return defaultResult
     }
   },
   AUTHORIZATION_FAILED: 0,

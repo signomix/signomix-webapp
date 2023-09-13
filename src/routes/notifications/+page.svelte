@@ -70,6 +70,7 @@
     export let data
     let offset = 0
     let limit = 20
+    let errorMessage = ''
 
     let promise = getAlerts()
 
@@ -107,7 +108,7 @@
             }
         } else {
             let headers = new Headers();
-            let url = utils.getBackendUrl(location) + "/api/alert"
+            let url = utils.getBackendUrl(location) + "/api/core/notifications"
             url = url + '?offset=' + offset + '&limit=' + limit
             headers.set('Authentication', $token);
             await fetch(url, { headers: headers })
@@ -156,7 +157,7 @@
         }
         const headers = new Headers()
         let method = 'DELETE'
-        let url = utils.getBackendUrl(location) + "/api/alert/" + id
+        let url = utils.getBackendUrl(location) + "/api/core/notifications/" + id
         headers.set('Authentication', $token);
         let response = fetch(
             url,
@@ -164,7 +165,7 @@
         ).then((response) => {
             if (response.status == 200) {
                 errorMessage = ''
-                goto('/notifications')
+                //goto('/notifications')
             } else if (response.status == 401 || response.status == 403 || response.status == 404) {
                 token.set(null)
             } else {

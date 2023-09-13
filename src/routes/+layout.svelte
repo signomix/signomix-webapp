@@ -51,11 +51,13 @@
                     </li>
                     {#if $isAuthenticated}
                     {#if $profile && $profile.organization!=0}
+                    {#if !utils.isUserRole($profile, 'limited', true)}
                     <li class="nav-item">
                         <a class="nav-link" class:active={false} on:click={toggleOrganization}>
                             <span><i class="bi bi-building me-2"></i><span>{utils.getLabel('organization',labels,$language)}</span>
                         </a>
                     </li>
+                    {/if}
                     {#if organizationExpanded}
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/organization/settings' }
@@ -83,12 +85,14 @@
                         </a>
                     </li>
                     <!-- Structure -->
+                    {#if !utils.isUserRole($profile, 'limited', true)}
                     <li class="nav-item">
                         <a class="nav-link" class:active={false} on:click={toggleStructure}>
                             <span><i
                                     class="bi bi-diagram-3 me-2"></i><span>{utils.getLabel('structure',labels,$language)}</span>
                         </a>
                     </li>
+                    {/if}
                     {#if structureExpanded}
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/devices' } href="/devices">
@@ -115,6 +119,7 @@
                             {/if}
                         </a>
                     </li>
+                    {#if !utils.isUserRole($profile, 'limited', true)}
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/settings' } href="/settings">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
@@ -122,6 +127,7 @@
                             </span>
                         </a>
                     </li>
+                    {/if}
                     {#if $profile.type==1}
                     <!-- Administration -->
                     <li class="nav-item">
@@ -151,8 +157,9 @@
                     {/if}
                     <!-- end logged in -->
                     {/if}
+                    {#if !utils.isUserRole($profile, 'limited', true)}
                     <li class="nav-item">
-                        <a class="nav-link" class:active={$page.url.pathname==='/about' }
+                        <a class="nav-link" class:active={$page.url.pathname==='/documentation' }
                             href="https://documentation.signomix.com" target="_blank">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i
@@ -160,7 +167,7 @@
                             </span>
                         </a>
                     </li>
-                    <!--<li class="nav-item text-end mt-2 me-2"><span>ver. 2.0.0</span></li>-->
+                    {/if}
                 </ul>
             </div>
         </nav>
@@ -179,6 +186,22 @@
     import { dev } from '$app/environment';
     import { sgxdata } from '$lib/sgxdata.js';
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
+
+    $: available=setAvailableOptions($profile)
+
+    function isAvailable(endpoint){
+        let result = available.includes(endpoint)
+        console.log('isAvailable', available, endpoint, result)
+        return result
+    }
+    function setAvailableOptions(userProfile){
+        console.log('setAvailableOptions', userProfile)
+        if(utils.isUserRole(userProfile, 'limited')){
+            return []
+        }else{
+            return ['/documentation']
+        }
+    }
 
     function logout() {
         console.log("LOGOUT")
@@ -207,14 +230,24 @@
         language.set('en')
         return true
     }
+    function isVisible(endpoint) {
+        let restricted = ['/', '/login', '/about', '/documentation']
+        console.log('profile', $profile)
+        console.log('isvisible', endpoint, restricted.includes(endpoint), utils.isUserRole($profile, 'limited'))
+        if (restricted.includes(endpoint) && utils.isUserRole($profile, 'limited')) {
+            return false
+        }
+        return true
+    }
     let alertCounter = { value: 0 }
     poll(async function fetchData() {
         if ($isAuthenticated) {
-            let url = utils.getBackendUrl(location) + "/api/alert"
+            let url = utils.getBackendUrl(location) + "/api/core/notifications/status"
             console.log("POLL")
             await sgxdata.getNotifications(dev, url, 0, 0, $token)
                 .then((data) => {
-                    alertCounter.value = data.value
+                    //alertCounter.value = data.value
+                    alertCounter.value = data
                 }).catch((error) => {
                     console.log('POLL ERROR', error)
                     token.set(null)
