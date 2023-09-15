@@ -14,19 +14,28 @@
         <div class="table-responsive">
             <table class="table">
                 <thead class="table-light">
+                    {#if !utils.isUserRole($profile, 'limited', true)}
                     <tr>
                         <th scope="col" class="col-1">#</th>
                         <th scope="col" class="col-4">{utils.getLabel('id',labels,$language)}</th>
                         <th scope="col" class="col-5">{utils.getLabel('title',labels,$language)}</th>
                         <th scope="col" class="col-2">{utils.getLabel('action',labels,$language)}</th>
                     </tr>
+                    {:else}
+                    <tr>
+                        <th scope="col" class="col-1">#</th>
+                        <th scope="col" class="col-9">{utils.getLabel('title',labels,$language)}</th>
+                        <th scope="col" class="col-2">{utils.getLabel('action',labels,$language)}</th>
+                    </tr>
+                    {/if}
                 </thead>
                 <tbody>
                     {#each configs as config, index}
+                    {#if !utils.isUserRole($profile, 'limited', true)}
                     <tr>
                         <th scope="row" class="col-1">{offset+1+index}</th>
                         <td class="col-4"><a href="/dashboards/{config.id}">{config.id}</a></td>
-                        <td class="col-5">{config.title}</td>
+                        <td class="col-5"><a href="/dashboards/{config.id}">{config.title}</a></td>
                         <td class="col-2">
                             <a href="/dashboards/{config.id}/edit"><i class="bi bi-pencil-square"></i></a>
                             {#if config.favourite}
@@ -38,6 +47,22 @@
                             {/if}
                         </td>
                     </tr>
+                    {:else}
+                    <tr>
+                        <th scope="row" class="col-1">{offset+1+index}</th>
+                        <td class="col-9"><a href="/dashboards/{config.id}">{config.title}</a></td>
+                        <td class="col-2">
+                            <a href="/dashboards/{config.id}/edit"><i class="bi bi-pencil-square"></i></a>
+                            {#if config.favourite}
+                            <a href="" on:click|preventDefault={toggleFav(config.id,false)}><i
+                                    class="bi bi-star-fill ms-2 text-warning"></i></a>
+                            {:else}
+                            <a href="" on:click|preventDefault={toggleFav(config.id,true)}><i
+                                    class="bi bi-star ms-2"></i></a>
+                            {/if}
+                        </td>
+                    </tr>
+                    {/if}
                     {/each}
                 </tbody>
             </table>
@@ -140,7 +165,7 @@
             console.log('toggle fav', id, favourite)
             let headers = new Headers();
             headers.set('Authentication', $token);
-            promise = fetch(utils.getBackendUrl(location) + '/api/core/favourite/dashboards/' + id, {headers: headers, method: favourite ? 'POST' : 'DELETE' })
+            promise = fetch(utils.getBackendUrl(location) + '/api/core/favourite/dashboards/' + id, { headers: headers, method: favourite ? 'POST' : 'DELETE' })
                 .then(response => response.text()) // pass the data as promise to next then block
                 .then(data => {
                     return getConfigs()

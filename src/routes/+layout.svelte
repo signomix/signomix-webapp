@@ -187,7 +187,7 @@
     import { sgxdata } from '$lib/sgxdata.js';
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
 
-    $: available=setAvailableOptions($profile)
+    /* $: available=setAvailableOptions($profile)
 
     function isAvailable(endpoint){
         let result = available.includes(endpoint)
@@ -202,7 +202,7 @@
             return ['/documentation']
         }
     }
-
+ */
     function logout() {
         console.log("LOGOUT")
         token.set(null)
