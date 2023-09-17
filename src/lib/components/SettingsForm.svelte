@@ -69,8 +69,7 @@
             <label for="input-organization" class="form-label">{utils.getLabel('organization',labels,$language)}</label>
         </div>
         <div class="col-md-10">
-            <input type="text" class="form-control" id="input-organization"
-                value={data.name} disabled>
+            <input type="text" class="form-control" id="input-organization" value={data.name} disabled>
         </div>
     </div>
     {/await}
@@ -92,14 +91,25 @@
             <h6>{utils.getLabel('notyfication_methods',labels,$language)}</h6>
         </div>
     </div>
+
     <div class="row">
-        <div class="col-md-1 col-form-label">
+        <div class="col-md-2"><h6>{utils.getLabel('type',labels,$language)}</h6></div>
+        <div class="col-md-3">
+            <h6>{utils.getLabel('channel',labels,$language)}</h6>
+        </div>
+        <div class="col-md-7">
+            <h6>{utils.getLabel('config',labels,$language)}</h6>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2 col-form-label">
             <label for="input-generalNotificationChannel"
                 class="form-label">{utils.getLabel('general_notifications',labels,$language)}</label>
         </div>
-        <div class="col-md-3">
-            <select class="form-select" id="input-generalNotificationChannel"
-                bind:value={config.generalNotificationChannel} readonly={readonly}>
+
+        <div class="col-md-2">
+            <select class="form-select" id="input-generalNotificationChannel" value={getChannelName('general')}
+                readonly={readonly}>
                 <option value="SIGNOMIX">{utils.getLabel('in_app',labels,$language)}</option>
                 <option value="SMTP">{utils.getLabel('email',labels,$language)}</option>
                 <option value="WEBHOOK">{utils.getLabel('webhook',labels,$language)}</option>
@@ -107,16 +117,16 @@
         </div>
         <div class="col-md-8">
             <input type="text" class="form-control" id="input-generalNotificationChannelConfig"
-                bind:value={config.generalNotificationChannelConfig} readonly={readonly}>
+                value={getChannelConfig('general')} readonly={readonly}>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-1 col-form-label">
+        <div class="col-md-2 col-form-label">
             <label for="input-infoNotificationChannel"
                 class="form-label">{utils.getLabel('info_notifications',labels,$language)}</label>
         </div>
-        <div class="col-md-3">
-            <select class="form-select" id="input-infoNotificationChannel" bind:value={config.infoNotificationChannel}
+        <div class="col-md-2">
+            <select class="form-select" id="input-infoNotificationChannel" value={getChannelName('info')}
                 readonly={readonly}>
                 <option value="SIGNOMIX">{utils.getLabel('in_app',labels,$language)}</option>
                 <option value="SMTP">{utils.getLabel('email',labels,$language)}</option>
@@ -125,17 +135,17 @@
         </div>
         <div class="col-md-8">
             <input type="text" class="form-control" id="input-infoNotificationChannelConfig"
-                bind:value={config.infoNotificationChannelConfig} readonly={readonly}>
+                value={getChannelConfig('info')} readonly={readonly}>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-1 col-form-label">
+        <div class="col-md-2 col-form-label">
             <label for="input-warningNotificationChannel"
                 class="form-label">{utils.getLabel('warning_notifications',labels,$language)}</label>
         </div>
-        <div class="col-md-3">
-            <select class="form-select" id="input-warningNotificationChannel"
-                bind:value={config.warningNotificationChannel} readonly={readonly}>
+        <div class="col-md-2">
+            <select class="form-select" id="input-warningNotificationChannel" value={getChannelName('warning')}
+                readonly={readonly}>
                 <option value="SIGNOMIX">{utils.getLabel('in_app',labels,$language)}</option>
                 <option value="SMTP">{utils.getLabel('email',labels,$language)}</option>
                 <option value="WEBHOOK">{utils.getLabel('webhook',labels,$language)}</option>
@@ -143,16 +153,16 @@
         </div>
         <div class="col-md-8">
             <input type="text" class="form-control" id="input-warningNotificationChannelConfig"
-                bind:value={config.warningNotificationChannelConfig} readonly={readonly}>
+                value={getChannelConfig('warning')} readonly={readonly}>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-1 col-form-label">
+        <div class="col-md-2 col-form-label">
             <label for="input-alertNotificationChannel"
                 class="form-label">{utils.getLabel('alert_notifications',labels,$language)}</label>
         </div>
-        <div class="col-md-3">
-            <select class="form-select" id="input-alertNotificationChannel" bind:value={config.alertNotificationChannel}
+        <div class="col-md-2">
+            <select class="form-select" id="input-alertNotificationChannel" value={getChannelName('alert')}
                 readonly={readonly}>
                 <option value="SIGNOMIX">{utils.getLabel('in_app',labels,$language)}</option>
                 <option value="SMTP">{utils.getLabel('email',labels,$language)}</option>
@@ -161,12 +171,12 @@
         </div>
         <div class="col-md-8">
             <input type="text" class="form-control" id="input-alertNotificationChannelConfig"
-                bind:value={config.alertNotificationChannelConfig} readonly={readonly}>
+                value={getChannelConfig('general')} readonly={readonly}>
         </div>
     </div>
 
     <hr>
-    
+
     <div class="row">
         <div class="col">
             <div class="col-form-label  text-center">
@@ -180,10 +190,10 @@
                     on:click={handleRemove}>{utils.getLabel('deleteAccount',labels,$language)}</button>
             </div>
         </div>
-    </div> 
+    </div>
 
     <hr>
-    
+
     {#if !readonly}
     <div class="row">
         <div class="col-form-label">
@@ -208,7 +218,40 @@
 
     console.log('config', config);
 
+    function getChannelName(channel) {
+        if (channel == 'general') {
+            return config.generalNotificationChannel.substring(0, config.generalNotificationChannel.indexOf(":"))
+        } else if (channel == 'info') {
+            return config.infoNotificationChannel.substring(0, config.infoNotificationChannel.indexOf(":"))
+        } else if (channel == 'warning') {
+            return config.warningNotificationChannel.substring(0, config.warningNotificationChannel.indexOf(":"))
+        } else if (channel == 'alert') {
+            return config.alertNotificationChannel.substring(0, config.alertNotificationChannel.indexOf(":"))
+        }
+        return ''
+    }
+    function getChannelConfig(channel) {
+        if (channel == 'general') {
+            return config.generalNotificationChannel.substring(config.generalNotificationChannel.indexOf(":") + 1)
+        } else if (channel == 'info') {
+            return config.infoNotificationChannel.substring(config.infoNotificationChannel.indexOf(":") + 1)
+        } else if (channel == 'warning') {
+            return config.warningNotificationChannel.substring(config.warningNotificationChannel.indexOf(":") + 1)
+        } else if (channel == 'alert') {
+            return config.alertNotificationChannel.substring(config.alertNotificationChannel.indexOf(":") + 1)
+        }
+        return ''
+    }
+
     function handleSave(event) {
+        config.generalNotificationChannel = document.getElementById('input-generalNotificationChannel').value
+            + ':' + document.getElementById('input-generalNotificationChannelConfig').value
+        config.infoNotificationChannel = document.getElementById('input-infoNotificationChannel').value
+            + ':' + document.getElementById('input-infoNotificationChannelConfig').value
+        config.warningNotificationChannel = document.getElementById('input-warningNotificationChannel').value
+            + ':' + document.getElementById('input-warningNotificationChannelConfig').value
+        config.alertNotificationChannel = document.getElementById('input-alertNotificationChannel').value
+            + ':' + document.getElementById('input-alertNotificationChannelConfig').value
         callback(config)
     }
     function handleCancel(event) {
@@ -221,8 +264,8 @@
         alert('Not implemented yet')
     }
 
-    const apiUrl = utils.getBackendUrl(location) + '/api/core/organization/'+$profile.organization
-    let promise = sgxdata.getOrganization(dev,apiUrl,$token);
+    const apiUrl = utils.getBackendUrl(location) + '/api/core/organization/' + $profile.organization
+    let promise = sgxdata.getOrganization(dev, apiUrl, $token);
 
 
     let labels = {
@@ -301,7 +344,27 @@
         'organization': {
             'en': 'Organization',
             'pl': 'Organizacja'
-        }
+        },
+        'changePassword': {
+            'en': 'Change password',
+            'pl': 'Zmień hasło'
+        },
+        'deleteAccount': {
+            'en': 'Delete account',
+            'pl': 'Usuń konto'
+        },
+        'type': {
+            'en': 'Type',
+            'pl': 'Typ'
+        },
+        'channel': {
+            'en': 'Channel',
+            'pl': 'Kanał'
+        },
+        'config': {
+            'en': 'Configuration',
+            'pl': 'Konfiguracja'
+        },
 
     }
 

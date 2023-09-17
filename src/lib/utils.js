@@ -181,7 +181,7 @@ export const utils = {
       roles = userProfile.role.toLowerCase().split(',')
       return roles.includes(roleName.toLowerCase())
     } catch (err) {
-      console.log('isUserRole error: ' + err)
+      console.log("error getting user's role. Returning " + defaultResult)
       return defaultResult
     }
   },

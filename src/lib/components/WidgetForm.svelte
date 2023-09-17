@@ -8,11 +8,11 @@
                 <div class="nav nav-underline" id="nav-tab">
                     <a class="nav-link {selectedTab==='basic'?'active':''}" type="button"
                         on:click={selectBasic}>Basic</a>
-                    {#if config[index].type!='text'}
+                    {#if config[index]!=undefined && config[index].type!='text'}
                     <a class="nav-link {selectedTab==='extended'?'active':''}" type="button"
                         on:click={selectExtended}>Details</a>
                     {/if}
-                    {#if config[index].type=='chart'}
+                    {#if config[index]!=undefined && config[index].type=='chart'}
                     <a class="nav-link {selectedTab==='chart'?'active':''}" type="button" on:click={selectChart}>Chart
                         opt.</a>
                     {/if}
@@ -162,11 +162,20 @@
             </div>
             -->
             <div class="p-1 mt-2">
-                <label for="cubic">Cubic interpolation</label>
-                <select id="cubic" class="form-control form-control-sm" bind:value={config[index].cubicInterpolation}>
+                <label class="form-check-label me-1" for="chart-markers">markery</label>
+                <input type="checkbox" class="form-check-input form-control-sm" id="chart-markers" bind:checked={config[index].chartMarkers}>
+            </div>
+            <div class="p-1 mt-2">
+                <label class="form-check-label me-1" for="chart-area">obszar</label>
+                <input type="checkbox" class="form-check-input form-control-sm" id="chart-area" bind:checked={config[index].chartArea}>
+            </div>
+            <div class="p-1 mt-2">
+<!--                 <label class="form-check-label me-1" for="cubic">Cubic interpolation</label>
+                <input type="checkbox" class="form-check-input form-control-sm" id="cubic" bind:checked={config[index].cubicInterpolation}>
+ -->                <!-- <select id="cubic" class="form-control form-control-sm" bind:value={config[index].cubicInterpolation}>
                     <option selected={true==config[index].cubicInterpolation} value="true">true</option>
                     <option selected={false==config[index].cubicInterpolation} value="false">false</option>
-                </select>
+                </select> -->
             </div>
             {/if}
             <div class="p-1 mt-2">

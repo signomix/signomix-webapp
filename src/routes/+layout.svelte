@@ -51,7 +51,7 @@
                     </li>
                     {#if $isAuthenticated}
                     {#if $profile && $profile.organization!=0}
-                    {#if !utils.isUserRole($profile, 'limited', true)}
+                    {#if !utils.isUserRole($profile, 'limited', false)}
                     <li class="nav-item">
                         <a class="nav-link" class:active={false} on:click={toggleOrganization}>
                             <span><i class="bi bi-building me-2"></i><span>{utils.getLabel('organization',labels,$language)}</span>
@@ -85,7 +85,7 @@
                         </a>
                     </li>
                     <!-- Structure -->
-                    {#if !utils.isUserRole($profile, 'limited', true)}
+                    {#if !utils.isUserRole($profile, 'limited', false)}
                     <li class="nav-item">
                         <a class="nav-link" class:active={false} on:click={toggleStructure}>
                             <span><i
@@ -119,7 +119,7 @@
                             {/if}
                         </a>
                     </li>
-                    {#if !utils.isUserRole($profile, 'limited', true)}
+                    {#if !utils.isUserRole($profile, 'limited', false)}
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/settings' } href="/settings">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
@@ -157,7 +157,7 @@
                     {/if}
                     <!-- end logged in -->
                     {/if}
-                    {#if !utils.isUserRole($profile, 'limited', true)}
+                    {#if !utils.isUserRole($profile, 'limited', false)}
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/documentation' }
                             href="https://documentation.signomix.com" target="_blank">

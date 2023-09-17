@@ -112,7 +112,7 @@
                         data: tmpMeasures[j],
                         backgroundColor: areaColors[(j%7)],
                         borderColor: borderColors[(j%7)],
-                        fill: true,
+                        fill: widgetConfig.chartArea,
                         spanGaps: true
                     }
                 )
@@ -141,7 +141,7 @@
                     borderColor: borderColors[0],
                     borderDash: [],
                     borderDashOffset: 0.0,
-                    fill: true,
+                    fill: widgetConfig.chartArea,
                     spanGaps: true
                 }
             )
@@ -161,6 +161,8 @@
             responsive: true,
             animation: false,
             maintainAspectRatio: false,
+            pointStyle: widgetConfig.chartMarkers,
+            tension: 0,
             scales: {
                 y: {
                     suggestedMin: 0

@@ -187,7 +187,11 @@ const getSgxUserSettings = async function (devMode, apiUrl, userData, token) {
       confirmed: true,
       preferredLanguage: 'pl',
       organization: userData.organization,
-      createdAt: Date.now()
+      createdAt: Date.now(),
+      generalNotificationChannel: '',
+      infoNotificationChannel: '',
+      warningNotificationChannel: '',
+      alertNotificationChannel: ''
     }
   }
   const headers = new Headers()

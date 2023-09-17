@@ -76,6 +76,7 @@
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
+    import { utils } from '$lib/utils.js';
 
     onMount(async () => {
         if(!$isAuthenticated){
@@ -113,35 +114,37 @@
 
     function saveSettings(config){
         console.log("saveSettings: ",config);
-        /*
-        let data = {
-            "uid": data.settings.uid,
-            "settings": config
-        }
-        console.log("data: ",data);
-        fetch('/api/settings', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data),
-        }).then(response => {
-            if (response.ok) {
-                return response.json();
+        const headers = new Headers()
+        let url = utils.getBackendUrl(location) + "/api/core/user/"+config.uid
+        //if (!(data.id === 'new' || data.id == null || data.id == '' || data.id == undefined)) {
+        //    url = url + data.id
+        //    method = 'PUT'
+        //}
+        headers.set('Authentication', $token);
+        headers.set('Content-Type', 'application/json');
+        let response = fetch(
+            url,
+            { method: 'PUT', mode: 'cors', headers: headers, body: JSON.stringify(config) }
+        ).then((response) => {
+            if (response.status == 200) {
+                errorMessage = ''
+                goto('/settings')
+            } else if (response.status == 401 || response.status == 403 || response.status == 404) {
+                token.set(null)
             } else {
-                throw new Error('Something went wrong');
-            }
-        }).then(data => {
-            console.log(data);
-            if(data.status=="OK"){
-                alert("Zapisano ustawienia");
-            }else{
-                alert("Błąd zapisu ustawień");
+                alert(
+                    utils.getMessage(utils.FETCH_STATUS)
+                        .replace('%1', response.status)
+                        .replace('%2', response.statusText)
+                )
             }
         }).catch((error) => {
-            console.error('Error:', error);
+            errorMessage = error.message
+            if (errorMessage == 'Failed to fetch' && location.protocol.toLowerCase() == 'https') {
+                errorMessage = errorMessage + ' ' + utils.getLabel('fetcherror_message', labels, $language)
+            }
+            console.log(error)
         });
-        */
     }
 
 </script>

@@ -36,6 +36,9 @@
     </span>
 </div>
 <div class="dashboard-container" id={dashboardId}>
+    {#if items.length==0}
+    {utils.getLabel('empty',labels,$language)}
+    {:else}
     <Grid bind:items={items} rowHeight={100} let:item {cols} let:index on:resize={handleResize} on:mount={handleMount}>
         <div class="dashboard-widget content bg-white border border-primary rounded-1">
             {#if 'chartjs'===getWidgetType(index)}
@@ -67,6 +70,7 @@
             {/if }
         </div>
     </Grid>
+    {/if}
 </div>
 <!-- Filter modal -->
 <div class="modal fade" id="filterModal" tabindex="0" role="dialog" aria-labelledby="filterModalLabel"
@@ -323,6 +327,10 @@
         'fetcherror_message': {
             'pl': " Możliwa przyczyna: sertyfikaty self signed nie są obsługiwane.",
             'en': " Possible cause: self signed certificates are not supported."
+        },
+        'empty': {
+            'pl': "Pulpit nie zawiera żadnych zdefiniowanych kontrolek.",
+            'en': "Dashboard does not contain any widgets."
         },
     }
 
