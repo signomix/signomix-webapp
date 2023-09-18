@@ -264,7 +264,7 @@
         alert('Not implemented yet')
     }
 
-    const apiUrl = utils.getBackendUrl(location) + '/api/core/organization/' + $profile.organization
+    const apiUrl = utils.getBackendUrl(location) + '/api/core/organization/' + config.organization
     let promise = sgxdata.getOrganization(dev, apiUrl, $token);
 
 
