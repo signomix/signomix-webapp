@@ -185,6 +185,9 @@ export const utils = {
       return defaultResult
     }
   },
+  isDefaultOrganizationUser: function(userProfile) {
+    return userProfile.organization === 0
+  },
   AUTHORIZATION_FAILED: 0,
   AUTHENTICATION_FAILED: 1,
   FETCH: 3,

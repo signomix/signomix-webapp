@@ -50,7 +50,7 @@
                         </a>
                     </li>
                     {#if $isAuthenticated}
-                    {#if $profile && $profile.organization!=0}
+                    {#if $profile && !utils.isDefaultOrganizationUser($profile)}
                     {#if !utils.isUserRole($profile, 'limited', false)}
                     <li class="nav-item">
                         <a class="nav-link" class:active={false} on:click={toggleOrganization}>
@@ -172,7 +172,9 @@
             </div>
         </nav>
         <main class="col-md-9 col-lg-10 ms-sm-auto px-md-4">
+            {#if $isAuthenticated}
             <slot></slot>
+            {/if}
         </main>
     </div>
 </div>
