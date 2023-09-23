@@ -12,8 +12,6 @@
 
     let errorMessage = '';
     const apiUrl = utils.getBackendUrl(location) + '/api/provider/v2/device/'
-    let parentHeight = 0;
-    let alertLevel = 3;
 
     let promise = sgxdata.getData(dev, apiUrl, config, filter, $token);
     let front = true;
@@ -22,25 +20,30 @@
         promise = sgxdata.getData(dev, apiUrl, config, filter, $token);
     });
     function recalculate(value) {
-        return Number.parseFloat(value).toFixed(config.rounding);
+        try {
+            return Number.parseFloat(value).toFixed(config.rounding);
+        } catch (e) {
+            return value;
+        }
     }
-    function isCalculated(measurement) {
-        alertLevel = sgxhelper.getAlertLevel(config.range, recalculate(measurement.value), measurement.timestamp)
-        return true
+    function switchView() {
+        front = !front;
     }
-    function getColor() {
+
+    function getColor(data) {
+        let level = sgxhelper.getAlertLevel(config.range, recalculate(data.value), data.timestamp);
         if (config.config != undefined && config.config != null && config.config != '') {
             try {
                 let cfg = JSON.parse(config.config)
                 if (cfg.colors != undefined && cfg.colors != null && cfg.colors.length == 5) {
-                    return cfg.colors[alertLevel]
+                    return cfg.colors[level]
                 }
             } catch (e) {
                 console.log("error parsing config: ", e);
                 return 'text-muted'
             }
         }
-        switch (alertLevel) {
+        switch (level) {
             case 0:
                 return 'text-success'
             case 1:
@@ -53,8 +56,23 @@
                 return 'text-muted'
         }
     }
+    function getIconName(data) {
+        let level = sgxhelper.getAlertLevel(config.range, recalculate(data.value), data.timestamp);
+        switch (level) {
+            case 0:
+                return 'bi-emoji-smile-fill'
+            case 1:
+                return 'bi-emoji-neutral-fill'
+            case 2:
+                return 'bi-emoji-frown-fill'
+            case 3:
+                return 'bi-emoji-expressionless-fill'
+            default:
+                return 'bi-emoji-expressionless'
+        }
+    }
 </script>
-<div class="p-1 w-100">
+<div class="p-1 w-100" on:click={switchView}>
     {#if config.title!=""}
     <div class="row text-center">
         <div class="col-12"><span>{config.title}</span></div>
@@ -65,18 +83,11 @@
             {#await promise}
             <div class="spinner-border spinner-border-sm" role="status"></div>
             {:then data}
-            {#if isCalculated(data[0][0])}
-            {#if alertLevel==0}
-            <i class="bi bi-emoji-smile-fill h3 {getColor()}"></i>
-            {:else if alertLevel==1}
-            <i class="bi bi-emoji-neutral-fill h3 {getColor()}"></i>
-            {:else if alertLevel==2}
-            <i class="bi bi-emoji-frown-fill h3 {getColor()}"></i>
-            {:else if alertLevel==3}
-            <i class="bi bi-emoji-expressionless-fill h3 {getColor()}"></i>
+            {#if front}
+            <i class="bi {getIconName(data[0][0])} h3 {getColor(data[0][0])}"></i>
             {:else}
-            <i class="bi bi-emoji-expressionless h3 {getColor()}"></i>
-            {/if}
+            {new Date(data[0][0].timestamp).toLocaleString()}<br />
+            {config.dev_id}
             {/if}
             {:catch error}
             {#if !front}

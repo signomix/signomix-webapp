@@ -172,7 +172,7 @@
             </div>
         </nav>
         <main class="col-md-9 col-lg-10 ms-sm-auto px-md-4">
-            {#if $isAuthenticated}
+            {#if $isAuthenticated || $page.url.pathname==='/login'}
             <slot></slot>
             {/if}
         </main>

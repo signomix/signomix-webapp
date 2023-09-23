@@ -142,6 +142,15 @@
     let dashboardFilter = { from: '', to: '' }
     let editedFilter = { from: '', to: '' }
     let dashboardLinkConfig = { link: '', code: '' }
+    let applications = [
+        {
+            id: 0,
+            organization: 0,
+            version: 0,
+            name: "system",
+            configuration: "{\"refreshInterval\":7}",
+        }
+    ]
 
 
     // Documentation of cols
@@ -170,19 +179,6 @@
     let getRefreshInterval = function () {
         const defaultInterval = 300
         let interval = dev ? 10 : defaultInterval
-        let applications = [
-            {
-                id: 0,
-                organization: 0,
-                version: 0,
-                name: "system",
-                configuration: "{\"refreshInterval\":7}",
-            }
-        ]
-        if (!dev) {
-            applications = getApplications()
-        }
-
         try {
             for (let i = 0; i < applications.length; i++) {
                 if (applications[i].name === "system") {
@@ -205,7 +201,7 @@
         let method = 'GET'
         let url = utils.getBackendUrl(location) + "/api/core/application?offset=0&limit=1000"
         headers.set('Authentication', $token);
-        let apps = fetch(url,{ headers: headers }
+        let apps = fetch(url, { headers: headers }
         ).then((response) => {
             if (response.status == 200) {
                 errorMessage = ''
@@ -232,7 +228,9 @@
     let show = function () {
         dashboardConfig = data
         blockChanges(dashboardConfig)
-        console.log('SHOW dashboard '+dashboardConfig.id)
+        mergeConfigs()
+        console.log('dashboardConfig ', dashboardConfig)
+        console.log('SHOW dashboard ' + dashboardConfig.id)
         //console.log('dashboardConfig ', dashboardConfig)
         items = dashboardConfig.items
         cols = [
@@ -240,6 +238,33 @@
             [500, 1],
         ];
     }
+
+    let findApplication = function (id) {
+        console.log('findApplication', applications)
+        for(let i=0;i<applications.length;i++){
+            if(applications[i].id==id){
+                return applications[i]
+            }
+        }
+        return null
+    }
+
+    let mergeConfigs=function(){
+        // it doesn't work because of fetch in getApplications
+/*         for(let i=0;i<dashboardConfig.widgets.length;i++){
+            let widget=dashboardConfig.widgets[i]
+            let app = findApplication(widget.app_id);
+            if(app==null){
+                continue
+            }
+            console.log('app', app)
+            let appCfg = JSON.parse(app.configuration)
+            let cfg=JSON.parse(widget.config)
+            let combined = Object.assign({}, cfg, appCfg);
+            dashboardConfig.widgets[i].config=JSON.stringify(...combined)
+        } */
+    }
+
     let interval
     afterNavigate(({ from, to }) => {
         console.log('afterNavigate', from, to);
@@ -249,12 +274,15 @@
         } else {
             console.log('settings', data);
         }
+        if (!dev) {
+            applications = getApplications()
+        }
         clearInterval(interval);
         interval = setInterval(() => {
-             invalidateAll()
-             show()
-         }, getRefreshInterval());
-         show()
+            invalidateAll()
+            show()
+        }, getRefreshInterval());
+        show()
     })
     beforeNavigate(({ from, to }) => {
         console.log('beforeNavigate', from, to);

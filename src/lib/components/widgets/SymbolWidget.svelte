@@ -20,11 +20,16 @@
         promise = sgxdata.getData(dev, apiUrl, config, filter, $token);
     });
     function recalculate(value) {
+        try{
         return Number.parseFloat(value).toFixed(config.rounding);
+        }catch(e){
+            return value;
+        }
     }
     function switchView() {
         front = !front;
     }
+
     function getColor(data) {
         let level = sgxhelper.getAlertLevel(config.range, recalculate(data.value), data.timestamp);
         if (config.config != undefined && config.config != null && config.config != '') {
@@ -92,8 +97,7 @@
     <div class="row text-center">
         <div class="col-12 mt-1">
             {#await promise}
-            <div class="spinner-border spinner-border-sm" role="status">
-            </div>
+            <div class="spinner-border spinner-border-sm" role="status"></div>
             {:then data}
             {#if front}
             <span class="h4">
