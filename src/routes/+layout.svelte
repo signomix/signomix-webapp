@@ -188,6 +188,7 @@
     import { dev } from '$app/environment';
     import { sgxdata } from '$lib/sgxdata.js';
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
+    import { getInfo, platformInfo, defaultOrganizationId } from '$lib/stores.js';
 
     /* $: available=setAvailableOptions($profile)
 
@@ -205,6 +206,12 @@
         }
     }
  */
+
+    onMount(async () => {
+        //console.log('onMount', $page)
+        getInfo($page.url)
+    });
+
     function logout() {
         console.log("LOGOUT")
         token.set(null)

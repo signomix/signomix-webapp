@@ -1,4 +1,7 @@
-import { userSession } from '$lib/stores.js';
+import { defaultOrganizationId } from '$lib/stores.js';
+
+let defaultOrganizationIdValue
+defaultOrganizationId.subscribe((value) => defaultOrganizationIdValue = value)
 
 export const utils = {
   getBackendUrl: function (url) {
@@ -7,16 +10,6 @@ export const utils = {
       x = x.substring(4)
     }
     return url.protocol + '//' + x
-  },
-  setAuthorized: function (session, value) { //TODO: remove
-    userSession.user.set(
-      {
-        logged: session.user.logged,
-        login: session.user.login,
-        password: session.user.password,
-        authorized: value
-      }
-    )
   },
   getLocalDateFormat: function (dateString) {
     //zamienia ciąg znaków reprezentujący datę
@@ -185,8 +178,11 @@ export const utils = {
       return defaultResult
     }
   },
-  isDefaultOrganizationUser: function(userProfile) {
-    return userProfile.organization === 0
+  isDefaultOrganizationUser: function (userProfile) {
+    console.log('isDefaultOrganizationUser', userProfile, defaultOrganizationIdValue)
+    let result = userProfile.organization == defaultOrganizationIdValue
+      || defaultOrganizationIdValue == null
+    return result
   },
   AUTHORIZATION_FAILED: 0,
   AUTHENTICATION_FAILED: 1,

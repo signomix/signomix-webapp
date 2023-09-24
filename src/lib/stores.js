@@ -1,20 +1,18 @@
 import { writable } from 'svelte/store';
+import { utils } from './utils.js';
 
-export const userSession = writable(
-    {
-        user: {
-            logged: false,
-            login: '',
-            password: '',
-            language: 'en',
-            authorized: false,
-            token: '',
-            organization: 0,
-            type: 0
-        },
-        organization: {
-            id: 0
-        }
-    }
-);
-export const baseUrl = writable({ url: '' })
+export const defaultOrganizationId = writable(null);
+export const platformInfo = writable(null);
+
+export const getInfo=async (url)=>{
+    let infoUrl = utils.getBackendUrl(url) + '/api/core/info'
+    //console.log('getInfo', infoUrl)
+    fetch(infoUrl)
+        .then(response => response.json())
+        .then(data => {
+            console.log('layout data', data)
+            platformInfo.set(data)
+            defaultOrganizationId.set(data.defaultOrganizationId)
+            return {}
+        });
+}
