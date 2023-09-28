@@ -17,9 +17,9 @@
                     <tr>
                         <th scope="col" class="col-1">#</th>
                         <th scope="col" class="col-2">EUI</th>
-                        <th scope="col" class="col-6">{utils.getLabel('name',labels,$language)}</th>
+                        <th scope="col" class="col-5">{utils.getLabel('name',labels,$language)}</th>
                         <th scope="col" class="col-2">{utils.getLabel('type',labels,$language)}</th>
-                        <th scope="col" class="col-1">{utils.getLabel('actions',labels,$language)}</th>
+                        <th scope="col" class="col-2 text-end">{utils.getLabel('actions',labels,$language)}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -27,11 +27,14 @@
                     <tr>
                         <th scope="row" class="col-1">{offset+1+index}</th>
                         <td class="col-2"><a href="/devices/{config.eui}">{config.eui}</a></td>
-                        <td class="col-6">{config.name}</td>
+                        <td class="col-5">{config.name}</td>
                         <td class="col-2">{config.type}</td>
-                        <td class="col-1">
+                        <td class="col-2 text-end">
+                            <a href="/devices/{config.eui}/upload"><i class="bi bi-upload h5 me-2 link-dark" title={utils.getLabel('upload',labels,$language)}></i></a>
                             <a href="/devices/{config.eui}/edit" title={utils.getLabel('configure',labels,$language)}><i
                                 class="bi bi-gear h5 me-2 link-dark"></i></a>
+                            <a href="" on:click|preventDefault={deleteSelected(config.eui)} title={utils.getLabel('delete',labels,$language)}><i
+                                class="bi bi-trash h5 link-dark"></i></a>
                         </td>
                     </tr>
                     {/each}
@@ -148,6 +151,22 @@
         console.log(event)
     }
 
+    function showUploadForm(eui) {
+        return function (event) {
+            event.preventDefault();
+            console.log('show upload form', eui)
+            alert('show upload form not implemented')
+        }
+    }
+
+    function deleteSelected(eui) {
+        return function (event) {
+            event.preventDefault();
+            console.log('delete', eui)
+            alert('delete not implemented')
+        }
+    }
+
     let labels = {
         'devices': {
             'pl': "Urządzenia",
@@ -176,6 +195,14 @@
         'configure': {
             'pl': "Konfiguruj",
             'en': "Configure"
+        },
+        'delete': {
+            'pl': "Usuń",
+            'en': "Delete"
+        },
+        'upload': {
+            'pl': "Prześlij dane",
+            'en': "Upload data"
         }
     }
 
