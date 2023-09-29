@@ -12,7 +12,7 @@
                     <a class="nav-link {selectedTab==='extended'?'active':''}" type="button"
                         on:click={selectExtended}>Details</a>
                     {/if}
-                    {#if config[index]!=undefined && config[index].type=='chart'}
+                    {#if config[index]!=undefined && config[index].type=='chart' || config[index].type=='groupchart'}
                     <a class="nav-link {selectedTab==='chart'?'active':''}" type="button" on:click={selectChart}>Chart
                         opt.</a>
                     {/if}
@@ -140,13 +140,21 @@
 
             </div>
             {/if}
+            <!-- chart options -->
             {#if selectedTab === 'chart'}
             <div class="p-1 mt-2">
                 <label for="chart_type">Typ wykresu</label>
                 <select id="chart_type" class="form-control form-control-sm" bind:value={config[index].chartType}>
+                    {#if config[index].type=='chart'}
                     {#each widgets.chartTypes as chartType}
                     <option selected={chartType==config[index].chartType} value={chartType}>{chartType}</option>
                     {/each}
+                    {/if}
+                    {#if config[index].type=='groupchart'}
+                    {#each widgets.groupchartTypes as chartType}
+                    <option selected={chartType==config[index].chartType} value={chartType}>{chartType}</option>
+                    {/each}
+                    {/if}
                 </select>
             </div>
             {#if config[index].chartType=='line'}
@@ -172,7 +180,7 @@
             <div class="p-1 mt-2">
 <!--                 <label class="form-check-label me-1" for="cubic">Cubic interpolation</label>
                 <input type="checkbox" class="form-check-input form-control-sm" id="cubic" bind:checked={config[index].cubicInterpolation}>
- -->                <!-- <select id="cubic" class="form-control form-control-sm" bind:value={config[index].cubicInterpolation}>
+ -->       <!-- <select id="cubic" class="form-control form-control-sm" bind:value={config[index].cubicInterpolation}>
                     <option selected={true==config[index].cubicInterpolation} value="true">true</option>
                     <option selected={false==config[index].cubicInterpolation} value="false">false</option>
                 </select> -->
@@ -198,6 +206,7 @@
                 </select>
             </div>
             {/if}
+            <!-- widget instance configuration -->
             {#if selectedTab === 'config'}
             {#if widgets.isVisible(config[index].type, 'app_id')}
             <div class="mb-2">
@@ -213,6 +222,7 @@
                 <br>
             </div>
             {/if}
+            <!-- widget description -->
             {#if selectedTab === 'desc'}
             <div class="p-1 mt-2">
                 <label for="description">Opis kontrolki</label>

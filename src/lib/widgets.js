@@ -2,6 +2,7 @@ export const widgets = {
     types: [
         'button',
         'chart',
+        'groupchart',
         'date',
         'devinfo',
         'image',
@@ -25,16 +26,24 @@ export const widgets = {
         'bar',
         'scatter'
     ],
+    groupchartTypes: [
+        'donut',
+        'stacked'
+    ],
     localTypes: [], // List of locally defined widget types
     communityTypes: [], // List of widgets types delivered by the community
     chartOptions: {
         line: ['dots:', 'plain:', 'area:', 'areaWithDots:'],
-        bar: []
+        bar: [],
+        scatter: [],
+        donut: [],
+        stacked: []
     },
     typeFields: {
         default: ['title', 'type', 'role','config', 'app_id'],
         button: ['dev_id','channel', 'commandType'],
         chart: ['dev_id','channel', 'query', 'format', 'chartType','channel_translated'],
+        groupchart: ['group','channel','channel_translated','query','format','chartType'],
         date: ['dev_id','channel', 'query'],
         devinfo: ['dev_id',],
         image: ['imageUrl'],
@@ -42,9 +51,9 @@ export const widgets = {
         link: ['dashboardID'],
         map: ['dev_id','channel', 'query'],
         multimap: ['group','channel'],
-        multitrack: ['group','channel'],
+        multitrack: ['group','channel','query'],
         plan: ['group','channel','range'],
-        raw: ['dev_id','channel', 'query'],
+        raw: ['dev_id','group','channel', 'query'],
         report: ['group','channel','channel_translated'],
         text: [],
         stopwatch: ['dev_id','channel', 'query'],

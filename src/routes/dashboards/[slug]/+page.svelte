@@ -39,7 +39,7 @@
     {#if items.length==0}
     {utils.getLabel('empty',labels,$language)}
     {:else}
-    <Grid bind:items={items} rowHeight={100} let:item {cols} let:index on:resize={handleResize} on:mount={handleMount}>
+    <Grid gap={[4,4]} bind:items={items} rowHeight={100} let:item {cols} let:index on:resize={handleResize} on:mount={handleMount}>
         <div class="dashboard-widget content bg-white border border-primary rounded-1">
             {#if 'chartjs'===getWidgetType(index)}
             <ChartjsWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
@@ -63,6 +63,14 @@
             <RawDataWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'chart'===getWidgetType(index)}
             <ChartWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+            {:else if 'groupchart'===getWidgetType(index)}
+            {#if 'donut'===getWidgetChartType(index)}
+            <ChartjsWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
+            {:else if 'stacked'===getWidgetChartType(index)}
+            <ChartjsWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
+            {:else}
+            <CanvasWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
+            {/if}
             {:else if 'plan'===getWidgetType(index)}
             <PlanWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else}
@@ -166,7 +174,8 @@
     }
     let getWidgetChartType = function (idx) {
         try {
-            if ('chart' === dashboardConfig.widgets[idx].type) {
+            if ('chart' === dashboardConfig.widgets[idx].type || 'groupchart' === dashboardConfig.widgets[idx].type) {
+                console.log('chartType', dashboardConfig.widgets[idx].chartType)
                 return dashboardConfig.widgets[idx].chartType
             } else {
                 return 'unknown'
