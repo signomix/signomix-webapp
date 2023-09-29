@@ -27,7 +27,7 @@ export const widgets = {
         'scatter'
     ],
     groupchartTypes: [
-        'donut',
+        'doughnut',
         'stacked'
     ],
     localTypes: [], // List of locally defined widget types
@@ -36,7 +36,7 @@ export const widgets = {
         line: ['dots:', 'plain:', 'area:', 'areaWithDots:'],
         bar: [],
         scatter: [],
-        donut: [],
+        doughnut: [],
         stacked: []
     },
     typeFields: {

@@ -64,7 +64,7 @@
             {:else if 'chart'===getWidgetType(index)}
             <ChartWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'groupchart'===getWidgetType(index)}
-            {#if 'donut'===getWidgetChartType(index)}
+            {#if 'doughnut'===getWidgetChartType(index)}
             <ChartjsWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
             {:else if 'stacked'===getWidgetChartType(index)}
             <ChartjsWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />

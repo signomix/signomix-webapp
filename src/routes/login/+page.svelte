@@ -83,7 +83,7 @@
 
         } else {
             errorMessage = ''
-            let user = {language:'en',organization:0,login:lg}
+            let user = {language:'en',organization:0,login:lg,uid:'user'}
             profile.set(user)
             token.set('dev')
             goto('/')
