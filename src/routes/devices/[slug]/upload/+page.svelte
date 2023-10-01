@@ -28,31 +28,37 @@
         goto("/devices");
     }
 
-    function sendData(data, callback) {
-        if(data==null){
+    function sendData(dataToSend, callback) {
+        if(dataToSend==null){
             goBack()
             return
         }
-        console.log('data to send', data)
-        callback('data no sent')
+        console.log('data to send', dataToSend)
+        sendFormData(dataToSend, callback)
     }
 
-    function sendFormData(data,callback) {
+    function sendFormData(dataToSend,callback) {
         try {
             let silent = false
             let result = ''
-            const headers = new Headers()
-            let method = 'POST'
-            let url = utils.getBackendUrl(location) + "/api/core/device/"
-            if (!(data.eui === 'new' || data.eui == null || data.eui == '' || data.eui == undefined)) {
-                url = url + data.eui
-                method = 'PUT'
+            let formData = new URLSearchParams();
+            for(let i=0; i<dataToSend.payload_fields.length; i++){
+                formData.append(dataToSend.payload_fields[i].name, dataToSend.payload_fields[i].value)
             }
-            headers.set('Authentication', $token);
-            headers.set('Content-Type', 'application/json');
+            formData.append('timestamp', utils.getDateApiFormat(dataToSend.timestamp))
+            formData.append('eui', dataToSend.device_eui)
+            const headers = new Headers()
+            let url = utils.getBackendUrl(location) + "/api/receiver/in"
+            headers.set('Authorization', data.key);
+            headers.set('X-device-eui', data.eui)
             let response = fetch(
                 url,
-                { method: method, mode: 'cors', headers: headers, body: JSON.stringify(data) }
+                { 
+                    method:'post',
+                    referrerPolicy: 'strict-origin-when-cross-origin',
+                    mode: 'cors',
+                    headers: headers, 
+                    body: formData }
             )
                 .then((response) => {
                     if (response.status == 200) {

@@ -1,16 +1,23 @@
 <form class="mb-2">
     <div class="row">
-        <div class="col-md-1 col-form-label">
+        <div class="col-md-3 col-form-label">
             <label for="input-uid" class="form-label">{utils.getLabel('eui',labels,$language)}</label>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-9">
             <input disabled type="text" class="form-control" id="input-uid" bind:value={config.eui}>
         </div>
-        <div class="col-md-1 col-form-label">
+    </div>
+    <div class="row">
+        <div class="col-md-3 col-form-label">
             <label for="input-name" class="form-label">{utils.getLabel('name',labels,$language)}</label>
         </div>
-        <div class="col-md-7">
+        <div class="col-md-9">
             <input disabled type="text" class="form-control" id="input-name" bind:value={config.name}>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <legend class="col-form-label-lg">{utils.getLabel('legend',labels,$language)}</legend>
         </div>
     </div>
     {#each measurements as measurement}
@@ -25,11 +32,12 @@
     {/each}
     <div class="row">
         <div class="col-md-2 col-form-label">
-            <label for="input-timestamp" class="form-label">timestamp</label>
+            <label for="input-timestamp" class="form-label">{utils.getLabel('timestamp',labels,$language)}</label>
         </div>
         <div class="col-md-4">
             <input type="datetime-local" class="form-control" id="input-timestamp" bind:value={timestamp}>
         </div>
+        <div id="timestampHelp" class="form-text">{utils.getLabel('timestampHelp',labels,$language)}</div>
     </div>
     <div class="row">
         <div class="col-form-label">
@@ -47,15 +55,15 @@
     export let config
     export let callback
 
-    let channelNames=config.channelsAsString.split(',')
-    let measurements=[]
-    for (let i=0; i<channelNames.length; i++) {
-        measurements.push({name: channelNames[i], value: ''})
+    let channelNames = config.channelsAsString.split(',')
+    let measurements = []
+    for (let i = 0; i < channelNames.length; i++) {
+        measurements.push({ name: channelNames[i], value: '' })
     }
-    let timestamp=''
+    let timestamp = ''
 
     function handleSave(event) {
-        let data={
+        let data = {
             payload_fields: measurements,
             timestamp: timestamp
         }
@@ -90,88 +98,24 @@
 
     let labels = {
         'eui': {
-            'pl': "EUI",
-            'en': "EUI"
+            'pl': "Identyfikator urządzenia (EUI)",
+            'en': "Device identifier (EUI)"
         },
         'name': {
             'pl': "Nazwa",
             'en': "Name"
         },
-        'type': {
-            'pl': "Typ",
-            'en': "Type"
+        'legend': {
+            'pl': "Wprowadź dane",
+            'en': "Enter data"
         },
-        'owner': {
-            'pl': "Właściciel",
-            'en': "Owner"
+        'timestamp': {
+            'pl': "Znacznik czasu",
+            'en': "Timestamp"
         },
-        'team': {
-            'pl': "Zespół",
-            'en': "Team"
-        },
-        'administrators': {
-            'pl': "Administratorzy",
-            'en': "Administrators"
-        },
-        'key': {
-            'pl': "Klucz autoryzacyjny",
-            'en': "Authorization key"
-        },
-        'measurements': {
-            'pl': "Pomiary",
-            'en': "Measurements"
-        },
-        'groups': {
-            'pl': "Grupy",
-            'en': "Groups"
-        },
-        'project': {
-            'pl': "Projekt",
-            'en': "Project"
-        },
-        'latitude': {
-            'pl': "Szerokość geograficzna",
-            'en': "Latitude"
-        },
-        'longitude': {
-            'pl': "Długość geograficzna",
-            'en': "Longitude"
-        },
-        'altitude': {
-            'pl': "Wysokość",
-            'en': "Altitude"
-        },
-        'interval': {
-            'pl': "Interwał transmisji (min)",
-            'en': "Transmission interval (min)"
-        },
-        'description': {
-            'pl': "Opis",
-            'en': "Description"
-        },
-        'decoder': {
-            'pl': "Skrypt dekodera danych",
-            'en': "Data decoder script"
-        },
-        'processor': {
-            'pl': "Skrypt procesora danych",
-            'en': "Data processor script"
-        },
-        'configuration': {
-            'pl': "Konfiguracja",
-            'en': "Configuration"
-        },
-        'application': {
-            'pl': "Aplikacja",
-            'en': "Application"
-        },
-        'status': {
-            'pl': "Status",
-            'en': "Status"
-        },
-        'seen': {
-            'pl': "Ostatnio widziany",
-            'en': "Last seen"
+        'timestampHelp': {
+            'pl': "Zostaw puste, aby użyć aktualnego czasu",
+            'en': "Leave empty to use current time"
         },
         'cancel': {
             'pl': "Anuluj",
