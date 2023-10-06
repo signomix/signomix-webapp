@@ -1,6 +1,6 @@
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-2 border-bottom">
-    <h5>Konfiguracja urządzenia</h5>
+    <h5>utils.getLabel('title',labels,$language)</h5>
     {#if data.eui!='new'}<a href="/devices/{data.eui}"
     title="{utils.getLabel('view',labels,$language)}"><i class="bi bi-eye h5 me-2 link-dark"></i></a>{/if}
 </div>
@@ -35,9 +35,25 @@
             let cfg = config
             cfg.channels = "{}"
             cfg.applicationConfig = "{}"
+            let validationError=validate(cfg)
+            if(validationError!=''){
+                callback(validationError)
+                return
+            }
             sendForm(cfg, true, callback)
         }
         goBack()
+    }
+
+    function validate(config) {
+        let result=''
+        if(config.code.includes('%')){
+            result= utils.getLabel('illegalProc',labels,$language)
+        }
+        if(config.encoder.includes('%')){
+            result= utils.getLabel('illegalDecoder',labels,$language)
+        }
+        return result
     }
 
     function sendForm(data, silent, callback) {
@@ -83,7 +99,7 @@
                     if (!silent) {
                         errorMessage = error.message
                         if (errorMessage == 'Failed to fetch' && location.protocol.toLowerCase() == 'https') {
-                            errorMessage = errorMessage + ' Możliwa przyczyna: self signed nie są obsługiwane.'
+                            errorMessage = errorMessage + utils.getLabel('selfSigned',labels,$language)
                         }
                     }
                     if(error.message=='Failed to fetch'){
@@ -97,6 +113,10 @@
     }
 
     let labels = {
+        'title': {
+            'pl': "Konfiguracja urządzenia",
+            'en': "Device configuration"
+        },
         'failToFetch': {
             'pl': "Problem z połączeniem internetowym",
             'en': "Internet connection problem"
@@ -104,7 +124,19 @@
         'view': {
             'pl': "Pokaż",
             'en': "View"
-        }
+        },
+        'illegalProc': {
+            'en': "illegal characters in data processor script",
+            'pl': "niedozwolone znaki w skrypcie procesora danych"
+        },
+        'illegalDecoder': {
+            'en': "illegal characters in decoder script",
+            'pl': "niedozwolone znaki w skrypcie dekodera"
+        },
+        'selfSigned': {
+            'pl': " Możliwa przyczyna: certyfikaty self signed nie są obsługiwane",
+            'en': " Possible cause: self signed certificates are not supported"
+        },
     }
 
 </script>

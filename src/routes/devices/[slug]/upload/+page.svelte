@@ -46,6 +46,7 @@
                 formData.append(dataToSend.payload_fields[i].name, dataToSend.payload_fields[i].value)
             }
             formData.append('timestamp', utils.getDateApiFormat(dataToSend.timestamp))
+            formData.append('project', 'simulation')
             const headers = new Headers()
             let url = utils.getBackendUrl(location) + "/api/receiver/in"
             headers.set('Authorization', data.key);

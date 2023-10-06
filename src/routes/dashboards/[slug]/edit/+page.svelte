@@ -294,6 +294,9 @@
 
     function widgetFormCallback(idx, cfg) {
         console.log('testCallback ', idx, cfg);
+        if(widgets.singleValueTypes.includes(cfg.type)) {
+            cfg.query = 'last 1'
+        }
         modified = true
     }
 

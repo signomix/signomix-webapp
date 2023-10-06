@@ -13,6 +13,7 @@
     {errorMessage}
 </div>
 {/if}
+
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h5>{dashboardConfig.title}</h5>
@@ -37,10 +38,14 @@
 </div>
 <div class="dashboard-container" id={dashboardId}>
     {#if items.length==0}
-    {utils.getLabel('empty',labels,$language)}
+    <div class="alert alert-light mx-auto my-auto">{utils.getLabel('empty',labels,$language)}</div>
     {:else}
-    <Grid gap={[4,4]} bind:items={items} rowHeight={100} let:item {cols} let:index on:resize={handleResize} on:mount={handleMount}>
+    <Grid gap={[4,4]} bind:items={items} rowHeight={100} let:item {cols} let:index on:resize={handleResize}
+        on:mount={handleMount}>
         <div class="dashboard-widget content bg-white border border-primary rounded-1">
+            {#if !isRoleOK(index)}
+            <div class="alert alert-light mx-auto my-auto">{utils.getLabel('hidden',labels,$language)}</div>
+            {:else}
             {#if 'chartjs'===getWidgetType(index)}
             <ChartjsWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
             {:else if 'canvas'===getWidgetType(index)}
@@ -76,6 +81,7 @@
             {:else}
             <CanvasWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
             {/if }
+            {/if}<!-- isRoleOK -->
         </div>
     </Grid>
     {/if}
@@ -185,6 +191,30 @@
         }
     }
 
+    // check if user has role to see widget
+    let isRoleOK = function (index) {
+        let userRoles = []
+        try {
+            userRoles = $profile.role.split(',')
+        } catch (e) {
+            console.log(e)
+        }
+        let widgetRoles = dashboardConfig.widgets[index].role.split(',')
+        console.log('userRoles', userRoles)
+        console.log('widgetRoles', widgetRoles)
+        // remove empty roles
+        widgetRoles = widgetRoles.filter(function(entry) { return entry.trim() != ''; });
+        if(widgetRoles.length==0){
+            return true
+        }
+        for (let role of widgetRoles) {
+            if (userRoles.includes(role)) {
+                return true
+            }
+        }
+        return false
+    }
+
     let getRefreshInterval = function () {
         const defaultInterval = 300
         let interval = dev ? 10 : defaultInterval
@@ -250,28 +280,28 @@
 
     let findApplication = function (id) {
         console.log('findApplication', applications)
-        for(let i=0;i<applications.length;i++){
-            if(applications[i].id==id){
+        for (let i = 0; i < applications.length; i++) {
+            if (applications[i].id == id) {
                 return applications[i]
             }
         }
         return null
     }
 
-    let mergeConfigs=function(){
+    let mergeConfigs = function () {
         // it doesn't work because of fetch in getApplications
-/*         for(let i=0;i<dashboardConfig.widgets.length;i++){
-            let widget=dashboardConfig.widgets[i]
-            let app = findApplication(widget.app_id);
-            if(app==null){
-                continue
-            }
-            console.log('app', app)
-            let appCfg = JSON.parse(app.configuration)
-            let cfg=JSON.parse(widget.config)
-            let combined = Object.assign({}, cfg, appCfg);
-            dashboardConfig.widgets[i].config=JSON.stringify(...combined)
-        } */
+        /*         for(let i=0;i<dashboardConfig.widgets.length;i++){
+                    let widget=dashboardConfig.widgets[i]
+                    let app = findApplication(widget.app_id);
+                    if(app==null){
+                        continue
+                    }
+                    console.log('app', app)
+                    let appCfg = JSON.parse(app.configuration)
+                    let cfg=JSON.parse(widget.config)
+                    let combined = Object.assign({}, cfg, appCfg);
+                    dashboardConfig.widgets[i].config=JSON.stringify(...combined)
+                } */
     }
 
     let interval
@@ -368,6 +398,10 @@
         'empty': {
             'pl': "Pulpit nie zawiera żadnych zdefiniowanych kontrolek.",
             'en': "Dashboard does not contain any widgets."
+        },
+        'hidden': {
+            'pl': "ukryte (brak uprawnień)",
+            'en': "hidden (no permissions)"
         },
     }
 

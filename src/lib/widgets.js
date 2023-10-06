@@ -30,6 +30,13 @@ export const widgets = {
         'doughnut',
         'stacked'
     ],
+    singleValueTypes: [
+        'symbol',
+        'date',
+        'time',
+        'stopwatch',
+        'led'
+    ],
     localTypes: [], // List of locally defined widget types
     communityTypes: [], // List of widgets types delivered by the community
     chartOptions: {
