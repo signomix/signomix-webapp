@@ -197,9 +197,14 @@
         try {
             userRoles = $profile.role.split(',')
         } catch (e) {
-            console.log(e)
+            //console.log(e)
         }
-        let widgetRoles = dashboardConfig.widgets[index].role.split(',')
+        let widgetRoles =[]
+        try{
+            widgetRoles = dashboardConfig.widgets[index].role.split(',')
+        }catch(e){
+            //console.log(e)
+        }
         console.log('userRoles', userRoles)
         console.log('widgetRoles', widgetRoles)
         // remove empty roles
