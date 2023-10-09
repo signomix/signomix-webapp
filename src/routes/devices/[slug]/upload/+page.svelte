@@ -54,8 +54,8 @@
             let response = fetch(
                 url,
                 { 
-                    method:'post',
-                    referrerPolicy: 'strict-origin-when-cross-origin',
+                    method:'POST',
+                    //referrerPolicy: 'strict-origin-when-cross-origin',
                     mode: 'cors',
                     headers: headers, 
                     body: formData }

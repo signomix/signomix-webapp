@@ -58,7 +58,7 @@
                         </a>
                     </li>
                     {/if}
-                    {#if organizationExpanded}
+                    {#if organizationExpanded && !utils.isUserRole($profile, 'limited', false)}
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/organization/settings' }
                             href="/organization/settings">
@@ -93,7 +93,7 @@
                         </a>
                     </li>
                     {/if}
-                    {#if structureExpanded}
+                    {#if structureExpanded && !utils.isUserRole($profile, 'limited', false)}
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/devices' } href="/devices">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
@@ -239,7 +239,7 @@
         language.set('en')
         return true
     }
-    function isVisible(endpoint) {
+    /* function isVisible(endpoint) {
         let restricted = ['/', '/login', '/about', '/documentation']
         console.log('profile', $profile)
         console.log('isvisible', endpoint, restricted.includes(endpoint), utils.isUserRole($profile, 'limited'))
@@ -247,7 +247,7 @@
             return false
         }
         return true
-    }
+    } */
     let alertCounter = { value: 0 }
     poll(async function fetchData() {
         if ($isAuthenticated) {
