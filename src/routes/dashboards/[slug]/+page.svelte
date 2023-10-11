@@ -24,6 +24,7 @@
             <i class="bi  bi-link-45deg h4 me-2 link-dark"></i>
         </a>
         {/if}
+        {#if !utils.isUserRole($profile, 'limited', false)}
         <a title={utils.getLabel('filter',labels,$language)} data-bs-toggle="modal" data-bs-target="#filterModal"
             on:click|preventDefault={setFilter}>
             {#if isFilterSet(dashboardFilter)}
@@ -34,6 +35,7 @@
         </a>
         <a href="/dashboards/{data.id}/edit" title={utils.getLabel('configure',labels,$language)}><i
                 class="bi bi-gear h5 me-2 link-dark"></i></a>
+        {/if}
     </span>
 </div>
 <div class="dashboard-container" id={dashboardId}>
