@@ -97,12 +97,28 @@ export const utils = {
     }
 
   },
-  isObjectAdmin: function (userProfile, objectOwner) {
-    if (userProfile.organization == 0) {
-      return userProfile.type == 1 || userProfile.uid == objectOwner
+  isObjectAdmin: function (userProfile, objectOwner, defaultOrganizationId) {
+    //user types
+    //1 - service admin
+    //9 - organization admin
+    let result = false
+    let data={}
+    data.isDefault = userProfile.organization == defaultOrganizationId
+    data.isOwner = userProfile.uid == objectOwner
+    data.isServiceAdmin = userProfile.type == 1
+    data.isOrganizationAdmin = userProfile.type == 9
+  
+    if (data.isDefault) {
+      result = userProfile.type == 1 || userProfile.uid == objectOwner
     } else {
-      return userProfile.type == 9 || userProfile.type == 1 || userProfile.type == 0
+      // Service admin or organization admin can manage objects of his organization
+      // Object owners which are not service admin or organization admin 
+      // are not allowed to manage objects of his organization
+      result = userProfile.type == 9 || userProfile.type == 1
     }
+    data.hasAccess = result
+    console.log('isObjectAdmin', data)
+    return result
   },
   getUserType: function (name) {
     switch (name) {

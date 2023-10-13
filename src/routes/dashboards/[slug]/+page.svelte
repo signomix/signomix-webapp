@@ -33,8 +33,10 @@
             <i class="bi bi-funnel h5 me-2 link-dark"></i>
             {/if}
         </a>
+        {#if (utils.isObjectAdmin($profile, data.userID, $defaultOrganizationId))}
         <a href="/dashboards/{data.id}/edit" title={utils.getLabel('configure',labels,$language)}><i
                 class="bi bi-gear h5 me-2 link-dark"></i></a>
+        {/if}
         {/if}
     </span>
 </div>
@@ -127,6 +129,7 @@
     import { goto, afterNavigate, beforeNavigate } from '$app/navigation';
     import { invalidateAll } from '$app/navigation';
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
+    import { defaultOrganizationId } from '$lib/stores.js';
 
     import DashboardFilterForm from '$lib/components/DashboardFilterForm.svelte';
     import DashboardLinkForm from '$lib/components/DashboardLinkForm.svelte';
