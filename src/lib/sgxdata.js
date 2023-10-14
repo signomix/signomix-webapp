@@ -119,6 +119,7 @@ const getSgxData2 = async function (devMode, apiUrl, config, filter, token, tran
 }
 
 const getSgxGroupData = async function (devMode, apiUrl, config, filter, token, transformFunction) {
+  //console.log('getSgxGroupData', devMode, apiUrl, config, filter, token, transformFunction)
   if (devMode) {
     if (transformFunction == null || transformFunction == undefined) {
       return groupDataExample

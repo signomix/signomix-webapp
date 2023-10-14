@@ -43,17 +43,47 @@
                     </select>
                     <label class="form-label">Type {config[index].type} description</label>
                 </div>
-                {#if widgets.isVisible(config[index].type, 'dev_id')}
+
+                {#if widgets.isVisible(config[index].type, 'dev_id') && widgets.isVisible(config[index].type, 'group')}
                 <div class="mb-2">
-                    <label for="dev_id" class="form-label">EUI</label>
-                    <input type="text" class="form-control form-control-sm" id="dev_id"
-                        bind:value={config[index].dev_id}>
+                    {#if singleDevice==1}
+                    <input class="form-check-input" type="radio" name="gr" id="groupRadio1" value="1" 
+                     on:click={setSingleDevice} checked >
+                    {:else}
+                    <input class="form-check-input" type="radio" name="gr" id="groupRadio1" value="1" 
+                     on:click={setSingleDevice}>
+                    {/if}
+                    <label class="form-check-label" for="groupRadio1">
+                        Single device {singleDevice}
+                    </label>
+                    {#if singleDevice==0}
+                    <input class="form-check-input ms-2" type="radio" name="gr" id="groupRadio2"  value="0" 
+                     on:click={setGroup} checked >
+                    {:else} 
+                    <input class="form-check-input ms-2" type="radio" name="gr" id="groupRadio2"  value="0" 
+                     on:click={setGroup} >
+                    {/if}
+                    <label class="form-check-label" for="gropuRadio2">
+                        Group of devices {singleDevice}
+                    </label>
                 </div>
                 {/if}
-                {#if widgets.isVisible(config[index].type, 'group')}
-                <div class="mb-2">
-                    <label for="group" class="form-label">Group</label>
-                    <input type="text" class="form-control form-control-sm" id="group" bind:value={config[index].group}>
+                {#if singleDevice==1}
+                <div class="input-group mb-2">
+                    <label for="dev_id" class="form-label me-2">EUI</label>
+                    <input type="text" class="form-control form-control-sm" id="dev_id"
+                        bind:value={config[index].dev_id}>
+                        <button type="button" class="btn btn-outline-secondary"
+                        on:click={() => (showDeviceSelectorModal = true)}>...</button>
+                </div>
+                {/if}
+                {#if  singleDevice==0}
+                <div class="input-group mb-2">
+                    <label for="group" class="form-label me-2">Group</label>
+                    <input type="text" class="form-control form-control-sm" id="group" 
+                    bind:value={config[index].group}>
+                    <button type="button" class="btn btn-outline-secondary"
+                    on:click={() => (showGroupSelectorModal = true)}>...</button>
                 </div>
                 {/if}
                 {#if widgets.isVisible(config[index].type, 'imageUrl')}
@@ -69,7 +99,7 @@
                     <input type="text" class="form-control form-control-sm" id="dashboardID"
                         bind:value={config[index].dashboardID}>
                 </div>
-                {/if} 
+                {/if}
             </div>
             {/if}
             {#if selectedTab === 'extended'}
@@ -171,16 +201,18 @@
             -->
             <div class="p-1 mt-2">
                 <label class="form-check-label me-1" for="chart-markers">markery</label>
-                <input type="checkbox" class="form-check-input form-control-sm" id="chart-markers" bind:checked={config[index].chartMarkers}>
+                <input type="checkbox" class="form-check-input form-control-sm" id="chart-markers"
+                    bind:checked={config[index].chartMarkers}>
             </div>
             <div class="p-1 mt-2">
                 <label class="form-check-label me-1" for="chart-area">obszar</label>
-                <input type="checkbox" class="form-check-input form-control-sm" id="chart-area" bind:checked={config[index].chartArea}>
+                <input type="checkbox" class="form-check-input form-control-sm" id="chart-area"
+                    bind:checked={config[index].chartArea}>
             </div>
             <div class="p-1 mt-2">
-<!--                 <label class="form-check-label me-1" for="cubic">Cubic interpolation</label>
+                <!--                 <label class="form-check-label me-1" for="cubic">Cubic interpolation</label>
                 <input type="checkbox" class="form-check-input form-control-sm" id="cubic" bind:checked={config[index].cubicInterpolation}>
- -->       <!-- <select id="cubic" class="form-control form-control-sm" bind:value={config[index].cubicInterpolation}>
+ --> <!-- <select id="cubic" class="form-control form-control-sm" bind:value={config[index].cubicInterpolation}>
                     <option selected={true==config[index].cubicInterpolation} value="true">true</option>
                     <option selected={false==config[index].cubicInterpolation} value="false">false</option>
                 </select> -->
@@ -242,14 +274,38 @@
     </div>
 
 </div>
+
+<DeviceSelector bind:showDeviceSelectorModal></DeviceSelector>
+<GroupSelector bind:showGroupSelectorModal></GroupSelector>
+
 <script>
     import widgets from '$lib/widgets.js';
-    import { profile,token, language, isAuthenticated } from '$lib/usersession.js';
+    import { profile, token, language, isAuthenticated } from '$lib/usersession.js';
+    import { onMount } from 'svelte';
+    import DeviceSelector from '$lib/components/DeviceSelector.svelte';
+    import GroupSelector from '$lib/components/GroupSelector.svelte';
     export let index
     export let config
     export let callback
 
     let selectedTab = 'basic'
+    let singleDevice = 0
+    let isSingleDevice = false
+    let showDeviceSelectorModal = false;
+    let showGroupSelectorModal = false;
+
+    onMount(() => {
+        if(config[index].group == undefined || config[index].group == null || config[index].group == ''){
+            singleDevice = 1
+            isSingleDevice=true
+            console.log('group',config[index].group)
+        } else {
+            singleDevice = 0
+            isSingleDevice=false
+        }
+        console.log('singleDevice', singleDevice)
+    });
+
     function handleClick(event) {
         ////console.log('clicked widget index', index, 'config', config[index])
         callback(index, config[index])
@@ -269,4 +325,15 @@
     function selectConfig() {
         selectedTab = 'config'
     }
+    function setGroup() {
+        config[index].dev_id=''
+        singleDevice=0
+
+    }
+    function setSingleDevice() {
+        config[index].group=''
+        singleDevice=1
+    }
+
+
 </script>

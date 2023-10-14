@@ -102,12 +102,12 @@ export const utils = {
     //1 - service admin
     //9 - organization admin
     let result = false
-    let data={}
+    let data = {}
     data.isDefault = userProfile.organization == defaultOrganizationId
     data.isOwner = userProfile.uid == objectOwner
     data.isServiceAdmin = userProfile.type == 1
     data.isOrganizationAdmin = userProfile.type == 9
-  
+
     if (data.isDefault) {
       result = userProfile.type == 1 || userProfile.uid == objectOwner
     } else {
@@ -199,6 +199,13 @@ export const utils = {
     let result = userProfile.organization == defaultOrganizationIdValue
       || defaultOrganizationIdValue == null
     return result
+  },
+  recalculate: function (value, rounding) {
+    try {
+      return Number.parseFloat(value).toFixed(rounding);
+    } catch (e) {
+      return value;
+    }
   },
   AUTHORIZATION_FAILED: 0,
   AUTHENTICATION_FAILED: 1,

@@ -70,6 +70,10 @@
             <LedWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'raw'===getWidgetType(index)}
             <RawDataWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+            {:else if 'plan'===getWidgetType(index)}
+            <PlanWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+            {:else if 'report'===getWidgetType(index)}
+            <ReportWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'chart'===getWidgetType(index)}
             <ChartWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'groupchart'===getWidgetType(index)}
@@ -80,8 +84,6 @@
             {:else}
             <CanvasWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
             {/if}
-            {:else if 'plan'===getWidgetType(index)}
-            <PlanWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else}
             <CanvasWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
             {/if }
@@ -143,6 +145,7 @@
     import RawDataWidget from '$lib/components/widgets/RawDataWidget.svelte';
     import ChartWidget from '$lib/components/widgets/ChartWidget.svelte';
     import PlanWidget from '$lib/components/widgets/PlanWidget.svelte';
+    import ReportWidget from '$lib/components/widgets/ReportWidget.svelte';
 
     export let data
 
