@@ -9,17 +9,17 @@
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^2.0.0",
-		"@sveltejs/adapter-static": "^2.0.2",
+		"@sveltejs/adapter-static": "^2.0.3",
 		"@sveltejs/kit": "^1.5.0",
 		"@vite-pwa/sveltekit": "^0.2.1",
 		"svelte": "^3.55.1",
-		"svelte-grid": "^5.1.1",
-		"svelte-preprocess": "^5.0.3",
+		"svelte-grid": "^5.1.2",
+		"svelte-preprocess": "^5.0.4",
 		"vite": "^4.2.0"
 	},
 	"type": "module",
 	"dependencies": {
-		"chart.js": "^4.3.0",
+		"chart.js": "^4.4.0",
 		"chartjs-adapter-moment": "^1.0.1",
 		"moment": "^2.29.4",
 		"svelte-chartjs": "^3.1.2"

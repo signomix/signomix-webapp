@@ -65,9 +65,9 @@
             <ChartWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'groupchart'===getWidgetType(index)}
             {#if 'doughnut'===getWidgetChartType(index)}
-            <ChartjsWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
+            <DoughnutWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'stacked'===getWidgetChartType(index)}
-            <ChartjsWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
+            <StackedBarWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else}
             <CanvasWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
             {/if}
@@ -132,6 +132,8 @@
     import RawDataWidget from '$lib/components/widgets/RawDataWidget.svelte';
     import ChartWidget from '$lib/components/widgets/ChartWidget.svelte';
     import PlanWidget from '$lib/components/widgets/PlanWidget.svelte';
+    import DoughnutWidget from '$lib/components/widgets/DoughnutWidget.svelte';
+    import StackedBarWidget from '$lib/components/widgets/StackedBarWidget.svelte';
 
     export let data
 
