@@ -18,14 +18,20 @@
                         <th scope="col" class="col-1">#</th>
                         <th scope="col" class="col-2">EUI</th>
                         <th scope="col" class="col-9">{utils.getLabel('name', labels, $language)}</th>
+                        <th scope="col" class="col-2">{utils.getLabel('action',labels,$language)}</th>
                     </tr>
                 </thead>
                 <tbody>
                     {#each groups as config, index}
                     <tr>
                         <th scope="row" class="col-1">{offset+1+index}</th>
-                        <td class="col-3"><a href="/groups/{config.EUI}">{config.EUI}</a></td>
+                        <td class="col-3"><a href="/groups/{config.eui}">{config.eui}</a></td>
                         <td class="col-9">{config.name}</td>
+                        <td class="col-2">
+                            {#if (utils.isObjectAdmin($profile, config.userID, $defaultOrganizationId))}
+                            <a href="/groups/{config.id}/edit"><i class="bi bi-pencil-square"></i></a>
+                            {/if}
+                        </td>
                     </tr>
                     {/each}
                 </tbody>
@@ -66,14 +72,16 @@
     import { profile,token, language, isAuthenticated } from '$lib/usersession.js';
     import { utils } from '$lib/utils.js';
     import { dev } from '$app/environment';
+    import { defaultOrganizationId } from '$lib/stores.js';
+    import { sgxdata } from '$lib/sgxdata.js';
 
     //export let data
     let offset = 0
     let limit = 10
 
-    let promise = getGroups(offset)
+    let promise = sgxdata.getGroups(dev,utils.getBackendUrl(location) + "/api/core/v2/groups",$token, offset, limit)
 
-    async function getGroups(actualOffset) {
+    /* async function getGroups(actualOffset) {
         let groups = []
         if (!$isAuthenticated) {
             return groups
@@ -82,7 +90,7 @@
             for (var i = 0; i < limit; i++) {
                 groups.push(
                     {
-                        EUI: '0000000000' + (i + actualOffset + 1),
+                        eui: '0000000000' + (i + actualOffset + 1),
                         name: 'group' + (i + actualOffset + 1),
                         userID: 'tester1',
                         team: ',',
@@ -102,7 +110,7 @@
             console.log(groups)
         } else {
             let headers = new Headers();
-            let url = utils.getBackendUrl(location) + "/api/iot/group"
+            let url = utils.getBackendUrl(location) + "/api/core/v2/groups"
             url = url + '?offset=' + actualOffset + '&limit=' + limit + '&full=true'
             headers.set('Authentication', $token);
             headers.set('Access-Control-Allow-Origin', '*');
@@ -126,7 +134,7 @@
                 });
         }
         return groups;
-    }
+    } */
     function handleLoadPrevious(event) {
         offset = offset - limit
         if (offset < 0) offset = 0
@@ -149,6 +157,10 @@
         'name': {
             'pl': "Nazwa",
             'en': "Name"
+        },
+        'action': {
+            'pl': "Akcje",
+            'en': "Actions"
         },
         'type': {
             'pl': "Typ",

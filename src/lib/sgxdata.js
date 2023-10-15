@@ -85,6 +85,22 @@ export const sgxdata = {
       throw new Error(e);
     }
     //return Promise.resolve(getSgxNotifications(devMode, apiUrl, limit, offset, token)).then((result) => result);
+  },
+  getGroups: function (devMode, apiUrl, token, limit, offset) {
+    try {
+      return Promise.resolve(getSgxGroups(devMode, apiUrl, token, limit, offset)).then((result) => result);
+    } catch (e) {
+      console.log('getGroups', e)
+      throw new Error(e);
+    }
+  },
+  getGroup: function (devMode, apiUrl, token) {
+    try {
+      return Promise.resolve(getSgxGroups(devMode, apiUrl, token)).then((result) => result[0]);
+    }catch (e) {
+      console.log('getGroup', e)
+      throw new Error(e);
+    }
   }
 }
 
@@ -232,6 +248,39 @@ const getSgxOrganizationData = async function (devMode, apiUrl, token) {
   }
 }
 
+const getSgxGroups = async function (devMode, apiUrl, token, limit, offset) {  
+  if (devMode) {
+    return groupsExample
+  }
+  const headers = new Headers()
+  headers.set('Accept', 'application/json');
+  headers.set('Authentication', token);
+  const res = await fetch(apiUrl+'?limit='+limit+'&offset='+offset, { mode: 'cors', headers: headers });
+  let data;
+  data = await res.json();
+  if (res.ok) {
+    return data;
+  } else {
+    throw new Error(res.statusText);
+  }
+}
+const getSgxGroup = async function (devMode, apiUrl, token) {  
+  if (devMode) {
+    return groupsExample[0]
+  }
+  const headers = new Headers()
+  headers.set('Accept', 'application/json');
+  headers.set('Authentication', token);
+  const res = await fetch(apiUrl, { mode: 'cors', headers: headers });
+  let data;
+  data = await res.json();
+  if (res.ok) {
+    return data;
+  } else {
+    throw new Error(res.statusText);
+  }
+}
+
 
 const groupDataExample = [
   [
@@ -298,4 +347,28 @@ const groupDataExample = [
       }
     ]
   ]
+]
+
+const groupsExample = [
+  {
+    "name": "Test group 1",
+    "userID": "user",
+    "team": ",tester1,public,",
+    "administrators": ",",
+    "channels": {
+      "latitude": {
+        "name": "latitude",
+        "type": null
+      },
+      "longitude": {
+        "name": "longitude",
+        "type": null
+      }
+    },
+    "description": "",
+    "open": true,
+    "organization": 1,
+    "eui": "TEST",
+    "channelsAsString": "latitude,longitude"
+  }
 ]
