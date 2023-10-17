@@ -29,7 +29,7 @@
                         <td class="col-9">{config.name}</td>
                         <td class="col-2">
                             {#if (utils.isObjectAdmin($profile, config.userID, $defaultOrganizationId))}
-                            <a href="/groups/{config.id}/edit"><i class="bi bi-pencil-square"></i></a>
+                            <a href="/groups/{config.eui}/edit"><i class="bi bi-pencil-square"></i></a>
                             {/if}
                         </td>
                     </tr>

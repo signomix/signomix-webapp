@@ -1,7 +1,27 @@
 <script>
 	export let showDeviceSelectorModal; // boolean
+	export let config //[{eui:'abc', name:'nazwa''}, {eui:'abc2', name:'nazwa2'}]
+	export let callback //function
+
+	let mojaTablica=[]
+
 	let dialog; // HTMLDialogElement
 	$: if (dialog && showDeviceSelectorModal) dialog.showModal();
+
+	function searchEui(event) {
+		if(event.target.value.length>2) {
+			console.log('searching eui',event.target.value)
+			mojaTablica = config.filter((device) => device.eui.includes(event.target.value));
+			callback(event.target.value)
+		}
+	
+	}
+
+	function searchName(event) {
+		console.log('searching name',event.target.value)
+		mojaTablica = config.filter((device) => device.name.includes(event.target.value));
+	}
+	
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
@@ -21,10 +41,10 @@
 		</div>
 		<div class="row">
 			<div class="col">
-				<input type="text" class="form-control" placeholder="Identyfikator" />
+				<input type="text" class="form-control" placeholder="Identyfikator" on:input={searchEui}/>
 			</div>
 			<div class="col">
-				<input type="text" class="form-control" placeholder="Nazwa" />
+				<input type="text" class="form-control" placeholder="Nazwa" on:input={searchName}/>
 			</div>
 		</div>
 		<div class="row">
@@ -37,18 +57,12 @@
 				</tr>
 			</thead>
 			<tbody>
+				{#each mojaTablica as device}
 				<tr>
-					<td>1</td>
-					<td>urządzenie 1</td>
+					<td>{device.eui}</td>
+					<td>{device.name}</td>
 				</tr>
-				<tr>
-					<td>2</td>
-					<td>Bardzo długa nazwa urządzenia 2</td>
-				</tr>
-				<tr>
-					<td>3</td>
-					<td>urządzenie 3</td>
-				</tr>
+				{/each}
 		</table>
 		</div>
 		</div>

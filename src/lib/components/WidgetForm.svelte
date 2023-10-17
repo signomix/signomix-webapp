@@ -275,11 +275,12 @@
 
 </div>
 
-<DeviceSelector bind:showDeviceSelectorModal></DeviceSelector>
+<DeviceSelector config={myDevices} bind:showDeviceSelectorModal callback={setDevice}></DeviceSelector>
 <GroupSelector bind:showGroupSelectorModal></GroupSelector>
 
 <script>
     import widgets from '$lib/widgets.js';
+    //import sgxdata from '$lib/sgxdata.js';
     import { profile, token, language, isAuthenticated } from '$lib/usersession.js';
     import { onMount } from 'svelte';
     import DeviceSelector from '$lib/components/DeviceSelector.svelte';
@@ -293,6 +294,7 @@
     let isSingleDevice = false
     let showDeviceSelectorModal = false;
     let showGroupSelectorModal = false;
+    let myDevices = []
 
     onMount(() => {
         if(config[index].group == undefined || config[index].group == null || config[index].group == ''){
@@ -305,6 +307,11 @@
         }
         console.log('singleDevice', singleDevice)
     });
+
+    function setDevice(selectedDevice) {
+        console.log('selectedDevice', selectedDevice)
+        config[index].dev_id = selectedDevice
+    }
 
     function handleClick(event) {
         ////console.log('clicked widget index', index, 'config', config[index])
