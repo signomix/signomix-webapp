@@ -1,13 +1,13 @@
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-2 border-bottom">
-    <h5>utils.getLabel('title',labels,$language)</h5>
-    {#if data.eui!='new'}<a href="/devices/{data.eui}"
+    <h5>{utils.getLabel('title',labels,$language)}</h5>
+    {#if data.eui!='new'}<a href="/groups/{data.eui}"
     title="{utils.getLabel('view',labels,$language)}"><i class="bi bi-eye h5 me-2 link-dark"></i></a>{/if}
 </div>
 {#await data}
 {:then data}
 {#if data!==undefined}
-<DeviceForm config={data} callback={saveSettings} readonly={false} />
+<GroupForm config={data} callback={saveSettings} readonly={false} />
 {/if}
 {/await}
 <script>
@@ -17,7 +17,7 @@
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { base } from '$app/paths'
     import { goto, afterNavigate } from '$app/navigation'
-    import DeviceForm from '$lib/components/DeviceForm.svelte';
+    import GroupForm from '$lib/components/GroupForm.svelte';
 
     export let data
     let errorMessage = ''
@@ -27,14 +27,12 @@
         previousPage = from?.url.pathname || previousPage
     })
     function goBack() {
-        goto("/devices");
+        goto("/groups");
     }
 
     function saveSettings(config, callback) {
         if (config != null) {
             let cfg = config
-            cfg.channels = "{}"
-            cfg.applicationConfig = "{}"
             let validationError=validate(cfg)
             if(validationError!=''){
                 callback(validationError)
@@ -47,12 +45,6 @@
 
     function validate(config) {
         let result=''
-        if(config.code.includes('%')){
-            result= utils.getLabel('illegalProc',labels,$language)
-        }
-        if(config.encoder.includes('%')){
-            result= utils.getLabel('illegalDecoder',labels,$language)
-        }
         return result
     }
 
@@ -61,7 +53,7 @@
             let result = ''
             const headers = new Headers()
             let method = 'POST'
-            let url = utils.getBackendUrl(location) + "/api/core/device/"
+            let url = utils.getBackendUrl(location) + "/api/core/v2/groups/"
             if (!(data.eui === 'new' || data.eui == null || data.eui == '' || data.eui == undefined)) {
                 url = url + data.eui
                 method = 'PUT'
@@ -74,7 +66,7 @@
             )
                 .then((response) => {
                     if (response.status == 200) {
-                        goto('/devices')
+                        goto('/groups')
                         return ''
                     } else if (response.status == 401 || response.status == 403 || response.status == 404) {
                         token.set(null)
@@ -114,8 +106,8 @@
 
     let labels = {
         'title': {
-            'pl': "Konfiguracja urządzenia",
-            'en': "Device configuration"
+            'pl': "Konfiguracja grupy",
+            'en': "Group configuration"
         },
         'failToFetch': {
             'pl': "Problem z połączeniem internetowym",
@@ -124,14 +116,6 @@
         'view': {
             'pl': "Pokaż",
             'en': "View"
-        },
-        'illegalProc': {
-            'en': "illegal characters in data processor script",
-            'pl': "niedozwolone znaki w skrypcie procesora danych"
-        },
-        'illegalDecoder': {
-            'en': "illegal characters in decoder script",
-            'pl': "niedozwolone znaki w skrypcie dekodera"
         },
         'selfSigned': {
             'pl': " Możliwa przyczyna: certyfikaty self signed nie są obsługiwane",

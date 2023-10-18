@@ -86,6 +86,14 @@ export const sgxdata = {
     }
     //return Promise.resolve(getSgxNotifications(devMode, apiUrl, limit, offset, token)).then((result) => result);
   },
+  getDevices: function (devMode, apiUrl, searchString, token) {
+    try {
+      return Promise.resolve(getSgxDevices(devMode, apiUrl, searchString, token)).then((result) => result);
+    } catch (e) {
+      console.log('getDevices', e)
+      throw new Error(e);
+    }
+  },
   getGroups: function (devMode, apiUrl, token, limit, offset) {
     try {
       return Promise.resolve(getSgxGroups(devMode, apiUrl, token, limit, offset)).then((result) => result);
@@ -97,7 +105,7 @@ export const sgxdata = {
   getGroup: function (devMode, apiUrl, token) {
     try {
       return Promise.resolve(getSgxGroups(devMode, apiUrl, token)).then((result) => result[0]);
-    }catch (e) {
+    } catch (e) {
       console.log('getGroup', e)
       throw new Error(e);
     }
@@ -248,14 +256,30 @@ const getSgxOrganizationData = async function (devMode, apiUrl, token) {
   }
 }
 
-const getSgxGroups = async function (devMode, apiUrl, token, limit, offset) {  
+const getSgxDevices = async function (devMode, apiUrl, searchString, token) {
   if (devMode) {
-    return groupsExample
+    // when running in dev mode, return devicesExample
+    if (searchString == null || searchString == undefined || searchString == "") {
+      return devicesExample
+    } else {
+      let s = searchString.split("=");
+      if(s[1]=='*'){
+        return devicesExample
+      } else if(s[0] == 'eui') {
+        return devicesExample.filter((device) => device.eui.includes(s[1].toUpperCase()))
+      } else {
+        return devicesExample.filter((device) => device.name.toLowerCase().includes(s[1].toLowerCase()))
+      }
+    }
+  }
+  let endpoint = apiUrl;
+  if (searchString != null && searchString != undefined && searchString != "") {
+    endpoint = endpoint + "&" + searchString;
   }
   const headers = new Headers()
   headers.set('Accept', 'application/json');
   headers.set('Authentication', token);
-  const res = await fetch(apiUrl+'?limit='+limit+'&offset='+offset, { mode: 'cors', headers: headers });
+  const res = await fetch(apiUrl, { mode: 'cors', headers: headers });
   let data;
   data = await res.json();
   if (res.ok) {
@@ -264,7 +288,23 @@ const getSgxGroups = async function (devMode, apiUrl, token, limit, offset) {
     throw new Error(res.statusText);
   }
 }
-const getSgxGroup = async function (devMode, apiUrl, token) {  
+const getSgxGroups = async function (devMode, apiUrl, token, limit, offset) {
+  if (devMode) {
+    return groupsExample
+  }
+  const headers = new Headers()
+  headers.set('Accept', 'application/json');
+  headers.set('Authentication', token);
+  const res = await fetch(apiUrl + '?limit=' + limit + '&offset=' + offset, { mode: 'cors', headers: headers });
+  let data;
+  data = await res.json();
+  if (res.ok) {
+    return data;
+  } else {
+    throw new Error(res.statusText);
+  }
+}
+const getSgxGroup = async function (devMode, apiUrl, token) {
   if (devMode) {
     return groupsExample[0]
   }
@@ -372,3 +412,44 @@ const groupsExample = [
     "channelsAsString": "latitude,longitude"
   }
 ]
+
+const devicesExample = [
+  {
+    "eui": "010203040506",
+    "name": "device 1",
+    "type": "TTN",
+    "channelsAsString": "satelites,hdop,altitude,longitude,latitude"
+  },
+  {
+    "eui": "012345678",
+    "name": "device 2",
+    "type": "GENERIC",
+    "channelsAsString": "temperature,humidity"
+  },
+  {
+    "eui": "ABC123456",
+    "name": "mydevice 1",
+    "type": "GENERIC",
+    "channelsAsString": "satelites"
+  },
+  {
+    "eui": "ABC12345678",
+    "name": "mydevice 2",
+    "type": "TTN",
+    "channelsAsString": "satelites,hdop,altitude,longitude,latitude"
+  },
+  {
+    "eui": "01020304050607",
+    "name": "mydevice 3",
+    "type": "GENERIC",
+    "channelsAsString": "temperature"
+  },
+  {
+    "eui": "EF020304050607",
+    "name": "mydevice 4",
+    "type": "GENERIC",
+    "channelsAsString": "temperature"
+  }
+]
+
+export default sgxdata;

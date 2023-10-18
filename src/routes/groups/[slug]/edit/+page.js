@@ -14,10 +14,10 @@ profile.subscribe((value) => userProfile = value)
   const getSelectedConfig = async (serviceUrl) => {
     let config = null
     if (params.slug == 'new' || (dev && browser)) {
-      config = newDevice
+      config = newGroup
     } else {
       try {
-        let endpoint = serviceUrl + "/api/core/device/" + params.slug + "?full=true"
+        let endpoint = serviceUrl + "/api/core/group/" + params.slug + "?full=true"
         let headers = new Headers();
         headers.set('Authentication', usertoken);
         await fetch(endpoint, { headers: headers }).then(response => {
@@ -41,49 +41,53 @@ profile.subscribe((value) => userProfile = value)
     return config
   }
 
-  const newDevice = {
-    template: null,
-    name: "",
-    applicationEUI: null,
-    applicationID: null,
-    key: "",
-    userID: userProfile.uid,
-    type: "GENERIC",
-    team: ",",
-    channels: {
+  const newGroup = {
+  "EUI":"new",
+  "name":"",
+  "userID":"",
+  "team":"",
+  "administrators":"",
+  "channels":{
+    "pm2_5":{
+      "name":"pm2_5",
+      "type":null
     },
-    code: "",
-    encoder: "",
-    description: "                  ",
-    lastSeen: 1693516148,
-    transmissionInterval: 0,
-    lastFrame: -1,
-    checkFrames: false,
-    pattern: null,
-    downlink: null,
-    commandScript: null,
-    groups: ",",
-    alertStatus: 0,
-    deviceID: "",
-    active: true,
-    project: "",
-    latitude: 0.0,
-    longitude: 0.0,
-    altitude: 0.0,
-    state: 0.0,
-    retentionTime: 0,
-    administrators: ",",
-    configuration: "",
-    orgApplicationId: 0,
-    applicationConfig: null,
-    organizationId: userProfile.organization,
-    writable: true,
-    virtual: false,
-    eui: "new",
-    channelsAsString: "",
-    codeUnescaped: "",
-    encoderUnescaped: "",
-    configurationMap: {}
+    "pm10":{
+      "name":"pm10",
+      "type":null
+    },
+    "pressure":{
+      "name":"pressure",
+      "type":null
+    },
+    "temperature":{
+      "name":"temperature",
+      "type":null
+    },
+    "humidity":{
+      "name":"humidity",
+      "type":null
+    },
+    "latitude":{
+      "name":"latitude",
+      "type":null
+    },
+    "longitude":{
+      "name":"longitude",
+      "type":null
+    },
+    "pm2_5avg":{
+      "name":"pm2_5avg",
+      "type":null
+    },
+    "pm10avg":{
+      "name":"pm10avg",
+      "type":null
+    }
+  },
+  "description":"",
+  "open":true,
+  "organization":0
   }
 
   return await getSelectedConfig(utils.getBackendUrl(url))

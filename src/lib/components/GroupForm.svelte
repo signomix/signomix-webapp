@@ -4,7 +4,7 @@
             <label for="input-uid" class="form-label">{utils.getLabel('eui',labels,$language)}</label>
         </div>
         <div class="col-md-10">
-            <input disabled type="text" class="form-control" id="input-uid" bind:value={config.eui}>
+            <input type="text" class="form-control" id="input-uid" bind:value={config.EUI} disabled={readonly && config.eui!='new'}>
         </div>
     </div>
     <div class="row">
@@ -12,7 +12,7 @@
             <label for="input-name" class="form-label">{utils.getLabel('name',labels,$language)}</label>
         </div>
         <div class="col-md-10">
-            <input type="text" class="form-control" id="input-name" bind:value={config.name} disabled={readonly}>
+            <input type="text" class="form-control" id="input-name" bind:value={config.name} readonly={readonly}>
         </div>
     </div>
     <div class="row">
@@ -20,7 +20,7 @@
             <label for="input-owner" class="form-label">{utils.getLabel('owner',labels,$language)}</label>
         </div>
         <div class="col-md-10">
-            <input type="text" class="form-control" id="input-owner" bind:value={config.userID} readonly={readonly}>
+            <input type="text" class="form-control" id="input-owner" bind:value={config.userID} disabled>
         </div>
     </div>
     <div class="row">
@@ -45,7 +45,7 @@
             <label for="input-channels" class="form-label">{utils.getLabel('measurements',labels,$language)}</label>
         </div>
         <div class="col-md-9">
-            <input type="text" class="form-control" id="input-channels" bind:value={config.channelsAsString}
+            <input type="text" class="form-control" id="input-channels" bind:value={channelsAsString}
                 readonly={readonly}>
         </div>
     </div>
@@ -61,7 +61,7 @@
     {#if !readonly}
     <div class="row">
         <div class="col-form-label">
-            <a href="/devices" class="btn btn-outline-secondary mt-1"
+            <a href="/groups" class="btn btn-outline-secondary mt-1"
                 on:click|preventDefault={handleCancel}>{utils.getLabel('cancel',labels,$language)}</a>
             <button class="btn btn-outline-primary me-4 mt-1"
                 on:click={handleSave}>{utils.getLabel('save',labels,$language)}</button>
@@ -77,35 +77,23 @@
     export let callback
     export let readonly
 
-    let interval = config.transmissionInterval / 60000
-    let decoderScript = unescape(config.encoder)
-    let processorScript = unescape(config.code)
+    let channelsAsString=getChannelsAsString(config.channels)
 
     function handleSave(event) {
-
-        config.transmissionInterval = interval * 60000
-        config.encoder = decoderScript.trim()
-        config.code = processorScript.trim()
-        config.configuration = config.configuration.trim()
 
         let errMessage = validate()
         if (errMessage != '') {
             alert(utils.getLabel(errMessage, labels, $language))
             return
         }
+        //config.channels = getChannels(channelsAsString)
+        config.channelsAsString=channelsAsString
         callback(config, handleCallbackResponse)
     }
     function handleCancel(event) {
         callback(null)
     }
     function validate() {
-        if (config.configuration != '') {
-            try {
-                JSON.parse(config.configuration)
-            } catch (error) {
-                return 'error.configuration'
-            }
-        }
         return ''
     }
     async function handleCallbackResponse(promise) {
@@ -130,6 +118,27 @@
         } else {
             alert(utils.getLabel('error', labels, $language) + ': ' + promise)
         }
+    }
+
+    function getChannelsAsString(channels) {
+        let result = ''
+        if (channels != null) {
+            for (let key in channels) {
+                result = result + key + ','
+            }
+        }
+        return result
+    }
+
+    function getChannels(channelsAsString) {
+        let result = {}
+        if (channelsAsString != null) {
+            let channels = channelsAsString.split(',')
+            for (let i = 0; i < channels.length; i++) {
+                result[channels[i]] = {name: channels[i], type: null}
+            }
+        }
+        return result
     }
 
     let labels = {

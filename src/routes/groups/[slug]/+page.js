@@ -7,6 +7,7 @@ export const load = async ({ params, url }) => {
 
   let usertoken
   token.subscribe((value) => usertoken = value)
-  return sgxdata.getGroup(dev, url, usertoken)
+  let endpoint = utils.getBackendUrl(url)+"/api/core/v2/groups/" + params.slug
+  return sgxdata.getGroup(dev, endpoint, usertoken)
 
 }

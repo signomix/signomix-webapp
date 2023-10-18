@@ -275,12 +275,12 @@
 
 </div>
 
-<DeviceSelector config={myDevices} bind:showDeviceSelectorModal callback={setDevice}></DeviceSelector>
+<DeviceSelector bind:showDeviceSelectorModal callback={setDevice}></DeviceSelector>
 <GroupSelector bind:showGroupSelectorModal></GroupSelector>
 
 <script>
     import widgets from '$lib/widgets.js';
-    //import sgxdata from '$lib/sgxdata.js';
+    import sgxdata from '$lib/sgxdata.js';
     import { profile, token, language, isAuthenticated } from '$lib/usersession.js';
     import { onMount } from 'svelte';
     import DeviceSelector from '$lib/components/DeviceSelector.svelte';

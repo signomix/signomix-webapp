@@ -4,15 +4,16 @@
             <label for="input-uid" class="form-label">{utils.getLabel('eui',labels,$language)}</label>
         </div>
         <div class="col-md-10">
-            <input disabled type="text" class="form-control" id="input-uid" bind:value={config.eui}>
+            <input type="text" class="form-control" id="input-uid" 
+            bind:value={config.eui} disabled={readonly && config.eui.toUpperCase()=='new'} >
         </div>
-    </div>
+    </div> 
     <div class="row">
         <div class="col-md-1 col-form-label">
             <label for="input-name" class="form-label">{utils.getLabel('name',labels,$language)}</label>
         </div>
         <div class="col-md-10">
-            <input type="text" class="form-control" id="input-name" bind:value={config.name} disabled={readonly}>
+            <input type="text" class="form-control" id="input-name" bind:value={config.name} readonly={readonly}>
         </div>
     </div>
     <div class="row">
