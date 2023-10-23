@@ -53,11 +53,12 @@
             let result = ''
             const headers = new Headers()
             let method = 'POST'
-            let url = utils.getBackendUrl(location) + "/api/core/v2/groups/"
+            let url = utils.getBackendUrl(location) + "/api/core/group/"
             if (!(data.eui === 'new' || data.eui == null || data.eui == '' || data.eui == undefined)) {
                 url = url + data.eui
                 method = 'PUT'
             }
+            data.channels=getChannels(data.channelsAsString)
             headers.set('Authentication', $token);
             headers.set('Content-Type', 'application/json');
             let response = fetch(
@@ -102,6 +103,18 @@
         } catch (error) {
             callback(error.message)
         }
+    }
+
+    function getChannels(channelsAsString){
+        let channels={}
+        if(channelsAsString!=null && channelsAsString!=''){
+            let channelsArray=channelsAsString.split(',')
+            for(let i=0;i<channelsArray.length;i++){
+                let channel=channelsArray[i]
+                channels[channel]={name:channel,type:null}
+            }
+        }
+        return JSON.stringify(channels)
     }
 
     let labels = {

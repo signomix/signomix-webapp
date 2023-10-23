@@ -29,6 +29,7 @@
             console.log('redirect to login');
             goto('/login');
         }
+        
     });
 
     function saveSettings(config){

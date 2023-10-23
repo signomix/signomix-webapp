@@ -94,9 +94,9 @@ export const sgxdata = {
       throw new Error(e);
     }
   },
-  getGroups: function (devMode, apiUrl, token, limit, offset) {
+  getGroups: function (devMode, apiUrl, searchString, token) {
     try {
-      return Promise.resolve(getSgxGroups(devMode, apiUrl, token, limit, offset)).then((result) => result);
+      return Promise.resolve(getSgxGroups(devMode, apiUrl, searchString, token)).then((result) => result);
     } catch (e) {
       console.log('getGroups', e)
       throw new Error(e);
@@ -104,7 +104,7 @@ export const sgxdata = {
   },
   getGroup: function (devMode, apiUrl, token) {
     try {
-      return Promise.resolve(getSgxGroups(devMode, apiUrl, token)).then((result) => result[0]);
+      return Promise.resolve(getSgxGroups(devMode, apiUrl, '', token)).then((result) => result[0]);
     } catch (e) {
       console.log('getGroup', e)
       throw new Error(e);
@@ -279,7 +279,7 @@ const getSgxDevices = async function (devMode, apiUrl, searchString, token) {
   const headers = new Headers()
   headers.set('Accept', 'application/json');
   headers.set('Authentication', token);
-  const res = await fetch(apiUrl, { mode: 'cors', headers: headers });
+  const res = await fetch(endpoint, { mode: 'cors', headers: headers });
   let data;
   data = await res.json();
   if (res.ok) {
@@ -288,14 +288,30 @@ const getSgxDevices = async function (devMode, apiUrl, searchString, token) {
     throw new Error(res.statusText);
   }
 }
-const getSgxGroups = async function (devMode, apiUrl, token, limit, offset) {
+const getSgxGroups = async function (devMode, apiUrl, searchString, token) {
+  //console.log('getSgxGroups', 'devmode=',devMode, apiUrl, 'search=',searchString, 'token=',token)
   if (devMode) {
-    return groupsExample
+    if (searchString == null || searchString == undefined || searchString == "") {
+      return groupsExample
+    } else {
+      let s = searchString.split("=");
+      if(s[1]=='*'){
+        return groupsExample
+      } else if(s[0] == 'eui') {
+        return groupsExample.filter((group) => group.eui.includes(s[1].toUpperCase()))
+      } else {
+        return groupsExample.filter((group) => group.name.toLowerCase().includes(s[1].toLowerCase()))
+      }
+    }
+  }
+  let endpoint = apiUrl;
+  if (searchString != null && searchString != undefined && searchString != "") {
+    endpoint = endpoint + "&" + searchString;
   }
   const headers = new Headers()
   headers.set('Accept', 'application/json');
   headers.set('Authentication', token);
-  const res = await fetch(apiUrl + '?limit=' + limit + '&offset=' + offset, { mode: 'cors', headers: headers });
+  const res = await fetch(endpoint, { mode: 'cors', headers: headers });
   let data;
   data = await res.json();
   if (res.ok) {

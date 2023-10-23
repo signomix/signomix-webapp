@@ -17,7 +17,7 @@ profile.subscribe((value) => userProfile = value)
       config = newGroup
     } else {
       try {
-        let endpoint = serviceUrl + "/api/core/group/" + params.slug + "?full=true"
+        let endpoint = serviceUrl + "/api/core/group/" + params.slug
         let headers = new Headers();
         headers.set('Authentication', usertoken);
         await fetch(endpoint, { headers: headers }).then(response => {
@@ -42,52 +42,14 @@ profile.subscribe((value) => userProfile = value)
   }
 
   const newGroup = {
-  "EUI":"new",
+  "eui":"new",
   "name":"",
   "userID":"",
   "team":"",
   "administrators":"",
-  "channels":{
-    "pm2_5":{
-      "name":"pm2_5",
-      "type":null
-    },
-    "pm10":{
-      "name":"pm10",
-      "type":null
-    },
-    "pressure":{
-      "name":"pressure",
-      "type":null
-    },
-    "temperature":{
-      "name":"temperature",
-      "type":null
-    },
-    "humidity":{
-      "name":"humidity",
-      "type":null
-    },
-    "latitude":{
-      "name":"latitude",
-      "type":null
-    },
-    "longitude":{
-      "name":"longitude",
-      "type":null
-    },
-    "pm2_5avg":{
-      "name":"pm2_5avg",
-      "type":null
-    },
-    "pm10avg":{
-      "name":"pm10avg",
-      "type":null
-    }
-  },
+  "channels":{},
   "description":"",
-  "open":true,
-  "organization":0
+  "open":true
   }
 
   return await getSelectedConfig(utils.getBackendUrl(url))

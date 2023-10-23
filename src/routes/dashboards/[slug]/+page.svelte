@@ -18,6 +18,7 @@
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h5>{dashboardConfig.title}</h5>
     <span>
+        <a title={utils.getLabel('refresh',labels,$language)} on:click={refreshView}><i class="bi bi-arrow-clockwise h5 me-2 link-dark"></i></a>
         {#if dashboardConfig.shared}
         <a title="Dashboard access" data-bs-toggle="modal" data-bs-target="#linkModal"
             on:click|preventDefault={showLink}>
@@ -343,6 +344,8 @@
     onMount(() => {
     });
 
+
+
     const blockChanges = function (config) {
         //set draggable and resizable to false
         config.items.forEach(function (item) {
@@ -368,6 +371,11 @@
         // do nothing
     }
 
+    function refreshView() {
+        invalidateAll()
+        show()
+    }
+
     function filterFormCallback(cfg) {
         dashboardFilter.from = cfg.from
         dashboardFilter.to = cfg.to
@@ -384,6 +392,10 @@
     }
 
     let labels = {
+        'refresh': {
+            'pl': "Odśwież",
+            'en': "Refresh"
+        },
         'filter': {
             'pl': "Filtr danych pulpitu",
             'en': "Dashboard data filter"

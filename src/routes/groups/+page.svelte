@@ -79,7 +79,8 @@
     let offset = 0
     let limit = 10
 
-    let promise = sgxdata.getGroups(dev,utils.getBackendUrl(location) + "/api/core/v2/groups",$token, limit, offset)
+    let endpoint=utils.getBackendUrl(location) + "/api/core/group?offset=" + offset + "&limit=" + limit
+    let promise = sgxdata.getGroups(dev,endpoint,'',$token)
 
     /* async function getGroups(actualOffset) {
         let groups = []

@@ -75,7 +75,13 @@
   <link href="%sveltekit.assets%/dashboard.css" rel="stylesheet">
   %sveltekit.head%
 </head>
-
+<script>
+  window.addEventListener("beforeunload", function (e) {
+    var confirmationMessage = 'If you reload page you will be logged out from appliction.';
+    (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+    return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+  });
+</script>
 <body data-sveltekit-preload-data="tap">
   %sveltekit.body%
   </div>

@@ -1,3 +1,4 @@
+<Toaster richColors closeButton position="top-center"/>
 <header class="navbar navbar-dark bg-primary sticky-top flex-md-nowrap p-0 shadow">
     <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="/"><img src="/img/logo-light.svg"
             height="30px" /><span class="h5 m-2">Signomix</span></a>
@@ -189,6 +190,7 @@
     import { sgxdata } from '$lib/sgxdata.js';
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { getInfo, platformInfo, defaultOrganizationId } from '$lib/stores.js';
+    import { Toaster, toast } from 'svelte-sonner'
 
     /* $: available=setAvailableOptions($profile)
 

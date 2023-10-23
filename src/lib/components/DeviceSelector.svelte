@@ -7,8 +7,6 @@
 	export let showDeviceSelectorModal; // boolean
 	export let callback //function
 
-
-	let mojaTablica = []
 	let promise = null
 	let dialog; // HTMLDialogElement
 

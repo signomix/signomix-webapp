@@ -4,7 +4,7 @@
             <label for="input-uid" class="form-label">{utils.getLabel('eui',labels,$language)}</label>
         </div>
         <div class="col-md-10">
-            <input type="text" class="form-control" id="input-uid" bind:value={config.EUI} disabled={readonly && config.eui!='new'}>
+            <input type="text" class="form-control" id="input-uid" bind:value={config.eui} disabled>
         </div>
     </div>
     <div class="row">
