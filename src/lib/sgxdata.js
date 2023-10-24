@@ -153,7 +153,10 @@ const getSgxGroupData = async function (devMode, apiUrl, config, filter, token, 
   }
   const headers = new Headers()
   headers.set('Accept', 'application/json');
-  const endpoint = apiUrl + config.group + "/" + config.channel + "?tid=" + token + "&query=" + config.query;
+  const endpoint = apiUrl + config.group + "/" + config.channel + "?tid=" + token
+  if(!(config.query==null || config.query==undefined || config.query.length==0)){
+    endpoint = endpoint + "&query=" + config.query
+  } 
   const res = await fetch(endpoint, { mode: 'cors', headers: headers });
   let data;
   if (transformFunction == null || transformFunction == undefined) {

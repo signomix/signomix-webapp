@@ -61,7 +61,7 @@ export const widgets = {
         multitrack: ['group','channel','query'],
         plan: ['group','channel','range'],
         raw: ['dev_id','group','channel', 'query'],
-        report: ['dev_id','group','channel','channel_translated','rounding'],
+        report: ['dev_id','group','channel','channel_translated','rounding','query'],
         text: [],
         stopwatch: ['dev_id','channel', 'query'],
         time: ['dev_id','channel', 'query'],
