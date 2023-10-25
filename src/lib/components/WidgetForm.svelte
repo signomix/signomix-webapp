@@ -276,7 +276,7 @@
 </div>
 
 <DeviceSelector bind:showDeviceSelectorModal callback={setDevice}></DeviceSelector>
-<GroupSelector bind:showGroupSelectorModal></GroupSelector>
+<GroupSelector bind:showGroupSelectorModal callback={selectGroup}></GroupSelector>
 
 <script>
     import widgets from '$lib/widgets.js';
@@ -311,6 +311,11 @@
     function setDevice(selectedDevice) {
         console.log('selectedDevice', selectedDevice)
         config[index].dev_id = selectedDevice
+    }
+
+    function selectGroup(selectedGroup) {
+        console.log('selectedGroup', selectedGroup)
+        config[index].group = selectedGroup
     }
 
     function handleClick(event) {
