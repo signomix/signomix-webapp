@@ -57,7 +57,7 @@
 	>
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<div on:click|stopPropagation>
-		<h3>Wybierz urządzenie</h3>
+		<h3>Wybierz grupę</h3>
 		<hr />
 		<div class="row">
 			<div class="col">
