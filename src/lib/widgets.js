@@ -30,6 +30,13 @@ export const widgets = {
         'doughnut',
         'stacked'
     ],
+    singleValueTypes: [
+        'symbol',
+        'date',
+        'time',
+        'stopwatch',
+        'led'
+    ],
     localTypes: [], // List of locally defined widget types
     communityTypes: [], // List of widgets types delivered by the community
     chartOptions: {
@@ -54,7 +61,7 @@ export const widgets = {
         multitrack: ['group','channel','query'],
         plan: ['group','channel','range'],
         raw: ['dev_id','group','channel', 'query'],
-        report: ['group','channel','channel_translated'],
+        report: ['dev_id','group','channel','channel_translated','rounding','query'],
         text: [],
         stopwatch: ['dev_id','channel', 'query'],
         time: ['dev_id','channel', 'query'],

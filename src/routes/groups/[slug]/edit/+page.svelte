@@ -1,11 +1,13 @@
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-2 border-bottom">
-    <h5>Przesyłanie danych</h5>
+    <h5>{utils.getLabel('title',labels,$language)}</h5>
+    {#if data.eui!='new'}<a href="/groups/{data.eui}"
+    title="{utils.getLabel('view',labels,$language)}"><i class="bi bi-eye h5 me-2 link-dark"></i></a>{/if}
 </div>
 {#await data}
 {:then data}
 {#if data!==undefined}
-<DataUploadForm config={data} callback={sendData} />
+<GroupForm config={data} callback={saveSettings} readonly={false} />
 {/if}
 {/await}
 <script>
@@ -15,7 +17,7 @@
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { base } from '$app/paths'
     import { goto, afterNavigate } from '$app/navigation'
-    import DataUploadForm from '$lib/components/DataUploadForm.svelte';
+    import GroupForm from '$lib/components/GroupForm.svelte';
 
     export let data
     let errorMessage = ''
@@ -25,44 +27,47 @@
         previousPage = from?.url.pathname || previousPage
     })
     function goBack() {
-        goto("/devices");
+        goto("/groups");
     }
 
-    function sendData(dataToSend, callback) {
-        if(dataToSend==null){
-            goBack()
-            return
-        }
-        console.log('data to send', dataToSend)
-        sendFormData(dataToSend, callback)
-    }
-
-    function sendFormData(dataToSend,callback) {
-        try {
-            let silent = false
-            let result = ''
-            let formData = new URLSearchParams();
-            for(let i=0; i<dataToSend.payload_fields.length; i++){
-                formData.append(dataToSend.payload_fields[i].name, dataToSend.payload_fields[i].value)
+    function saveSettings(config, callback) {
+        if (config != null) {
+            let cfg = config
+            let validationError=validate(cfg)
+            if(validationError!=''){
+                callback(validationError)
+                return
             }
-            formData.append('timestamp', utils.getDateApiFormat(dataToSend.timestamp))
-            formData.append('project', 'simulation')
+            sendForm(cfg, true, callback)
+        }
+        goBack()
+    }
+
+    function validate(config) {
+        let result=''
+        return result
+    }
+
+    function sendForm(data, silent, callback) {
+        try {
+            let result = ''
             const headers = new Headers()
-            let url = utils.getBackendUrl(location) + "/api/receiver/in"
-            headers.set('Authorization', data.key);
-            headers.set('X-device-eui', data.eui)
+            let method = 'POST'
+            let url = utils.getBackendUrl(location) + "/api/core/group/"
+            if (!(data.eui === 'new' || data.eui == null || data.eui == '' || data.eui == undefined)) {
+                url = url + data.eui
+                method = 'PUT'
+            }
+            data.channels=getChannels(data.channelsAsString)
+            headers.set('Authentication', $token);
+            headers.set('Content-Type', 'application/json');
             let response = fetch(
                 url,
-                { 
-                    method:'POST',
-                    //referrerPolicy: 'strict-origin-when-cross-origin',
-                    mode: 'cors',
-                    headers: headers, 
-                    body: formData }
+                { method: method, mode: 'cors', headers: headers, body: JSON.stringify(data) }
             )
                 .then((response) => {
                     if (response.status == 200) {
-                        goto('/devices')
+                        goto('/groups')
                         return ''
                     } else if (response.status == 401 || response.status == 403 || response.status == 404) {
                         token.set(null)
@@ -87,7 +92,7 @@
                     if (!silent) {
                         errorMessage = error.message
                         if (errorMessage == 'Failed to fetch' && location.protocol.toLowerCase() == 'https') {
-                            errorMessage = errorMessage + ' Możliwa przyczyna: self signed nie są obsługiwane.'
+                            errorMessage = errorMessage + utils.getLabel('selfSigned',labels,$language)
                         }
                     }
                     if(error.message=='Failed to fetch'){
@@ -100,7 +105,23 @@
         }
     }
 
+    function getChannels(channelsAsString){
+        let channels={}
+        if(channelsAsString!=null && channelsAsString!=''){
+            let channelsArray=channelsAsString.split(',')
+            for(let i=0;i<channelsArray.length;i++){
+                let channel=channelsArray[i]
+                channels[channel]={name:channel,type:null}
+            }
+        }
+        return JSON.stringify(channels)
+    }
+
     let labels = {
+        'title': {
+            'pl': "Konfiguracja grupy",
+            'en': "Group configuration"
+        },
         'failToFetch': {
             'pl': "Problem z połączeniem internetowym",
             'en': "Internet connection problem"
@@ -108,7 +129,11 @@
         'view': {
             'pl': "Pokaż",
             'en': "View"
-        }
+        },
+        'selfSigned': {
+            'pl': " Możliwa przyczyna: certyfikaty self signed nie są obsługiwane",
+            'en': " Possible cause: self signed certificates are not supported"
+        },
     }
 
 </script>

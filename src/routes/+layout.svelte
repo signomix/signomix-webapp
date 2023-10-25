@@ -1,3 +1,4 @@
+<Toaster richColors closeButton position="top-center"/>
 <header class="navbar navbar-dark bg-primary sticky-top flex-md-nowrap p-0 shadow">
     <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="/"><img src="/img/logo-light.svg"
             height="30px" /><span class="h5 m-2">Signomix</span></a>
@@ -58,7 +59,7 @@
                         </a>
                     </li>
                     {/if}
-                    {#if organizationExpanded}
+                    {#if organizationExpanded && !utils.isUserRole($profile, 'limited', false)}
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/organization/settings' }
                             href="/organization/settings">
@@ -93,7 +94,7 @@
                         </a>
                     </li>
                     {/if}
-                    {#if structureExpanded}
+                    {#if structureExpanded && !utils.isUserRole($profile, 'limited', false)}
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/devices' } href="/devices">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
@@ -189,6 +190,7 @@
     import { sgxdata } from '$lib/sgxdata.js';
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { getInfo, platformInfo, defaultOrganizationId } from '$lib/stores.js';
+    import { Toaster, toast } from 'svelte-sonner'
 
     /* $: available=setAvailableOptions($profile)
 
@@ -239,7 +241,7 @@
         language.set('en')
         return true
     }
-    function isVisible(endpoint) {
+    /* function isVisible(endpoint) {
         let restricted = ['/', '/login', '/about', '/documentation']
         console.log('profile', $profile)
         console.log('isvisible', endpoint, restricted.includes(endpoint), utils.isUserRole($profile, 'limited'))
@@ -247,7 +249,7 @@
             return false
         }
         return true
-    }
+    } */
     let alertCounter = { value: 0 }
     poll(async function fetchData() {
         if ($isAuthenticated) {

@@ -37,7 +37,9 @@
                         <td class="col-4"><a href="/dashboards/{config.id}">{config.id}</a></td>
                         <td class="col-5"><a href="/dashboards/{config.id}">{config.title}</a></td>
                         <td class="col-2">
+                            {#if (utils.isObjectAdmin($profile, config.userID, $defaultOrganizationId))}
                             <a href="/dashboards/{config.id}/edit"><i class="bi bi-pencil-square"></i></a>
+                            {/if}
                             {#if config.favourite}
                             <a href="" on:click|preventDefault={toggleFav(config.id,false)}><i
                                     class="bi bi-star-fill ms-2 text-warning"></i></a>
@@ -104,6 +106,7 @@
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
+    import { defaultOrganizationId } from '$lib/stores.js';
 
     onMount(async () => {
         if (!$isAuthenticated) {

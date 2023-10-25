@@ -30,7 +30,9 @@
                         <td class="col-5">{config.name}</td>
                         <td class="col-2">{config.type}</td>
                         <td class="col-2 text-end">
+                            {#if config.type=='GENERIC' && $profile.uid==config.userID}
                             <a href="/devices/{config.eui}/upload"><i class="bi bi-upload h5 me-2 link-dark" title={utils.getLabel('upload',labels,$language)}></i></a>
+                            {/if}
                             <a href="/devices/{config.eui}/edit" title={utils.getLabel('configure',labels,$language)}><i
                                 class="bi bi-gear h5 me-2 link-dark"></i></a>
                             <a href="" on:click|preventDefault={deleteSelected(config.eui)} title={utils.getLabel('delete',labels,$language)}><i

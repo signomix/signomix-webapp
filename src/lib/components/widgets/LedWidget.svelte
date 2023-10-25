@@ -19,19 +19,13 @@
     afterUpdate(() => {
         promise = sgxdata.getData(dev, apiUrl, config, filter, $token);
     });
-    function recalculate(value) {
-        try {
-            return Number.parseFloat(value).toFixed(config.rounding);
-        } catch (e) {
-            return value;
-        }
-    }
+
     function switchView() {
         front = !front;
     }
 
     function getColor(data) {
-        let level = sgxhelper.getAlertLevel(config.range, recalculate(data.value), data.timestamp);
+        let level = sgxhelper.getAlertLevel(config.range, utils.recalculate(data.value,config.rounding), data.timestamp);
         if (config.config != undefined && config.config != null && config.config != '') {
             try {
                 let cfg = JSON.parse(config.config)
@@ -57,7 +51,7 @@
         }
     }
     function getIconName(data) {
-        let level = sgxhelper.getAlertLevel(config.range, recalculate(data.value), data.timestamp);
+        let level = sgxhelper.getAlertLevel(config.range, utils.recalculate(data.value,config.rounding), data.timestamp);
         switch (level) {
             case 0:
                 return 'bi-emoji-smile-fill'

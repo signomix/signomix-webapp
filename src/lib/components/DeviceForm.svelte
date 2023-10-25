@@ -4,7 +4,8 @@
             <label for="input-uid" class="form-label">{utils.getLabel('eui',labels,$language)}</label>
         </div>
         <div class="col-md-10">
-            <input disabled type="text" class="form-control" id="input-uid" bind:value={config.eui}>
+            <input type="text" class="form-control" id="input-uid" bind:value={config.eui} disabled={readonly &&
+                !newDevice }>
         </div>
     </div>
     <div class="row">
@@ -12,7 +13,7 @@
             <label for="input-name" class="form-label">{utils.getLabel('name',labels,$language)}</label>
         </div>
         <div class="col-md-10">
-            <input type="text" class="form-control" id="input-name" bind:value={config.name} disabled={readonly}>
+            <input type="text" class="form-control" id="input-name" bind:value={config.name} readonly={readonly}>
         </div>
     </div>
     <div class="row">
@@ -68,7 +69,8 @@
         </div>
         <div class="col-md-9">
             <input type="text" class="form-control" id="input-channels" bind:value={config.channelsAsString}
-                readonly={readonly}>
+                on:change={showAlert}
+            readonly={readonly}>
         </div>
     </div>
     <div class="row">
@@ -200,6 +202,7 @@
 <script>
     import { utils } from '$lib/utils.js';
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
+    import { Toaster, toast } from 'svelte-sonner'
 
     export let config
     export let callback
@@ -208,6 +211,9 @@
     let interval = config.transmissionInterval / 60000
     let decoderScript = unescape(config.encoder)
     let processorScript = unescape(config.code)
+    let originalMeasurementChannels = config.channelsAsString
+    let waintingDecisionn = false
+    let newDevice = config.eui.toUpperCase()=='NEW'
 
     function handleSave(event) {
 
@@ -223,10 +229,30 @@
         }
         callback(config, handleCallbackResponse)
     }
+
+    function showAlert(event) {
+        if(newDevice){
+            return
+        }
+        waintingDecisionn = true
+        toast.warning(utils.getLabel('changedMeasurements',labels,$language),
+            {
+            action: {
+            label: utils.getLabel('undo',labels,$language),
+            onClick: () => {waintingDecisionn=true; document.getElementById('input-channels').value=originalMeasurementChannels}
+            },
+            duration: Number.POSITIVE_INFINITY,
+            description: utils.getLabel('changedMeasurementsDescription',labels,$language)});
+            waintingDecisionn = false
+    }
+
     function handleCancel(event) {
         callback(null)
     }
     function validate() {
+        while(waintingDecisionn){
+            //wait
+        }
         if (config.configuration != '') {
             try {
                 JSON.parse(config.configuration)
@@ -364,6 +390,18 @@
         'error': {
             'pl': "Błąd",
             'en': "Error"
-        }
+        },
+        'changedMeasurements': {
+            'pl': "Zmieniono listę pomiarów",
+            'en': "Changed measurements list"
+        },
+        'changedMeasurementsDescription': {
+            'pl': "Zmiana listy pomiarów spowoduje utratę danych historycznych. Czy chcesz zapisać zmiany?",
+            'en': "Changing the list of measurements will result in loss of historical data. Do you want to save the changes?"
+        },
+        'undo': {
+            'pl': "Cofnij zmiany",
+            'en': "Undo changes"
+        },
     }
 </script>

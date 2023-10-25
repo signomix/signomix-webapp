@@ -86,11 +86,15 @@
             'pl': "Ulubione pulpity",
             'en': "Favorite dashboards"
         },
-        'info': {
+        'info_bak': {
             'pl': "To jest prototyp nowej webaplikacji Signomiksa. Niektóre funkcjonalności mogą nie działać prawidłowo lub nie działać wcale. Wszystko może się zmienić w przyszłości.",
             'en': "This is prototype of the new Signomix web application. Some features may not work properly or not work at all. Everything may change in the future."
         },
         'info2': {
+            'pl': "",
+            'en': ""
+        },
+        'info':{
             'pl': "",
             'en': ""
         }

@@ -13,16 +13,19 @@
     {errorMessage}
 </div>
 {/if}
+
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h5>{dashboardConfig.title}</h5>
     <span>
+        <a title={utils.getLabel('refresh',labels,$language)} on:click={refreshView}><i class="bi bi-arrow-clockwise h5 me-2 link-dark"></i></a>
         {#if dashboardConfig.shared}
         <a title="Dashboard access" data-bs-toggle="modal" data-bs-target="#linkModal"
             on:click|preventDefault={showLink}>
             <i class="bi  bi-link-45deg h4 me-2 link-dark"></i>
         </a>
         {/if}
+        {#if !utils.isUserRole($profile, 'limited', false)}
         <a title={utils.getLabel('filter',labels,$language)} data-bs-toggle="modal" data-bs-target="#filterModal"
             on:click|preventDefault={setFilter}>
             {#if isFilterSet(dashboardFilter)}
@@ -31,16 +34,23 @@
             <i class="bi bi-funnel h5 me-2 link-dark"></i>
             {/if}
         </a>
+        {#if (utils.isObjectAdmin($profile, data.userID, $defaultOrganizationId))}
         <a href="/dashboards/{data.id}/edit" title={utils.getLabel('configure',labels,$language)}><i
                 class="bi bi-gear h5 me-2 link-dark"></i></a>
+        {/if}
+        {/if}
     </span>
 </div>
 <div class="dashboard-container" id={dashboardId}>
     {#if items.length==0}
-    {utils.getLabel('empty',labels,$language)}
+    <div class="alert alert-light mx-auto my-auto">{utils.getLabel('empty',labels,$language)}</div>
     {:else}
-    <Grid gap={[4,4]} bind:items={items} rowHeight={100} let:item {cols} let:index on:resize={handleResize} on:mount={handleMount}>
+    <Grid gap={[4,4]} bind:items={items} rowHeight={100} let:item {cols} let:index on:resize={handleResize}
+        on:mount={handleMount}>
         <div class="dashboard-widget content bg-white border border-primary rounded-1">
+            {#if !isRoleOK(index)}
+            <div class="alert alert-light mx-auto my-auto">{utils.getLabel('hidden',labels,$language)}</div>
+            {:else}
             {#if 'chartjs'===getWidgetType(index)}
             <ChartjsWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
             {:else if 'canvas'===getWidgetType(index)}
@@ -61,6 +71,10 @@
             <LedWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'raw'===getWidgetType(index)}
             <RawDataWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+            {:else if 'plan'===getWidgetType(index)}
+            <PlanWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+            {:else if 'report'===getWidgetType(index)}
+            <ReportWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'chart'===getWidgetType(index)}
             <ChartWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'groupchart'===getWidgetType(index)}
@@ -71,11 +85,10 @@
             {:else}
             <CanvasWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
             {/if}
-            {:else if 'plan'===getWidgetType(index)}
-            <PlanWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else}
             <CanvasWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
             {/if }
+            {/if}<!-- isRoleOK -->
         </div>
     </Grid>
     {/if}
@@ -119,6 +132,7 @@
     import { goto, afterNavigate, beforeNavigate } from '$app/navigation';
     import { invalidateAll } from '$app/navigation';
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
+    import { defaultOrganizationId } from '$lib/stores.js';
 
     import DashboardFilterForm from '$lib/components/DashboardFilterForm.svelte';
     import DashboardLinkForm from '$lib/components/DashboardLinkForm.svelte';
@@ -134,6 +148,7 @@
     import PlanWidget from '$lib/components/widgets/PlanWidget.svelte';
     import DoughnutWidget from '$lib/components/widgets/DoughnutWidget.svelte';
     import StackedBarWidget from '$lib/components/widgets/StackedBarWidget.svelte';
+    import ReportWidget from '$lib/components/widgets/ReportWidget.svelte';
 
     export let data
 
@@ -185,6 +200,35 @@
         } catch (e) {
             return 'unknown'
         }
+    }
+
+    // check if user has role to see widget
+    let isRoleOK = function (index) {
+        let userRoles = []
+        try {
+            userRoles = $profile.role.split(',')
+        } catch (e) {
+            //console.log(e)
+        }
+        let widgetRoles =[]
+        try{
+            widgetRoles = dashboardConfig.widgets[index].role.split(',')
+        }catch(e){
+            //console.log(e)
+        }
+        console.log('userRoles', userRoles)
+        console.log('widgetRoles', widgetRoles)
+        // remove empty roles
+        widgetRoles = widgetRoles.filter(function(entry) { return entry.trim() != ''; });
+        if(widgetRoles.length==0){
+            return true
+        }
+        for (let role of widgetRoles) {
+            if (userRoles.includes(role)) {
+                return true
+            }
+        }
+        return false
     }
 
     let getRefreshInterval = function () {
@@ -252,28 +296,28 @@
 
     let findApplication = function (id) {
         console.log('findApplication', applications)
-        for(let i=0;i<applications.length;i++){
-            if(applications[i].id==id){
+        for (let i = 0; i < applications.length; i++) {
+            if (applications[i].id == id) {
                 return applications[i]
             }
         }
         return null
     }
 
-    let mergeConfigs=function(){
+    let mergeConfigs = function () {
         // it doesn't work because of fetch in getApplications
-/*         for(let i=0;i<dashboardConfig.widgets.length;i++){
-            let widget=dashboardConfig.widgets[i]
-            let app = findApplication(widget.app_id);
-            if(app==null){
-                continue
-            }
-            console.log('app', app)
-            let appCfg = JSON.parse(app.configuration)
-            let cfg=JSON.parse(widget.config)
-            let combined = Object.assign({}, cfg, appCfg);
-            dashboardConfig.widgets[i].config=JSON.stringify(...combined)
-        } */
+        /*         for(let i=0;i<dashboardConfig.widgets.length;i++){
+                    let widget=dashboardConfig.widgets[i]
+                    let app = findApplication(widget.app_id);
+                    if(app==null){
+                        continue
+                    }
+                    console.log('app', app)
+                    let appCfg = JSON.parse(app.configuration)
+                    let cfg=JSON.parse(widget.config)
+                    let combined = Object.assign({}, cfg, appCfg);
+                    dashboardConfig.widgets[i].config=JSON.stringify(...combined)
+                } */
     }
 
     let interval
@@ -302,6 +346,8 @@
     onMount(() => {
     });
 
+
+
     const blockChanges = function (config) {
         //set draggable and resizable to false
         config.items.forEach(function (item) {
@@ -327,6 +373,11 @@
         // do nothing
     }
 
+    function refreshView() {
+        invalidateAll()
+        show()
+    }
+
     function filterFormCallback(cfg) {
         dashboardFilter.from = cfg.from
         dashboardFilter.to = cfg.to
@@ -343,6 +394,10 @@
     }
 
     let labels = {
+        'refresh': {
+            'pl': "Odśwież",
+            'en': "Refresh"
+        },
         'filter': {
             'pl': "Filtr danych pulpitu",
             'en': "Dashboard data filter"
@@ -370,6 +425,10 @@
         'empty': {
             'pl': "Pulpit nie zawiera żadnych zdefiniowanych kontrolek.",
             'en': "Dashboard does not contain any widgets."
+        },
+        'hidden': {
+            'pl': "ukryte (brak uprawnień)",
+            'en': "hidden (no permissions)"
         },
     }
 
