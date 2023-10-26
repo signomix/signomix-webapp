@@ -57,6 +57,7 @@ export const sgxdata = {
     return Promise.resolve(getSgxData2(devMode, apiUrl, config, filter, token, transformFunction)).then((result) => result);
   },
   getGroupData: function (devMode, apiUrl, config, filter, token, transformFunction) {
+    console.log('getGroupData', devMode, apiUrl, config, filter, token, transformFunction)
     return Promise.resolve(getSgxGroupData(devMode, apiUrl, config, filter, token, transformFunction)).then((result) => result);
   },
   getNotifications: function (devMode, apiUrl, limit, offset, token) {
@@ -143,7 +144,7 @@ const getSgxData2 = async function (devMode, apiUrl, config, filter, token, tran
 }
 
 const getSgxGroupData = async function (devMode, apiUrl, config, filter, token, transformFunction) {
-  //console.log('getSgxGroupData', devMode, apiUrl, config, filter, token, transformFunction)
+  console.log('getSgxGroupData_1', devMode, apiUrl, config, filter, token, transformFunction)
   if (devMode) {
     if (transformFunction == null || transformFunction == undefined) {
       return groupDataExample
@@ -151,12 +152,14 @@ const getSgxGroupData = async function (devMode, apiUrl, config, filter, token, 
       return await transformFunction(config, groupDataExample)
     }
   }
+  console.log('getSgxGroupData_2')
   const headers = new Headers()
   headers.set('Accept', 'application/json');
-  const endpoint = apiUrl + config.group + "/" + config.channel + "?tid=" + token
-  if(!(config.query==null || config.query==undefined || config.query.length==0)){
+  let endpoint = apiUrl + config.group + "/" + config.channel+"?tid="+token
+  if(config.query!=null && config.query!=undefined && config.query.length>0){
     endpoint = endpoint + "&query=" + config.query
   } 
+  console.log('getSgxGroupData_3', endpoint)
   const res = await fetch(endpoint, { mode: 'cors', headers: headers });
   let data;
   if (transformFunction == null || transformFunction == undefined) {

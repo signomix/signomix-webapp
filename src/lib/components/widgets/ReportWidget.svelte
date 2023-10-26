@@ -60,57 +60,61 @@
             <div class="spinner-border spinner-border-sm" role="status"></div>
             {:then data}
             {#if !front}
-            {getDate(data)}
+            {#if isGroup()}
+            {getDate(data)} {config.group}
+            {:else}
+            {getDate(data)} {config.dev_id}
+            {/if}
             {:else}
             <div style="height: {parentHeight-32}px; overflow-y: scroll;">
-            {#if isGroup()}
-            <table class="table table-sm table-responsive-sm">
-                <thead class="text-bg-primary">
-                    <th scope="col">EUI</th>
-                    <th scope="col">data</th>
-                    {#each data[0][0] as item}
-                    <th scope="col">{item.name}</th>
-                    {/each}
-                </thead>
-                <tbody>
-                    {#each data as row}
-                    <tr>
-                        <td>{row[0][0].deviceEUI}</td>
-                        <td>{row[0][0].timestamp}</td>
-                        {#each row[0] as item}
-                        <td>{utils.recalculate(item.value,config.rounding)}</td>
+                {#if isGroup()}
+                <table class="table table-sm table-responsive-sm">
+                    <thead class="text-bg-primary">
+                        <th scope="col">EUI</th>
+                        <th scope="col">data</th>
+                        {#each data[0][0] as item}
+                        <th scope="col">{item.name}</th>
                         {/each}
-                    </tr>
-                    {/each}
-                </tbody>
-            </table>
-            {:else}
-            <table class="table table-sm table-responsive-sm">
-                <thead class="text-bg-primary">
-                    <th scope="col">data</th>
-                    {#each data[0] as item}
-                    <th scope="col">{item.name}</th>
-                    {/each}
-                </thead>
-                <tbody>
-                    {#each data as row}
-                    <tr>
-                        <td>{new Date(row[0].timestamp).toLocaleString()}</td>
-                        {#each row as item}
-                        <td>{utils.recalculate(item.value, config.rounding)}</td>
+                    </thead>
+                    <tbody>
+                        {#each data as row}
+                        <tr>
+                            <td>{row[0][0].deviceEUI}</td>
+                            <td>{new Date(row[0][0].timestamp).toLocaleString()}</td>
+                            {#each row[0] as item}
+                            <td>{utils.recalculate(item.value,config.rounding)}</td>
+                            {/each}
+                        </tr>
                         {/each}
-                    </tr>
-                    {/each}
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+                {:else}
+                <table class="table table-sm table-responsive-sm">
+                    <thead class="text-bg-primary">
+                        <th scope="col">data</th>
+                        {#each data[0] as item}
+                        <th scope="col">{item.name}</th>
+                        {/each}
+                    </thead>
+                    <tbody>
+                        {#each data as row}
+                        <tr>
+                            <td>{new Date(row[0].timestamp).toLocaleString()}</td>
+                            {#each row as item}
+                            <td>{utils.recalculate(item.value, config.rounding)}</td>
+                            {/each}
+                        </tr>
+                        {/each}
+                    </tbody>
+                </table>
+                {/if}
+            </div>
             {/if}
+            {:catch error}
+            {#if !front}
+            <p style="color: red">{error.message}</p>
+            {/if}
+            {/await}
         </div>
-        {/if}
-        {:catch error}
-        {#if !front}
-        <p style="color: red">{error.message}</p>
-        {/if}
-        {/await}
     </div>
-</div>
 </div>

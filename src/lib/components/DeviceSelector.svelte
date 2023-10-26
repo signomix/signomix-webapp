@@ -17,7 +17,7 @@
 		dialog.showModal();
 		let url = utils.getBackendUrl(location) + "/api/core/device"
 		url = url + '?offset=' + offset + '&limit=' + limit
-		promise = sgxdata.getDevices(dev, url, '', token, limit, offset)
+		promise = sgxdata.getDevices(dev, url, '', $token, limit, offset)
 	}
 
 	function searchEui(event) {
@@ -26,7 +26,7 @@
 			console.log('searching eui', searchString)
 			let url = utils.getBackendUrl(location) + "/api/core/device"
 			url = url + '?offset=' + offset + '&limit=' + limit
-			promise = sgxdata.getDevices(dev, url, 'eui=' + searchString, token, limit, offset)
+			promise = sgxdata.getDevices(dev, url, 'search=eui:' + searchString, $token, limit, offset)
 		}
 	}
 
@@ -36,7 +36,7 @@
 			console.log('searching eui', searchString)
 			let url = utils.getBackendUrl(location) + "/api/core/device"
 			url = url + '?offset=' + offset + '&limit=' + limit
-			promise = sgxdata.getDevices(dev, url, 'name=' + searchString ,token, limit, offset)
+			promise = sgxdata.getDevices(dev, url, 'search=name:' + searchString ,$token, limit, offset)
 		}
 	}
 
