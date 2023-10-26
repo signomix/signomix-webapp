@@ -432,6 +432,69 @@ const groupsExample = [
     "organization": 1,
     "eui": "TEST",
     "channelsAsString": "latitude,longitude"
+  },
+  {
+    "name": "group 2",
+    "userID": "user",
+    "team": ",tester1,public,",
+    "administrators": ",",
+    "channels": {
+      "latitude": {
+        "name": "latitude",
+        "type": null
+      },
+      "longitude": {
+        "name": "longitude",
+        "type": null
+      }
+    },
+    "description": "",
+    "open": true,
+    "organization": 1,
+    "eui": "2TEST",
+    "channelsAsString": "latitude,longitude"
+  },
+  {
+    "name": "33333spr",
+    "userID": "user",
+    "team": ",tester1,public,",
+    "administrators": ",",
+    "channels": {
+      "latitude": {
+        "name": "latitude",
+        "type": null
+      },
+      "longitude": {
+        "name": "longitude",
+        "type": null
+      }
+    },
+    "description": "",
+    "open": true,
+    "organization": 1,
+    "eui": "33spr",
+    "channelsAsString": "latitude,longitude"
+  },
+  {
+    "name": "4group 44444",
+    "userID": "user",
+    "team": ",tester1,public,",
+    "administrators": ",",
+    "channels": {
+      "latitude": {
+        "name": "latitude",
+        "type": null
+      },
+      "longitude": {
+        "name": "longitude",
+        "type": null
+      }
+    },
+    "description": "",
+    "open": true,
+    "organization": 1,
+    "eui": "4test",
+    "channelsAsString": "latitude,longitude"
   }
 ]
 

@@ -1,7 +1,54 @@
 <script>
+	import sgxdata from '$lib/sgxdata.js';
+	import { token } from '$lib/usersession.js';
+	import { dev } from '$app/environment';
+	import { utils } from '$lib/utils.js';
+
 	export let showGroupSelectorModal; // boolean
+	export let callback //function
+
+
+	let mojaTablica = []
+	let promise = null
 	let dialog; // HTMLDialogElement
-	$: if (dialog && showGroupSelectorModal) dialog.showModal();
+
+	let offset = 0
+	let limit = 20
+
+	$: if (dialog && showGroupSelectorModal) {
+		dialog.showModal();
+		let url = utils.getBackendUrl(location) + "/api/core/device"
+		url = url + '?offset=' + offset + '&limit=' + limit
+		promise = sgxdata.getGroups(dev, url, '', token, limit, offset)
+	}
+
+	function searchEui(event) {
+		if (event.target.value.length >= 0) {
+			let searchString = event.target.value
+			console.log('searching eui', searchString)
+			let url = utils.getBackendUrl(location) + "/api/core/device"
+			url = url + '?offset=' + offset + '&limit=' + limit
+			promise = sgxdata.getGroups(dev, url, 'eui=' + searchString, token, limit, offset)
+			console.log(promise);
+		}
+	}
+
+	function searchName(event) {
+		if (event.target.value.length >= 0) {
+			let searchString = event.target.value
+			console.log('searching eui', searchString)
+			let url = utils.getBackendUrl(location) + "/api/core/device"
+			url = url + '?offset=' + offset + '&limit=' + limit
+			promise = sgxdata.getGroups(dev, url, 'name=' + searchString ,token, limit, offset)
+		}
+	}
+
+	function handleSelected(eui) {
+		console.log('selected', eui)
+		callback(eui)
+		dialog.close()
+	}
+
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
@@ -19,36 +66,38 @@
 		</div>
 		<div class="row">
 			<div class="col">
-				<input type="text" class="form-control" placeholder="Identyfikator" />
+				<input type="text" class="form-control" placeholder="Identyfikator" on:input={searchEui} />
 			</div>
 			<div class="col">
-				<input type="text" class="form-control" placeholder="Nazwa" />
+				<input type="text" class="form-control" placeholder="Nazwa" on:input={searchName} />
 			</div>
 		</div>
 		<div class="row">
 			<div class="col">
-		<table class="table table-sm table-responsive">
-			<thead>
-				<tr>
-					<th scope="col">Identyfikator</th>
-					<th scope="col">Nazwa</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>1</td>
-					<td>Grupa 1</td>
-				</tr>
-				<tr>
-					<td>2</td>
-					<td>Bardzo długa nazwa grupy 2</td>
-				</tr>
-				<tr>
-					<td>3</td>
-					<td>Grupa 3</td>
-				</tr>
-		</table>
-		</div>
+				{#if promise!=null}
+				{#await promise}
+				<p>Ładowanie...</p>
+				{:then devices}
+				<table class="table table-sm table-responsive">
+					<thead>
+						<tr>
+							<th scope="col">Identyfikator</th>
+							<th scope="col">Nazwa</th>
+						</tr>
+					</thead>
+					<tbody>
+						{#each devices as device}
+						<tr>
+							<td on:click={handleSelected(device.eui)}>{device.eui}</td>
+							<td on:click={handleSelected(device.eui)}>{device.name}</td>
+						</tr>
+						{/each}
+				</table>
+				{:catch error}
+				<p>{error.message}</p>
+				{/await}
+				{/if}
+			</div>
 		</div>
 		<hr />
 		<button class="btn btn-primary" autofocus on:click={()=> dialog.close()}>close modal</button>
@@ -58,7 +107,7 @@
 <style>
 	dialog {
 		max-width: 32em;
-		border-radius: 0.2em;
+		border-radius: 0.5em;
 		border: none;
 		padding: 0;
 	}
