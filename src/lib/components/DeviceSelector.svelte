@@ -12,6 +12,8 @@
 
 	let offset = 0
 	let limit = 20
+	let euiToSearch=''
+	let nameToSearch=''
 
 	$: if (dialog && showDeviceSelectorModal) {
 		dialog.showModal();
@@ -22,26 +24,23 @@
 
 	function searchEui(event) {
 		if (event.target.value.length >= 0) {
-			let searchString = event.target.value
-			console.log('searching eui', searchString)
+			nameToSearch=''
 			let url = utils.getBackendUrl(location) + "/api/core/device"
 			url = url + '?offset=' + offset + '&limit=' + limit
-			promise = sgxdata.getDevices(dev, url, 'search=eui:' + searchString, $token, limit, offset)
+			promise = sgxdata.getDevices(dev, url, 'search=eui:' + euiToSearch, $token, limit, offset)
 		}
 	}
 
 	function searchName(event) {
 		if (event.target.value.length >= 0) {
-			let searchString = event.target.value
-			console.log('searching eui', searchString)
+			euiToSearch=''
 			let url = utils.getBackendUrl(location) + "/api/core/device"
 			url = url + '?offset=' + offset + '&limit=' + limit
-			promise = sgxdata.getDevices(dev, url, 'search=name:' + searchString ,$token, limit, offset)
+			promise = sgxdata.getDevices(dev, url, 'search=name:' + nameToSearch ,$token, limit, offset)
 		}
 	}
 
 	function handleSelected(eui) {
-		console.log('selected', eui)
 		callback(eui)
 		dialog.close()
 	}
@@ -63,10 +62,10 @@
 		</div>
 		<div class="row">
 			<div class="col">
-				<input type="text" class="form-control" placeholder="Identyfikator" on:input={searchEui} />
+				<input type="text" id="eui`" class="form-control" placeholder="Identyfikator" bind:value={euiToSearch} on:input={searchEui} />
 			</div>
 			<div class="col">
-				<input type="text" class="form-control" placeholder="Nazwa" on:input={searchName} />
+				<input type="text" id="name" class="form-control" placeholder="Nazwa" bind:value={nameToSearch} on:input={searchName} />
 			</div>
 		</div>
 		<div class="row">
