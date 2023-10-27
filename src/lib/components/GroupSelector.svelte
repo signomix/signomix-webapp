@@ -7,8 +7,6 @@
 	export let showGroupSelectorModal; // boolean
 	export let callback //function
 
-
-	let mojaTablica = []
 	let promise = null
 	let dialog; // HTMLDialogElement
 
@@ -17,18 +15,18 @@
 
 	$: if (dialog && showGroupSelectorModal) {
 		dialog.showModal();
-		let url = utils.getBackendUrl(location) + "/api/core/device"
-		url = url + '?offset=' + offset + '&limit=' + limit
-		promise = sgxdata.getGroups(dev, url, '', token, limit, offset)
+		let url = utils.getBackendUrl(location) + "/api/core/group"
+		url = url + '?offset=' + offset + '&limit=' + limit + '&shared=true'
+		promise = sgxdata.getGroups(dev, url, '', $token, limit, offset)
 	}
 
 	function searchEui(event) {
 		if (event.target.value.length >= 0) {
 			let searchString = event.target.value
 			console.log('searching eui', searchString)
-			let url = utils.getBackendUrl(location) + "/api/core/device"
-			url = url + '?offset=' + offset + '&limit=' + limit
-			promise = sgxdata.getGroups(dev, url, 'eui=' + searchString, token, limit, offset)
+			let url = utils.getBackendUrl(location) + "/api/core/group"
+			url = url + '?offset=' + offset + '&limit=' + limit + '&shared=true'
+			promise = sgxdata.getGroups(dev, url, 'search=eui:' + searchString, $token, limit, offset)
 			console.log(promise);
 		}
 	}
@@ -37,9 +35,9 @@
 		if (event.target.value.length >= 0) {
 			let searchString = event.target.value
 			console.log('searching eui', searchString)
-			let url = utils.getBackendUrl(location) + "/api/core/device"
-			url = url + '?offset=' + offset + '&limit=' + limit
-			promise = sgxdata.getGroups(dev, url, 'name=' + searchString ,token, limit, offset)
+			let url = utils.getBackendUrl(location) + "/api/core/group"
+			url = url + '?offset=' + offset + '&limit=' + limit + '&shared=true'
+			promise = sgxdata.getGroups(dev, url, 'search=name:' + searchString, $token, limit, offset)
 		}
 	}
 
