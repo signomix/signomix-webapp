@@ -23,6 +23,7 @@
 		"chartjs-adapter-moment": "^1.0.1",
 		"moment": "^2.29.4",
 		"svelte-chartjs": "^3.1.2",
+		"svelte-dialogs": "^1.2.2",
 		"svelte-sonner": "^0.3.0"
 	}
 }

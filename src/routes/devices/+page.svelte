@@ -31,12 +31,14 @@
                         <td class="col-2">{config.type}</td>
                         <td class="col-2 text-end">
                             {#if config.type=='GENERIC' && $profile.uid==config.userID}
-                            <a href="/devices/{config.eui}/upload"><i class="bi bi-upload h5 me-2 link-dark" title={utils.getLabel('upload',labels,$language)}></i></a>
+                            <a href="/devices/{config.eui}/upload"><i class="bi bi-upload me-2 link-dark" title={utils.getLabel('upload',labels,$language)}></i></a>
                             {/if}
+                            <a href="/devices/{config.eui}/copy" title={utils.getLabel('copy',labels,$language)}><i
+                                class="bi bi-copy me-2 link-dark"></i></a>
                             <a href="/devices/{config.eui}/edit" title={utils.getLabel('configure',labels,$language)}><i
-                                class="bi bi-gear h5 me-2 link-dark"></i></a>
+                                class="bi bi-gear me-2 link-dark"></i></a>
                             <a href="" on:click|preventDefault={deleteSelected(config.eui)} title={utils.getLabel('delete',labels,$language)}><i
-                                class="bi bi-trash h5 link-dark"></i></a>
+                                class="bi bi-trash link-dark"></i></a>
                         </td>
                     </tr>
                     {/each}
@@ -79,6 +81,7 @@
     import { dev } from '$app/environment';
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
+    import { dialogs } from "svelte-dialogs";
 
     //export let data
     let offset = 0
@@ -157,17 +160,31 @@
         return function (event) {
             event.preventDefault();
             console.log('show upload form', eui)
-            alert('show upload form not implemented')
+            alert('upload form not implemented')
         }
     }
 
     function deleteSelected(eui) {
         return function (event) {
             event.preventDefault();
-            console.log('delete', eui)
-            alert('delete not implemented')
+            let confirmed = confirm(utils.getLabel('question_delete',labels,$language))
+            if(!confirmed || dev) return
+            
+            let headers = new Headers();
+            let url = utils.getBackendUrl(location) + "/api/core/device/"+eui
+            headers.set('Authentication', $token);
+            fetch(url,
+                {
+                    mode: 'cors',
+                    method: 'DELETE',
+                    referrerPolicy: 'origin-when-cross-origin',
+                    headers: headers
+                }).then(promise=getDevices(0)).catch((error) => {
+                    console.log(error)
+                });
         }
     }
+
 
     let labels = {
         'devices': {
@@ -198,6 +215,10 @@
             'pl': "Konfiguruj",
             'en': "Configure"
         },
+        'copy': {
+            'pl': "Kopiuj",
+            'en': "Copy"
+        },
         'delete': {
             'pl': "Usuń",
             'en': "Delete"
@@ -205,7 +226,12 @@
         'upload': {
             'pl': "Prześlij dane",
             'en': "Upload data"
+        },
+        'question_delete': {
+            'pl': "Czy na pewno chcesz usunąć urządzenie? Również dane związane z tym urządzeniem zostaną usunięte. Potwierdzasz?",
+            'en': "Are you sure you want to delete this device? All data related to this device will be deleted as well. Confirm?"
         }
+        
     }
 
 </script>

@@ -29,7 +29,9 @@
                         <td class="col-9">{config.name}</td>
                         <td class="col-2">
                             {#if (utils.isObjectAdmin($profile, config.userID, $defaultOrganizationId))}
-                            <a href="/groups/{config.eui}/edit"><i class="bi bi-pencil-square"></i></a>
+                            <a href="/groups/{config.eui}/edit" title={utils.getLabel('configure',labels,$language)}><i class="bi bi-pencil-square link-dark"></i></a>
+                            <a href="" on:click|preventDefault={deleteSelected(config.eui)} title={utils.getLabel('delete',labels,$language)}><i
+                                class="bi bi-trash link-dark"></i></a>
                             {/if}
                         </td>
                     </tr>
@@ -77,65 +79,16 @@
 
     //export let data
     let offset = 0
-    let limit = 10
+    let limit = 20
 
-    let endpoint=utils.getBackendUrl(location) + "/api/core/group?offset=" + offset + "&limit=" + limit
-    let promise = sgxdata.getGroups(dev,endpoint,'',$token)
+    //let endpoint=utils.getBackendUrl(location) + "/api/core/group?offset=" + offset + "&limit=" + limit
+    let promise = getGroups(offset)
 
-    /* async function getGroups(actualOffset) {
-        let groups = []
-        if (!$isAuthenticated) {
-            return groups
-        }
-        if (dev) {
-            for (var i = 0; i < limit; i++) {
-                groups.push(
-                    {
-                        eui: '0000000000' + (i + actualOffset + 1),
-                        name: 'group' + (i + actualOffset + 1),
-                        userID: 'tester1',
-                        team: ',',
-                        administrators: ',',
-                        description: '',
-                        open: false,
-                        organization: 0,
-                        channels: {
-                            temperature: {
-                                name: 'temperature',
-                                type: null
-                            },
-                        }
-                    }
-                )
-            }
-            console.log(groups)
-        } else {
-            let headers = new Headers();
-            let url = utils.getBackendUrl(location) + "/api/core/v2/groups"
-            url = url + '?offset=' + actualOffset + '&limit=' + limit + '&full=true'
-            headers.set('Authentication', $token);
-            headers.set('Access-Control-Allow-Origin', '*');
-            await fetch(url,
-                {
-                    mode: 'cors',
-                    method: 'GET',
-                    referrerPolicy: 'origin-when-cross-origin',
-                    headers: headers
-                })
-                .then((response) => {
-                    if (response.status == 200) {
-                        groups = response.json();
-                    } else if (response.status == 401 || response.status == 403) {
-                        token.set(null)
-                    } else {
-                        alert(alertMessage.replace('%1', response.status).replace('%2', response.statusText))
-                    }
-                }).catch((error) => {
-                    console.log(error)
-                });
-        }
-        return groups;
-    } */
+    async function getGroups(offset) {
+        let endpoint=utils.getBackendUrl(location) + "/api/core/group?offset=" + offset + "&limit=" + limit
+        return sgxdata.getGroups(dev,endpoint,'',$token)
+    }
+
     function handleLoadPrevious(event) {
         offset = offset - limit
         if (offset < 0) offset = 0
@@ -149,6 +102,36 @@
         console.log(event)
     }
 
+    function showUploadForm(eui) {
+        return function (event) {
+            event.preventDefault();
+            console.log('show upload form', eui)
+            alert('upload form not implemented')
+        }
+    }
+
+    function deleteSelected(eui) {
+        return function (event) {
+            event.preventDefault();
+            let confirmed = confirm(utils.getLabel('question_delete',labels,$language))
+            if(!confirmed || dev) return
+            
+            let headers = new Headers();
+            let url = utils.getBackendUrl(location) + "/api/core/group/"+eui
+            headers.set('Authentication', $token);
+            promise = fetch(url,
+                {
+                    mode: 'cors',
+                    method: 'DELETE',
+                    referrerPolicy: 'origin-when-cross-origin',
+                    headers: headers
+                }).then(response => {
+                    return getGroups(offset)
+                }).catch((error) => {
+                    console.log(error)
+                });
+        }
+    }
 
     let labels = {
         'title': {
@@ -174,6 +157,18 @@
         'add': {
             'pl': "Dodaj",
             'en': "Add"
+        },
+        'configure': {
+            'pl': "Konfiguruj",
+            'en': "Configure"
+        },
+        'delete': {
+            'pl': "Usuń",
+            'en': "Delete"
+        },
+        'question_delete': {
+            'pl': "Czy na pewno usunąć?",
+            'en': "Are you sure to delete?"
         },
         'not_implemented': {
             'pl': "Funkcjonalność w przygotowaniu",

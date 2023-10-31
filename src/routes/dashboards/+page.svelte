@@ -37,15 +37,20 @@
                         <td class="col-4"><a href="/dashboards/{config.id}">{config.id}</a></td>
                         <td class="col-5"><a href="/dashboards/{config.id}">{config.title}</a></td>
                         <td class="col-2">
+                            <a href="/dashboards/{config.id}/copy"><i class="bi bi-copy link-dark"></i></a>
                             {#if (utils.isObjectAdmin($profile, config.userID, $defaultOrganizationId))}
-                            <a href="/dashboards/{config.id}/edit"><i class="bi bi-pencil-square"></i></a>
+                            <a href="/dashboards/{config.id}/edit"><i
+                                    class="bi bi-pencil-square ms-2 link-dark"></i></a>
+                            <a href="" on:click|preventDefault={deleteSelected(config.id)}
+                                title={utils.getLabel('delete',labels,$language)}><i
+                                    class="bi bi-trash link-dark"></i></a>
                             {/if}
                             {#if config.favourite}
                             <a href="" on:click|preventDefault={toggleFav(config.id,false)}><i
                                     class="bi bi-star-fill ms-2 text-warning"></i></a>
                             {:else}
                             <a href="" on:click|preventDefault={toggleFav(config.id,true)}><i
-                                    class="bi bi-star ms-2"></i></a>
+                                    class="bi bi-star ms-2 link-dark"></i></a>
                             {/if}
                         </td>
                     </tr>
@@ -54,13 +59,12 @@
                         <th scope="row" class="col-1">{offset+1+index}</th>
                         <td class="col-9"><a href="/dashboards/{config.id}">{config.title}</a></td>
                         <td class="col-2">
-                            <a href="/dashboards/{config.id}/edit"><i class="bi bi-pencil-square"></i></a>
                             {#if config.favourite}
                             <a href="" on:click|preventDefault={toggleFav(config.id,false)}><i
                                     class="bi bi-star-fill ms-2 text-warning"></i></a>
                             {:else}
                             <a href="" on:click|preventDefault={toggleFav(config.id,true)}><i
-                                    class="bi bi-star ms-2"></i></a>
+                                    class="bi bi-star ms-2 link-dark"></i></a>
                             {/if}
                         </td>
                     </tr>
@@ -73,8 +77,10 @@
 </div>
 <div class="row">
     <div class="col-2">
+        {#if !utils.isUserRole($profile, 'limited', true)}
         <a class="btn btn-outline-primary" role="button"
             href="/dashboards/new/edit">{utils.getLabel('add',labels,$language)}</a>
+        {/if}
     </div>
     <div class="col-10">
         <nav aria-label="Table navigation">
@@ -180,6 +186,29 @@
         }
     }
 
+    function deleteSelected(id) {
+        return function (event) {
+            event.preventDefault();
+            let confirmed = confirm(utils.getLabel('question_delete', labels, $language))
+            if (!confirmed || dev) return
+
+            let headers = new Headers();
+            let url = utils.getBackendUrl(location) + "/api/core/v2/dashboards/" + id
+            headers.set('Authentication', $token);
+            promise = fetch(url,
+                {
+                    mode: 'cors',
+                    method: 'DELETE',
+                    referrerPolicy: 'origin-when-cross-origin',
+                    headers: headers
+                }).then(response => {
+                    return getConfigs()
+                }).catch((error) => {
+                    console.log(error)
+                });
+        }
+    }
+
     let labels = {
         'pagetitle': {
             'pl': "Pulpity",
@@ -204,6 +233,14 @@
         'add': {
             'pl': "Dodaj",
             'en': "Add"
+        },
+        'delete': {
+            'pl': "Usuń",
+            'en': "Delete"
+        },
+        'question_delete': {
+            'pl': "Czy na pewno usunąć?",
+            'en': "Are you sure to delete?"
         }
     }
 </script>

@@ -34,7 +34,7 @@
             <i class="bi bi-funnel h5 me-2 link-dark"></i>
             {/if}
         </a>
-        {#if (utils.isObjectAdmin($profile, data.userID, $defaultOrganizationId))}
+        {#if (utils.isObjectAdmin($profile, data.userID, $defaultOrganizationId) && !utils.isUserRole($profile, 'limited', false))}
         <a href="/dashboards/{data.id}/edit" title={utils.getLabel('configure',labels,$language)}><i
                 class="bi bi-gear h5 me-2 link-dark"></i></a>
         {/if}

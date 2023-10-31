@@ -1,4 +1,4 @@
-<Toaster richColors closeButton position="top-center"/>
+<Toaster richColors closeButton position="top-center" />
 <header class="navbar navbar-dark bg-primary sticky-top flex-md-nowrap p-0 shadow">
     <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="/"><img src="/img/logo-light.svg"
             height="30px" /><span class="h5 m-2">Signomix</span></a>
@@ -27,6 +27,13 @@
                                 <span data-bs-toggle="collapse"
                                     data-bs-target=".navbar-collapse.show">{utils.getLabel('signin',labels,$language)}</span>
                             </a></li>
+                            
+                        {#if isCloud()}
+                        <li><a class="dropdown-item" href="/signup">
+                            <span data-bs-toggle="collapse"
+                                data-bs-target=".navbar-collapse.show">{utils.getLabel('signup',labels,$language)}</span>
+                        </a></li>
+                        {/if}
                         {:else}
                         <li><a class="dropdown-item" href="/" on:click={logout}>
                                 <span data-bs-toggle="collapse"
@@ -55,7 +62,8 @@
                     {#if !utils.isUserRole($profile, 'limited', false)}
                     <li class="nav-item">
                         <a class="nav-link" class:active={false} on:click={toggleOrganization}>
-                            <span><i class="bi bi-building me-2"></i><span>{utils.getLabel('organization',labels,$language)}</span>
+                            <span><i
+                                    class="bi bi-building me-2"></i><span>{utils.getLabel('organization',labels,$language)}</span>
                         </a>
                     </li>
                     {/if}
@@ -86,7 +94,7 @@
                         </a>
                     </li>
                     <!-- Structure -->
-                    {#if !utils.isUserRole($profile, 'limited', false)}
+                    {#if isCloud() || !utils.isUserRole($profile, 'limited', false)}
                     <li class="nav-item">
                         <a class="nav-link" class:active={false} on:click={toggleStructure}>
                             <span><i
@@ -94,7 +102,7 @@
                         </a>
                     </li>
                     {/if}
-                    {#if structureExpanded && !utils.isUserRole($profile, 'limited', false)}
+                    {#if structureExpanded && (isCloud() || !utils.isUserRole($profile, 'limited', false))}
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/devices' } href="/devices">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
@@ -120,7 +128,7 @@
                             {/if}
                         </a>
                     </li>
-                    {#if !utils.isUserRole($profile, 'limited', false)}
+                    {#if isCloud() || !utils.isUserRole($profile, 'limited', false)}
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/settings' } href="/settings">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
@@ -140,14 +148,16 @@
                     {#if administrationExpanded}
                     <!-- TODO -->
                     <li class="nav-item ms-3">
-                        <a class="nav-link" class:active={$page.url.pathname==='/admin/applications' } href="/admin/applications">
+                        <a class="nav-link" class:active={$page.url.pathname==='/admin/applications' }
+                            href="/admin/applications">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i
                                     class="bi bi-code-square me-2"></i><span>{utils.getLabel('apps',labels,$language)}</span>
                         </a>
                     </li>
                     <li class="nav-item ms-3">
-                        <a class="nav-link" class:active={$page.url.pathname==='/admin/organizations' } href="/admin/organizations">
+                        <a class="nav-link" class:active={$page.url.pathname==='/admin/organizations' }
+                            href="/admin/organizations">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i
                                     class="bi bi-building me-2"></i><span>{utils.getLabel('organizations',labels,$language)}</span>
@@ -158,7 +168,7 @@
                     {/if}
                     <!-- end logged in -->
                     {/if}
-                    {#if !utils.isUserRole($profile, 'limited', false)}
+                    {#if isCloud() || !utils.isUserRole($profile, 'limited', true)}
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/documentation' }
                             href="https://documentation.signomix.com" target="_blank">
@@ -214,9 +224,16 @@
         getInfo($page.url)
     });
 
+    function isCloud(){
+        return utils.isCloudSubdomain($page.url)
+    }
+
     function logout() {
         console.log("LOGOUT")
         token.set(null)
+        profile.set(null)
+        language.set('pl')
+        goto('/')
         return true
     }
 
@@ -278,6 +295,10 @@
         'signout': {
             'pl': "Wyloguj się",
             'en': "Sign out"
+        },
+        'signup': {
+            'en': "Create account",
+            'pl': "Utwórz konto"
         },
         'anonymous': {
             'pl': "niezalogowany",

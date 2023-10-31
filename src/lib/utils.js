@@ -8,8 +8,13 @@ export const utils = {
     let x = url.host
     if (x.startsWith('app.')) {
       x = x.substring(4)
+    }else if (x.startsWith('cloud.')) {
+      x = x.substring(6)
     }
     return url.protocol + '//' + x
+  },
+  isCloudSubdomain: function (url) {
+    return url.host.startsWith('cloud.')
   },
   getLocalDateFormat: function (dateString) {
     //zamienia ciąg znaków reprezentujący datę
