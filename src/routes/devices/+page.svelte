@@ -33,6 +33,8 @@
                             {#if config.type=='GENERIC' && $profile.uid==config.userID}
                             <a href="/devices/{config.eui}/upload"><i class="bi bi-upload me-2 link-dark" title={utils.getLabel('upload',labels,$language)}></i></a>
                             {/if}
+                            <a href="/devices/{config.eui}/download" title={utils.getLabel('download',labels,$language)}><i
+                                class="bi bi-cloud-download me-2 link-dark"></i></a>
                             <a href="/devices/{config.eui}/copy" title={utils.getLabel('copy',labels,$language)}><i
                                 class="bi bi-copy me-2 link-dark"></i></a>
                             <a href="/devices/{config.eui}/edit" title={utils.getLabel('configure',labels,$language)}><i
@@ -226,6 +228,10 @@
         'upload': {
             'pl': "Prześlij dane",
             'en': "Upload data"
+        },
+        'download': {
+            'pl': "Pobierz dane",
+            'en': "Download data"
         },
         'question_delete': {
             'pl': "Czy na pewno chcesz usunąć urządzenie? Również dane związane z tym urządzeniem zostaną usunięte. Potwierdzasz?",

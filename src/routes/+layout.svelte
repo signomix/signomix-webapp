@@ -27,12 +27,12 @@
                                 <span data-bs-toggle="collapse"
                                     data-bs-target=".navbar-collapse.show">{utils.getLabel('signin',labels,$language)}</span>
                             </a></li>
-                            
+
                         {#if isCloud()}
                         <li><a class="dropdown-item" href="/signup">
-                            <span data-bs-toggle="collapse"
-                                data-bs-target=".navbar-collapse.show">{utils.getLabel('signup',labels,$language)}</span>
-                        </a></li>
+                                <span data-bs-toggle="collapse"
+                                    data-bs-target=".navbar-collapse.show">{utils.getLabel('signup',labels,$language)}</span>
+                            </a></li>
                         {/if}
                         {:else}
                         <li><a class="dropdown-item" href="/" on:click={logout}>
@@ -178,6 +178,15 @@
                             </span>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" class:active={$page.url.pathname==='/documentation' }
+                            href="https://signomix.com/app#!doc,toc" target="_blank">
+                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                <i
+                                    class="bi bi-question-circle me-2"></i>{utils.getLabel('documentation_old',labels,$language)}
+                            </span>
+                        </a>
+                    </li>
                     {/if}
                 </ul>
             </div>
@@ -185,6 +194,33 @@
         <main class="col-md-9 col-lg-10 ms-sm-auto px-md-4">
             {#if $isAuthenticated || $page.url.pathname==='/login'}
             <slot></slot>
+            {:else}
+            {#if utils.getSubdomain(location).toLowerCase() == 'cloud'}
+            <div class="row mt-4">
+                <div class="col-md-6 col-sm-12">
+                    <div class="row">
+                        <div class="col-12">
+                            <span
+                                class="fs-1 fw-bold text-body text-opacity-75">{utils.getLabel('info',labels,$language)}</span>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-12">
+                            <span
+                                class="fs-5 fw-normal text-body text-opacity-75">{utils.getLabel('info2',labels,$language)}</span>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <button type="button" class="btn btn-lg btn-outline-primary w-100">{utils.getLabel('register',labels,$language)}</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col col-md-6 d-none d-md-block">
+                    <img class="img-fluid" src="/img/media1.jpeg" alt="iot" />
+                </div>
+            </div>
+            {/if}
             {/if}
         </main>
     </div>
@@ -224,7 +260,7 @@
         getInfo($page.url)
     });
 
-    function isCloud(){
+    function isCloud() {
         return utils.isCloudSubdomain($page.url)
     }
 
@@ -300,6 +336,10 @@
             'en': "Create account",
             'pl': "Utwórz konto"
         },
+        'register': {
+            'pl': "Zarejestruj bezpłatne konto",
+            'en': "Register free account"
+        },
         'anonymous': {
             'pl': "niezalogowany",
             'en': "anonymous"
@@ -352,6 +392,10 @@
             'pl': "Dokumentacja",
             'en': "Documentation"
         },
+        'documentation_old': {
+            'pl': "Dokumentacja (ver. 1)",
+            'en': "Documentation (ver. 1)"
+        },
         'about': {
             'pl': "O aplikacji",
             'en': "About"
@@ -363,6 +407,15 @@
         'applications': {
             'pl': 'Aplikacje',
             'en': 'Applications'
+        },
+        'info': {
+            'pl': 'Prosta platforma dla Internetu Rzeczy',
+            'en': 'Simple platform for the Internet of Things'
+
+        },
+        'info2': {
+            'pl': 'Zbieraj, analizuj i prezentuj dane. Bez programowania, bez komplikacji.',
+            'en': 'Collect, analyze and present data. No programming, no complications.'
         }
     }
 </script>

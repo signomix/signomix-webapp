@@ -3,6 +3,17 @@
     {utils.getLabel('notlogged',labels,$language)}
 </div>
 {:else}
+{#if utils.getSubdomain(location).toLowerCase() == 'cloud'}
+<div class="row">
+    <div class="col-12">
+        <div class="alert alert-light mt-4" role="alert">
+            {utils.getLabel('info',labels,$language)}<br>
+            {utils.getLabel('info2',labels,$language)}
+        </div>
+    </div>
+
+</div>
+{/if}
 {#await promise}
 {:then dashboards}
 <div class="row mt-4">
@@ -20,13 +31,6 @@
     </div>
 </div>
 {/await}
-<div class="row mt-4">
-    <div class="col-12">
-        <hr>
-        <p>{utils.getLabel('info',labels,$language)}<br>
-        <p>{utils.getLabel('info2',labels,$language)}</p>
-    </div>
-</div>
 {/if}
 <script>
     import { profile,token, language, isAuthenticated } from '$lib/usersession.js';
@@ -91,12 +95,12 @@
             'en': "This is prototype of the new Signomix web application. Some features may not work properly or not work at all. Everything may change in the future."
         },
         'info2': {
-            'pl': "",
-            'en': ""
+            'pl': "Nie jest dostępne udostępnianie pulpitów niezalogowanym użytkownikom oraz kontrolki pulpitów prezentujące mapy.",
+            'en': "Sharing dashboards to unlogged users and dashboard controls presenting maps are not available."
         },
         'info':{
-            'pl': "",
-            'en': ""
+            'pl': "Aktualna wersja aplikacji nie jest jeszcze w pełni funkcjonalna. Wszystkie funkcje będą dostępne wkrótce.",
+            'en': "The current version of the application is not yet fully functional. All functions will be available soon."
         }
     }
 

@@ -16,6 +16,14 @@ export const utils = {
   isCloudSubdomain: function (url) {
     return url.host.startsWith('cloud.')
   },
+  getSubdomain: function (url) {
+    let idx=url.host.indexOf('.')
+    if(idx<1){
+      return ''
+    }
+    let subdomain=url.host.substring(0, idx)
+    return subdomain
+  },
   getLocalDateFormat: function (dateString) {
     //zamienia ciąg znaków reprezentujący datę
     //z formatu stosowanego przez REST API
@@ -42,6 +50,27 @@ export const utils = {
       timeOffsetStr = "_" + (plusOffset ? "+0" : "-0") + offset + "00"
     } else {
       timeOffsetStr = "_" + (plusOffset ? "+" : "-") + offset + "00"
+    }
+    timeOffsetStr = timeOffsetStr.substring(1)
+    //
+    return dateString + ':00' + timeOffsetStr
+  },
+  getDateApiISOFormat: function (dateString) {
+    //zamienia ciąg znaków reprezentujący datę
+    //z formatu wymaganego przez pole typu datetime-local formularza HTML
+    //na format stosowany przez REST API
+    if (dateString === null || dateString === undefined || dateString.trim().length === 0) {
+      return ''
+    }
+    //
+    let offset = -1 * (new Date(dateString).getTimezoneOffset()) / 60;
+    let plusOffset = offset > 0;
+    offset = Math.abs(offset)
+    let timeOffsetStr
+    if (offset < 10) {
+      timeOffsetStr = "_" + (plusOffset ? "+0" : "-0") + offset + ":00"
+    } else {
+      timeOffsetStr = "_" + (plusOffset ? "+" : "-") + offset + ":00"
     }
     timeOffsetStr = timeOffsetStr.substring(1)
     //
