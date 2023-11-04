@@ -207,12 +207,13 @@
                     <div class="row mt-2">
                         <div class="col-12">
                             <span
-                                class="fs-5 fw-normal text-body text-opacity-75">{utils.getLabel('info2',labels,$language)}</span>
+                                class="fs-5 fw-normal text-body text-opacity-75">{utils.getLabel('info2',labels,$language)}<sup>*</sup> {utils.getLabel('info3',labels,$language)}</span>
                         </div>
                     </div>
                     <div class="row mt-4">
                         <div class="col-12">
-                            <button type="button" class="btn btn-lg btn-outline-primary w-100">{utils.getLabel('register',labels,$language)}</button>
+                            <button type="button" class="btn btn-lg btn-outline-primary w-100"
+                            on:click={() => toast(utils.getLabel('notavailable',labels,$language),{duration: 7000,})}>{utils.getLabel('register',labels,$language)}</button>
                         </div>
                     </div>
                 </div>
@@ -414,8 +415,16 @@
 
         },
         'info2': {
-            'pl': 'Zbieraj, analizuj i prezentuj dane. Bez programowania, bez komplikacji.',
-            'en': 'Collect, analyze and present data. No programming, no complications.'
-        }
+            'pl': 'Zbieraj, przetwarzaj i prezentuj dane. Zbudiuj swoje Smart Rozwiązanie',
+            'en': 'Collect, process and present data. Build your Smart Solution'
+        },
+        'info3': {
+            'pl': 'szybko i bez komplikacji.',
+            'en': 'quickly and without complications.'
+        },
+        'notavailable': {
+            'pl': 'Rejestrowanie kont jest obecnie niedostępne. Spróbuj ponownie za dzień lub dwa.',
+            'en': 'Account registration is currently unavailable. Try again in a day or two.'
+        },
     }
 </script>
