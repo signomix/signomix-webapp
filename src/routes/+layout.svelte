@@ -166,6 +166,7 @@
                     {/if}
                     <!-- end Administration -->
                     {/if}
+                    {#if dev}
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/alerts' } href="/alerts">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
@@ -173,6 +174,7 @@
                             </span>
                         </a>
                     </li>
+                    {/if}
                     <!-- end logged in -->
                     {/if}
                     {#if isCloud() || !utils.isUserRole($profile, 'limited', true)}
