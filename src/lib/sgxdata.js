@@ -78,6 +78,15 @@ export const sgxdata = {
     }
     //return Promise.resolve(getSgxUserSettings(devMode, apiUrl, token)).then((result) => result);
   },
+  getAlertConfig: function (devMode, apiUrl, userData, token) {
+    try {
+      return Promise.resolve(getSgxAlertConfig(devMode, apiUrl, userData, token)).then((result) => result);
+    } catch (e) {
+      console.log('getUserSettings', e)
+      throw new Error(e);
+    }
+    //return Promise.resolve(getSgxUserSettings(devMode, apiUrl, token)).then((result) => result);
+  },
   getOrganization: function (devMode, apiUrl, token) {
     try {
       return Promise.resolve(getSgxOrganizationData(devMode, apiUrl, token)).then((result) => result);
@@ -238,6 +247,42 @@ const getSgxUserSettings = async function (devMode, apiUrl, userData, token) {
   }
 
 
+}
+
+const getSgxAlertConfig = async function (devMode, apiUrl, userData, token) {
+  if (devMode) {
+    return {
+      id: 1,
+      name:'Sala A - parametry środowiskowe',
+      active:true,
+      target:{
+        eui:'abc',
+        group:'asdf',
+        tag:{name:'tag1',value:'value1'}
+        },
+      conditions:[
+          {
+          measurement:'temperature',
+          condition1:'<',
+          value:-10.0,
+          operator:'or',
+          condition2:'>',
+          value2:35.0
+          },
+          {
+          measurement:'humidity',
+          condition1:'<',
+          value1:10.0
+          }
+        ],
+      result:{
+        alertType:'warning',
+        message:'treść komunikatu',
+        everytime: true,
+        conditionOKMessage: true,
+        }
+      }
+  }
 }
 
 const getSgxOrganizationData = async function (devMode, apiUrl, token) {
