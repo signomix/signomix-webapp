@@ -1,168 +1,597 @@
-<form>
-    do zrobienia
-</form>
 <script>
-    import { sgxhelper } from '$lib/sgxhelper.js';
-    import { sgxdata } from '$lib/sgxdata.js';
-    import { utils } from '$lib/utils.js';
-    import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
-    import { dev } from '$app/environment';
 
-    export let config
-    export let callback
-    export let readonly
+  import { sgxhelper } from "$lib/sgxhelper.js";
+  import { sgxdata } from "$lib/sgxdata.js";
+  import { utils } from "$lib/utils.js";
+  import DeviceSelector from "./DeviceSelector.svelte";
+  import GroupSelector from "./GroupSelector.svelte";
+  import {
+    token,
+    profile,
+    language,
+    isAuthenticated,
+  } from "$lib/usersession.js";
+  import { dev } from "$app/environment";
 
-    console.log('config', config);
+  export let config;
+  export let callback;
+  export let readonly;
 
-    function getChannelName(channel) {
-        if (channel == 'general') {
-            return config.generalNotificationChannel.substring(0, config.generalNotificationChannel.indexOf(":"))
-        } else if (channel == 'info') {
-            return config.infoNotificationChannel.substring(0, config.infoNotificationChannel.indexOf(":"))
-        } else if (channel == 'warning') {
-            return config.warningNotificationChannel.substring(0, config.warningNotificationChannel.indexOf(":"))
-        } else if (channel == 'alert') {
-            return config.alertNotificationChannel.substring(0, config.alertNotificationChannel.indexOf(":"))
-        }
-        return ''
+  let selectedTarget;
+  let selectedOption = "1";
+
+  function handleInputChange(event) {
+    selectedOption = event.target.value;
+
+    if (selectedOption === "1") {
+      config.result.everytime = "true";
+    } else {
+      config.result.everytime = "false";
     }
-    function getChannelConfig(channel) {
-        if (channel == 'general') {
-            return config.generalNotificationChannel.substring(config.generalNotificationChannel.indexOf(":") + 1)
-        } else if (channel == 'info') {
-            return config.infoNotificationChannel.substring(config.infoNotificationChannel.indexOf(":") + 1)
-        } else if (channel == 'warning') {
-            return config.warningNotificationChannel.substring(config.warningNotificationChannel.indexOf(":") + 1)
-        } else if (channel == 'alert') {
-            return config.alertNotificationChannel.substring(config.alertNotificationChannel.indexOf(":") + 1)
-        }
-        return ''
+  }
+
+  function addFilter(event) {
+    let editableFilter = event.target.checked;
+
+    document.querySelector("#input5").disabled = !editableFilter;
+    document.querySelector("#input6").disabled = !editableFilter;
+  }
+
+  console.log("config", config);
+
+  function getChannelName(channel) {
+    if (channel == "general") {
+      return config.generalNotificationChannel.substring(
+        0,
+        config.generalNotificationChannel.indexOf(":")
+      );
+    } else if (channel == "info") {
+      return config.infoNotificationChannel.substring(
+        0,
+        config.infoNotificationChannel.indexOf(":")
+      );
+    } else if (channel == "warning") {
+      return config.warningNotificationChannel.substring(
+        0,
+        config.warningNotificationChannel.indexOf(":")
+      );
+    } else if (channel == "alert") {
+      return config.alertNotificationChannel.substring(
+        0,
+        config.alertNotificationChannel.indexOf(":")
+      );
     }
-
-    function handleSave(event) {
-        config.generalNotificationChannel = document.getElementById('input-generalNotificationChannel').value
-            + ':' + document.getElementById('input-generalNotificationChannelConfig').value
-        config.infoNotificationChannel = document.getElementById('input-infoNotificationChannel').value
-            + ':' + document.getElementById('input-infoNotificationChannelConfig').value
-        config.warningNotificationChannel = document.getElementById('input-warningNotificationChannel').value
-            + ':' + document.getElementById('input-warningNotificationChannelConfig').value
-        config.alertNotificationChannel = document.getElementById('input-alertNotificationChannel').value
-            + ':' + document.getElementById('input-alertNotificationChannelConfig').value
-        callback(config)
+    return "";
+  }
+  function getChannelConfig(channel) {
+    if (channel == "general") {
+      return config.generalNotificationChannel.substring(
+        config.generalNotificationChannel.indexOf(":") + 1
+      );
+    } else if (channel == "info") {
+      return config.infoNotificationChannel.substring(
+        config.infoNotificationChannel.indexOf(":") + 1
+      );
+    } else if (channel == "warning") {
+      return config.warningNotificationChannel.substring(
+        config.warningNotificationChannel.indexOf(":") + 1
+      );
+    } else if (channel == "alert") {
+      return config.alertNotificationChannel.substring(
+        config.alertNotificationChannel.indexOf(":") + 1
+      );
     }
-    function handleCancel(event) {
-        callback(null)
-    }
-    function handlePassword(event) {
-        alert('Not implemented yet')
-    }
-    function handleRemove(event) {
-        alert('Not implemented yet')
-    }
+    return "";
+  }
 
-    const apiUrl = utils.getBackendUrl(location) + '/api/core/organization/' + config.organization
-    let promise = sgxdata.getOrganization(dev, apiUrl, $token);
+  function handleSave(event) {
+    // config.generalNotificationChannel =
+    //   document.getElementById("input-generalNotificationChannel").value +
+    //   ":" +
+    //   document.getElementById("input-generalNotificationChannelConfig").value;
+    // config.infoNotificationChannel =
+    //   document.getElementById("input-infoNotificationChannel").value +
+    //   ":" +
+    //   document.getElementById("input-infoNotificationChannelConfig").value;
+    // config.warningNotificationChannel =
+    //   document.getElementById("input-warningNotificationChannel").value +
+    //   ":" +
+    //   document.getElementById("input-warningNotificationChannelConfig").value;
+    // config.alertNotificationChannel =
+    //   document.getElementById("input-alertNotificationChannel").value +
+    //   ":" +
+    //   document.getElementById("input-alertNotificationChannelConfig").value;
+    callback(config);
+  }
+  function handleCancel(event) {
+    callback(null);
+  }
+  function handlePassword(event) {
+    alert("Not implemented yet");
+  }
+  function handleRemove(event) {
+    alert("Not implemented yet");
+  }
 
+  const apiUrl =
+    utils.getBackendUrl(location) +
+    "/api/core/organization/" +
+    config.organization;
+  let promise = sgxdata.getOrganization(dev, apiUrl, $token);
 
-    let labels = {
-        'login': {
-            'en': 'Login',
-            'pl': 'Login',
-        },
-        'name': {
-            'en': 'Name',
-            'pl': 'Imię',
-        },
-        'surname': {
-            'en': 'Surname',
-            'pl': 'Nazwisko',
-        },
-        'account': {
-            'en': 'Account type',
-            'pl': 'Typ konta',
-        },
-        'email': {
-            'en': 'E-mail',
-            'pl': 'E-mail',
-        },
-        'phone_prefix': {
-            'en': 'Phone prefix',
-            'pl': 'Prefiks telefonu',
-        },
-        'roles': {
-            'en': 'Role',
-            'pl': 'Rola',
-        },
-        'language': {
-            'en': 'Preffered language',
-            'pl': 'Preferowany język',
-        },
-        'registration': {
-            'en': 'Registration date',
-            'pl': 'Data rejestracji',
-        },
-        'notyfication_methods': {
-            'en': 'Configuration of notification types',
-            'pl': 'Konfiguracja typów powiadomień',
-        },
-        'general_notifications': {
-            'en': 'General',
-            'pl': 'Ogólne',
-        },
-        'info_notifications': {
-            'en': 'Info',
-            'pl': 'Informacyjne',
-        },
-        'warning_notifications': {
-            'en': 'Warning',
-            'pl': 'Ostrzegawcze',
-        },
-        'alert_notifications': {
-            'en': 'Alert',
-            'pl': 'Alarmowe',
-        },
-        'cancel': {
-            'en': 'Cancel',
-            'pl': 'Anuluj',
-        },
-        'save': {
-            'en': 'Save',
-            'pl': 'Zapisz',
-        },
-        'in_app': {
-            'en': 'In application',
-            'pl': 'W aplikacji',
-        },
-        'webhook': {
-            'en': 'Webhook',
-            'pl': 'Webhook',
-        },
-        'organization': {
-            'en': 'Organization',
-            'pl': 'Organizacja'
-        },
-        'changePassword': {
-            'en': 'Change password',
-            'pl': 'Zmień hasło'
-        },
-        'deleteAccount': {
-            'en': 'Delete account',
-            'pl': 'Usuń konto'
-        },
-        'type': {
-            'en': 'Type',
-            'pl': 'Typ'
-        },
-        'channel': {
-            'en': 'Channel',
-            'pl': 'Kanał'
-        },
-        'config': {
-            'en': 'Configuration',
-            'pl': 'Konfiguracja'
-        },
-
-    }
-
-
+  let labels = {
+    login: {
+      en: "Login",
+      pl: "Login",
+    },
+    name: {
+      en: "Name",
+      pl: "Imię",
+    },
+    surname: {
+      en: "Surname",
+      pl: "Nazwisko",
+    },
+    account: {
+      en: "Account type",
+      pl: "Typ konta",
+    },
+    email: {
+      en: "E-mail",
+      pl: "E-mail",
+    },
+    phone_prefix: {
+      en: "Phone prefix",
+      pl: "Prefiks telefonu",
+    },
+    roles: {
+      en: "Role",
+      pl: "Rola",
+    },
+    language: {
+      en: "Preffered language",
+      pl: "Preferowany język",
+    },
+    registration: {
+      en: "Registration date",
+      pl: "Data rejestracji",
+    },
+    notyfication_methods: {
+      en: "Configuration of notification types",
+      pl: "Konfiguracja typów powiadomień",
+    },
+    general_notifications: {
+      en: "General",
+      pl: "Ogólne",
+    },
+    info_notifications: {
+      en: "Info",
+      pl: "Informacyjne",
+    },
+    warning_notifications: {
+      en: "Warning",
+      pl: "Ostrzegawcze",
+    },
+    alert_notifications: {
+      en: "Alert",
+      pl: "Alarmowe",
+    },
+    cancel: {
+      en: "Cancel",
+      pl: "Anuluj",
+    },
+    save: {
+      en: "Save",
+      pl: "Zapisz",
+    },
+    in_app: {
+      en: "In application",
+      pl: "W aplikacji",
+    },
+    webhook: {
+      en: "Webhook",
+      pl: "Webhook",
+    },
+    organization: {
+      en: "Organization",
+      pl: "Organizacja",
+    },
+    changePassword: {
+      en: "Change password",
+      pl: "Zmień hasło",
+    },
+    deleteAccount: {
+      en: "Delete account",
+      pl: "Usuń konto",
+    },
+    type: {
+      en: "Type",
+      pl: "Typ",
+    },
+    channel: {
+      en: "Channel",
+      pl: "Kanał",
+    },
+    config: {
+      en: "Configuration",
+      pl: "Konfiguracja",
+    },
+  };
 </script>
+
+<form>
+  <div class="row form-group">
+    <div class="col-sm-2 d-flex align-items-center">
+      <p style="margin: 0;">ID: {config.id}</p>
+    </div>
+    <div class="col-sm-10">
+      <div class="d-flex">
+        <label
+          for="rule_name"
+          class="flex-shrink-0 text-center text-center"
+          style="position: relative; top: 8px;">Nazwa reguły:</label
+        >
+        <input
+          type="text"
+          id="rule_name"
+          class="form-control ms-2"
+          placeholder={config.name}
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="container mt-3">
+    <div class="row">
+      <div class="col-sm-8">
+        <div class="form-group d-flex align-items-center">
+          <label for="alert_def" class="me-2" style="white-space: nowrap;"
+            >Alert definiowany dla:</label
+          >
+          <select
+            class="form-select"
+            id="alert_def"
+            bind:value={selectedTarget}
+          >
+            <option selected>wybierz: urządzenie/grupa/tag</option>
+            <option value="1">urządzenie</option>
+            <option value="2">grupa</option>
+            <option value="3">tag</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="col-sm-4 d-flex align-items-center">
+        <div class="form-check">
+          <label class="form-check-label" for="exampleCheckbox">Aktywny</label>
+          <input
+            type="checkbox"
+            class="form-check-input"
+            id="exampleCheckbox"
+            bind:checked={config.active}
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mt-3 mb-3">
+    <div class="row">
+      <div class="col-sm-6 mt-3">
+        <div class="form-group">
+          {#if selectedTarget == 1}
+            <label for="euiSelector">EUI</label>
+            <DeviceSelector
+              showDeviceSelectorModal="true"
+              callback={(device) => {
+                config.target.eui = device;
+              }}
+            />
+            <p id="euiSelector">{config.target.eui}</p>
+          {:else if selectedTarget == 2}
+            <label for="groupSelector">ID Grupy:</label>
+            <GroupSelector
+              showGroupSelectorModal="true"
+              callback={(group) => {
+                config.target.group = group;
+              }}
+            />
+            <p id="euiSelector">{config.target.group}</p>
+          {:else}
+            <label for="euiIdGroup">EUI/ID Grupy:</label>
+            <!-- ??? -->
+          {/if}
+        </div>
+      </div>
+      <div class="col-sm-6 mt-3">
+        <div class="form-group d-flex align-items-center">
+          <label for="tag" class="me-2">Tag:</label>
+          <div class="d-flex">
+            <input
+              type="text"
+              id="tag_name"
+              class="form-control"
+              placeholder="Nazwa tagu"
+              bind:value={config.target.tag.name}
+            />
+            <input
+              type="text"
+              id="tag_value"
+              class="form-control ms-2"
+              placeholder="Wartość tagu"
+              bind:value={config.target.tag.value}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Kontener z napisem "Jeżeli" i linią -->
+    <div class="d-flex align-items-center mb-3">
+      <p class="mb-0 display-7">Jeżeli</p>
+      <hr class="flex-grow-1 ms-3" />
+    </div>
+
+    <div class="container">
+      <!-- Całe zestawienie inputów w jednej linii dla sm i większej -->
+      <div class="form-group d-flex align-items-center flex-wrap">
+        <!-- Pierwszy obowiązkowy input (zmniejszony o 25%) -->
+        <label for="input1" />
+        <input
+          bind:value={config.conditions[0].measurement}
+          type="text"
+          id="input1"
+          class="form-control"
+          style="max-width: 25%;"
+          placeholder="temperature"
+        />
+
+        <!-- Pozostałe 3 inputy -->
+        <label for="input2" />
+        <input
+          bind:value={config.conditions[0].condition1}
+          type="text"
+          id="input2"
+          class="form-control ms-2"
+          style="max-width: 70px;"
+          placeholder="<"
+        />
+
+        <label for="input3" />
+        <input
+          bind:value={config.conditions[0].value}
+          type="text"
+          id="input3"
+          class="form-control ms-2"
+          style="max-width: 70px;"
+          placeholder="-10.0"
+        />
+
+        <label for="input4" />
+        <input
+          bind:value={config.conditions[0].operator}
+          type="text"
+          id="input4"
+          class="form-control"
+          style="max-width: 70px;"
+          placeholder="LUB"
+        />
+
+        <!-- Paragraf, przycisk "Edytuj", Inputy 5 i 6 w jednej linii dla sm i większej -->
+        <div class="form-group d-flex align-items-center flex-wrap ms-5">
+          <p class="mt-3 flex-grow-1">temperature</p>
+          <input
+            bind:value={config.conditions[0].condition2}
+            type="text"
+            id="input5"
+            class="form-control ms-2"
+            style="max-width: 60px;"
+            placeholder=">"
+            disabled
+          />
+          <input
+            bind:value={config.conditions[0].value2}
+            type="text"
+            id="input6"
+            class="form-control ms-2"
+            style="max-width: 60px;"
+            placeholder="35.0"
+            disabled
+          />
+          <div class="form-check ms-2">
+            <input
+              on:change={addFilter}
+              type="checkbox"
+              id="enableEdit"
+              class="form-check-input"
+            />
+            <label class="form-check-label" for="enableEdit">Dodaj filtr</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="container mt-3">
+        <div class="form-group d-flex align-items-center">
+          <!-- Napis "LUB" z poziomą linią na obu stronach -->
+          <p class="mb-0 display-7">Lub</p>
+          <div class="flex-grow-1">
+            <hr class="flex-grow-1 ms-3" />
+          </div>
+          <!-- Przycisk "Dodaj pole" -->
+          <button
+            class="btn btn-primary ms-2"
+            data-bs-toggle="collapse"
+            data-bs-target="#additionalFields">-</button
+          >
+        </div>
+
+        <div class="collapse" id="additionalFields">
+          <!-- COLLAPSE BEGIN -->
+          {#each config.conditions as condition, i}
+            {#if i > 0}
+              <div class="form-group">
+                <div id="additionalFields{i}">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <input
+                        bind:value={condition.measurement}
+                        type="text"
+                        class="form-control mt-3"
+                        placeholder="humidity"
+                      />
+                    </div>
+                    <div class="col-md-4">
+                      <input
+                        bind:value={condition.condition1}
+                        type="text"
+                        class="form-control mt-3"
+                        placeholder="<"
+                      />
+                    </div>
+                    <div class="col-md-4">
+                      <input
+                        bind:value={condition.value1}
+                        type="text"
+                        class="form-control mt-3"
+                        placeholder="20.5"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="container mt-3">
+                <div class="form-group d-flex align-items-center">
+                  <!-- Przycisk "Dodaj pole" z ikoną "+" -->
+                  <button
+                    class="btn btn-primary"
+                    on:click={() => {
+                      config.conditions.push({
+                        measurement: "",
+                        condition1: ">",
+                        value1: "",
+                      });
+                      config.conditions = config.conditions;
+                    }}
+                  >
+                    <i class="bi bi-plus" />
+                  </button>
+                  <!-- Linia na całą szerokość strony -->
+                  <hr class="flex-grow-1 mx-2" />
+                </div>
+              </div>
+            {/if}
+          {/each}
+          <!-- COLLAPSE END -->
+        </div>
+
+        <div class="container mt-3">
+          <!-- Linia z tekstem "wtedy" -->
+          <div class="d-flex align-items-center">
+            <p class="m-0 me-2">WTEDY</p>
+            <hr class="flex-grow-1" />
+          </div>
+
+          <!-- Nowa linia z paragrafem, dropdownem i inputem -->
+          <div class="d-flex align-items-center mt-2">
+            <!-- Paragraf z krótkim napisem -->
+            <p class="m-0 me-2" style="white-space: nowrap;">Utwórz alert</p>
+            <!-- Dropdown z 5 opcjami -->
+            <select
+              class="form-select me-2"
+              bind:value={config.result.alertType}
+            >
+              <option selected value="warning">warning</option>
+              <option value="warning 2">warning 2</option>
+              <option value="warning 3">warning 3</option>
+              <option value="warning 4">warning 4</option>
+              <option value="warning 5">warning 5</option>
+            </select>
+            <!-- Input -->
+            <input
+              bind:value={config.result.message}
+              type="text"
+              class="form-control"
+              placeholder="Przekroczone parametry środowiskowe"
+            />
+          </div>
+        </div>
+
+        <!-- Kolejna linia z dwoma radiobuttonami i napisem "cześć" -->
+        <div class=" mt-4">
+          <!-- Kontener dla dwóch radiobuttonów -->
+          <div class="d-flex justify-content-evenly">
+            <div class="form-check me-2">
+              <input
+                bind:group={selectedOption}
+                on:change={handleInputChange}
+                class="form-check-input"
+                type="radio"
+                name="radiogroup"
+                id="radio1"
+                value="1"
+              />
+              <label class="form-check-label" for="radio1"
+                >Przy każdym wystąpieniu warunków</label
+              >
+            </div>
+            <div class="form-check">
+              <input
+                bind:group={selectedOption}
+                on:change={handleInputChange}
+                class="form-check-input"
+                type="radio"
+                name="radiogroup"
+                id="radio2"
+                value="2"
+              />
+              <label class="form-check-label" for="radio2"
+                >Przy pierwszym wystąpieniu warunków</label
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Nowa linia z checkboxem "Wysyłaj informacje o powrocie parametrów do normy" -->
+        <div class="row mt-2">
+          <div class="col-12 d-flex justify-content-center">
+            <div class="form-check">
+              <input
+                bind:checked={config.result.conditionOKMessage}
+                class="form-check-input"
+                type="checkbox"
+                value=""
+                id="defaultCheck1"
+              />
+              <label class="form-check-label" for="defaultCheck1">
+                Wysyłaj informacje o powrocie parametrów do normy
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nowa linia z buttonami "Save" i "Cancel" -->
+        <div class="row mt-2 justify-content-end">
+          <div class="col-md-6 d-flex justify-content-end">
+            <button
+              type="button"
+              class="btn btn-primary me-2"
+              on:click={(event) => {
+                handleSave(event);
+              }}>Save</button
+            >
+            <button
+              type="button"
+              class="btn btn-secondary"
+              on:click={() => {
+                window.history.back();
+              }}>Cancel</button
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
