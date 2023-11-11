@@ -14,6 +14,7 @@ npm i svelte-chartjs chart.js
 npm install moment chartjs-adapter-moment
 npm i svelte-sonner 
 // npm i svelte-dialogs // to decide
+npm i -D leaflet
 ```
 
 Modify the code (or not) and to test start web application in `dev` mode with command:

@@ -75,6 +75,8 @@
             <PlanWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'report'===getWidgetType(index)}
             <ReportWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+            {:else if 'map'===getWidgetType(index)}
+            <MapWidget index={index} bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'chart'===getWidgetType(index)}
             <ChartWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'groupchart'===getWidgetType(index)}
@@ -149,6 +151,7 @@
     import DoughnutWidget from '$lib/components/widgets/DoughnutWidget.svelte';
     import StackedBarWidget from '$lib/components/widgets/StackedBarWidget.svelte';
     import ReportWidget from '$lib/components/widgets/ReportWidget.svelte';
+    import MapWidget from '$lib/components/widgets/MapWidget.svelte';
 
     export let data
 
