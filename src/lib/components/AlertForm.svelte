@@ -1,5 +1,4 @@
 <script>
-
   import { sgxhelper } from "$lib/sgxhelper.js";
   import { sgxdata } from "$lib/sgxdata.js";
   import { utils } from "$lib/utils.js";
@@ -19,6 +18,8 @@
 
   let selectedTarget;
   let selectedOption = "1";
+  let showEuiModal = false;
+  let showGroupModal = false;
 
   function handleInputChange(event) {
     selectedOption = event.target.value;
@@ -31,10 +32,55 @@
   }
 
   function addFilter(event) {
-    let editableFilter = event.target.checked;
+    let isDisabled = !event.target.checked;
 
-    document.querySelector("#input5").disabled = !editableFilter;
-    document.querySelector("#input6").disabled = !editableFilter;
+    document.querySelector("#input4").disabled = isDisabled;
+    document.querySelector("#input5").disabled = isDisabled;
+    document.querySelector("#input6").disabled = isDisabled;
+
+    if (isDisabled) {
+      config.conditions[0].operator = null;
+      config.conditions[0].condition2 = null;
+      config.conditions[0].value2 = null;
+      console.log("optional conditions cleared!");
+    }
+  }
+
+  function addFilterWithIndex(event, i) {
+    let isDisabled = !event.target.checked;
+
+    document.querySelector("#input4" + i).disabled = isDisabled;
+    document.querySelector("#input5" + i).disabled = isDisabled;
+    document.querySelector("#input6" + i).disabled = isDisabled;
+
+    if (isDisabled) {
+      config.conditions[i].operator = null;
+      config.conditions[i].condition2 = null;
+      config.conditions[i].value2 = null;
+      console.log("optional conditions cleared!");
+    }
+  }
+
+  function addCondition() {
+    if (config.conditions.length >= 3) {
+      return;
+    }
+
+    config.conditions.push({
+      measurement: "",
+      condition1: ">",
+      value1: "",
+    });
+    config.conditions = config.conditions;
+  }
+
+  function removeCondition(index) {
+    if (index >= 0 && index < config.conditions.length) {
+      config.conditions.splice(index, 1);
+    } else {
+      console.error("Invalid index");
+    }
+    config.conditions = config.conditions;
   }
 
   console.log("config", config);
@@ -235,7 +281,7 @@
           type="text"
           id="rule_name"
           class="form-control ms-2"
-          placeholder={config.name}
+          bind:value={config.name}
         />
       </div>
     </div>
@@ -277,64 +323,80 @@
 
   <div class="container mt-3 mb-3">
     <div class="row">
-      <div class="col-sm-6 mt-3">
-        <div class="form-group">
-          {#if selectedTarget == 1}
-            <label for="euiSelector">EUI</label>
+      {#if selectedTarget == 1}
+        <div class="col-sm-6 mt-3">
+          <div class="form-group">
+            <label for="euiSelector">EUI: </label>
             <DeviceSelector
-              showDeviceSelectorModal="true"
+              bind:showDeviceSelectorModal={showEuiModal}
               callback={(device) => {
                 config.target.eui = device;
               }}
             />
-            <p id="euiSelector">{config.target.eui}</p>
-          {:else if selectedTarget == 2}
-            <label for="groupSelector">ID Grupy:</label>
+            <input
+              readonly
+              id="euiSelector"
+              bind:value={config.target.eui}
+              on:click={() => {
+                showEuiModal = true;
+              }}
+            />
+          </div>
+        </div>
+      {:else if selectedTarget == 2}
+        <div class="col-sm-6 mt-3">
+          <div class="form-group">
+            <label for="groupSelector">ID Grupy: </label>
             <GroupSelector
-              showGroupSelectorModal="true"
+              bind:showGroupSelectorModal={showGroupModal}
               callback={(group) => {
                 config.target.group = group;
               }}
             />
-            <p id="euiSelector">{config.target.group}</p>
-          {:else}
-            <label for="euiIdGroup">EUI/ID Grupy:</label>
-            <!-- ??? -->
-          {/if}
-        </div>
-      </div>
-      <div class="col-sm-6 mt-3">
-        <div class="form-group d-flex align-items-center">
-          <label for="tag" class="me-2">Tag:</label>
-          <div class="d-flex">
             <input
-              type="text"
-              id="tag_name"
-              class="form-control"
-              placeholder="Nazwa tagu"
-              bind:value={config.target.tag.name}
-            />
-            <input
-              type="text"
-              id="tag_value"
-              class="form-control ms-2"
-              placeholder="Wartość tagu"
-              bind:value={config.target.tag.value}
+              readonly
+              id="groupSelector"
+              bind:value={config.target.group}
+              on:click={() => {
+                showGroupModal = true;
+              }}
             />
           </div>
         </div>
-      </div>
+      {:else if selectedTarget == 3}
+        <div class="col-sm-6 mt-3">
+          <div class="form-group d-flex align-items-center">
+            <label for="tag" class="me-2">Tag:</label>
+            <div class="d-flex">
+              <input
+                type="text"
+                id="tag_name"
+                class="form-control"
+                placeholder="Nazwa tagu"
+                bind:value={config.target.tag.name}
+              />
+              <input
+                type="text"
+                id="tag_value"
+                class="form-control ms-2"
+                placeholder="Wartość tagu"
+                bind:value={config.target.tag.value}
+              />
+            </div>
+          </div>
+        </div>
+      {:else}{/if}
     </div>
   </div>
 
-  <div class="container">
+  <div>
     <!-- Kontener z napisem "Jeżeli" i linią -->
     <div class="d-flex align-items-center mb-3">
       <p class="mb-0 display-7">Jeżeli</p>
       <hr class="flex-grow-1 ms-3" />
     </div>
 
-    <div class="container">
+    <div>
       <!-- Całe zestawienie inputów w jednej linii dla sm i większej -->
       <div class="form-group d-flex align-items-center flex-wrap">
         <!-- Pierwszy obowiązkowy input (zmniejszony o 25%) -->
@@ -369,19 +431,19 @@
           placeholder="-10.0"
         />
 
-        <label for="input4" />
-        <input
-          bind:value={config.conditions[0].operator}
-          type="text"
-          id="input4"
-          class="form-control"
-          style="max-width: 70px;"
-          placeholder="LUB"
-        />
-
         <!-- Paragraf, przycisk "Edytuj", Inputy 5 i 6 w jednej linii dla sm i większej -->
         <div class="form-group d-flex align-items-center flex-wrap ms-5">
-          <p class="mt-3 flex-grow-1">temperature</p>
+          <label for="input4" />
+          <input
+            bind:value={config.conditions[0].operator}
+            type="text"
+            id="input4"
+            class="form-control"
+            style="max-width: 70px;"
+            placeholder="or/and"
+            disabled
+          />
+          <p class="mt-3 flex-grow-1">{config.conditions[0].measurement}</p>
           <input
             bind:value={config.conditions[0].condition2}
             type="text"
@@ -407,77 +469,132 @@
               id="enableEdit"
               class="form-check-input"
             />
-            <label class="form-check-label" for="enableEdit">Dodaj filtr</label>
+            <label class="form-check-label" for="enableEdit"
+              >Dodaj warunek</label
+            >
           </div>
         </div>
       </div>
 
-      <div class="container mt-3">
+      <div class="mt-3">
         <div class="form-group d-flex align-items-center">
           <!-- Napis "LUB" z poziomą linią na obu stronach -->
-          <p class="mb-0 display-7">Lub</p>
+          <p class="mb-0 display-7">LUB/ORAZ</p>
           <div class="flex-grow-1">
             <hr class="flex-grow-1 ms-3" />
           </div>
           <!-- Przycisk "Dodaj pole" -->
-          <button
-            class="btn btn-primary ms-2"
-            data-bs-toggle="collapse"
-            data-bs-target="#additionalFields">-</button
-          >
+          {#if config.conditions.length <= 2}
+            <button class="btn btn-primary" on:click={addCondition}
+              ><i class="bi bi-plus-lg" /></button
+            >
+          {/if}
+          {#if config.conditions.length > 1}
+            <button
+              class="btn btn-primary ms-2"
+              data-bs-toggle="collapse"
+              data-bs-target="#additionalFields"
+              ><i class="bi bi-arrows-collapse" /></button
+            >
+          {/if}
         </div>
 
-        <div class="collapse" id="additionalFields">
+        <div class="collapse show" id="additionalFields">
           <!-- COLLAPSE BEGIN -->
           {#each config.conditions as condition, i}
             {#if i > 0}
-              <div class="form-group">
-                <div id="additionalFields{i}">
-                  <div class="row">
-                    <div class="col-md-4">
-                      <input
-                        bind:value={condition.measurement}
-                        type="text"
-                        class="form-control mt-3"
-                        placeholder="humidity"
-                      />
-                    </div>
-                    <div class="col-md-4">
-                      <input
-                        bind:value={condition.condition1}
-                        type="text"
-                        class="form-control mt-3"
-                        placeholder="<"
-                      />
-                    </div>
-                    <div class="col-md-4">
-                      <input
-                        bind:value={condition.value1}
-                        type="text"
-                        class="form-control mt-3"
-                        placeholder="20.5"
-                      />
-                    </div>
+              <div class="form-group d-flex align-items-center flex-wrap">
+                <!-- Pierwszy obowiązkowy input (zmniejszony o 25%) -->
+                <label for="input1{i}" />
+                <input
+                  bind:value={condition.measurement}
+                  type="text"
+                  id="input1{i}"
+                  class="form-control"
+                  style="max-width: 25%;"
+                  placeholder="temperature"
+                />
+
+                <!-- Pozostałe 3 inputy -->
+                <label for="input2{i}" />
+                <input
+                  bind:value={condition.condition1}
+                  type="text"
+                  id="input2{i}"
+                  class="form-control ms-2"
+                  style="max-width: 70px;"
+                  placeholder="<"
+                />
+
+                <label for="input3{i}" />
+                <input
+                  bind:value={condition.value}
+                  type="text"
+                  id="input3{i}"
+                  class="form-control ms-2"
+                  style="max-width: 70px;"
+                  placeholder="-10.0"
+                />
+
+                <!-- Paragraf, przycisk "Edytuj", Inputy 5 i 6 w jednej linii dla sm i większej -->
+                <div
+                  class="form-group d-flex align-items-center flex-wrap ms-5"
+                >
+                  <label for="input4{i}" />
+                  <input
+                    bind:value={condition.operator}
+                    type="text"
+                    id="input4{i}"
+                    class="form-control"
+                    style="max-width: 75px;"
+                    placeholder="or/and"
+                    disabled
+                  />
+                  <p class="mt-3 flex-grow-1">{condition.measurement}</p>
+                  <input
+                    bind:value={condition.condition2}
+                    type="text"
+                    id="input5{i}"
+                    class="form-control ms-2"
+                    style="max-width: 60px;"
+                    placeholder=">"
+                    disabled
+                  />
+                  <input
+                    bind:value={condition.value2}
+                    type="text"
+                    id="input6{i}"
+                    class="form-control ms-2"
+                    style="max-width: 60px;"
+                    placeholder="35.0"
+                    disabled
+                  />
+                  <div class="form-check ms-2">
+                    <input
+                      on:change={(event) => {
+                        addFilterWithIndex(event, i);
+                      }}
+                      type="checkbox"
+                      id="enableEdit{i}"
+                      class="form-check-input"
+                    />
+                    <label class="form-check-label" for="enableEdit{i}"
+                      >Dodaj warunek</label
+                    >
+                  </div>
+                  <div class="form-check ms-2">
+                    <button
+                      class="btn btn-danger form-control"
+                      on:click={() => {
+                        removeCondition(i);
+                      }}><i class="bi bi-dash" /></button
+                    >
                   </div>
                 </div>
               </div>
 
               <div class="container mt-3">
                 <div class="form-group d-flex align-items-center">
-                  <!-- Przycisk "Dodaj pole" z ikoną "+" -->
-                  <button
-                    class="btn btn-primary"
-                    on:click={() => {
-                      config.conditions.push({
-                        measurement: "",
-                        condition1: ">",
-                        value1: "",
-                      });
-                      config.conditions = config.conditions;
-                    }}
-                  >
-                    <i class="bi bi-plus" />
-                  </button>
                   <!-- Linia na całą szerokość strony -->
                   <hr class="flex-grow-1 mx-2" />
                 </div>
@@ -487,7 +604,7 @@
           <!-- COLLAPSE END -->
         </div>
 
-        <div class="container mt-3">
+        <div class="mt-3">
           <!-- Linia z tekstem "wtedy" -->
           <div class="d-flex align-items-center">
             <p class="m-0 me-2">WTEDY</p>
@@ -555,21 +672,25 @@
         </div>
 
         <!-- Nowa linia z checkboxem "Wysyłaj informacje o powrocie parametrów do normy" -->
-        <div class="row mt-2">
-          <div class="col-12 d-flex justify-content-center">
-            <div class="form-check">
-              <input
-                bind:checked={config.result.conditionOKMessage}
-                class="form-check-input"
-                type="checkbox"
-                value=""
-                id="defaultCheck1"
-              />
-              <label class="form-check-label" for="defaultCheck1">
-                Wysyłaj informacje o powrocie parametrów do normy
-              </label>
-            </div>
-          </div>
+        <div class="mt-4">
+          <input
+            bind:checked={config.result.conditionOKMessage}
+            class="form-check-input"
+            type="checkbox"
+            value=""
+            id="defaultCheck1"
+          />
+          <label class="form-check-label" for="defaultCheck1">
+            Wysyłaj informacje o powrocie parametrów do normy
+          </label>
+          {#if config.result.conditionOKMessage}
+            <!-- Input TODO: Filed not specified in config Object !!! -->
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Parametry powróciły do normy"
+            />
+          {/if}
         </div>
 
         <!-- Nowa linia z buttonami "Save" i "Cancel" -->
