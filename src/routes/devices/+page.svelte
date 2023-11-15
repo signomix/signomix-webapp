@@ -83,7 +83,7 @@
     import { dev } from '$app/environment';
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
-    import { dialogs } from "svelte-dialogs";
+    //import { dialogs } from "svelte-dialogs";
 
     //export let data
     let offset = 0

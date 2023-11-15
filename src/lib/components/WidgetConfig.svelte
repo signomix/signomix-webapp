@@ -21,7 +21,7 @@
         on:click={() => showAlert()} >
         <i class="bi bi-trash3"></i>
     </button>
-    {config[index].name}
+    {config[index].title}
     {/if}
 </div>
 <script>

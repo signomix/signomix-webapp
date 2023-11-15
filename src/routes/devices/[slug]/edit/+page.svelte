@@ -63,7 +63,8 @@
             let method = ''
             let url = utils.getBackendUrl(location) + "/api/core/device/"
             console.log('DATA',data)
-            if (data.eui == null || data.eui == '' || data.eui == undefined || data.eui.toLowerCase() == 'new') {
+            //if (data.eui == null || data.eui == '' || data.eui == undefined || data.eui.toLowerCase() == 'new') {
+            if(data.isNew){
                 method = 'POST'
             } else {
                 url = url + data.eui

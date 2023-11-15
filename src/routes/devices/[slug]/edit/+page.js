@@ -83,7 +83,8 @@ profile.subscribe((value) => userProfile = value)
     channelsAsString: "",
     codeUnescaped: "",
     encoderUnescaped: "",
-    configurationMap: {}
+    configurationMap: {},
+    isNew: true
   }
 
   return await getSelectedConfig(utils.getBackendUrl(url))

@@ -1,3 +1,10 @@
+<Dialog bind:dialog callback={handleSave} title={utils.getLabel('saveQuestion',labels,$language)}
+    okLabel={utils.getLabel('save',labels,$language)}>
+    {#if measurementChanged}
+    <span class="text-danger"><b>{utils.getLabel('changedMeasurements',labels,$language)}</b></span><br>
+    {utils.getLabel('changedMeasurementsDescription',labels,$language)}
+    {/if}
+</Dialog>
 <form class="mb-2">
     <div class="row">
         <div class="col-md-1 col-form-label">
@@ -69,8 +76,7 @@
         </div>
         <div class="col-md-9">
             <input type="text" class="form-control" id="input-channels" bind:value={config.channelsAsString}
-                on:change={showAlert}
-            readonly={readonly}>
+                on:change={measurementChange} readonly={readonly}>
         </div>
     </div>
     <div class="row">
@@ -194,7 +200,7 @@
             <a href="/devices" class="btn btn-outline-secondary mt-1"
                 on:click|preventDefault={handleCancel}>{utils.getLabel('cancel',labels,$language)}</a>
             <button class="btn btn-outline-primary me-4 mt-1"
-                on:click={handleSave}>{utils.getLabel('save',labels,$language)}</button>
+                on:click={decide}>{utils.getLabel('save',labels,$language)}</button>
         </div>
     </div>
     {/if}
@@ -203,6 +209,7 @@
     import { utils } from '$lib/utils.js';
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { Toaster, toast } from 'svelte-sonner'
+    import Dialog from '$lib/components/Dialog.svelte'
 
     export let config
     export let callback
@@ -212,11 +219,19 @@
     let decoderScript = unescape(config.encoder)
     let processorScript = unescape(config.code)
     let originalMeasurementChannels = config.channelsAsString
-    let waintingDecisionn = false
-    let newDevice = config.eui.toUpperCase()=='NEW'
+    let newDevice = config.eui.toUpperCase() == 'NEW'
+    let dialog
+    let measurementChanged = false
 
-    function handleSave(event) {
+    function decide() {
+        dialog.showModal()
+    }
 
+    function handleSave(decision) {
+        dialog.close()
+        if (!decision) {
+            return
+        }
         config.transmissionInterval = interval * 60000
         config.encoder = decoderScript.trim()
         config.code = processorScript.trim()
@@ -224,35 +239,27 @@
 
         let errMessage = validate()
         if (errMessage != '') {
-            alert(utils.getLabel(errMessage, labels, $language))
+            toast.error(utils.getLabel(errMessage, labels, $language),{
+                action: { label: utils.getLabel('close', labels, $language), onClick: () => { } },
+                duration: Number.POSITIVE_INFINITY
+            })
             return
         }
         callback(config, handleCallbackResponse)
     }
 
-    function showAlert(event) {
-        if(newDevice){
+    function measurementChange(event) {
+        if (newDevice) {
             return
         }
-        waintingDecisionn = true
-        toast.warning(utils.getLabel('changedMeasurements',labels,$language),
-            {
-            action: {
-            label: utils.getLabel('undo',labels,$language),
-            onClick: () => {waintingDecisionn=true; document.getElementById('input-channels').value=originalMeasurementChannels}
-            },
-            duration: Number.POSITIVE_INFINITY,
-            description: utils.getLabel('changedMeasurementsDescription',labels,$language)});
-            waintingDecisionn = false
+        measurementChanged = true
     }
 
     function handleCancel(event) {
         callback(null)
     }
     function validate() {
-        while(waintingDecisionn){
-            //wait
-        }
+
         if (config.configuration != '') {
             try {
                 JSON.parse(config.configuration)
@@ -273,16 +280,26 @@
                     errTxt = 'error.applicationid'
                 }
                 if (errTxt != null) {
-                    alert(utils.getLabel(errTxt, labels, $language))
+                    //alert(utils.getLabel(errTxt, labels, $language))
+                    toast.error('1 ' + utils.getLabel(errTxt, labels, $language))
                 } else {
-                    alert(data)
+                    //alert(data)
+                    toast.success(data)
                 }
-                alert(text)
+                //alert(text)
+                toast.success(text)
             }).catch(error => {
-                alert(utils.getLabel('error', labels, $language) + ': ' + error.message)
+                //alert(utils.getLabel('error', labels, $language) + ': ' + error.message)
+                toast.error('2 ' + utils.getLabel('error', labels, $language) + ': ' + error.message)
             })
         } else {
-            alert(utils.getLabel('error', labels, $language) + ': ' + promise)
+            //alert(utils.getLabel('error', labels, $language) + ': ' + promise)
+            toast.error('3 ' + utils.getLabel('error', labels, $language) + ': ' + promise,
+                {
+                    action: { label: utils.getLabel('close', labels, $language), onClick: () => { } },
+                    duration: Number.POSITIVE_INFINITY
+                }
+            )
         }
     }
 
@@ -391,9 +408,13 @@
             'pl': "Błąd",
             'en': "Error"
         },
+        'saveQuestion': {
+            'pl': "Zapisać zmiany?",
+            'en': "Save changes?"
+        },
         'changedMeasurements': {
-            'pl': "Zmieniono listę pomiarów",
-            'en': "Changed measurements list"
+            'pl': "Zmieniono listę pomiarów!",
+            'en': "Changed measurements list!"
         },
         'changedMeasurementsDescription': {
             'pl': "Zmiana listy pomiarów spowoduje utratę danych historycznych. Czy chcesz zapisać zmiany?",
@@ -402,6 +423,10 @@
         'undo': {
             'pl': "Cofnij zmiany",
             'en': "Undo changes"
+        },
+        'close': {
+            'pl': "Zamknij",
+            'en': "Close"
         },
     }
 </script>
