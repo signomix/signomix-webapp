@@ -64,7 +64,7 @@
                         <a class="nav-link" class:active={false} on:click={toggleOrganization}>
                             <span><i
                                     class="bi bi-building me-2"></i><span>{utils.getLabel('organization',labels,$language)}</span>
-                        </a>
+                        </a>alerts
                     </li>
                     {/if}
                     {#if organizationExpanded && !utils.isUserRole($profile, 'limited', false)}
@@ -118,6 +118,28 @@
                         </a>
                     </li>
                     {/if}
+                    <!-- Analytics -->
+                    <li class="nav-item">
+                        <a class="nav-link" class:active={false} on:click={toggleAnalytics}>
+                            <span><i
+                                    class="bi bi-database me-2"></i><span>{utils.getLabel('reporting',labels,$language)}</span>
+                        </a>
+                    </li>
+                    {#if analyticsExpanded}
+                    <li class="nav-item ms-3">
+                        <a class="nav-link" class:active={$page.url.pathname==='/sentinels' } href="/sentinels">
+                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                <i
+                                    class="bi bi-camera-video me-2"></i><span>{utils.getLabel('sentinels',labels,$language)}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item ms-3">
+                        <a class="nav-link" class:active={$page.url.pathname==='/alarms' } href="/alarms">
+                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                <i class="bi bi-bell me-2"></i><span>{utils.getLabel('alarms',labels,$language)}</span>
+                        </a>
+                    </li>
+                    {/if}
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/notifications' } href="/notifications">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
@@ -166,15 +188,6 @@
                     {/if}
                     <!-- end Administration -->
                     {/if}
-                    {#if dev}
-                    <li class="nav-item">
-                        <a class="nav-link" class:active={$page.url.pathname==='/alerts' } href="/alerts">
-                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-columns-gap me-2"></i>alerts
-                            </span>
-                        </a>
-                    </li>
-                    {/if}
                     <!-- end logged in -->
                     {/if}
                     {#if isCloud() || !utils.isUserRole($profile, 'limited', true)}
@@ -216,13 +229,15 @@
                     <div class="row mt-2">
                         <div class="col-12">
                             <span
-                                class="fs-5 fw-normal text-body text-opacity-75">{utils.getLabel('info2',labels,$language)}<sup>*</sup> {utils.getLabel('info3',labels,$language)}</span>
+                                class="fs-5 fw-normal text-body text-opacity-75">{utils.getLabel('info2',labels,$language)}<sup>*</sup>
+                                {utils.getLabel('info3',labels,$language)}</span>
                         </div>
                     </div>
                     <div class="row mt-4">
                         <div class="col-12">
-                            <button type="button" class="btn btn-lg btn-outline-primary w-100"
-                            on:click={() => toast(utils.getLabel('notavailable',labels,$language),{duration: 7000,})}>{utils.getLabel('register',labels,$language)}</button>
+                            <button type="button" class="btn btn-lg btn-outline-primary w-100" on:click={()=>
+                                toast(utils.getLabel('notavailable',labels,$language),{duration:
+                                7000,})}>{utils.getLabel('register',labels,$language)}</button>
                         </div>
                     </div>
                 </div>
@@ -294,6 +309,10 @@
     let organizationExpanded = false;
     function toggleOrganization(event) {
         organizationExpanded = !organizationExpanded;
+    }
+    let analyticsExpanded = false;
+    function toggleAnalytics(event) {
+        analyticsExpanded = !analyticsExpanded;
     }
 
     function setLanguagePl(event) {
@@ -417,6 +436,18 @@
         'applications': {
             'pl': 'Aplikacje',
             'en': 'Applications'
+        },
+        'reporting': {
+            'pl': 'Raportowanie',
+            'en': 'Reporting'
+        },
+        'alarms': {
+            'pl': 'Alarmy',
+            'en': 'Alarms'
+        },
+        'sentinels': {
+            'pl': 'Wartownicy',
+            'en': 'Sentinels'
         },
         'info': {
             'pl': 'Prosta platforma dla Internetu Rzeczy',
