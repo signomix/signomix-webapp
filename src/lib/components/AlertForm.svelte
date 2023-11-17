@@ -21,6 +21,24 @@
   let showEuiModal = false;
   let showGroupModal = false;
 
+  function targetChange(event) {
+    console.log("Target change to", selectedTarget);
+
+    if (selectedTarget === "1") {
+      config.target.group = null;
+      config.target.tag.name = null;
+      config.target.tag.value = null;
+    } else if (selectedTarget === "2") {
+      config.target.eui = null;
+      config.target.tag.name = null;
+      config.target.tag.value = null;
+    } else {
+      config.target.eui = null;
+      config.target.group = null;
+      console.log("cleared eui group");
+    }
+  }
+
   function handleInputChange(event) {
     selectedOption = event.target.value;
 
@@ -34,12 +52,10 @@
   function addFilter(event) {
     let isDisabled = !event.target.checked;
 
-    document.querySelector("#input4").disabled = isDisabled;
     document.querySelector("#input5").disabled = isDisabled;
     document.querySelector("#input6").disabled = isDisabled;
 
     if (isDisabled) {
-      config.conditions[0].operator = null;
       config.conditions[0].condition2 = null;
       config.conditions[0].value2 = null;
       console.log("optional conditions cleared!");
@@ -49,12 +65,10 @@
   function addFilterWithIndex(event, i) {
     let isDisabled = !event.target.checked;
 
-    document.querySelector("#input4" + i).disabled = isDisabled;
     document.querySelector("#input5" + i).disabled = isDisabled;
     document.querySelector("#input6" + i).disabled = isDisabled;
 
     if (isDisabled) {
-      config.conditions[i].operator = null;
       config.conditions[i].condition2 = null;
       config.conditions[i].value2 = null;
       console.log("optional conditions cleared!");
@@ -74,12 +88,8 @@
     config.conditions = config.conditions;
   }
 
-  function removeCondition(index) {
-    if (index >= 0 && index < config.conditions.length) {
-      config.conditions.splice(index, 1);
-    } else {
-      console.error("Invalid index");
-    }
+  function removeLastCondition() {
+    config.conditions.pop();
     config.conditions = config.conditions;
   }
 
@@ -147,6 +157,11 @@
     //   document.getElementById("input-alertNotificationChannel").value +
     //   ":" +
     //   document.getElementById("input-alertNotificationChannelConfig").value;
+    if (selectedTarget != 1 && selectedTarget != 2 && selectedTarget != 3) {
+      alert("Nie zdefiniowano targetu, którego ma dotyczyć alert!");
+      return;
+    }
+
     callback(config);
   }
   function handleCancel(event) {
@@ -298,6 +313,7 @@
             class="form-select"
             id="alert_def"
             bind:value={selectedTarget}
+            on:change={targetChange}
           >
             <option selected>wybierz: urządzenie/grupa/tag</option>
             <option value="1">urządzenie</option>
@@ -389,220 +405,245 @@
     </div>
   </div>
 
+
+
+
+
   <div>
     <!-- Kontener z napisem "Jeżeli" i linią -->
-    <div class="d-flex align-items-center mb-3">
+    <div class="d-flex align-items-center mb-1">
       <p class="mb-0 display-7">Jeżeli</p>
       <hr class="flex-grow-1 ms-3" />
     </div>
-
-    <div>
-      <!-- Całe zestawienie inputów w jednej linii dla sm i większej -->
-      <div class="form-group d-flex align-items-center flex-wrap">
-        <!-- Pierwszy obowiązkowy input (zmniejszony o 25%) -->
-        <label for="input1" />
+  
+    <div class="row mb-3">
+      <!-- Pierwsze trzy inputy w jednej linii -->
+      <div class="col-sm-6">
+        <label for="input1"></label>
         <input
           bind:value={config.conditions[0].measurement}
           type="text"
           id="input1"
-          class="form-control"
-          style="max-width: 25%;"
+          class="form-control me-1"
+          style="width: 100%;"
           placeholder="temperature"
         />
-
-        <!-- Pozostałe 3 inputy -->
-        <label for="input2" />
-        <input
-          bind:value={config.conditions[0].condition1}
-          type="text"
+      </div>
+  
+      <div class="col-sm-3">
+        <label for="input2"></label>
+        <select
+          class="form-select"
+          style="width: 100%;"
           id="input2"
-          class="form-control ms-2"
-          style="max-width: 70px;"
-          placeholder="<"
-        />
-
-        <label for="input3" />
+          bind:value={config.conditions[0].condition1}
+        >
+          <option selected value=">">&gt;</option>
+          <option value="<">&lt;</option>
+        </select>
+      </div>
+  
+      <div class="col-sm-3">
+        <label for="input3"></label>
         <input
-          bind:value={config.conditions[0].value}
+          bind:value={config.conditions[0].value1}
           type="text"
           id="input3"
           class="form-control ms-2"
-          style="max-width: 70px;"
+          style="width: 100%;" 
           placeholder="-10.0"
         />
-
-        <!-- Paragraf, przycisk "Edytuj", Inputy 5 i 6 w jednej linii dla sm i większej -->
-        <div class="form-group d-flex align-items-center flex-wrap ms-5">
-          <label for="input4" />
-          <input
-            bind:value={config.conditions[0].operator}
-            type="text"
-            id="input4"
-            class="form-control"
-            style="max-width: 70px;"
-            placeholder="or/and"
-            disabled
-          />
-          <p class="mt-3 flex-grow-1">{config.conditions[0].measurement}</p>
-          <input
-            bind:value={config.conditions[0].condition2}
-            type="text"
-            id="input5"
-            class="form-control ms-2"
-            style="max-width: 60px;"
-            placeholder=">"
-            disabled
-          />
-          <input
-            bind:value={config.conditions[0].value2}
-            type="text"
-            id="input6"
-            class="form-control ms-2"
-            style="max-width: 60px;"
-            placeholder="35.0"
-            disabled
-          />
-          <div class="form-check ms-2">
-            <input
-              on:change={addFilter}
-              type="checkbox"
-              id="enableEdit"
-              class="form-check-input"
-            />
-            <label class="form-check-label" for="enableEdit"
-              >Dodaj warunek</label
-            >
-          </div>
-        </div>
       </div>
+    </div>
+  
+    <!-- Pozostałe elementy w nowej linii na małych ekranach -->
+    <div class="form-group d-flex align-items-center flex-wrap  flex-sm-nowrap mb-3">
+      <p class="mt-3 mb-3 flex-grow-0 me-2">LUB</p>
+      <p class="mt-3 mb-3 me-3">{config.conditions[0].measurement}</p>
+      <select
+        class="form-select mb-2 mb-sm-0"
+        style="width: 20%;" 
+        id="input5"
+        bind:value={config.conditions[0].condition2}
+        disabled
+      >
+        <option selected value=">">&gt;</option>
+        <option value="<">&lt;</option>
+      </select>
+      <input
+        bind:value={config.conditions[0].value2}
+        type="text"
+        id="input6"
+        class="form-control me-2 ms-2 mb-2 mb-sm-0"
+        style="max-width: 30%;" 
+        placeholder="35.0"
+        disabled
+      />
+      <div class="form-check ms-2 mb-2 mb-sm-0">
+        <input
+          on:change={addFilter}
+          type="checkbox"
+          id="enableEdit"
+          class="form-check-input"
+        />
+        <label class="form-check-label" for="enableEdit"
+          >Dodaj warunek</label
+        >
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
 
       <div class="mt-3">
-        <div class="form-group d-flex align-items-center">
+        <div class="form-group d-flex align-items-center mb-2">
           <!-- Napis "LUB" z poziomą linią na obu stronach -->
-          <p class="mb-0 display-7">LUB/ORAZ</p>
+          <select
+            class="form-select mb-0 display-7"
+            style="max-width: 30%;"
+            id="inputOrAnd"
+            bind:value={config.conditions[0].operator}
+          >
+            <option selected value="or">LUB</option>
+            <option value="and">ORAZ</option>
+          </select>
           <div class="flex-grow-1">
-            <hr class="flex-grow-1 ms-3" />
+            <hr class="flex-grow-1 ms-3 me-3" />
           </div>
           <!-- Przycisk "Dodaj pole" -->
           {#if config.conditions.length <= 2}
-            <button class="btn btn-primary" on:click={addCondition}
+            <button class="btn btn-primary me-1" on:click={addCondition}
               ><i class="bi bi-plus-lg" /></button
             >
           {/if}
           {#if config.conditions.length > 1}
             <button
-              class="btn btn-primary ms-2"
-              data-bs-toggle="collapse"
-              data-bs-target="#additionalFields"
-              ><i class="bi bi-arrows-collapse" /></button
+              class="btn btn-primary"
+              on:click={() => {
+                removeLastCondition();
+              }}><i class="bi bi-dash" /></button
             >
           {/if}
         </div>
 
-        <div class="collapse show" id="additionalFields">
-          <!-- COLLAPSE BEGIN -->
+
+
+
+
+
+
+
+        <div id="additionalFields">
           {#each config.conditions as condition, i}
             {#if i > 0}
-              <div class="form-group d-flex align-items-center flex-wrap">
+              <div class="form-group d-flex align-items-center flex-wrap mb-3">
                 <!-- Pierwszy obowiązkowy input (zmniejszony o 25%) -->
                 <label for="input1{i}" />
                 <input
                   bind:value={condition.measurement}
                   type="text"
                   id="input1{i}"
-                  class="form-control"
-                  style="max-width: 25%;"
+                  class="form-control me-1"
+                  style="max-width: 40%;"
                   placeholder="temperature"
                 />
-
+          
                 <!-- Pozostałe 3 inputy -->
                 <label for="input2{i}" />
-                <input
-                  bind:value={condition.condition1}
-                  type="text"
+                <select
+                  class="form-select me-1"
+                  style="max-width: 20%;"
                   id="input2{i}"
-                  class="form-control ms-2"
-                  style="max-width: 70px;"
-                  placeholder="<"
-                />
-
+                  bind:value={condition.condition1}
+                >
+                  <option selected value=">">&gt;</option>
+                  <option value="<">&lt;</option>
+                </select>
+          
                 <label for="input3{i}" />
                 <input
-                  bind:value={condition.value}
+                  bind:value={condition.value1}
                   type="text"
                   id="input3{i}"
-                  class="form-control ms-2"
-                  style="max-width: 70px;"
+                  class="form-control ms-1"
+                  style="max-width: 30%;"
                   placeholder="-10.0"
                 />
-
-                <!-- Paragraf, przycisk "Edytuj", Inputy 5 i 6 w jednej linii dla sm i większej -->
-                <div
-                  class="form-group d-flex align-items-center flex-wrap ms-5"
+              </div>
+          
+              <!-- Paragraf, przycisk "Edytuj", Inputy 5 i 6 w jednej linii dla sm i większej -->
+              <div class="form-group d-flex align-items-center flex-wrap mb-3">
+                <p class="mt-3 flex-grow-0 me-1">LUB</p>
+                <p class="mt-3 me-2">{condition.measurement}</p>
+                <select
+                  class="form-select me-1"
+                  style="max-width: 20%;"
+                  id="input5{i}"
+                  bind:value={condition.condition2}
+                  disabled
                 >
-                  <label for="input4{i}" />
+                  <option selected value=">">&gt;</option>
+                  <option value="<">&lt;</option>
+                </select>
+                <input
+                  bind:value={condition.value2}
+                  type="text"
+                  id="input6{i}"
+                  class="form-control ms-1"
+                  style="max-width: 20%;"
+                  placeholder="35.0"
+                  disabled
+                />
+                <div class="form-check ms-3">
                   <input
-                    bind:value={condition.operator}
-                    type="text"
-                    id="input4{i}"
-                    class="form-control"
-                    style="max-width: 75px;"
-                    placeholder="or/and"
-                    disabled
+                    on:change={(event) => {
+                      addFilterWithIndex(event, i);
+                    }}
+                    type="checkbox"
+                    id="enableEdit{i}"
+                    class="form-check-input"
                   />
-                  <p class="mt-3 flex-grow-1">{condition.measurement}</p>
-                  <input
-                    bind:value={condition.condition2}
-                    type="text"
-                    id="input5{i}"
-                    class="form-control ms-2"
-                    style="max-width: 60px;"
-                    placeholder=">"
-                    disabled
-                  />
-                  <input
-                    bind:value={condition.value2}
-                    type="text"
-                    id="input6{i}"
-                    class="form-control ms-2"
-                    style="max-width: 60px;"
-                    placeholder="35.0"
-                    disabled
-                  />
-                  <div class="form-check ms-2">
-                    <input
-                      on:change={(event) => {
-                        addFilterWithIndex(event, i);
-                      }}
-                      type="checkbox"
-                      id="enableEdit{i}"
-                      class="form-check-input"
-                    />
-                    <label class="form-check-label" for="enableEdit{i}"
-                      >Dodaj warunek</label
-                    >
-                  </div>
-                  <div class="form-check ms-2">
-                    <button
-                      class="btn btn-danger form-control"
-                      on:click={() => {
-                        removeCondition(i);
-                      }}><i class="bi bi-dash" /></button
-                    >
-                  </div>
+                  <label class="form-check-label" for="enableEdit{i}"
+                    >Dodaj warunek</label
+                  >
                 </div>
               </div>
-
-              <div class="container mt-3">
+          
+              <div class="container mt-2 mb-2">
                 <div class="form-group d-flex align-items-center">
+                  {#if i < 2}
+                  <select
+                    class="form-select mb-0 display-7 me-2"
+                    style="max-width: 30%;"
+                    id="inputOrAnd{i}"
+                    bind:value={condition.operator}
+                  >
+                    <option selected value="or">LUB</option>
+                    <option value="and">ORAZ</option>
+                  </select>
+                  {/if}
                   <!-- Linia na całą szerokość strony -->
                   <hr class="flex-grow-1 mx-2" />
                 </div>
               </div>
             {/if}
           {/each}
-          <!-- COLLAPSE END -->
         </div>
+
+
+
+
+
+
+
+
+
+
+
 
         <div class="mt-3">
           <!-- Linia z tekstem "wtedy" -->
@@ -684,8 +725,8 @@
             Wysyłaj informacje o powrocie parametrów do normy
           </label>
           {#if config.result.conditionOKMessage}
-            <!-- Input TODO: Filed not specified in config Object !!! -->
             <input
+              bind:value={config.result.conditionOKMessageText}
               type="text"
               class="form-control"
               placeholder="Parametry powróciły do normy"
@@ -713,6 +754,6 @@
           </div>
         </div>
       </div>
-    </div>
-  </div>
+    
+ 
 </form>
