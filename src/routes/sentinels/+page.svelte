@@ -17,7 +17,7 @@
             <table class="table">
                 <thead class="table-light">
                     <tr>
-                        <th scope="col" class="col-2">Źródło</th>
+                        <th scope="col" class="col-2">Nazwa</th>
                         <th scope="col" class="col-1">Poziom</th>
                         <th scope="col" class="col-2">Data</th>
                         <th scope="col" class="col-6">Wiadomość</th>
@@ -25,13 +25,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {#each data.list as alert, index}
+                    {#each data.list as sentinel, index}
                     <tr>
-                        <td class="col-2">{alert.deviceEui}</td>
-                        <td class="col-1">{alert.level}</td>
-                        <td class="col-2">{new Date(alert.createdAt).toLocaleString()}</td>
+                        <td class="col-2"><a href="/sentinels/{sentinel.id}">{sentinel.name}</a></td>
+                        <td class="col-1">{sentinel.level}</td>
+                        <td class="col-2">{new Date(sentinel.createdAt).toLocaleString()}</td>
                         <td class="col-6">{alert.messagePl}</td>
-                        <td class="col-1"><a href="#" on:click|preventDefault={remove(alert.id)}><i class="bi bi-trash3 link-dark"></i></a></td>
+                        <td class="col-1"><a href="#" on:click|preventDefault={remove(sentinel.id)}><i class="bi bi-trash3 link-dark"></i></a></td>
                     </tr>
                     {/each}
                 </tbody>
@@ -40,7 +40,10 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-12">
+    <div class="col-2">
+        <a class="btn btn-outline-primary" role="button" href="/sentinels/new/edit">{utils.getLabel('add',labels,$language)}</a>
+    </div>
+    <div class="col-10">
         <nav aria-label="Table navigation">
             <ul class="pagination justify-content-end">
                 <li class="page-item">
@@ -62,6 +65,7 @@
         </nav>
     </div>
 </div>
+
 {:catch error}
 {/await}
 
@@ -75,7 +79,7 @@
     let offset = 0
     let limit = 10
 
-    function removeAlert(id) {
+    function remove(id) {
     }
 
     function handleLoadPrevious() {

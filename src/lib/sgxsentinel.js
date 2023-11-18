@@ -87,7 +87,6 @@ const getSgxSentinels = async function (devMode, apiUrl, limit, offset, token) {
         userId: "tester1",
         type: 1,
         organizationId: 1,
-        sentinelConfigId: 1,
         deviceEui: "0000000000000001",
         groupEui: "0000000000000001",
         tagName: "Test tag",

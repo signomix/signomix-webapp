@@ -1,22 +1,50 @@
+import { browser, dev } from '$app/environment';
 import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
-import { dev } from '$app/environment';
 import { utils } from '$lib/utils.js';
-import { sgxdata } from '$lib/sgxdata.js';
+import sgxsentinel from '$lib/sgxsentinel.js';
 
 
 let usertoken
-token.subscribe((value)=> usertoken=value)
-let userprofile
-profile.subscribe((value)=>userprofile=value)
-let userAuthenticated
-isAuthenticated.subscribe((value)=>userAuthenticated=value)
+token.subscribe((value) => usertoken = value )
+let userProfile
+profile.subscribe((value) => userProfile = value)
 
-export async function load({url}) {
-    if(!userAuthenticated){
-        return {}
-    }
+
+export async function load({ params, url }) {
+    if (params.slug == 'new' || (dev && browser)) {
+        return newConfig
+      }
     //let apiUrl = utils.getBackendUrl(url) + '/api/core/user/'+userprofile.uid
     //console.log('load({url})', url)
     let apiUrl=''
-    return await sgxdata.getAlertConfig(dev, apiUrl, userprofile, usertoken)
+    return await sgxsentinel.getSentinel(dev, apiUrl, usertoken)
+}
+
+const newConfig = {
+    "name": "",
+    "active": true,
+    "target": {
+        "eui": "",
+        "group": "",
+        "tag": {
+            "name": "",
+            "value": ""
+        }
+    },
+    "conditions": [
+        {
+            "measurement": "",
+            "condition1": "<",
+            "value1": null,
+            "operator": null,
+            "condition2": ">",
+            "value2": null
+        }
+    ],
+    "result": {
+        "alertType": 1,
+        "message": "",
+        "everytime": true,
+        "conditionOKMessage": ""
+    }
 }

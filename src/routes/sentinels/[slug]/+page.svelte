@@ -1,9 +1,9 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h5>{utils.getLabel('title',labels, $language)}</h5><a href="/alerts/edit" title="Edit"><i class="bi bi-gear h5 me-2 link-dark"></i></a>
+    <h5>{utils.getLabel('title',labels, $language)}</h5><a href="/sentinels/{data.id}/edit" title="Edit"><i class="bi bi-gear h5 me-2 link-dark"></i></a>
 </div>
 {#await data}
 {:then data}
-<AlertForm config={data} callback={saveSettings} readonly=false/>
+<AlertForm config={data} callback={saveSettings} editable=false/>
 {/await}
 <script>
     import AlertForm from '$lib/components/AlertForm.svelte';

@@ -15,8 +15,7 @@ export async function load({url}) {
     if(!userAuthenticated){
         return {}
     }
-    //let apiUrl = utils.getBackendUrl(url) + '/api/core/user/'+userprofile.uid
-    //console.log('load({url})', url)
-    let apiUrl=''
+    let apiUrl = utils.getBackendUrl(url) + '/api/sentinel/'+userprofile.uid
+
     return await sgxdata.getAlertConfig(dev, apiUrl, userprofile, usertoken)
 }

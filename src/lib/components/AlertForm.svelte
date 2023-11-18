@@ -14,7 +14,7 @@
 
   export let config;
   export let callback;
-  export let readonly;
+  export let editable;
 
   let selectedTarget;
   let selectedOption = "1";
@@ -95,68 +95,7 @@
 
   console.log("config", config);
 
-  function getChannelName(channel) {
-    if (channel == "general") {
-      return config.generalNotificationChannel.substring(
-        0,
-        config.generalNotificationChannel.indexOf(":")
-      );
-    } else if (channel == "info") {
-      return config.infoNotificationChannel.substring(
-        0,
-        config.infoNotificationChannel.indexOf(":")
-      );
-    } else if (channel == "warning") {
-      return config.warningNotificationChannel.substring(
-        0,
-        config.warningNotificationChannel.indexOf(":")
-      );
-    } else if (channel == "alert") {
-      return config.alertNotificationChannel.substring(
-        0,
-        config.alertNotificationChannel.indexOf(":")
-      );
-    }
-    return "";
-  }
-  function getChannelConfig(channel) {
-    if (channel == "general") {
-      return config.generalNotificationChannel.substring(
-        config.generalNotificationChannel.indexOf(":") + 1
-      );
-    } else if (channel == "info") {
-      return config.infoNotificationChannel.substring(
-        config.infoNotificationChannel.indexOf(":") + 1
-      );
-    } else if (channel == "warning") {
-      return config.warningNotificationChannel.substring(
-        config.warningNotificationChannel.indexOf(":") + 1
-      );
-    } else if (channel == "alert") {
-      return config.alertNotificationChannel.substring(
-        config.alertNotificationChannel.indexOf(":") + 1
-      );
-    }
-    return "";
-  }
-
   function handleSave(event) {
-    // config.generalNotificationChannel =
-    //   document.getElementById("input-generalNotificationChannel").value +
-    //   ":" +
-    //   document.getElementById("input-generalNotificationChannelConfig").value;
-    // config.infoNotificationChannel =
-    //   document.getElementById("input-infoNotificationChannel").value +
-    //   ":" +
-    //   document.getElementById("input-infoNotificationChannelConfig").value;
-    // config.warningNotificationChannel =
-    //   document.getElementById("input-warningNotificationChannel").value +
-    //   ":" +
-    //   document.getElementById("input-warningNotificationChannelConfig").value;
-    // config.alertNotificationChannel =
-    //   document.getElementById("input-alertNotificationChannel").value +
-    //   ":" +
-    //   document.getElementById("input-alertNotificationChannelConfig").value;
     if (selectedTarget != 1 && selectedTarget != 2 && selectedTarget != 3) {
       alert("Nie zdefiniowano targetu, którego ma dotyczyć alert!");
       return;
@@ -167,13 +106,13 @@
   function handleCancel(event) {
     callback(null);
   }
-  function handlePassword(event) {
-    alert("Not implemented yet");
-  }
   function handleRemove(event) {
     alert("Not implemented yet");
   }
-
+  function isAvailable() {
+    console.log("isAvailable", editable);
+    return editable;
+  }
   const apiUrl =
     utils.getBackendUrl(location) +
     "/api/core/organization/" +
@@ -315,7 +254,6 @@
             bind:value={selectedTarget}
             on:change={targetChange}
           >
-            <option selected>wybierz: urządzenie/grupa/tag</option>
             <option value="1">urządzenie</option>
             <option value="2">grupa</option>
             <option value="3">tag</option>
@@ -388,14 +326,14 @@
                 type="text"
                 id="tag_name"
                 class="form-control"
-                placeholder="Nazwa tagu"
+                placeholder=""
                 bind:value={config.target.tag.name}
               />
               <input
                 type="text"
                 id="tag_value"
                 class="form-control ms-2"
-                placeholder="Wartość tagu"
+                placeholder=""
                 bind:value={config.target.tag.value}
               />
             </div>
@@ -406,13 +344,10 @@
   </div>
 
 
-
-
-
   <div>
     <!-- Kontener z napisem "Jeżeli" i linią -->
     <div class="d-flex align-items-center mb-1">
-      <p class="mb-0 display-7">Jeżeli</p>
+      <p class="mb-0 display-7">JEŚLI</p>
       <hr class="flex-grow-1 ms-3" />
     </div>
   
@@ -426,7 +361,7 @@
           id="input1"
           class="form-control me-1"
           style="width: 100%;"
-          placeholder="temperature"
+          placeholder="podaj nazwę wartości"
         />
       </div>
   
@@ -451,7 +386,7 @@
           id="input3"
           class="form-control ms-2"
           style="width: 100%;" 
-          placeholder="-10.0"
+          placeholder="podaj wartość"
         />
       </div>
     </div>
@@ -476,7 +411,7 @@
         id="input6"
         class="form-control me-2 ms-2 mb-2 mb-sm-0"
         style="max-width: 30%;" 
-        placeholder="35.0"
+        placeholder="podaj wartość"
         disabled
       />
       <div class="form-check ms-2 mb-2 mb-sm-0">
@@ -492,12 +427,6 @@
       </div>
     </div>
   </div>
-
-
-
-
-
-
 
       <div class="mt-3">
         <div class="form-group d-flex align-items-center mb-2">
@@ -549,7 +478,7 @@
                   id="input1{i}"
                   class="form-control me-1"
                   style="max-width: 40%;"
-                  placeholder="temperature"
+                  placeholder="podaj nazwę wartości"
                 />
           
                 <!-- Pozostałe 3 inputy -->
@@ -571,7 +500,7 @@
                   id="input3{i}"
                   class="form-control ms-1"
                   style="max-width: 30%;"
-                  placeholder="-10.0"
+                  placeholder="podaj wartość"
                 />
               </div>
           
@@ -595,7 +524,7 @@
                   id="input6{i}"
                   class="form-control ms-1"
                   style="max-width: 20%;"
-                  placeholder="35.0"
+                  placeholder="podaj wartość"
                   disabled
                 />
                 <div class="form-check ms-3">
@@ -634,17 +563,6 @@
           {/each}
         </div>
 
-
-
-
-
-
-
-
-
-
-
-
         <div class="mt-3">
           <!-- Linia z tekstem "wtedy" -->
           <div class="d-flex align-items-center">
@@ -655,24 +573,24 @@
           <!-- Nowa linia z paragrafem, dropdownem i inputem -->
           <div class="d-flex align-items-center mt-2">
             <!-- Paragraf z krótkim napisem -->
-            <p class="m-0 me-2" style="white-space: nowrap;">Utwórz alert</p>
+            <p class="m-0 me-2" style="white-space: nowrap;">Wywołaj alarm</p>
             <!-- Dropdown z 5 opcjami -->
             <select
               class="form-select me-2"
               bind:value={config.result.alertType}
             >
-              <option selected value="warning">warning</option>
-              <option value="warning 2">warning 2</option>
-              <option value="warning 3">warning 3</option>
-              <option value="warning 4">warning 4</option>
-              <option value="warning 5">warning 5</option>
+              <option selected value=1>warning 1</option>
+              <option value=2>warning 2</option>
+              <option value=3>warning 3</option>
+              <option value=4>warning 4</option>
+              <option value=5>warning 5</option>
             </select>
             <!-- Input -->
             <input
               bind:value={config.result.message}
               type="text"
               class="form-control"
-              placeholder="Przekroczone parametry środowiskowe"
+              placeholder="treść komunikatu"
             />
           </div>
         </div>
@@ -729,7 +647,7 @@
               bind:value={config.result.conditionOKMessageText}
               type="text"
               class="form-control"
-              placeholder="Parametry powróciły do normy"
+              placeholder="treść komunikatu"
             />
           {/if}
         </div>

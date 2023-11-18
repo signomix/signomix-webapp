@@ -1,9 +1,9 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h5>{utils.getLabel('title',labels, $language)}</h5><a href="/alerts/edit" title="Edit"><i class="bi bi-gear h5 me-2 link-dark"></i></a>
+    <h5>{utils.getLabel('title',labels, $language)}</h5><a href="/sentinels/{data.id}" title="View"><i class="bi bi-eye h5 me-2 link-dark"></i></a>
 </div>
 {#await data}
 {:then data}
-<AlertForm config={data} callback={saveSettings} readonly=true/>
+<AlertForm config={data} callback={saveSettings} editable=true/>
 {/await}
 <script>
     import AlertForm from '$lib/components/AlertForm.svelte';
@@ -23,8 +23,112 @@
 
     export let data;
 
-    function saveSettings(config){
-        console.log("saveSettings: ",config);
+    function saveSettings(config) {
+        if (config != null) {
+            let cfg = config
+            cfg.type = cfg.result.type
+            cfg.deviceEui= cfg.target.eui==null?"":cfg.target.eui
+            cfg.groupEui= cfg.target.group==null?"":cfg.target.group
+            cfg.tagName= cfg.target.tag.name==null?"":cfg.target.tag.name
+            cfg.tagValue= cfg.target.tag.value==null?"":cfg.target.tag.value
+            cfg.alertLevel= cfg.result.alertType
+            if(cfg.team==null){
+                cfg.team = ""
+            }
+            if(cfg.administrators==null){
+                cfg.administrators = ""
+            }
+            cfg.everyTime = cfg.result.everytime==null?"":cfg.result.everytime
+            for(let i=0;i<cfg.conditions.length;i++){
+                    cfg.conditions[i].condition1= 1
+                    cfg.conditions[i].condition2= 1
+                    cfg.conditions[i].operator= 1
+                    cfg.conditions[i].orOperator= true
+            }
+            cfg.organizationId = $profile.organization
+            cfg.alertMessage = cfg.result.message==null?"":cfg.result.message
+            cfg.conditionOkMessage = cfg.result.conditionOKMessage==null?"":cfg.result.conditionOKMessage
+            let validationError = validate(cfg)
+            if (validationError != '') {
+                //callback(validationError)
+                alert(validationError)
+                return
+            }
+            //sendForm(cfg, true, callback)
+            console.log('SAVE',cfg)
+            sendForm(cfg,true)
+        }
+        //goBack()
+    }
+
+    function validate(config) {
+        let result = ''
+/*         if (config.code.includes('%')) {
+            result = utils.getLabel('illegalProc', labels, $language)
+        }
+        if (config.encoder.includes('%')) {
+            result = utils.getLabel('illegalDecoder', labels, $language)
+        } */
+        return result
+    }
+
+    function sendForm(data, silent /*, callback */) {
+        try {
+            let result = ''
+            const headers = new Headers()
+            let method = ''
+            let url = utils.getBackendUrl(location) + "/api/sentinel/"
+            console.log('DATA',data)
+             if(data.id==undefined){
+                method = 'POST'
+            } else {
+                url = url + data.id
+                method = 'PUT'
+            }
+            headers.set('Authentication', $token);
+            headers.set('Content-Type', 'application/json');
+            let response = fetch(
+                url,
+                { method: method, mode: 'cors', headers: headers, body: JSON.stringify(data) }
+            )
+                .then((response) => {
+                    if (response.status == 200) {
+                        goto('/sentinels')
+                        return ''
+                    } else if (response.status == 401 || response.status == 403) {
+                        token.set(null)
+                    } else if (response.status == 400) {
+                    } else {
+                        if (!silent) {
+                            alert(
+                                utils.getMessage(utils.FETCH_STATUS)
+                                    .replace('%1', response.status)
+                                    .replace('%2', response.statusText)
+                            )
+                        }
+                    }
+                    return response.text()
+                })
+                .then((text) => {
+                    if (text != '') {
+                        //callback(text)
+                    }
+                })
+                .catch((error) => {
+                    if (!silent) {
+                        errorMessage = error.message
+                        if (errorMessage == 'Failed to fetch' && location.protocol.toLowerCase() == 'https') {
+                            errorMessage = errorMessage + utils.getLabel('selfSigned', labels, $language)
+                        }
+                    }
+                    if (error.message == 'Failed to fetch') {
+                        error.message = utils.getLabel('failToFetch', labels, $language)
+                    }
+                    //callback(error.message)
+                });
+        } catch (error) {
+            //callback(error.message)
+        }
     }
 
     let labels = {
