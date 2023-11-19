@@ -12,11 +12,9 @@ profile.subscribe((value) => userProfile = value)
 
 export async function load({ params, url }) {
     if (params.slug == 'new' || (dev && browser)) {
-        return newConfig
+        return {sentinel:newConfig}
       }
-    //let apiUrl = utils.getBackendUrl(url) + '/api/core/user/'+userprofile.uid
-    //console.log('load({url})', url)
-    let apiUrl=''
+    let apiUrl = utils.getBackendUrl(url) + '/api/sentinel/'+params.slug
     return await sgxsentinel.getSentinel(dev, apiUrl, usertoken)
 }
 

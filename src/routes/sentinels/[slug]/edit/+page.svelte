@@ -1,9 +1,9 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h5>{utils.getLabel('title',labels, $language)}</h5><a href="/sentinels/{data.id}" title="View"><i class="bi bi-eye h5 me-2 link-dark"></i></a>
+    <h5>{utils.getLabel('title',labels, $language)}</h5><a href="/sentinels/{data.sentinel.id}" title="View"><i class="bi bi-eye h5 me-2 link-dark"></i></a>
 </div>
 {#await data}
 {:then data}
-<AlertForm config={data} callback={saveSettings} editable=true/>
+<AlertForm config={data.sentinel} callback={saveSettings} editable=1/>
 {/await}
 <script>
     import AlertForm from '$lib/components/AlertForm.svelte';
@@ -40,14 +40,15 @@
             }
             cfg.everyTime = cfg.result.everytime==null?"":cfg.result.everytime
             for(let i=0;i<cfg.conditions.length;i++){
-                    cfg.conditions[i].condition1= 1
-                    cfg.conditions[i].condition2= 1
-                    cfg.conditions[i].operator= 1
-                    cfg.conditions[i].orOperator= true
+                    /* cfg.conditions[i].condition1=cfg.conditions[i].condition1=='<'?-1:1;
+                    cfg.conditions[i].condition2= cfg.conditions[i].condition2=='<'?-1:1;
+                    cfg.conditions[i].conditionOperator=cfg.conditions[i].operator=='and'?3:4;
+                    cfg.conditions[i].orOperator=(cfg.conditions[i].value2!=null) */
             }
             cfg.organizationId = $profile.organization
             cfg.alertMessage = cfg.result.message==null?"":cfg.result.message
-            cfg.conditionOkMessage = cfg.result.conditionOKMessage==null?"":cfg.result.conditionOKMessage
+            cfg.conditionOkMessage = cfg.result.conditionOkMessage==null?"":cfg.result.conditionOkMessage
+            cfg.conditionOkMessageText = cfg.result.conditionOkMessageText==null?"":cfg.result.conditionOkMessageText
             let validationError = validate(cfg)
             if (validationError != '') {
                 //callback(validationError)

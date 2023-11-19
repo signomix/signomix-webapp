@@ -17,21 +17,19 @@
             <table class="table">
                 <thead class="table-light">
                     <tr>
-                        <th scope="col" class="col-2">Nazwa</th>
-                        <th scope="col" class="col-1">Poziom</th>
-                        <th scope="col" class="col-2">Data</th>
-                        <th scope="col" class="col-6">Wiadomość</th>
+                        <th scope="col" class="col-5">Nazwa</th>
+                        <th scope="col" class="col-1">Alarm</th>
+                        <th scope="col" class="col-1">Wiadomość</th>
                         <th scope="col" class="col-1"></th>
                     </tr>
                 </thead>
                 <tbody>
                     {#each data.list as sentinel, index}
                     <tr>
-                        <td class="col-2"><a href="/sentinels/{sentinel.id}">{sentinel.name}</a></td>
-                        <td class="col-1">{sentinel.level}</td>
-                        <td class="col-2">{new Date(sentinel.createdAt).toLocaleString()}</td>
-                        <td class="col-6">{alert.messagePl}</td>
-                        <td class="col-1"><a href="#" on:click|preventDefault={remove(sentinel.id)}><i class="bi bi-trash3 link-dark"></i></a></td>
+                        <td class="col-5"><a href="/sentinels/{sentinel.id}/edit">{sentinel.name}</a></td>
+                        <td class="col-1">{sentinel.alertLevel}</td>
+                        <td class="col-5">{sentinel.alertMessage}</td>
+                        <td class="col-1"><a href="/sentinels" on:click|preventDefault={remove(sentinel.id)}><i class="bi bi-trash3 link-dark"></i></a></td>
                     </tr>
                     {/each}
                 </tbody>
@@ -73,6 +71,7 @@
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { utils } from '$lib/utils.js';
     import { dev } from '$app/environment';
+    import { invalidateAll } from '$app/navigation';
 
     export let data
 
@@ -80,6 +79,28 @@
     let limit = 10
 
     function remove(id) {
+        return function () {
+            if(dev){
+                return
+            }
+            let url = utils.getBackendUrl(location) + "/api/sentinel/"+id
+            if (confirm('Czy na pewno chcesz usunąć ten alarm?')) {
+                fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authentication': $token,
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        console.log('OK')
+                        invalidateAll()
+                    } else {
+                        console.log('ERROR')
+                    }
+                })
+            }
+        }
     }
 
     function handleLoadPrevious() {
