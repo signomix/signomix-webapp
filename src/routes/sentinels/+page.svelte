@@ -84,7 +84,7 @@
                 return
             }
             let url = utils.getBackendUrl(location) + "/api/sentinel/"+id
-            if (confirm('Czy na pewno chcesz usunąć ten alarm?')) {
+            if (confirm('Czy na pewno chcesz usunąć wybraną konfigurację?')) {
                 fetch(url, {
                     method: 'DELETE',
                     headers: {
@@ -114,8 +114,8 @@
 
     let labels = {
         'title': {
-            'pl': "Alarmy",
-            'en': "Alarms",
+            'pl': "Wartownicy",
+            'en': "Sentinels",
         },
         'accessdenied': {
             'pl': "Brak dostępu",

@@ -69,6 +69,7 @@
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { utils } from '$lib/utils.js';
     import { dev } from '$app/environment';
+    import { invalidateAll } from '$app/navigation';
 
     export let data
 
@@ -105,6 +106,31 @@
             }
             console.log(error)
         });
+    }
+
+    function remove(id) {
+        return function () {
+            if(dev){
+                return
+            }
+            let url = utils.getBackendUrl(location) + "/api/signal/"+id
+            //if (confirm('Czy na pewno chcesz usunąć ten alarm?')) {
+                fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authentication': $token,
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        console.log('OK')
+                        invalidateAll()
+                    } else {
+                        console.log('ERROR')
+                    }
+                })
+            //}
+        }
     }
 
     function handleLoadPrevious() {

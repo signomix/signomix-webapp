@@ -214,7 +214,7 @@
             if (response.status == 200) {
                 errorMessage = ''
                 goto('/dashboards')
-            } else if (response.status == 401 || response.status == 403 || response.status == 404) {
+            } else if (response.status == 401 || response.status == 403) {
                 token.set(null)
             } else {
                 alert(
@@ -250,7 +250,7 @@
             if (response.status == 200) {
                 errorMessage = ''
                 goto('/dashboards')
-            } else if (response.status == 401 || response.status == 403 || response.status == 404) {
+            } else if (response.status == 401 || response.status == 403) {
                 token.set(null)
             } else {
                 alert(

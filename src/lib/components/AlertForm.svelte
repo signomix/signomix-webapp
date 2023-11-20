@@ -40,6 +40,24 @@
     name:"mniejsze niż"
   }]
 
+  let alarmLevels = [{
+    id:1,
+    name:"Info"
+  },{
+    id:2,
+    name:"Warning"
+  },{
+    id:3,
+    name:"Alert"
+  },{
+    id:4,
+    name:"Critical"
+  },{
+    id:5,
+    name:"Emergency"
+  }
+]
+
   let selectedOption = "1";
   let showEuiModal = false;
   let showGroupModal = false;
@@ -54,6 +72,9 @@
 
   config.result={}
   config.result.alertType = config.alertLevel;
+  if(config.result.alertType == null || config.result.alertType == undefined){
+    config.result.alertType = 1;
+  }
   config.result.message = config.alertMessage;
   config.result.everytime = config.everyTime
   config.result.conditionOkMessage = config.conditionOk
@@ -544,16 +565,20 @@
         <p class="m-0 me-2" style="white-space: nowrap;">Wywołaj alarm</p>
         <!-- Dropdown z 5 opcjami -->
         <select class="form-select me-2" bind:value={config.result.alertType}>
-          <option selected value=1>warning 1</option>
-          <option value=2>warning 2</option>
-          <option value=3>warning 3</option>
-          <option value=4>warning 4</option>
-          <option value=5>warning 5</option>
+          {#each alarmLevels as alarmLevel}
+          <option selected value={alarmLevel.id}>{alarmLevel.name}</option>
+          {/each}
         </select>
         <!-- Input -->
         <input bind:value={config.result.message} type="text" class="form-control" placeholder="treść komunikatu" />
       </div>
     </div>
+    <div class="d-flex align-items-center mt-2">
+      <!-- Input -->
+      <label class="form-check-label me-2" for="team_input">Powiadom</label>
+      <input id="team_input" bind:value={config.team} type="text" class="form-control" placeholder="loginy oddzielone przecinkami" />
+    </div>
+
 
     <!-- Kolejna linia z dwoma radiobuttonami i napisem "cześć" -->
     <div class=" mt-4">

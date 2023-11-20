@@ -29,8 +29,8 @@
 
     let labels = {
         'title': {
-            'pl': "Ustawienia alarmu",
-            'en': "Alert settings"
+            'pl': "Ustawienia wartownika",
+            'en': "Sentinel settings"
         }
     }
 

@@ -32,10 +32,10 @@ const newConfig = {
     "conditions": [
         {
             "measurement": "",
-            "condition1": "<",
+            "condition1": -1,
             "value1": null,
             "operator": null,
-            "condition2": ">",
+            "condition2": -1,
             "value2": null
         }
     ],
