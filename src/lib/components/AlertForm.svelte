@@ -13,66 +13,66 @@
   export let editable;
 
   let selectedTarget = 1;
-  let targets=[{
-    id:1,
-    name:"Urządzenie"
-  },{
-    id:2,
-    name:"Grupa"
-  },{
-    id:3,
-    name:"Tag"
+  let targets = [{
+    id: 1,
+    name: "Urządzenie"
+  }, {
+    id: 2,
+    name: "Grupa"
+  }, {
+    id: 3,
+    name: "Tag"
   }]
 
   let booleabOperators = [{
-    id:3,
-    name:"AND"
-  },{
-    id:4,
-    name:"OR"
+    id: 3,
+    name: "AND"
+  }, {
+    id: 4,
+    name: "OR"
   }]
 
   let conditionOperators = [{
-    id:1,
-    name:"większe niż"
-  },{
-    id:-1,
-    name:"mniejsze niż"
+    id: 1,
+    name: "większe niż"
+  }, {
+    id: -1,
+    name: "mniejsze niż"
   }]
 
   let alarmLevels = [{
-    id:1,
-    name:"Info"
-  },{
-    id:2,
-    name:"Warning"
-  },{
-    id:3,
-    name:"Alert"
-  },{
-    id:4,
-    name:"Critical"
-  },{
-    id:5,
-    name:"Emergency"
+    id: 1,
+    name: "Info"
+  }, {
+    id: 2,
+    name: "Warning"
+  }, {
+    id: 3,
+    name: "Alert"
+  }, {
+    id: 4,
+    name: "Critical"
+  }, {
+    id: 5,
+    name: "Emergency"
   }
-]
+  ]
 
   let selectedOption = "1";
   let showEuiModal = false;
   let showGroupModal = false;
-  
+
 
   console.log("config", config);
   let orCondition1 = config.conditions[0].orOperator
   let orCondition2 = false
-  if(config.conditions.length > 1){
+  if (config.conditions.length > 1) {
     orCondition2 = config.conditions[1].orOperator
   }
 
-  config.result={}
+  config.result = {}
   config.result.alertType = config.alertLevel;
-  if(config.result.alertType == null || config.result.alertType == undefined){
+  if (config.result.alertType == null || config.result.alertType == undefined) {
     config.result.alertType = 1;
   }
   config.result.message = config.alertMessage;
@@ -85,20 +85,20 @@
   config.target.tag = {}
   config.target.tag.name = config.tagName
   config.target.tag.value = config.tagValue
-  if(config.target.eui != null && config.target.eui != ""){
+  if (config.target.eui != null && config.target.eui != "") {
     selectedTarget = 1;
-  }else if(config.target.group != null && config.target.group != ""){
+  } else if (config.target.group != null && config.target.group != "") {
     selectedTarget = 2;
-  }else{
+  } else {
     selectedTarget = 3;
   }
 
-  console.log('selectedTarget',selectedTarget)
+  console.log('selectedTarget', selectedTarget)
 
-  if(config.result.conditionOkMessage == null || config.result.conditionOkMessage == undefined){
+  if (config.result.conditionOkMessage == null || config.result.conditionOkMessage == undefined) {
     config.result.conditionOkMessage = false;
   }
-  if(config.result.conditionOkMessageText == null || config.result.conditionOkMessageText == undefined){
+  if (config.result.conditionOkMessageText == null || config.result.conditionOkMessageText == undefined) {
     config.result.conditionOkMessageText = "";
   }
 
@@ -183,25 +183,84 @@
       alert("Nie zdefiniowano targetu, którego ma dotyczyć alert!");
       return;
     }
-
+    // validate
+    let errorMessage = validate();
+    if (errorMessage != "") {
+      alert(errorMessage);
+      return;
+    }
+    config.conditions[0].orOperator = orCondition1;
+    if (config.conditions.length > 1) {
+      config.conditions[1].orOperator = orCondition2;
+    }
     callback(config);
   }
   function handleCancel(event) {
     callback(null);
   }
-  function handleRemove(event) {
-    alert("Not implemented yet");
+
+  function validate() {
+    if (!config.active) {
+      return ''
+    }
+    if (config.name == null || config.name == '') {
+      return 'Nazwa nie może być pusta'
+    }
+    // target
+    if (selectedTarget == 1) {
+      if (config.target.eui == null || config.target.eui == '') {
+        return 'Nie wybrano urządzenia'
+      }
+    } else if (selectedTarget == 2) {
+      if (config.target.group == null || config.target.group == '') {
+        return 'Nie wybrano grupy'
+      }
+    } else if (selectedTarget == 3) {
+      if (config.target.tag.name == null || config.target.tag.name == '') {
+        return 'Nie wybrano tagu'
+      }
+      if (config.target.tag.value == null || config.target.tag.value == '') {
+        return 'Nie wybrano wartości tagu'
+      }
+    }
+    // condition 1
+    if (config.conditions[0].measurement == null || config.conditions[0].measurement == '') {
+      return 'Nie wybrano wartości'
+    }
+    if (config.conditions[0].value1 == null || config.conditions[0].value1 == '') {
+      return 'Nie wybrano wartości'
+    }
+    if (config.conditions[0].orOperator) {
+      if (config.conditions[0].value2 == null || config.conditions[0].value2 == '') {
+        return 'Nie wybrano wartości'
+      }
+    }
+    // condition 2
+    if (config.conditions.length > 1) {
+      if (config.conditions[1].measurement == null || config.conditions[1].measurement == '') {
+        return 'Nie wybrano wartości'
+      }
+      if (config.conditions[1].value1 == null || config.conditions[1].value1 == '') {
+        return 'Nie wybrano wartości'
+      }
+      if (config.conditions[1].orOperator) {
+        if (config.conditions[1].value2 == null || config.conditions[1].value2 == '') {
+          return 'Nie wybrano wartości'
+        }
+      }
+    }
+    //
+    if(config.team == null || config.team == ''){
+      return 'Nie wybrano użytkowników do powiadomienia'
+    }
+    if(config.alertMessage == null || config.alertMessage == ''){
+      return 'Nie wybrano treści komunikatu'
+    }
+    if(config.conditionOkMessage && (config.conditionOkMessageText == null || config.conditionOkMessageText == '')){
+      return 'Nie wybrano treści komunikatu o powrocie parametrów do normy'
+    }
+    return ''
   }
-  function isAvailable() {
-    console.log("isAvailable", editable);
-    return editable;
-  }
-  /*   const apiUrl =
-      utils.getBackendUrl(location) +
-      "/api/core/organization/" +
-      config.organization;
-    let promise = sgxdata.getOrganization(dev, apiUrl, $token); 
-    */
 
   let labels = {
     login: {
@@ -323,7 +382,7 @@
         <div class="form-group d-flex align-items-center">
           <label for="alert_def" class="me-2" style="white-space: nowrap;">Alert definiowany dla:</label>
           <select class="form-select" id="alert_def" bind:value={selectedTarget} on:change={targetChange}>
-            <option disabled  value=0 selected={selectedTarget===0}>wybierz target</option>
+            <option disabled value=0 selected={selectedTarget===0}>wybierz target</option>
             {#each targets as target}
             <option value={target.id}>{target.name}</option>
             {/each}
@@ -421,7 +480,8 @@
     <!-- Pozostałe elementy w nowej linii na małych ekranach -->
     <div class="form-group d-flex align-items-center flex-wrap  flex-sm-nowrap mb-3">
       <div class="form-check ms-2 mb-2 mb-sm-0 me-2">
-        <input bind:checked={orCondition1} on:change={addFilter} type="checkbox" id="enableEdit" class="form-check-input" />
+        <input bind:checked={orCondition1} on:change={addFilter} type="checkbox" id="enableEdit"
+          class="form-check-input" />
         <label class="form-check-label" for="enableEdit">LUB</label>
       </div>
       {#if orCondition1}
@@ -576,7 +636,8 @@
     <div class="d-flex align-items-center mt-2">
       <!-- Input -->
       <label class="form-check-label me-2" for="team_input">Powiadom</label>
-      <input id="team_input" bind:value={config.team} type="text" class="form-control" placeholder="loginy oddzielone przecinkami" />
+      <input id="team_input" bind:value={config.team} type="text" class="form-control"
+        placeholder="loginy oddzielone przecinkami" />
     </div>
 
 
@@ -598,13 +659,13 @@
     </div>
 
     <!-- Nowa linia z checkboxem "Wysyłaj informacje o powrocie parametrów do normy" -->
-    <div class="mt-4">
+    <div class="mt-2">
       <input bind:checked={config.result.conditionOkMessage} class="form-check-input" type="checkbox" value=""
         id="defaultCheck1" />
-      <label class="form-check-label" for="defaultCheck1">
+      <label class="form-check-label mb-2" for="defaultCheck1">
         Wysyłaj informacje o powrocie parametrów do normy
       </label>
-      {#if config.result.conditionOKMessage}
+      {#if config.result.conditionOkMessage}
       <input bind:value={config.result.conditionOkMessageText} type="text" class="form-control"
         placeholder="treść komunikatu" />
       {/if}

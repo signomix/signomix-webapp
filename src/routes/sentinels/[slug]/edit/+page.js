@@ -21,6 +21,8 @@ export async function load({ params, url }) {
 const newConfig = {
     "name": "",
     "active": true,
+    "conditionOk": false,
+    "conditionOkMessage": "",
     "target": {
         "eui": "",
         "group": "",
@@ -34,7 +36,16 @@ const newConfig = {
             "measurement": "",
             "condition1": -1,
             "value1": null,
-            "operator": null,
+            "orOperator": null,
+            "condition2": -1,
+            "value2": null
+        },
+        {
+            "measurement": "",
+            "condition1": -1,
+            "value1": null,
+            "conditionOperator": null,
+            "orOperator": false,
             "condition2": -1,
             "value2": null
         }
@@ -43,6 +54,5 @@ const newConfig = {
         "alertType": 1,
         "message": "",
         "everytime": true,
-        "conditionOKMessage": ""
     }
 }
