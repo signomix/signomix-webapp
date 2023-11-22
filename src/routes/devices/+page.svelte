@@ -87,7 +87,7 @@
 
     //export let data
     let offset = 0
-    let limit = 10
+    let limit = 20
 
     let promise = getDevices(offset)
 

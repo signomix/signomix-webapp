@@ -21,7 +21,7 @@
         on:click={() => showAlert()} >
         <i class="bi bi-trash3"></i>
     </button>
-    {config[index].title}
+    {getTitle(config,index)}
     {/if}
 </div>
 <script>
@@ -41,5 +41,12 @@
     }
     function doCopy(show) {
         copyCallback(index)
+    }
+    function getTitle(config, index){
+        try{
+            return config[index].title
+        }catch(e){
+            return ''
+        }
     }
 </script>

@@ -23,6 +23,7 @@ const newConfig = {
     "active": true,
     "conditionOk": false,
     "conditionOkMessage": "",
+    "everyTime": true,
     "target": {
         "eui": "",
         "group": "",
@@ -36,15 +37,6 @@ const newConfig = {
             "measurement": "",
             "condition1": -1,
             "value1": null,
-            "orOperator": null,
-            "condition2": -1,
-            "value2": null
-        },
-        {
-            "measurement": "",
-            "condition1": -1,
-            "value1": null,
-            "conditionOperator": null,
             "orOperator": false,
             "condition2": -1,
             "value2": null

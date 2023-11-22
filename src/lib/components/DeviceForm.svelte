@@ -166,6 +166,20 @@
                 readonly={readonly} />
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-2 col-form-label">
+            <label for="input-tagname" class="form-label">{utils.getLabel('tagname',labels,$language)}</label>
+        </div>
+        <div class="col-md-4">
+            <input type="text" class="form-control" id="input-tagname" bind:value={tagName} readonly={readonly}>
+        </div>
+        <div class="col-md-2 col-form-label">
+            <label for="input-tagvalue" class="form-label">{utils.getLabel('tagvalue',labels,$language)}</label>
+        </div>
+        <div class="col-md-4">
+            <input type="text" class="form-control" id="input-tagvalue" bind:value={tagValue} readonly={readonly}>
+        </div>
+    </div>
     {#if config.organizationId>0}
     <div class="row">
         <div class="col-md-2 col-form-label">
@@ -223,6 +237,15 @@
     let dialog
     let measurementChanged = false
 
+    //
+    let tagName = ""
+    let tagValue = ""
+    if (config.tags != null && config.tags!='') {
+        let tag = config.tags.split(':')
+        tagName = tag[0]
+        tagValue = tag[1]
+    }
+
     function decide() {
         dialog.showModal()
     }
@@ -236,10 +259,13 @@
         config.encoder = decoderScript.trim()
         config.code = processorScript.trim()
         config.configuration = config.configuration.trim()
+        if(tagName!='' && tagValue!=''){
+            config.tags = tagName+':'+tagValue
+        }
 
         let errMessage = validate()
         if (errMessage != '') {
-            toast.error(utils.getLabel(errMessage, labels, $language),{
+            toast.error(utils.getLabel(errMessage, labels, $language), {
                 action: { label: utils.getLabel('close', labels, $language), onClick: () => { } },
                 duration: Number.POSITIVE_INFINITY
             })

@@ -1,9 +1,12 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h5>{utils.getLabel('title',labels, $language)}</h5><a href="/sentinels/{data.sentinel.id}" title="View"><i class="bi bi-eye h5 me-2 link-dark"></i></a>
+    <h5>{utils.getLabel('title',labels, $language)}</h5>
+    {#if data.sentinel.id != null}
+    <a href="/sentinels/{data.sentinel.id}" title="View"><i class="bi bi-eye h5 me-2 link-dark"></i></a>
+    {/if}
 </div>
 {#await data}
 {:then data}
-<AlertForm config={data.sentinel} callback={saveSettings} editable=1/>
+<AlertForm config={data.sentinel} callback={saveSettings} editable=1 />
 {/await}
 <script>
     import AlertForm from '$lib/components/AlertForm.svelte';
@@ -13,11 +16,11 @@
     import { utils } from '$lib/utils.js';
 
     onMount(async () => {
-        if(!$isAuthenticated){
+        if (!$isAuthenticated) {
             console.log('redirect to login');
             goto('/login');
-        }else{
-            console.log('ALERTS',data);
+        } else {
+            console.log('ALERTS', data);
         }
     });
 
@@ -25,30 +28,32 @@
 
     function saveSettings(config) {
         if (config != null) {
-            let cfg = config
-            cfg.type = cfg.result.type
-            cfg.deviceEui= cfg.target.eui==null?"":cfg.target.eui
-            cfg.groupEui= cfg.target.group==null?"":cfg.target.group
-            cfg.tagName= cfg.target.tag.name==null?"":cfg.target.tag.name
-            cfg.tagValue= cfg.target.tag.value==null?"":cfg.target.tag.value
-            cfg.alertLevel= cfg.result.alertType
-            if(cfg.team==null){
-                cfg.team = ""
-            }
-            if(cfg.administrators==null){
-                cfg.administrators = ""
-            }
-            cfg.everyTime = cfg.result.everytime==null?"":cfg.result.everytime
-            for(let i=0;i<cfg.conditions.length;i++){
-                    /* cfg.conditions[i].condition1=cfg.conditions[i].condition1=='<'?-1:1;
-                    cfg.conditions[i].condition2= cfg.conditions[i].condition2=='<'?-1:1;
-                    cfg.conditions[i].conditionOperator=cfg.conditions[i].operator=='and'?3:4;
-                    cfg.conditions[i].orOperator=(cfg.conditions[i].value2!=null) */
-            }
+            let cfg = {}
+            cfg.id = config.id
+            cfg.active = config.active
+            cfg.name = config.name
+            cfg.type = config.result.type
+            cfg.deviceEui = config.target.eui == null ? "" : config.target.eui
+            cfg.groupEui = config.target.group == null ? "" : config.target.group
+            cfg.tagName = config.target.tag.name == null ? "" : config.target.tag.name
+            cfg.tagValue = config.target.tag.value == null ? "" : config.target.tag.value
+            cfg.alertLevel = config.result.alertType
+            cfg.team = config.team == null ? '' : config.team
+            cfg.administrators = config.administrators == null ? '' : config.administrators
+
+            cfg.conditions = config.conditions
+            //for (let i = 0; i < cfg.conditions.length; i++) {
+            /* cfg.conditions[i].condition1=cfg.conditions[i].condition1=='<'?-1:1;
+            cfg.conditions[i].condition2= cfg.conditions[i].condition2=='<'?-1:1;
+            cfg.conditions[i].conditionOperator=cfg.conditions[i].operator=='and'?3:4;
+            cfg.conditions[i].orOperator=(cfg.conditions[i].value2!=null) */
+            //}
+            cfg.userId = $profile.uid
             cfg.organizationId = $profile.organization
-            cfg.alertMessage = cfg.result.message==null?"":cfg.result.message
-            cfg.conditionOkMessage = cfg.result.conditionOkMessage==null?"":cfg.result.conditionOkMessage
-            cfg.conditionOkMessageText = cfg.result.conditionOkMessageText==null?"":cfg.result.conditionOkMessageText
+            cfg.everyTime = config.everyTime
+            cfg.alertMessage = config.alertMessage  //config.result.message == null ? "" : config.result.message
+            cfg.conditionOk = config.conditionOk
+            cfg.conditionOkMessage = config.conditionOkMessage
             let validationError = validate(cfg)
             if (validationError != '') {
                 //callback(validationError)
@@ -56,20 +61,20 @@
                 return
             }
             //sendForm(cfg, true, callback)
-            console.log('SAVE',cfg)
-            sendForm(cfg,true)
+            console.log('SAVE', cfg)
+            sendForm(cfg, true)
         }
         //goBack()
     }
 
     function validate(config) {
         let result = ''
-/*         if (config.code.includes('%')) {
-            result = utils.getLabel('illegalProc', labels, $language)
-        }
-        if (config.encoder.includes('%')) {
-            result = utils.getLabel('illegalDecoder', labels, $language)
-        } */
+        /*         if (config.code.includes('%')) {
+                    result = utils.getLabel('illegalProc', labels, $language)
+                }
+                if (config.encoder.includes('%')) {
+                    result = utils.getLabel('illegalDecoder', labels, $language)
+                } */
         return result
     }
 
@@ -79,8 +84,8 @@
             const headers = new Headers()
             let method = ''
             let url = utils.getBackendUrl(location) + "/api/sentinel/"
-            console.log('DATA',data)
-             if(data.id==undefined){
+            console.log('DATA', data)
+            if (data.id == undefined) {
                 method = 'POST'
             } else {
                 url = url + data.id

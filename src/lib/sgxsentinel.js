@@ -161,7 +161,7 @@ const getSgxSentinels = async function (devMode, apiUrl, limit, offset, token) {
   }
 }
 
-const getSgxSentinel = async function (devMode, apiUrl, token) {
+const getSgxSentinel = async function (devMode, apiUrl, token, transform) {
   if (devMode) {
     return {
       sentinel:

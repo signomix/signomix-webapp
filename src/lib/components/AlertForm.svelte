@@ -12,6 +12,11 @@
   export let callback;
   export let editable;
 
+  let conditionOk=config.conditionOk
+  let everyTime=config.everyTime
+
+  console.log('conditionOk/everyTime: '+conditionOk+'/'+everyTime)
+
   let selectedTarget = 1;
   let targets = [{
     id: 1,
@@ -75,32 +80,32 @@
   if (config.result.alertType == null || config.result.alertType == undefined) {
     config.result.alertType = 1;
   }
-  config.result.message = config.alertMessage;
-  config.result.everytime = config.everyTime
-  config.result.conditionOkMessage = config.conditionOk
-  config.result.conditionOkMessageText = config.conditionOkMessage
+  //config.result.message = config.alertMessage;
+  //config.result.everytime = config.everyTime
+  //config.result.conditionOkMessage = config.conditionOk
+  //config.result.conditionOkMessageText = config.conditionOkMessage
   config.target = {}
   config.target.eui = config.deviceEui
   config.target.group = config.groupEui
   config.target.tag = {}
   config.target.tag.name = config.tagName
   config.target.tag.value = config.tagValue
-  if (config.target.eui != null && config.target.eui != "") {
-    selectedTarget = 1;
+  if (config.target.tag.name != null && config.target.tag.name != "" && config.target.tag.value != null && config.target.tag.value) {
+    selectedTarget = 3;
   } else if (config.target.group != null && config.target.group != "") {
     selectedTarget = 2;
   } else {
-    selectedTarget = 3;
+    selectedTarget = 1;
   }
 
   console.log('selectedTarget', selectedTarget)
 
-  if (config.result.conditionOkMessage == null || config.result.conditionOkMessage == undefined) {
+/*   if (config.result.conditionOkMessage == null || config.result.conditionOkMessage == undefined) {
     config.result.conditionOkMessage = false;
   }
   if (config.result.conditionOkMessageText == null || config.result.conditionOkMessageText == undefined) {
     config.result.conditionOkMessageText = "";
-  }
+  } */
 
   function targetChange(event) {
     console.log("Target change to", selectedTarget);
@@ -120,7 +125,7 @@
     }
   }
 
-  function handleInputChange(event) {
+/*   function handleInputChange(event) {
     selectedOption = event.target.value;
 
     if (selectedOption === "1") {
@@ -128,7 +133,7 @@
     } else {
       config.result.everytime = "false";
     }
-  }
+  } */
 
   function addFilter(event) {
     let isDisabled = !event.target.checked;
@@ -179,12 +184,13 @@
   console.log("config", config);
 
   function handleSave(event) {
+    console.log('save conditionOk/everyTime: '+conditionOk+'/'+everyTime)
     if (selectedTarget != 1 && selectedTarget != 2 && selectedTarget != 3) {
       alert("Nie zdefiniowano targetu, którego ma dotyczyć alert!");
       return;
     }
     // validate
-    let errorMessage = validate();
+    let errorMessage = '' //validate();
     if (errorMessage != "") {
       alert(errorMessage);
       return;
@@ -193,6 +199,8 @@
     if (config.conditions.length > 1) {
       config.conditions[1].orOperator = orCondition2;
     }
+    config.conditionOk=conditionOk
+    config.everyTime=everyTime
     callback(config);
   }
   function handleCancel(event) {
@@ -225,7 +233,7 @@
     }
     // condition 1
     if (config.conditions[0].measurement == null || config.conditions[0].measurement == '') {
-      return 'Nie wybrano wartości'
+      return 'Nie wybrano nazwy pomiaru'
     }
     if (config.conditions[0].value1 == null || config.conditions[0].value1 == '') {
       return 'Nie wybrano wartości'
@@ -238,7 +246,7 @@
     // condition 2
     if (config.conditions.length > 1) {
       if (config.conditions[1].measurement == null || config.conditions[1].measurement == '') {
-        return 'Nie wybrano wartości'
+        return 'Nie wybrano nazwy pomiaru'
       }
       if (config.conditions[1].value1 == null || config.conditions[1].value1 == '') {
         return 'Nie wybrano wartości'
@@ -253,7 +261,7 @@
     if(config.team == null || config.team == ''){
       return 'Nie wybrano użytkowników do powiadomienia'
     }
-    if(config.alertMessage == null || config.alertMessage == ''){
+    if(config.result.message == null || config.result.message == ''){
       return 'Nie wybrano treści komunikatu'
     }
     if(config.conditionOkMessage && (config.conditionOkMessageText == null || config.conditionOkMessageText == '')){
@@ -515,20 +523,12 @@
       <!-- Przycisk "Dodaj pole" -->
       {#if config.conditions.length == 2}
       <button class="btn btn-outline-primary" on:click={()=> {removeLastCondition();}}><i class="bi bi-dash" /> usuń
-        warunek dla drugiej wartości</button>
+        drugi warunek</button>
       {/if}
       {#if config.conditions.length == 1}
-      <button class="btn btn-outline-primary me-1" on:click={addCondition}><i class="bi bi-plus-lg" /> dodaj warunek dla
-        drugiej wartości</button>
+      <button class="btn btn-outline-primary me-1" on:click={addCondition}><i class="bi bi-plus-lg" /> dodaj drugi warunek</button>
       {/if}
     </div>
-
-
-
-
-
-
-
 
     <div id="additionalFields">
       {#each config.conditions as condition, i}
@@ -630,7 +630,7 @@
           {/each}
         </select>
         <!-- Input -->
-        <input bind:value={config.result.message} type="text" class="form-control" placeholder="treść komunikatu" />
+        <input bind:value={config.alertMessage} type="text" class="form-control" placeholder="treść komunikatu" />
       </div>
     </div>
     <div class="d-flex align-items-center mt-2">
@@ -642,8 +642,8 @@
 
 
     <!-- Kolejna linia z dwoma radiobuttonami i napisem "cześć" -->
+    <!--
     <div class=" mt-4">
-      <!-- Kontener dla dwóch radiobuttonów -->
       <div class="d-flex justify-content-evenly">
         <div class="form-check me-2">
           <input bind:group={selectedOption} on:change={handleInputChange} class="form-check-input" type="radio"
@@ -657,16 +657,24 @@
         </div>
       </div>
     </div>
+  -->
+  <div class="mt-2">
+    <input bind:checked={everyTime} class="form-check-input" type="checkbox"
+      id="checkEverytime" />
+    <label class="form-check-label mb-2" for="checkEverytime">
+      Wysyłaj informacje przy każdym wystąpieniu warunków
+    </label>
+  </div>
 
     <!-- Nowa linia z checkboxem "Wysyłaj informacje o powrocie parametrów do normy" -->
     <div class="mt-2">
-      <input bind:checked={config.result.conditionOkMessage} class="form-check-input" type="checkbox" value=""
+      <input bind:checked={conditionOk} class="form-check-input" type="checkbox"
         id="defaultCheck1" />
       <label class="form-check-label mb-2" for="defaultCheck1">
         Wysyłaj informacje o powrocie parametrów do normy
       </label>
-      {#if config.result.conditionOkMessage}
-      <input bind:value={config.result.conditionOkMessageText} type="text" class="form-control"
+      {#if conditionOk}
+      <input bind:value={config.conditionOkMessage} type="text" class="form-control"
         placeholder="treść komunikatu" />
       {/if}
     </div>

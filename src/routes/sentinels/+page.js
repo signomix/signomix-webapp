@@ -8,5 +8,5 @@ let usertoken
 token.subscribe((value)=> usertoken=value)
 
 export async function load({params,url}) {
-    return sgxsentinel.getSentinels(dev, utils.getBackendUrl(url)+'/api/sentinel', 10, 0, usertoken);
+    return sgxsentinel.getSentinels(dev, utils.getBackendUrl(url)+'/api/sentinel', 20, 0, usertoken);
 }
