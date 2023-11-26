@@ -54,6 +54,7 @@
             cfg.alertMessage = config.alertMessage  //config.result.message == null ? "" : config.result.message
             cfg.conditionOk = config.conditionOk
             cfg.conditionOkMessage = config.conditionOkMessage
+            cfg.timeShift = config.timeShift
             let validationError = validate(cfg)
             if (validationError != '') {
                 //callback(validationError)

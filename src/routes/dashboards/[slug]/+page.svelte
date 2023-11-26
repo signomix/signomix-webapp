@@ -45,9 +45,9 @@
     {#if items.length==0}
     <div class="alert alert-light mx-auto my-auto">{utils.getLabel('empty',labels,$language)}</div>
     {:else}
-    <Grid gap={[4,4]} bind:items={items} rowHeight={100} let:item {cols} let:index on:resize={handleResize}
+    <Grid gap={[2,2]} bind:items={items} rowHeight={100} let:item {cols} let:index on:resize={handleResize}
         on:mount={handleMount}>
-        <div class="dashboard-widget content bg-white border border-primary rounded-1">
+        <div class={getBorderClass(index)}>
             {#if !isRoleOK(index)}
             <div class="alert alert-light mx-auto my-auto">{utils.getLabel('hidden',labels,$language)}</div>
             {:else}
@@ -184,6 +184,18 @@
     // Documentation of cols
     // https://github.com/vaheqelyan/svelte-grid/issues/140
     let cols = {}
+
+    let getBorderClass = function (idx) {
+        try {
+            if(dashboardConfig.widgets[idx].type=='link'){
+                return 'dashboard-widget content bg-white'
+            }else{
+                return 'dashboard-widget content bg-white border border-primary rounded-1'
+            }
+        } catch (e) {
+            return ''
+        }
+    }
 
     let getWidgetType = function (idx) {
         try {

@@ -122,7 +122,7 @@
                     <li class="nav-item">
                         <a class="nav-link" class:active={false} on:click={toggleAnalytics}>
                             <span><i
-                                    class="bi bi-database me-2"></i><span>{utils.getLabel('reporting',labels,$language)}</span>
+                                    class="bi bi-database me-2"></i><span>{utils.getLabel('analytics',labels,$language)}</span>
                         </a>
                     </li>
                     {#if analyticsExpanded}
@@ -130,13 +130,13 @@
                         <a class="nav-link" class:active={$page.url.pathname==='/sentinels' } href="/sentinels">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i
-                                    class="bi bi-camera-video me-2"></i><span>{utils.getLabel('sentinels',labels,$language)}</span>
+                                    class="bi bi-list-check me-2"></i><span>{utils.getLabel('sentinels',labels,$language)}</span>
                         </a>
                     </li>
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/alarms' } href="/alarms">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-bell me-2"></i><span>{utils.getLabel('alarms',labels,$language)}</span>
+                                <i class="bi bi-bell me-2"></i><span>{utils.getLabel('alerts',labels,$language)}</span>
                         </a>
                     </li>
                     {/if}
@@ -437,17 +437,17 @@
             'pl': 'Aplikacje',
             'en': 'Applications'
         },
-        'reporting': {
-            'pl': 'Raportowanie',
-            'en': 'Reporting'
+        'analytics': {
+            'pl': 'Analityka',
+            'en': 'Analytics'
         },
-        'alarms': {
-            'pl': 'Alarmy',
-            'en': 'Alarms'
+        'alerts': {
+            'pl': 'Alerty',
+            'en': 'Alerts'
         },
         'sentinels': {
-            'pl': 'Wartownicy',
-            'en': 'Sentinels'
+            'pl': 'Reguły',
+            'en': 'Rules'
         },
         'info': {
             'pl': 'Prosta platforma dla Internetu Rzeczy',

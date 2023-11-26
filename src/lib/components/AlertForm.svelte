@@ -14,6 +14,7 @@
 
   let conditionOk=config.conditionOk
   let everyTime=config.everyTime
+  let timeShift=config.timeShift==undefined?1:config.timeShift
 
   console.log('conditionOk/everyTime: '+conditionOk+'/'+everyTime)
 
@@ -201,6 +202,7 @@
     }
     config.conditionOk=conditionOk
     config.everyTime=everyTime
+    config.timeShift=timeShift
     callback(config);
   }
   function handleCancel(event) {
@@ -379,7 +381,7 @@
       <div class="d-flex">
         <label for="rule_name" class="flex-shrink-0 text-center text-center" style="position: relative; top: 8px;">Nazwa
           reguły:</label>
-        <input type="text" id="rule_name" class="form-control ms-2" bind:value={config.name} />
+        <input type="text" required id="rule_name" class="form-control ms-2" bind:value={config.name} />
       </div>
     </div>
   </div>
@@ -407,10 +409,10 @@
     </div>
   </div>
 
-  <div class="container mt-3 mb-3">
+  <div class="container mt-3">
     <div class="row">
       {#if selectedTarget == 1}
-      <div class="col-sm-6 mt-3">
+      <div class="col-sm-6">
         <div class="form-group">
           <label for="euiSelector">EUI: </label>
           <DeviceSelector bind:showDeviceSelectorModal={showEuiModal} callback={(device)=> {
@@ -424,7 +426,7 @@
         </div>
       </div>
       {:else if selectedTarget == 2}
-      <div class="col-sm-6 mt-3">
+      <div class="col-sm-6">
         <div class="form-group">
           <label for="groupSelector">ID Grupy: </label>
           <GroupSelector bind:showGroupSelectorModal={showGroupModal} callback={(group)=> {
@@ -438,7 +440,7 @@
         </div>
       </div>
       {:else if selectedTarget == 3}
-      <div class="col-sm-6 mt-3">
+      <div class="col-sm-6">
         <div class="form-group d-flex align-items-center">
           <label for="tag" class="me-2">Tag:</label>
           <div class="d-flex">
@@ -451,7 +453,15 @@
       {:else}{/if}
     </div>
   </div>
-
+  <div class="container mt-3">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="form-group d-flex align-items-center">
+          <label for="timeshift" class="me-2" style="white-space: nowrap;">Uwzględniaj dane nie starsze niż (min.):</label>
+            <input type="number" min="1" id="timeshift" class="form-control ms-2" bind:value={timeShift} />
+        </div>
+      </div>
+  </div>
 
   <div>
     <!-- Kontener z napisem "Jeżeli" i linią -->
@@ -636,7 +646,7 @@
     <div class="d-flex align-items-center mt-2">
       <!-- Input -->
       <label class="form-check-label me-2" for="team_input">Powiadom</label>
-      <input id="team_input" bind:value={config.team} type="text" class="form-control"
+      <input id="team_input" required bind:value={config.team} type="text" class="form-control"
         placeholder="loginy oddzielone przecinkami" />
     </div>
 

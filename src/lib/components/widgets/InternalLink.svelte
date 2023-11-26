@@ -13,6 +13,6 @@
         goto('/dashboards/'+dashboardID, { replaceState: true })
     }
 </script>
-<div class="container p-1">
+<div class="container p-0">
     <a href="/dashboards/{dashboardID}" class="btn btn-primary w-100" role="button" aria-disabled="true">{title}</a>
 </div>
