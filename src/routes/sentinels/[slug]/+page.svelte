@@ -29,8 +29,8 @@
 
     let labels = {
         'title': {
-            'pl': "Ustawienia wartownika",
-            'en': "Sentinel settings"
+            'pl': "Definicja reguły",
+            'en': "Rule definition"
         }
     }
 

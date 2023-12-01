@@ -114,8 +114,8 @@
 
     let labels = {
         'title': {
-            'pl': "Wartownicy",
-            'en': "Sentinels",
+            'pl': "Reguły",
+            'en': "Rules",
         },
         'accessdenied': {
             'pl': "Brak dostępu",

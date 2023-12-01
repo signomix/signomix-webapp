@@ -455,7 +455,7 @@
 
         },
         'info2': {
-            'pl': 'Zbieraj, przetwarzaj i prezentuj dane. Zbudiuj swoje Smart Rozwiązanie',
+            'pl': 'Zbieraj, przetwarzaj i prezentuj dane. Zbuduj swoje Smart Rozwiązanie',
             'en': 'Collect, process and present data. Build your Smart Solution'
         },
         'info3': {
