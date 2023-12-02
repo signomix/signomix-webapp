@@ -9,6 +9,23 @@
 </div>
 {#await promise}
 {:then devices}
+<div class="component">
+<div class="row">
+    <div class="col-1">
+        <label class="col-form-label">Filtruj:</label>
+    </div>
+    <div class="col-2">
+        <input type="text" bind:value={euiFilter} on:input={euiChanged} class="form-control mb-2" aria-label="Search EUI">
+    </div>
+    <div class="col-4">
+        <input type="text" bind:value={nameFilter} on:input={nameChanged} class="form-control mb-2" aria-label="Search name">
+    </div>
+    
+    <div class="col-1">
+        <button on:click={handleSearch} class="btn btn-outline-secondary mb-2" type="button">Szukaj</button>
+    </div>
+    <div class="col-4"></div>
+</div>
 <div class="row">
     <div class="col-12">
         <div class="table-responsive">
@@ -75,6 +92,7 @@
         </nav>
     </div>
 </div>
+</div>
 {/await}
 {/if}
 <script>
@@ -87,7 +105,9 @@
 
     //export let data
     let offset = 0
-    let limit = 20
+    let limit = 12
+    let euiFilter = ''
+    let nameFilter = ''
 
     let promise = getDevices(offset)
 
@@ -120,8 +140,15 @@
             console.log(devcs)
         } else {
             let headers = new Headers();
+
             let url = utils.getBackendUrl(location) + "/api/core/device"
             url = url + '?offset=' + actualOffset + '&limit=' + limit + '&full=true'
+
+            if(euiFilter.length>0) {
+                url = url + '&search=eui:'+euiFilter
+            }else if(nameFilter.length>0){
+                url = url + '&search=name:'+nameFilter
+            }
             headers.set('Authentication', $token);
             headers.set('Access-Control-Allow-Origin', '*');
             await fetch(url,
@@ -156,6 +183,18 @@
     }
     function handleDoNothing(event) {
         console.log(event)
+    }
+    function handleSearch(event) {
+        console.log('handleSearch', event)
+        promise = getDevices(offset);
+    }
+    function euiChanged(event) {
+        console.log('euiChanged', event)
+        nameFilter = ''
+    }
+    function nameChanged(event) {
+        console.log('nameChanged', event)
+        euiFilter = ''
     }
 
     function showUploadForm(eui) {
