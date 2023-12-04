@@ -193,6 +193,15 @@
     {/if}
     <div class="row">
         <div class="col-md-2 col-form-label">
+            <label for="input-dashboard" class="form-label">{utils.getLabel('dashboard',labels,$language)}</label>
+        </div>
+        <div class="col-md-9">
+            <input type="checkbox" class="form-check-input" id="input-dashboard" bind:checked={config.dashboard}
+                readonly={readonly}>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2 col-form-label">
             <label for="input-status" class="form-label">{utils.getLabel('status',labels,$language)}</label>
         </div>
         <div class="col-md-9">
@@ -405,6 +414,18 @@
         'application': {
             'pl': "Aplikacja",
             'en': "Application"
+        },
+        'tagname': {
+            'pl': "Nazwa tagu",
+            'en': "Tag name"
+        },
+        'tagvalue': {
+            'pl': "Wartość tagu",
+            'en': "Tag value"
+        },
+        'dashboard': {
+            'pl': "Domyślny pulpit tworzony automatycznie",
+            'en': "Default dashboard created automatically"
         },
         'status': {
             'pl': "Status",

@@ -87,7 +87,10 @@ export const load = async ({ params, url }) => {
     channelsAsString: "temperature,humidity",
     codeUnescaped: "",
     encoderUnescaped: "",
-    configurationMap: {}
+    configurationMap: {},
+    isNew: true,
+    tags: "",
+    dashboard: true
   }
 
   return await getSelectedConfig(utils.getBackendUrl(url))

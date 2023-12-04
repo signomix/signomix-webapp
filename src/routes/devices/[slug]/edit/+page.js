@@ -84,7 +84,8 @@ profile.subscribe((value) => userProfile = value)
     encoderUnescaped: "",
     configurationMap: {},
     isNew: true,
-    tags: ""
+    tags: "",
+    dashboard: true
   }
 
   return await getSelectedConfig(utils.getBackendUrl(url))

@@ -140,6 +140,7 @@
                         </a>
                     </li>
                     {/if}
+                    {#if isCloud() || !utils.isUserRole($profile, 'limited', false)}
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/notifications' } href="/notifications">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
@@ -150,7 +151,6 @@
                             {/if}
                         </a>
                     </li>
-                    {#if isCloud() || !utils.isUserRole($profile, 'limited', false)}
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/settings' } href="/settings">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
@@ -216,8 +216,9 @@
         <main class="col-md-9 col-lg-10 ms-sm-auto px-md-4">
             {#if $isAuthenticated || $page.url.pathname==='/login'}
             <slot></slot>
-            {:else}
-            {#if utils.getSubdomain(location).toLowerCase() == 'cloud'}
+            {:else if $page.url.pathname!='/' && $page.url.pathname!='/login'}
+            {goto('/')}
+            {:else if utils.getSubdomain(location).toLowerCase() == 'cloud'}
             <div class="row mt-4">
                 <div class="col-md-6 col-sm-12">
                     <div class="row">
@@ -245,7 +246,6 @@
                     <img class="img-fluid" src="/img/media1.jpeg" alt="iot" />
                 </div>
             </div>
-            {/if}
             {/if}
         </main>
     </div>
@@ -282,7 +282,11 @@
 
     onMount(async () => {
         //console.log('onMount', $page)
-        getInfo($page.url)
+        try {
+            getInfo($page.url)
+        } catch (e) {
+            //console.log(e)
+        }
     });
 
     function isCloud() {

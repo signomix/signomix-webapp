@@ -38,7 +38,12 @@
     import { browser, dev } from '$app/environment'
     import { redirects } from '$lib/redirects.js';
 
-    let promise = getConfigs()
+    let promise
+    try{
+        promise = getConfigs()
+    }catch(e){
+        //console.log(e)
+    }
 
     async function getConfigs() {
         let configs = []
@@ -62,18 +67,25 @@
                 .then((response) => {
                     if (response.status == 200) {
                         configs = response.json();
+
                     } else if (response.status == 401 || response.status == 403) {
                     } else {
                         alert(alertMessage.replace('%1', response.status).replace('%2', response.statusText))
                     }
                 }).catch((error) => {
+                    console.log('error')
                     console.log(error)
                 });
         }
+
         return configs;
     }
 
+    try{
     redirects.handleOriginalUri();
+    }catch(e){
+       // console.log(e)
+    }
 
     let alertMessage = "HTTP-Error: %1 %2"
 
