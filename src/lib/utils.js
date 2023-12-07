@@ -131,6 +131,17 @@ export const utils = {
     }
 
   },
+  isServiceAvailable: function (userProfile, serviceName) {
+    let SMS=1 // 0b00000001 
+    let SUPPORT=2 // 0b00000010
+    switch (serviceName.toUpperCase()) {
+      case 'SMS':
+        return SMS & userProfile.services == SMS
+      case 'SUPPORT':
+        return SUPPORT & userProfile.services == SUPPORT
+    }
+    return false
+  },
   isObjectAdmin: function (userProfile, objectOwner, defaultOrganizationId) {
     //user types
     //1 - service admin

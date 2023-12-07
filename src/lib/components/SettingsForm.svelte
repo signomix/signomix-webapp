@@ -113,6 +113,9 @@
                 <option value="SIGNOMIX">{utils.getLabel('in_app',labels,$language)}</option>
                 <option value="SMTP">{utils.getLabel('email',labels,$language)}</option>
                 <option value="WEBHOOK">{utils.getLabel('webhook',labels,$language)}</option>
+                {#if utils.isServiceAvailable($profile,'sms') }
+                <option value="SMS">SMS</option>
+                {/if}
             </select>
         </div>
         <div class="col-md-8">
@@ -130,7 +133,10 @@
                 readonly={readonly}>
                 <option value="SIGNOMIX">{utils.getLabel('in_app',labels,$language)}</option>
                 <option value="SMTP">{utils.getLabel('email',labels,$language)}</option>
-                <option value="WEBHOOK">Web{utils.getLabel('webhook',labels,$language)}hook</option>
+                <option value="WEBHOOK">{utils.getLabel('webhook',labels,$language)}</option>
+                {#if utils.isServiceAvailable($profile,'sms') }
+                <option value="SMS">SMS</option>
+                {/if}
             </select>
         </div>
         <div class="col-md-8">
@@ -149,6 +155,9 @@
                 <option value="SIGNOMIX">{utils.getLabel('in_app',labels,$language)}</option>
                 <option value="SMTP">{utils.getLabel('email',labels,$language)}</option>
                 <option value="WEBHOOK">{utils.getLabel('webhook',labels,$language)}</option>
+                {#if utils.isServiceAvailable($profile,'sms') }
+                <option value="SMS">SMS</option>
+                {/if}
             </select>
         </div>
         <div class="col-md-8">
@@ -167,6 +176,9 @@
                 <option value="SIGNOMIX">{utils.getLabel('in_app',labels,$language)}</option>
                 <option value="SMTP">{utils.getLabel('email',labels,$language)}</option>
                 <option value="WEBHOOK">{utils.getLabel('webhook',labels,$language)}</option>
+                {#if utils.isServiceAvailable($profile,'sms') }
+                <option value="SMS">SMS</option>
+                {/if}
             </select>
         </div>
         <div class="col-md-8">
