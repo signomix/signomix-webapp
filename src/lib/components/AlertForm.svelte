@@ -15,6 +15,7 @@
   let conditionOk=config.conditionOk
   let everyTime=config.everyTime
   let timeShift=config.timeShift==undefined?1:config.timeShift
+  let hysteresis=config.hysteresis==undefined?0:config.hysteresis
 
   console.log('conditionOk/everyTime: '+conditionOk+'/'+everyTime)
 
@@ -203,6 +204,7 @@
     config.conditionOk=conditionOk
     config.everyTime=everyTime
     config.timeShift=timeShift
+    config.hysteresis=hysteresis
     callback(config);
   }
   function handleCancel(event) {
@@ -455,10 +457,16 @@
   </div>
   <div class="container mt-3">
     <div class="row">
-      <div class="col-sm-12">
+      <div class="col-sm-6">
         <div class="form-group d-flex align-items-center">
           <label for="timeshift" class="me-2" style="white-space: nowrap;">Uwzględniaj dane nie starsze niż (min.):</label>
             <input type="number" min="1" id="timeshift" class="form-control ms-2" bind:value={timeShift} />
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="form-group d-flex align-items-center">
+          <label for="hysteresis" class="me-2" style="white-space: nowrap;">Histereza:</label>
+            <input type="number" min="0" id="hysteresis" class="form-control ms-2" bind:value={hysteresis} />
         </div>
       </div>
   </div>

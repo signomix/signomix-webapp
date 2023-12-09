@@ -36,30 +36,43 @@
             <input type="text" class="form-control" id="input-email" bind:value={config.email} readonly={readonly}>
         </div>
         <div class="col-md-2 col-form-label">
-            <label for="input-email" class="form-label">{utils.getLabel('phone_prefix',labels,$language)}</label>
+            <label for="input-phone" class="form-label">{utils.getLabel('mobile',labels,$language)}</label>
         </div>
         <div class="col-md-4">
-            <input type="text" class="form-control" id="input-email" bind:value={config.phonePrefix}
-                readonly={readonly}>
+            <input type="tel" class="form-control" id="input-phone" bind:value={config.phone}
+                pattern="[0-9]" readonly={readonly}>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-1 col-form-label">
-            <label for="input-role" class="form-label">{utils.getLabel('roles',labels,$language)}</label>
-        </div>
-        <div class="col-md-5">
-            <input disabled type="text" class="form-control" id="input-role" bind:value={config.role}
-                readonly={readonly}>
-        </div>
 
+    <div class="row">
         <div class="col-md-2 col-form-label">
             <label for="input-language" class="form-label">{utils.getLabel('language',labels,$language)}</label>
         </div>
         <div class="col-md-4">
-            <input type="text" class="form-control" id="input-language" bind:value={config.preferredLanguage}
+<!--             <input type="text" class="form-control" id="input-language" bind:value={config.preferredLanguage}
+                readonly={readonly}> -->
+            <select class="form-select" id="input-language" value={config.preferredLanguage}
+                readonly={readonly}>
+                <option value="pl">{utils.getLabel('polish',labels,$language)}</option>
+                <option value="en">{utils.getLabel('english',labels,$language)}</option>
+            </select>
+        </div>
+        <div class="col-md-2 col-form-label">
+            <label for="input-phone_prefix" class="form-label">{utils.getLabel('phone_prefix',labels,$language)}</label>
+        </div>
+        <div class="col-md-4">
+            <input type="tel" class="form-control" id="input-phone_prefix" bind:value={config.phonePrefix}
+                pattern="[0-9]{3}" readonly={readonly}>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2 col-form-label">
+            <label for="input-role" class="form-label">{utils.getLabel('roles',labels,$language)}</label>
+        </div>
+        <div class="col-md-10">
+            <input disabled type="text" class="form-control" id="input-role" bind:value={config.role}
                 readonly={readonly}>
         </div>
-
     </div>
     {#if config.organization!=0}
     {#await promise}
@@ -301,6 +314,10 @@
             'en': 'E-mail',
             'pl': 'E-mail',
         },
+        'mobile': {
+            'en': 'Mobile',
+            'pl': 'Tel. komórkowy',
+        },
         'phone_prefix': {
             'en': 'Phone prefix',
             'pl': 'Prefiks telefonu',
@@ -377,6 +394,14 @@
             'en': 'Configuration',
             'pl': 'Konfiguracja'
         },
+        'english': {
+            'en': 'English',
+            'pl': 'English'
+        },
+        'polish': {
+            'en': 'Polski',
+            'pl': 'Polski'
+        }
 
     }
 
