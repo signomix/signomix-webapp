@@ -56,6 +56,11 @@
         return result
     }
 
+    function isNew(deviceConfig) {
+        return deviceConfig.originalEui==null || deviceConfig.originalEui=='' || deviceConfig.originalEui==undefined
+        || deviceConfig.originalEui.toLowerCase()=='new'
+    }
+
     function sendForm(data, silent, callback) {
         try {
             let result = ''
@@ -63,11 +68,10 @@
             let method = ''
             let url = utils.getBackendUrl(location) + "/api/core/device/"
             console.log('DATA',data)
-            //if (data.eui == null || data.eui == '' || data.eui == undefined || data.eui.toLowerCase() == 'new') {
-            if(data.isNew){
+            if(isNew(data)){
                 method = 'POST'
             } else {
-                url = url + data.eui
+                url = url + data.originalEui
                 method = 'PUT'
             }
             headers.set('Authentication', $token);

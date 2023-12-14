@@ -8,10 +8,10 @@
 <form class="mb-2">
     <div class="row">
         <div class="col-md-1 col-form-label">
-            <label for="input-uid" class="form-label">{utils.getLabel('eui',labels,$language)}</label>
+            <label for="input-eui" class="form-label">{utils.getLabel('eui',labels,$language)}</label>
         </div>
         <div class="col-md-10">
-            <input type="text" class="form-control" id="input-uid" bind:value={config.eui} disabled={readonly &&
+            <input type="text" class="form-control" id="input-eui" bind:value={newEui} disabled={readonly &&
                 !newDevice }>
         </div>
     </div>
@@ -33,7 +33,6 @@
                 <option value="TTN">TTN device</option>
                 <option value="LORA">ChirpStack device</option>
                 <option value="VIRTUAL">Virtual device</option>
-                <option value="EXTERNAL">EXTERNAL</option>
             </select>
         </div>
     </div>
@@ -247,6 +246,8 @@
     let measurementChanged = false
 
     //
+    let originalEui = config.eui
+    let newEui = config.eui
     let tagName = ""
     let tagValue = ""
     if (config.tags != null && config.tags!='') {
@@ -264,10 +265,16 @@
         if (!decision) {
             return
         }
+        config.originalEui = originalEui
+        config.eui = newEui.trim().toUpperCase()
         config.transmissionInterval = interval * 60000
         config.encoder = decoderScript.trim()
         config.code = processorScript.trim()
-        config.configuration = config.configuration.trim()
+        if(config.configuration!=null){
+            config.configuration = config.configuration.trim()
+        }else{
+            config.configuration = ''
+        }
         if(tagName!='' && tagValue!=''){
             config.tags = tagName+':'+tagValue
         }

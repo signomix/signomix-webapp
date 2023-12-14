@@ -25,7 +25,7 @@
     let previousPage = base;
     afterNavigate(({ from }) => {
         previousPage = from?.url.pathname || previousPage
-        data.eui='new'
+        data.eui=''
         data.name=utils.getLabel('copy',labels,$language)+data.name
     })
     function goBack() {
@@ -58,19 +58,17 @@
         return result
     }
 
+    function isNew(deviceConfig) {
+        return deviceConfig.eui.toUpperCase() != deviceConfig.originalEui.toUpperCase()
+    }
+
     function sendForm(data, silent, callback) {
         try {
             let result = ''
             const headers = new Headers()
-            let method = ''
+            let method = 'POST'
             let url = utils.getBackendUrl(location) + "/api/core/device/"
             console.log('DATA',data)
-            if (data.eui == null || data.eui == '' || data.eui == undefined || data.eui.toLowerCase() == 'new') {
-                method = 'POST'
-            } else {
-                url = url + data.eui
-                method = 'PUT'
-            }
             headers.set('Authentication', $token);
             headers.set('Content-Type', 'application/json');
             let response = fetch(
