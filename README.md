@@ -7,7 +7,8 @@ After clonning signomix-webapp repository to `signomix-webapp` folder:
 ```shell
 cd signomix-webapp
 npm install
-npm i -D @sveltejs/adapter-static
+// npm i -D @sveltejs/adapter-static
+npm i -D @sveltejs/adapter-node@next
 npm install -D svelte-preprocess
 npm i svelte-grid --save-dev
 npm i svelte-chartjs chart.js
