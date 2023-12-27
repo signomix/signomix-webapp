@@ -29,7 +29,7 @@
                             </a></li>
 
                         {#if isCloud()}
-                        <li><a class="dropdown-item" href="/signup">
+                        <li><a class="dropdown-item" href="/account/register">
                                 <span data-bs-toggle="collapse"
                                     data-bs-target=".navbar-collapse.show">{utils.getLabel('signup',labels,$language)}</span>
                             </a></li>
@@ -64,7 +64,7 @@
                         <a class="nav-link" class:active={false} on:click={toggleOrganization}>
                             <span><i
                                     class="bi bi-building me-2"></i><span>{utils.getLabel('organization',labels,$language)}</span>
-                        </a>alerts
+                        </a>
                     </li>
                     {/if}
                     {#if organizationExpanded && !utils.isUserRole($profile, 'limited', false)}
@@ -152,7 +152,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" class:active={$page.url.pathname==='/settings' } href="/settings">
+                        <a class="nav-link" class:active={$page.url.pathname==='/account/settings' } href="/account/settings">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i class="bi bi-sliders me-2"></i>{utils.getLabel('settings',labels,$language)}
                             </span>
@@ -214,7 +214,7 @@
             </div>
         </nav>
         <main class="col-md-9 col-lg-10 ms-sm-auto px-md-4">
-            {#if $isAuthenticated || $page.url.pathname==='/login'}
+            {#if ($isAuthenticated && $page.url.pathname!='/login') || (!$isAuthenticated && $page.url.pathname=='/account/register')}
             <slot></slot>
             {:else if $page.url.pathname!='/' && $page.url.pathname!='/login'}
             {goto('/')}
@@ -281,7 +281,7 @@
  */
 
     onMount(async () => {
-        //console.log('onMount', $page)
+        console.log('onMount', $page)
         try {
             getInfo($page.url)
         } catch (e) {

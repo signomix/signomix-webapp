@@ -14,5 +14,6 @@ export const getInfo=async (url)=>{
             platformInfo.set(data)
             defaultOrganizationId.set(data.defaultOrganizationId)
             return {}
-        });
+        })
+        .catch(error => {});
 }
