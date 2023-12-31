@@ -28,12 +28,6 @@
                                     data-bs-target=".navbar-collapse.show">{utils.getLabel('signin',labels,$language)}</span>
                             </a></li>
 
-                        {#if isCloud()}
-                        <li><a class="dropdown-item" href="/account/register">
-                                <span data-bs-toggle="collapse"
-                                    data-bs-target=".navbar-collapse.show">{utils.getLabel('signup',labels,$language)}</span>
-                            </a></li>
-                        {/if}
                         {:else}
                         <li><a class="dropdown-item" href="/" on:click={logout}>
                                 <span data-bs-toggle="collapse"
@@ -54,9 +48,16 @@
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i class="bi bi-house me-2"></i>{utils.getLabel('home',labels,$language)}
                             </span>
-
                         </a>
                     </li>
+                    {#if isCloud() || dev==true}
+                        <li class="nav-item">
+                            <a class="nav-link" class:active={$page.url.pathname==='/account/register' } href="/account/register">
+                                <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                    <i class="bi bi-person-add me-2"></i>{utils.getLabel('signup',labels,$language)}
+                                </span>
+                            </a>
+                        {/if}
                     {#if $isAuthenticated}
                     {#if $profile && !utils.isDefaultOrganizationUser($profile)}
                     {#if !utils.isUserRole($profile, 'limited', false)}
@@ -214,7 +215,7 @@
             </div>
         </nav>
         <main class="col-md-9 col-lg-10 ms-sm-auto px-md-4">
-            {#if ($isAuthenticated && $page.url.pathname!='/login') || (!$isAuthenticated && $page.url.pathname=='/account/register')}
+            {#if $isAuthenticated || $page.url.pathname=='/login' || $page.url.pathname=='/account/register' || $page.url.pathname=='/account/resetpassword'}
             <slot></slot>
             {:else if $page.url.pathname!='/' && $page.url.pathname!='/login'}
             {goto('/')}
@@ -236,9 +237,10 @@
                     </div>
                     <div class="row mt-4">
                         <div class="col-12">
-                            <button type="button" class="btn btn-lg btn-outline-primary w-100" on:click={()=>
+                            <!-- <button type="button" class="btn btn-lg btn-outline-primary w-100" on:click={()=>
                                 toast(utils.getLabel('notavailable',labels,$language),{duration:
-                                7000,})}>{utils.getLabel('register',labels,$language)}</button>
+                                7000,})}>{utils.getLabel('register',labels,$language)}</button> -->
+                                <a href="/account/register" class="btn btn-lg btn-outline-primary w-100">{utils.getLabel('register',labels,$language)}</a>
                         </div>
                     </div>
                 </div>
@@ -370,8 +372,8 @@
             'pl': "Utwórz konto"
         },
         'register': {
-            'pl': "Zarejestruj bezpłatne konto",
-            'en': "Register free account"
+            'pl': "Utwórz bezpłatne konto",
+            'en': "Create free account"
         },
         'anonymous': {
             'pl': "niezalogowany",

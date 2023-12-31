@@ -1,27 +1,22 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h5>{utils.getLabel('title',labels,$language)}</h5>
-    {#if dev}
-    <br><i>{utils.getLabel('dev_mode',labels,$language)}</i>
-    {/if}
 </div>
-<form class="" on:submit|preventDefault={doLogin}>
+<div class="row">
+<div class="col-md-2"></div>
+<div class="col-md-6">
+<form class="" on:submit|preventDefault={sendData}>
+    <div class="form-floating mb-3 text-center">
+        <p>{utils.getLabel('info',labels,$language)}</p>
+        </div>
     <div class="form-floating mb-3 text-center">
         <input required type="text" class="form-control" id="login" name="login" placeholder="login"
             on:change={clearMessage}>
         <label for="login">{utils.getLabel('login',labels,$language)}</label>
     </div>
     <div class="form-floating mb-3 text-center">
-        <input required type="password" class="form-control" id="password" name="password" placeholder="password"
+        <input required type="email" class="form-control" id="email" name="email" placeholder="email"
             on:change={clearMessage}>
-        <label for="password">{utils.getLabel('password',labels,$language)}</label>
-    </div>
-    <div class="form-floating mb-3 text-left">
-        <a href="/account/resetpassword" class="">{utils.getLabel('forgotten_password',labels,$language)}</a>
-    </div>
-    <div class="form-floating mb-3 text-left">
-        {#if isCloud() || dev==true}
-        {utils.getLabel('not_registered',labels,$language)}<a href="/account/register" class="">{utils.getLabel('register',labels,$language)}</a>
-        {/if}
+        <label for="email">{utils.getLabel('email',labels,$language)}</label>
     </div>
     {#if errorMessage!=''}
     <div class="alert alert-danger w-100" role="alert">
@@ -29,10 +24,13 @@
     </div>
     {/if}
     <div class="form-floating mb-3 text-center">
-    <button class="w-50 btn btn-lg btn-primary" type="submit">{utils.getLabel('send',labels,$language)}</button>
+    <button class="btn btn-lg btn-primary" type="submit">{utils.getLabel('send',labels,$language)}</button>
+    <button class="btn btn-lg btn-secondary" type="button" on:click|preventDefault={doCancel}>{utils.getLabel('cancel',labels,$language)}</button>
     </div>
-    <!--    <p class="mt-5 mb-3 text-muted">&copy; 2017–2022</p> -->
 </form>
+</div>
+<div class="col-md-2"></div>
+</div>
 
 <script>
     import { profile, token, language, isAuthenticated } from '$lib/usersession.js';
@@ -49,7 +47,10 @@
     function clearMessage(event) {
         errorMessage = ''
     }
-    async function doLogin(event) {
+    function doCancel(event) {
+        goto('/')
+    }
+    async function sendData(event) {
         event.preventDefault()
         const pwd = event.target.elements['password'].value
         const lg = event.target.elements['login'].value
@@ -107,36 +108,28 @@
 
     let labels = {
         'title': {
-            'pl': "Logowanie do serwisu",
-            'en': "Login to the service"
+            'pl': "Przywracanie hasła",
+            'en': "Reset password"
         },
         'send': {
             'pl': "Kontynuuj",
             'en': "Continue"
         },
-        'dev_mode': {
-            'pl': "Tryb develperski. Login: user, hasło: user",
-            'en': "Developer mode. Login: user, password: user"
+        'cancel': {
+            'pl': "Anuluj",
+            'en': "Cancel"
         },
         'login': {
             'pl': "Login",
             'en': "Login"
         },
-        'password': {
-            'pl': "Hasło",
-            'en': "Password"
+        'email': {
+            'pl': "E-mail",
+            'en': "E-mail"
         },
-        'forgotten_password': {
-            'pl': "Zapomniałem hasła",
-            'en': "Forgotten password"
-        },
-        'not_registered': {
-            'pl': "Jeżeli nie masz konta, ",
-            'en': "If you don't have an account, "
-        },
-        'register': {
-            'pl': "zarejestruj się",
-            'en': "register"
-        },
+        'info': {
+            'pl': "Wpisz swój login i e-mail. Na podany adres zostanie wysłany link do zmiany hasła.",
+            'en': "Enter your login and e-mail. A link to change your password will be sent to the given address."
+        }
     }
 </script>
