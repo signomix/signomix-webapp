@@ -174,6 +174,11 @@
                 return;
             }
         }
+        if(data.shared){
+            if (!confirm('Zapisanie pulpitu jako publicznie dostępny spowoduje,\n że publicznie dostępne staną się dane wszystkich urządzeń oraz grup\n wykorzystywanych na tym pulpicie.\nZapisać?')) {
+                return;
+            }
+        }
         if (dev) {
             if (browser) {
                 if (data.id == 'new') {

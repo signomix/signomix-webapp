@@ -153,7 +153,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" class:active={$page.url.pathname==='/account/settings' } href="/account/settings">
+                        <a class="nav-link" class:active={$page.url.pathname.startsWith('/account/settings') } href="/account/settings">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i class="bi bi-sliders me-2"></i>{utils.getLabel('settings',labels,$language)}
                             </span>

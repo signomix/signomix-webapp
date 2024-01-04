@@ -205,8 +205,7 @@
     <div class="row">
         <div class="col">
             <div class="col-form-label  text-center">
-                <button class="btn btn-outline-danger mt-1"
-                    on:click={handlePassword}>{utils.getLabel('changePassword',labels,$language)}</button>
+                <a href="/account/settings/password" class="btn btn-outline-danger mt-1">{utils.getLabel('changePassword',labels,$language)}</a>
             </div>
         </div>
         <div class="col">
@@ -222,8 +221,7 @@
     {#if !readonly}
     <div class="row">
         <div class="col-form-label">
-            <a href="/settings" class="btn btn-outline-secondary mt-1"
-                on:click={handleCancel}>{utils.getLabel('cancel',labels,$language)}</a>
+            <a href="/account/settings" class="btn btn-outline-secondary mt-1">{utils.getLabel('cancel',labels,$language)}</a>
             <button class="btn btn-outline-primary me-4 mt-1"
                 on:click={handleSave}>{utils.getLabel('save',labels,$language)}</button>
         </div>
@@ -236,6 +234,7 @@
     import { utils } from '$lib/utils.js';
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { dev } from '$app/environment';
+    import { goto } from '$app/navigation';
 
     export let config
     export let callback
@@ -282,11 +281,12 @@
     function handleCancel(event) {
         callback(null)
     }
-    function handlePassword(event) {
-        alert('Not implemented yet')
-    }
+/*     function handlePassword(event) {
+        console.log('handlePassword')
+        goto('/account/settings/password')
+    } */
     function handleRemove(event) {
-        alert('Not implemented yet')
+        alert(utils.getLabel('alert_remove',labels,$language))
     }
 
     const apiUrl = utils.getBackendUrl(location) + '/api/core/organization/' + config.organization
@@ -401,6 +401,10 @@
         'polish': {
             'en': 'Polski',
             'pl': 'Polski'
+        },
+        'alert_remove': {
+            'pl': 'Funkcja chwilowo niedostępna.Skontaktuj się z administratorem w celu usunięcia konta.',
+            'en': 'Function not available at the moment. Contact administrator to remove account.'
         }
 
     }

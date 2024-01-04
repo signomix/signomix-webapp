@@ -133,10 +133,7 @@ const getSgxData2 = async function (devMode, apiUrl, config, filter, token, tran
   const headers = new Headers()
   headers.set('Accept', 'application/json');
   headers.set('Authentication', token);
-  var query = config.query;
-  if (query == null || query == undefined || query == "undefined") {
-    query = "";
-  }
+  let query = applyFilter(config.query, filter);
   const endpoint = apiUrl + config.dev_id + "/" + config.channel + "?query=" + query;
   const res = await fetch(endpoint, { mode: 'cors', headers: headers });
   let data;
@@ -165,7 +162,8 @@ const getSgxGroupData = async function (devMode, apiUrl, config, filter, token, 
   const headers = new Headers()
   headers.set('Accept', 'application/json');
   let endpoint = apiUrl + config.group + "/" + config.channel+"?tid="+token
-  if(config.query!=null && config.query!=undefined && config.query.length>0){
+  let query = applyFilter(config.query, filter);
+  if(query.length>0){
     endpoint = endpoint + "&query=" + config.query
   } 
   console.log('getSgxGroupData_3', endpoint)
@@ -387,6 +385,42 @@ const getSgxGroup = async function (devMode, apiUrl, token) {
     throw new Error(res.statusText);
   }
 }
+
+
+const applyFilter = function(query, filter){
+  var result=sweepSpaces(query)
+  if(filter==null || filter==undefined || filter=="undefined"){
+    return result
+  }
+  if(filter.fromDate!=null && filter.fromDate!=undefined && filter.fromDate.length>0){
+      result=replaceDQL(result,'from',filter.fromDate)
+  }
+  if(filter.toDate!=null && filter.toDate!=undefined && filter.toDate.length>0){
+      result=replaceDQL(result,'to',filter.toDate)
+  }
+  //if(filter.project!=null && filter.project!=undefined && filter.project.length>0){
+  //    result=replaceDQL(result,'project',filter.project)
+  //}
+  return result
+}
+function replaceDQL(query, key, value){
+  let a=''
+  let b=''
+  let q2
+  let idx1=query.indexOf(key)
+  if(idx1<0){
+      q2=query+' '+key+' '+value
+  }else{
+      a=query.substring(0,idx1)
+      let idx2=query.indexOf(' ',idx1+(key+' ').length)
+      if(idx2>0){
+          b=query.substring(idx2)
+      }
+      q2=a+key+' '+value+b
+  }
+  return q2
+}
+function sweepSpaces(t){return t.trim().replace(/ +(?= )/g,'')}
 
 
 const groupDataExample = [
