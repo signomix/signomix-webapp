@@ -3,6 +3,7 @@
 	import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
 	export let dialog
 	export let title
+	export let message
 	export let okLabel
 	export let cancelLabel
 	export let callback
@@ -50,9 +51,11 @@
 <dialog bind:this={dialog}>
 	<div class="text-center">
 		<h5 class="card-title mb-2">{title}</h5>
-		<p>
-			<slot />
-		</p>
+		{#if message!=undefined && message!=null && message!=''}
+		<p>{message}</p>
+		{:else}
+	    <slot />
+		{/if}
 		<p><em>{getHint()}</em></p>
 		<div>
 			<button class="btn btn-outline-secondary" on:click={callback(false)}>{cancelLabel||utils.getLabel('cancel',
