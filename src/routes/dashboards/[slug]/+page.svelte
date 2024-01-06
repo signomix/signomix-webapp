@@ -380,9 +380,12 @@
         numberOfCols = event.detail.cols
     }
 
+    
+
+
     let setFilter = function (event) {
-        editedFilter.from = dashboardFilter.from
-        editedFilter.to = dashboardFilter.to
+        //editedFilter.from = utils.getLocalDateFormat(dashboardFilter.from)
+        //editedFilter.to = utils.getLocalDateFormat(dashboardFilter.to)
     }
     let showLink = function (event) {
         // do nothing
@@ -394,9 +397,9 @@
     }
 
     function filterFormCallback(cfg) {
-        dashboardFilter.from = cfg.from
-        dashboardFilter.to = cfg.to
-        editedFilter = { from: '', to: '' }
+        dashboardFilter.from = utils.getDateApiISOFormat(cfg.from)
+        dashboardFilter.to = utils.getDateApiISOFormat(cfg.to)
+        editedFilter = { from: cfg.from, to: cfg.to }
     }
     function filterFormCallbackCancel() {
         editedFilter = { from: '', to: '' }

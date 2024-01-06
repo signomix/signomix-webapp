@@ -38,6 +38,7 @@ export const utils = {
     //zamienia ciąg znaków reprezentujący datę
     //z formatu wymaganego przez pole typu datetime-local formularza HTML
     //na format stosowany przez REST API
+    //REST API zamieni znak '~' w definicji offsetu czasu na '+'
     if (dateString === null || dateString === undefined || dateString.trim().length === 0) {
       return ''
     }
@@ -47,9 +48,9 @@ export const utils = {
     offset = Math.abs(offset)
     let timeOffsetStr
     if (offset < 10) {
-      timeOffsetStr = "_" + (plusOffset ? "+0" : "-0") + offset + "00"
+      timeOffsetStr = "_" + (plusOffset ? "~0" : "-0") + offset + "00" // '~' is used instead of '+' because '+' is not allowed in URL
     } else {
-      timeOffsetStr = "_" + (plusOffset ? "+" : "-") + offset + "00"
+      timeOffsetStr = "_" + (plusOffset ? "~" : "-") + offset + "00"  // '~' is used instead of '+' because '+' is not allowed in URL
     }
     timeOffsetStr = timeOffsetStr.substring(1)
     //
@@ -59,7 +60,9 @@ export const utils = {
     //zamienia ciąg znaków reprezentujący datę
     //z formatu wymaganego przez pole typu datetime-local formularza HTML
     //na format stosowany przez REST API
+    //REST API zamieni znak '~' w definicji offsetu czasu na '+'
     if (dateString === null || dateString === undefined || dateString.trim().length === 0) {
+      console.log('getDateApiISOFormat: null dateString')
       return ''
     }
     //
@@ -68,9 +71,9 @@ export const utils = {
     offset = Math.abs(offset)
     let timeOffsetStr
     if (offset < 10) {
-      timeOffsetStr = "_" + (plusOffset ? "+0" : "-0") + offset + ":00"
+      timeOffsetStr = "_" + (plusOffset ? "~0" : "-0") + offset + ":00" // '~' is used instead of '+' because '+' is not allowed in URL
     } else {
-      timeOffsetStr = "_" + (plusOffset ? "+" : "-") + offset + ":00"
+      timeOffsetStr = "_" + (plusOffset ? "~" : "-") + offset + ":00"  // '~' is used instead of '+' because '+' is not allowed in URL
     }
     timeOffsetStr = timeOffsetStr.substring(1)
     //

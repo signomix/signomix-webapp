@@ -388,19 +388,21 @@ const getSgxGroup = async function (devMode, apiUrl, token) {
 
 
 const applyFilter = function(query, filter){
+  console.log('applyFilter', query, filter)
   var result=sweepSpaces(query)
   if(filter==null || filter==undefined || filter=="undefined"){
     return result
   }
-  if(filter.fromDate!=null && filter.fromDate!=undefined && filter.fromDate.length>0){
-      result=replaceDQL(result,'from',filter.fromDate)
+  if(filter.from!=null && filter.from!=undefined && filter.from.length>0){
+      result=replaceDQL(result,'from',filter.from)
   }
-  if(filter.toDate!=null && filter.toDate!=undefined && filter.toDate.length>0){
-      result=replaceDQL(result,'to',filter.toDate)
+  if(filter.to!=null && filter.to!=undefined && filter.to.length>0){
+      result=replaceDQL(result,'to',filter.to)
   }
-  //if(filter.project!=null && filter.project!=undefined && filter.project.length>0){
-  //    result=replaceDQL(result,'project',filter.project)
-  //}
+  if(filter.project!=null && filter.project!=undefined && filter.project.length>0){
+      result=replaceDQL(result,'project',filter.project)
+  }
+  console.log('applyFilter result', result)
   return result
 }
 function replaceDQL(query, key, value){
@@ -418,6 +420,7 @@ function replaceDQL(query, key, value){
       }
       q2=a+key+' '+value+b
   }
+  console.log('replaceDQL query,key,value,result: '+query+','+key+','+value+','+q2)
   return q2
 }
 function sweepSpaces(t){return t.trim().replace(/ +(?= )/g,'')}

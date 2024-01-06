@@ -5,12 +5,13 @@
     import { sgxhelper } from '$lib/sgxhelper.js';
     import { dev } from '$app/environment';
     import { onMount } from 'svelte';
+    import { afterUpdate } from 'svelte';
 
     export let config
     export let filter
 
     let errorMessage = '';
-    let apiUrl = utils.getBackendUrl(location) + '/api/provider/v2/device/'
+    let apiUrl
     let parentHeight = 0;
 
     console.log('ReportWidget config', config)
@@ -19,8 +20,19 @@
         apiUrl = utils.getBackendUrl(location) + '/api/provider/group/'
         promise = sgxdata.getGroupData(dev, apiUrl, config, filter, $token);
     } else {
+        apiUrl = utils.getBackendUrl(location) + '/api/provider/v2/device/'
         promise = sgxdata.getData(dev, apiUrl, config, filter, $token);
     }
+
+    afterUpdate(() => {
+        if (isGroup()) {
+            apiUrl = utils.getBackendUrl(location) + '/api/provider/group/'
+            promise = sgxdata.getGroupData(dev, apiUrl, config, filter, $token);
+        } else {
+            apiUrl = utils.getBackendUrl(location) + '/api/provider/v2/device/'
+            promise = sgxdata.getData(dev, apiUrl, config, filter, $token);
+        }
+    });
 
     let front = true;
 
