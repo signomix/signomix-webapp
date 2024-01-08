@@ -6,92 +6,122 @@
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h5>{utils.getLabel('devices',labels,$language)}</h5>
+    {#if nameFilter.length>0 || euiFilter.length>0 || tagName.length>0 || tagValue.length>0}
+    <a title={utils.getLabel('filter',labels,$language)} on:click|preventDefault={switchFilter}>
+        <i class="bi bi-funnel-fill h5 me-2 link-dark"></i>
+    </a>
+    {:else}
+    <a title={utils.getLabel('filter',labels,$language)} on:click|preventDefault={switchFilter}>
+        <i class="bi bi-funnel h5 me-2 link-dark"></i>
+    </a>
+    {/if}
 </div>
 {#await promise}
 {:then devices}
 <div class="component">
-<div class="row">
-    <div class="col-1">
-        <label class="col-form-label">Filtruj:</label>
-    </div>
-    <div class="col-2">
-        <input type="text" bind:value={euiFilter} on:input={euiChanged} class="form-control mb-2" aria-label="Search EUI">
-    </div>
-    <div class="col-4">
-        <input type="text" bind:value={nameFilter} on:input={nameChanged} class="form-control mb-2" aria-label="Search name">
-    </div>
-    
-    <div class="col-1">
-        <button on:click={handleSearch} class="btn btn-outline-secondary mb-2" type="button">Szukaj</button>
-    </div>
-    <div class="col-4"></div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <div class="table-responsive">
-            <table class="table">
-                <thead class="table-light">
-                    <tr>
-                        <th scope="col" class="col-1">#</th>
-                        <th scope="col" class="col-2">EUI</th>
-                        <th scope="col" class="col-5">{utils.getLabel('name',labels,$language)}</th>
-                        <th scope="col" class="col-2">{utils.getLabel('type',labels,$language)}</th>
-                        <th scope="col" class="col-2 text-end">{utils.getLabel('actions',labels,$language)}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {#each devices as config, index}
-                    <tr>
-                        <th scope="row" class="col-1">{offset+1+index}</th>
-                        <td class="col-2"><a href="/devices/{config.eui}">{config.eui}</a></td>
-                        <td class="col-5">{config.name}</td>
-                        <td class="col-2">{config.type}</td>
-                        <td class="col-2 text-end">
-                            {#if config.type=='GENERIC' && $profile.uid==config.userID}
-                            <a href="/devices/{config.eui}/upload"><i class="bi bi-upload me-2 link-dark" title={utils.getLabel('upload',labels,$language)}></i></a>
-                            {/if}
-                            <a href="/devices/{config.eui}/download" title={utils.getLabel('download',labels,$language)}><i
-                                class="bi bi-cloud-download me-2 link-dark"></i></a>
-                            <a href="/devices/{config.eui}/copy" title={utils.getLabel('copy',labels,$language)}><i
-                                class="bi bi-copy me-2 link-dark"></i></a>
-                            <a href="/devices/{config.eui}/edit" title={utils.getLabel('configure',labels,$language)}><i
-                                class="bi bi-gear me-2 link-dark"></i></a>
-                            <a href="" on:click|preventDefault={deleteSelected(config.eui)} title={utils.getLabel('delete',labels,$language)}><i
-                                class="bi bi-trash link-dark"></i></a>
-                        </td>
-                    </tr>
-                    {/each}
-                </tbody>
-            </table>
+    {#if showFilter}
+    <div class="row">
+        <div class="col-md-6">
+            <label class="col-form-label" for="input-eui">EUI:</label>
+            <input type="text" id="input-eui" bind:value={euiFilter} on:input={euiChanged} class="form-control mb-2"
+                aria-label="Search EUI">
+        </div>
+        <div class="col-md-6">
+            <label class="col-form-label" for="input-name">Nazwa:</label>
+            <input type="text" id="input-name" bind:value={nameFilter} on:input={nameChanged} class="form-control mb-2"
+                aria-label="Search name">
         </div>
     </div>
-</div>
-<div class="row">
-    <div class="col-2">
-        <a class="btn btn-outline-primary" role="button" href="/devices/new/edit">{utils.getLabel('add',labels,$language)}</a>
+    <div class="row">
+        <div class="col-md-6">
+            <label class="col-form-label" for="input-tagName">Tag name:</label>
+            <input type="text" id="input-tagName" bind:value={tagName} on:input={tagNameChanged} class="form-control mb-2"
+                aria-label="Search tag name">
+        </div>
+        <div class="col-md-6">
+            <label class="col-form-label" for="input-tagValue">Tag value:</label>
+            <input type="text" id="input-tagValue" bind:value={tagValue} on:input={tagValueChanged} class="form-control mb-2"
+                aria-label="Search name">
+        </div>
     </div>
-    <div class="col-10">
-        <nav aria-label="Table navigation">
-            <ul class="pagination justify-content-end">
-                <li class="page-item">
-                    <a class="page-link" class:disabled={offset==0} on:click={handleLoadPrevious}>
-                        <span aria-hidden="true"> &laquo; </span>
-                    </a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link disabled" on:click={handleDoNothing}>
-                        {offset+1}-{offset+devices.length}
-                    </a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" class:disabled={devices.length<limit} on:click={handleLoadNext}>
-                        <span aria-hidden="true"> &raquo; </span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
+    <div class="row">
+        <div class="col">
+            <button on:click={handleSearch} class="btn btn-outline-primary mb-2" type="button">Szukaj</button>
+            <button on:click={handleClearFilter} class="btn btn-outline-secondary mb-2" type="button">Wyczyść</button>
+        </div>
     </div>
-</div>
+    {/if}
+    <div class="row">
+        <div class="col-12">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col" class="col-1">#</th>
+                            <th scope="col" class="col-2">EUI</th>
+                            <th scope="col" class="col-5">{utils.getLabel('name',labels,$language)}</th>
+                            <th scope="col" class="col-2">{utils.getLabel('type',labels,$language)}</th>
+                            <th scope="col" class="col-2 text-end">{utils.getLabel('actions',labels,$language)}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each devices as config, index}
+                        <tr>
+                            <th scope="row" class="col-1">{offset+1+index}</th>
+                            <td class="col-2"><a href="/devices/{config.eui}">{config.eui}</a></td>
+                            <td class="col-5">{config.name}</td>
+                            <td class="col-2">{config.type}</td>
+                            <td class="col-2 text-end">
+                                {#if config.type=='GENERIC' && $profile.uid==config.userID}
+                                <a href="/devices/{config.eui}/upload"><i class="bi bi-upload me-2 link-dark"
+                                        title={utils.getLabel('upload',labels,$language)}></i></a>
+                                {/if}
+                                <a href="/devices/{config.eui}/download"
+                                    title={utils.getLabel('download',labels,$language)}><i
+                                        class="bi bi-cloud-download me-2 link-dark"></i></a>
+                                <a href="/devices/{config.eui}/copy" title={utils.getLabel('copy',labels,$language)}><i
+                                        class="bi bi-copy me-2 link-dark"></i></a>
+                                <a href="/devices/{config.eui}/edit"
+                                    title={utils.getLabel('configure',labels,$language)}><i
+                                        class="bi bi-gear me-2 link-dark"></i></a>
+                                <a href="" on:click|preventDefault={deleteSelected(config.eui)}
+                                    title={utils.getLabel('delete',labels,$language)}><i
+                                        class="bi bi-trash link-dark"></i></a>
+                            </td>
+                        </tr>
+                        {/each}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2">
+            <a class="btn btn-outline-primary" role="button"
+                href="/devices/new/edit">{utils.getLabel('add',labels,$language)}</a>
+        </div>
+        <div class="col-10">
+            <nav aria-label="Table navigation">
+                <ul class="pagination justify-content-end">
+                    <li class="page-item">
+                        <a class="page-link" class:disabled={offset==0} on:click={handleLoadPrevious}>
+                            <span aria-hidden="true"> &laquo; </span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link disabled" on:click={handleDoNothing}>
+                            {offset+1}-{offset+devices.length}
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" class:disabled={devices.length<limit} on:click={handleLoadNext}>
+                            <span aria-hidden="true"> &raquo; </span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
 </div>
 {/await}
 {/if}
@@ -108,6 +138,9 @@
     let limit = 12
     let euiFilter = ''
     let nameFilter = ''
+    let tagName = ''
+    let tagValue = ''
+    let showFilter = false
 
     let promise = getDevices(offset)
 
@@ -144,10 +177,15 @@
             let url = utils.getBackendUrl(location) + "/api/core/device"
             url = url + '?offset=' + actualOffset + '&limit=' + limit + '&full=true'
 
-            if(euiFilter.length>0) {
-                url = url + '&search=eui:'+euiFilter
-            }else if(nameFilter.length>0){
-                url = url + '&search=name:'+nameFilter
+            if (euiFilter.length > 0) {
+                url = url + '&search=eui:' + euiFilter
+                offset = 0
+            } else if (nameFilter.length > 0) {
+                url = url + '&search=name:' + nameFilter
+                offset = 0
+            } else if (tagName.length > 0 && tagValue.length > 0) {
+                url = url + '&search=tag:' + tagName + ':' + tagValue
+                offset = 0
             }
             headers.set('Authentication', $token);
             headers.set('Access-Control-Allow-Origin', '*');
@@ -172,6 +210,9 @@
         }
         return devcs;
     }
+    function switchFilter() {
+        showFilter = !showFilter
+    }
     function handleLoadPrevious(event) {
         offset = offset - limit
         if (offset < 0) offset = 0
@@ -188,13 +229,38 @@
         console.log('handleSearch', event)
         promise = getDevices(offset);
     }
+    function handleClearFilter(event) {
+        console.log('handleClearFilter', event)
+        euiFilter = ''
+        nameFilter = ''
+        tagName = ''
+        tagValue = ''
+        promise = getDevices(offset);
+    }
+    function isFilterSet() {
+        return euiFilter.length > 0 || nameFilter.length > 0 || tagName.length > 0 || tagValue.length > 0
+    }
     function euiChanged(event) {
         console.log('euiChanged', event)
         nameFilter = ''
+        tagName = ''
+        tagValue = ''
     }
     function nameChanged(event) {
         console.log('nameChanged', event)
         euiFilter = ''
+        tagName = ''
+        tagValue = ''
+    }
+    function tagNameChanged(event) {
+        console.log('tagNameChanged', event)
+        euiFilter = ''
+        nameFilter = ''
+    }
+    function tagValueChanged(event) {
+        console.log('tagValueChanged', event)
+        euiFilter = ''
+        nameFilter = ''
     }
 
     function showUploadForm(eui) {
@@ -208,11 +274,11 @@
     function deleteSelected(eui) {
         return function (event) {
             event.preventDefault();
-            let confirmed = confirm(utils.getLabel('question_delete',labels,$language))
-            if(!confirmed || dev) return
-            
+            let confirmed = confirm(utils.getLabel('question_delete', labels, $language))
+            if (!confirmed || dev) return
+
             let headers = new Headers();
-            let url = utils.getBackendUrl(location) + "/api/core/device/"+eui
+            let url = utils.getBackendUrl(location) + "/api/core/device/" + eui
             headers.set('Authentication', $token);
             fetch(url,
                 {
@@ -220,7 +286,7 @@
                     method: 'DELETE',
                     referrerPolicy: 'origin-when-cross-origin',
                     headers: headers
-                }).then(promise=getDevices(0)).catch((error) => {
+                }).then(promise = getDevices(0)).catch((error) => {
                     console.log(error)
                 });
         }
@@ -276,7 +342,7 @@
             'pl': "Czy na pewno chcesz usunąć urządzenie? Również dane związane z tym urządzeniem zostaną usunięte. Potwierdzasz?",
             'en': "Are you sure you want to delete this device? All data related to this device will be deleted as well. Confirm?"
         }
-        
+
     }
 
 </script>
