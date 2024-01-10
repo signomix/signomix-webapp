@@ -250,6 +250,8 @@
     let regex = /{[^}]*}/g;
     let keywords = ['{info}', '{tag.name}', '{tag.value}', '{target.eui}', '{target.name}', '{device.eui}', '{device.name}', '{var}', '{value}']
     let matches = text.match(regex);
+    console.log('keywords', keywords)
+    console.log('matches', matches)
     let result = ''
     let unknownVariables = []
     if (matches != null) {
