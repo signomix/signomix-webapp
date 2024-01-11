@@ -66,6 +66,8 @@
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { utils } from '$lib/utils.js';
     import { dev } from '$app/environment';
+    import { invalidateAll } from '$app/navigation';
+
 
     export let data
     let offset = 0
@@ -142,12 +144,15 @@
         console.log("remove alert"+id)
         sendRemove(id)
         promise = getAlerts()
+        //invalidateAll()
     }
     function removeAll(){
         if (confirm("Czy na pewno chcesz usunąć wszystkie powiadomienia?")) {
             console.log("remove all alerts")
-            sendRemove("*")
+            sendRemove("-1")
+            offset = 0
             promise = getAlerts()
+            //invalidateAll()
         }
     }
 
