@@ -70,7 +70,7 @@
                     <input class="form-check-input" type="checkbox" value="y" id="accept" name="accept" required
                         bind:checked={accepted}>
                     <label class="form-check-label" for="accept">
-                        {utils.getLabel('legal_text1',labels,$language)} <a href="/#!doc,legal" target="_blank">{utils.getLabel('legal_text2',labels,$language)}</a>.
+                        {utils.getLabel('legal_text1',labels,$language)} <a href={termsURL} target="_blank">{utils.getLabel('legal_text2',labels,$language)}</a>.
                     </label>
                 </div>
                 {#if validationError!=''}
@@ -99,6 +99,7 @@
     import { utils } from '$lib/utils.js';
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { goto } from '$app/navigation';
+    import { PUBLIC_TERMS_URL } from '$env/static/public'; 
  
     let login = ''
     let email = ''
@@ -109,6 +110,8 @@
     let preferredLanguage = 'PL'
     let accepted = false
     let validationError=''
+    //TODO: load PUBLIC_TERMS_URL from the backend
+    let termsURL = PUBLIC_TERMS_URL
 
     let registered = false
     let errorMessage = ''

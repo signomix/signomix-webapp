@@ -403,8 +403,8 @@
             'pl': 'Polski'
         },
         'alert_remove': {
-            'pl': 'Funkcja chwilowo niedostępna.Skontaktuj się z administratorem w celu usunięcia konta.',
-            'en': 'Function not available at the moment. Contact administrator to remove account.'
+            'pl': 'Jeśli chcesz usunąć konto, skontaktuj się z administratorem wysyłąjąc wiadomość na adres signomix@experiot.pl z konta e-mail podanego podczas zakładania konta.',
+            'en': 'If you want to remove your account, please contact administrator by sending e-mail to signomix@experiot pl from the e-mail address provided during account creation.'
         }
 
     }
