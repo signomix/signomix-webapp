@@ -33,7 +33,7 @@
     name: "Tag"
   }]
 
-  let booleabOperators = [{
+  let booleanOperators = [{
     id: 3,
     name: "AND"
   }, {
@@ -48,6 +48,18 @@
     id: -1,
     name: "mniejsze niż"
   }]
+
+  let logicalOperators = [{
+    id: 1,
+    name: "or"
+  }, {
+    id: 2,
+    name: "and"
+  }, {
+    id: 0,
+    name: "none"
+  }
+]
 
   let alarmLevels = [{
     id: 1,
@@ -66,6 +78,21 @@
     name: "Emergency"
   }
   ]
+
+  let labels = {
+        'none': {
+            'pl': "bez dodatkowego warunku",
+            'en': "without additional condition"
+        },
+        'or': {
+            'pl': "LUB dodatkowo",
+            'en': "OR additionally"
+        },
+        'and': {
+            'pl': "ORAZ dodatkowo",
+            'en': "AND additionally"
+        },
+      }
 
   let selectedOption = "1";
   let showEuiModal = false;
@@ -337,104 +364,6 @@
     return ''
   }
 
-  let labels = {
-    login: {
-      en: "Login",
-      pl: "Login",
-    },
-    name: {
-      en: "Name",
-      pl: "Imię",
-    },
-    surname: {
-      en: "Surname",
-      pl: "Nazwisko",
-    },
-    account: {
-      en: "Account type",
-      pl: "Typ konta",
-    },
-    email: {
-      en: "E-mail",
-      pl: "E-mail",
-    },
-    phone_prefix: {
-      en: "Phone prefix",
-      pl: "Prefiks telefonu",
-    },
-    roles: {
-      en: "Role",
-      pl: "Rola",
-    },
-    language: {
-      en: "Preffered language",
-      pl: "Preferowany język",
-    },
-    registration: {
-      en: "Registration date",
-      pl: "Data rejestracji",
-    },
-    notyfication_methods: {
-      en: "Configuration of notification types",
-      pl: "Konfiguracja typów powiadomień",
-    },
-    general_notifications: {
-      en: "General",
-      pl: "Ogólne",
-    },
-    info_notifications: {
-      en: "Info",
-      pl: "Informacyjne",
-    },
-    warning_notifications: {
-      en: "Warning",
-      pl: "Ostrzegawcze",
-    },
-    alert_notifications: {
-      en: "Alert",
-      pl: "Alarmowe",
-    },
-    cancel: {
-      en: "Cancel",
-      pl: "Anuluj",
-    },
-    save: {
-      en: "Save",
-      pl: "Zapisz",
-    },
-    in_app: {
-      en: "In application",
-      pl: "W aplikacji",
-    },
-    webhook: {
-      en: "Webhook",
-      pl: "Webhook",
-    },
-    organization: {
-      en: "Organization",
-      pl: "Organizacja",
-    },
-    changePassword: {
-      en: "Change password",
-      pl: "Zmień hasło",
-    },
-    deleteAccount: {
-      en: "Delete account",
-      pl: "Usuń konto",
-    },
-    type: {
-      en: "Type",
-      pl: "Typ",
-    },
-    channel: {
-      en: "Channel",
-      pl: "Kanał",
-    },
-    config: {
-      en: "Configuration",
-      pl: "Konfiguracja",
-    },
-  };
 </script>
 <Dialog title="Uwaga!" message={errorMessage} bind:dialog callback={closeDialog}>
 </Dialog>
@@ -554,7 +483,6 @@
         <div class="col-sm-3">
           <label for="input2"></label>
           <select class="form-select" style="width: 100%;" id="input2" bind:value={config.conditions[0].condition1}>
-            <option disabled selected value=null>-- wybierz --</option>
             {#each conditionOperators as operator}
             <option value={operator.id}>{operator.name}</option>
             {/each}
@@ -570,17 +498,20 @@
 
       <!-- Pozostałe elementy w nowej linii na małych ekranach -->
       <div class="form-group d-flex align-items-center flex-wrap  flex-sm-nowrap mb-3">
-        <div class="form-check ms-2 mb-2 mb-sm-0 me-2">
-          <input bind:checked={orCondition1} on:change={addFilter} type="checkbox" id="enableEdit"
-            class="form-check-input" />
-          <label class="form-check-label" for="enableEdit">LUB</label>
+        <div class="col-sm-3">
+
+          <select class="form-select" style="width: 100%;" id="input2" bind:value={config.conditions[0].logic} >
+            {#each logicalOperators as operator}
+            <option value={operator.id}>{utils.getLabel(operator.name, labels, $language)}</option>
+            {/each}
+          </select>
         </div>
-        {#if orCondition1}
+
+        {#if config.conditions[0].logic>0}
         <!--<p class="mt-3 mb-3 flex-grow-0 me-2">LUB</p>-->
-        <p class="mt-3 mb-3 me-3">{config.conditions[0].measurement}</p>
+        <p class="mt-2 mb-2 me-2 ms-2">{config.conditions[0].measurement}</p>
         <select class="form-select mb-2 mb-sm-0" style="width: 20%;" id="input5"
           bind:value={config.conditions[0].condition2}>
-          <option disabled selected value=null>-- wybierz --</option>
           {#each conditionOperators as operator}
           <option value={operator.id}>{operator.name}</option>
           {/each}
@@ -623,8 +554,7 @@
             {#if i ==1 }
             <select class="form-select mb-0 display-7 me-2" style="max-width: 30%;" id="inputOrAnd{i}"
               bind:value={condition.conditionOperator}>
-              <option disabled selected value=null>-- wybierz --</option>
-              {#each booleabOperators as operator}
+              {#each booleanOperators as operator}
               <option value={operator.id}>{operator.name}</option>
               {/each}
             </select>
@@ -642,7 +572,6 @@
           <!-- Pozostałe 3 inputy -->
           <label for="input2{i}" />
           <select class="form-select me-1" style="max-width: 20%;" id="input2{i}" bind:value={condition.condition1}>
-            <option disabled selected value=null>-- wybierz --</option>
             {#each conditionOperators as operator}
             <option value={operator.id}>{operator.name}</option>
             {/each}
@@ -655,21 +584,25 @@
 
         <!-- Paragraf, przycisk "Edytuj", Inputy 5 i 6 w jednej linii dla sm i większej -->
         <div class="form-group d-flex align-items-center flex-wrap mb-3">
-          <div class="form-check ms-3 me-2">
-            <input bind:checked={orCondition2} on:change={(event)=> {
+          <div class="form-check me-2">
+            <select class="form-select" style="width: 100%;" id="input2a" bind:value={config.conditions[1].logic} >
+              {#each logicalOperators as operator}
+              <option value={operator.id}>{utils.getLabel(operator.name, labels, $language)}</option>
+              {/each}
+            </select>
+<!--             <input bind:checked={orCondition2} on:change={(event)=> {
             addFilterWithIndex(event, i);
             }}
             type="checkbox"
             id="enableEdit{i}"
             class="form-check-input"
             />
-            <label class="form-check-label" for="enableEdit{i}">LUB</label>
+            <label class="form-check-label" for="enableEdit{i}">LUB</label> -->
           </div>
-          {#if orCondition2}
+          {#if config.conditions[1].logic>0}
           <!--<p class="mt-3 flex-grow-0 me-1">LUB</p>-->
           <p class="mt-3 me-2">{condition.measurement}</p>
           <select class="form-select me-1" style="max-width: 20%;" id="input5{i}" bind:value={condition.condition2}>
-            <option disabled selected value=null>-- wybierz --</option>
             {#each conditionOperators as operator}
             <option value={operator.id}>{operator.name}</option>
             {/each}
