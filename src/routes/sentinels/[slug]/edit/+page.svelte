@@ -55,6 +55,7 @@
             cfg.conditionOk = config.conditionOk
             cfg.conditionOkMessage = config.conditionOkMessage
             cfg.timeShift = config.timeShift
+            cfg.hysteresis = config.hysteresis
             let validationError = validate(cfg)
             if (validationError != '') {
                 //callback(validationError)
