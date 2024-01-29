@@ -196,7 +196,7 @@
         </div>
         <div class="col-md-8">
             <input type="text" class="form-control" id="input-alertNotificationChannelConfig"
-                value={getChannelConfig('general')} readonly={readonly}>
+                value={getChannelConfig('alert')} readonly={readonly}>
         </div>
     </div>
 

@@ -18,9 +18,10 @@
                 <thead class="table-light">
                     <tr>
                         <th scope="col" class="col-2">Źródło</th>
+                        <th scope="col" class="col-2">Reguła</th>
                         <th scope="col" class="col-1">Poziom</th>
                         <th scope="col" class="col-2">Data</th>
-                        <th scope="col" class="col-6">Wiadomość</th>
+                        <th scope="col" class="col-4">Wiadomość</th>
                         <th scope="col" class="col-1"></th>
                     </tr>
                 </thead>
@@ -28,9 +29,10 @@
                     {#each data.list as alert, index}
                     <tr>
                         <td class="col-2">{alert.deviceEui}</td>
+                        <td class="col-2"><a href="/sentinels/{alert.sentinelConfigId}">{alert.sentinelConfigId}</a></td>
                         <td class="col-1">{alert.level}</td>
                         <td class="col-2">{new Date(alert.createdAt).toLocaleString()}</td>
-                        <td class="col-6">{alert.messagePl}</td>
+                        <td class="col-4">{alert.messagePl}</td>
                         <td class="col-1"><a href="#" on:click|preventDefault={remove(alert.id)}><i class="bi bi-trash3 link-dark"></i></a></td>
                     </tr>
                     {/each}
@@ -70,42 +72,23 @@
     import { utils } from '$lib/utils.js';
     import { dev } from '$app/environment';
     import { invalidateAll } from '$app/navigation';
-
-    export let data
+    import { sgxsentinel } from '../../lib/sgxsentinel.js';
+    import { onMount } from 'svelte';
 
     let offset = 0
     let limit = 20
 
-    function removeAlert(id) {
-        if(dev){
-            return
+    let data=loadData()
+
+    onMount(async () => {
+        if (!$isAuthenticated) {
+            console.log('redirect to login');
+            goto('/login');
         }
-        const headers = new Headers()
-        let method = 'DELETE'
-        let url = utils.getBackendUrl(location) + "/api/signal/" + id
-        headers.set('Authentication', $token);
-        let response = fetch(
-            url,
-            { method: method, mode: 'cors', headers: headers }
-        ).then((response) => {
-            if (response.status == 200) {
-                errorMessage = ''
-            } else if (response.status == 401 || response.status == 403) {
-                token.set(null)
-            } else {
-                alert(
-                    utils.getMessage(utils.FETCH_STATUS)
-                        .replace('%1', response.status)
-                        .replace('%2', response.statusText)
-                )
-            }
-        }).catch((error) => {
-            errorMessage = error.message
-            if (errorMessage == 'Failed to fetch' && location.protocol.toLowerCase() == 'https') {
-                errorMessage = errorMessage + ' Możliwa przyczyna: self signed nie są obsługiwane.'
-            }
-            console.log(error)
-        });
+    })
+
+    async function loadData(){
+        return sgxsentinel.getSentinels(dev, utils.getBackendUrl(location)+'/api/signal', limit, offset, $token);
     }
 
     function remove(id) {
@@ -124,7 +107,7 @@
                 }).then(response => {
                     if (response.ok) {
                         console.log('OK')
-                        invalidateAll()
+                        data=loadData()
                     } else {
                         console.log('ERROR')
                     }
@@ -134,9 +117,14 @@
     }
 
     function handleLoadPrevious() {
+        offset = offset - limit
+        if (offset < 0) offset = 0
+        data=loadData()
     }
 
     function handleLoadNext() {
+        offset = offset + limit;
+        data=loadData()
     }
 
     function handleDoNothing() {

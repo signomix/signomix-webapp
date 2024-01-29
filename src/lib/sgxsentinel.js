@@ -21,7 +21,6 @@ export const sgxsentinel = {
     try {
       return Promise.resolve(getSgxSentinel(devMode, apiUrl, token)).then((result) => result);
     } catch (e) {
-      console.log('getSentinels', e)
       throw new Error(e);
     }
     //return Promise.resolve(getSgxNotifications(devMode, apiUrl, limit, offset, token)).then((result) => result);

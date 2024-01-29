@@ -17,18 +17,20 @@
             <table class="table">
                 <thead class="table-light">
                     <tr>
-                        <th scope="col" class="col-5">Nazwa</th>
+                        <th scope="col" class="col-1">ID</th>
+                        <th scope="col" class="col-3">Nazwa</th>
                         <th scope="col" class="col-1">Alarm</th>
-                        <th scope="col" class="col-1">Wiadomość</th>
+                        <th scope="col" class="col-6">Wiadomość</th>
                         <th scope="col" class="col-1"></th>
                     </tr>
                 </thead>
                 <tbody>
                     {#each data.list as sentinel, index}
                     <tr>
-                        <td class="col-5"><a href="/sentinels/{sentinel.id}/edit">{sentinel.name}</a></td>
+                        <td class="col-1">{sentinel.id}</td>
+                        <td class="col-3"><a href="/sentinels/{sentinel.id}/edit">{sentinel.name}</a></td>
                         <td class="col-1">{sentinel.alertLevel}</td>
-                        <td class="col-5">{sentinel.alertMessage}</td>
+                        <td class="col-6">{sentinel.alertMessage}</td>
                         <td class="col-1"><a href="/sentinels" on:click|preventDefault={remove(sentinel.id)}><i class="bi bi-trash3 link-dark"></i></a></td>
                     </tr>
                     {/each}
@@ -72,11 +74,24 @@
     import { utils } from '$lib/utils.js';
     import { dev } from '$app/environment';
     import { invalidateAll } from '$app/navigation';
-
-    export let data
+    import { sgxsentinel } from '../../lib/sgxsentinel.js';
+    import { onMount } from 'svelte';
 
     let offset = 0
     let limit = 20
+
+    let data=loadData()
+
+    onMount(async () => {
+        if (!$isAuthenticated) {
+            console.log('redirect to login');
+            goto('/login');
+        }
+    })
+
+    async function loadData(){
+        return sgxsentinel.getSentinels(dev, utils.getBackendUrl(location)+'/api/sentinel', limit, offset, $token);
+    }
 
     function remove(id) {
         return function () {
@@ -94,7 +109,7 @@
                 }).then(response => {
                     if (response.ok) {
                         console.log('OK')
-                        invalidateAll()
+                        data=loadData()
                     } else {
                         console.log('ERROR')
                     }
@@ -104,9 +119,14 @@
     }
 
     function handleLoadPrevious() {
+        offset = offset - limit
+        if (offset < 0) offset = 0
+        data=loadData()
     }
 
     function handleLoadNext() {
+        offset = offset + limit;
+        data=loadData()
     }
 
     function handleDoNothing() {
