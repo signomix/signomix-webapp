@@ -215,7 +215,7 @@
             </div>
         </nav>
         <main class="col-md-9 col-lg-10 ms-sm-auto px-md-4">
-            {#if $isAuthenticated || $page.url.pathname=='/login' || $page.url.pathname=='/account/register' || $page.url.pathname=='/account/resetpassword'}
+            {#if $isAuthenticated || $page.url.pathname=='/login' || $page.url.pathname=='/account/register' || $page.url.pathname=='/account/resetpassword' || $page.url.pathname=='/account/setpassword'}
             <slot></slot>
             {:else if $page.url.pathname!='/' && $page.url.pathname!='/login'}
             {goto('/')}

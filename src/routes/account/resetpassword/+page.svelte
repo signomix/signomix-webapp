@@ -33,9 +33,13 @@
             <div class="form-floating mb-3 text-center">
                 {#if !success}
                 <button class="btn btn-lg btn-primary" type="submit">{utils.getLabel('send',labels,$language)}</button>
-                {/if}
                 <button class="btn btn-lg btn-secondary" type="button"
                     on:click|preventDefault={doCancel}>{utils.getLabel('cancel',labels,$language)}</button>
+                {:else}
+                <button class="btn btn-lg btn-secondary" type="button"
+                    on:click|preventDefault={doCancel}>{utils.getLabel('ok',labels,$language)}</button>
+                {/if}
+                
             </div>
         </form>
     </div>
@@ -65,6 +69,7 @@
     }
     async function sendData(event) {
         event.preventDefault()
+        errorMessage = ''
         if (!dev) {
             const url = utils.getBackendUrl(location) + '/api/account/' + login + '/resetpassword?email=' + email
             const result = fetch(
@@ -74,6 +79,8 @@
                     mode: 'cors',
                     referrerPolicy: 'origin-when-cross-origin'
                 }).then((response) => {
+                    success = true // hiding result to prevent checking if login or email exists
+                    /*
                     if (response.status == 200) {
                         errorMessage = ''
                         success = true
@@ -83,6 +90,7 @@
                             .replace('%2', response.statusText)
                         alert(errorMessage)
                     }
+                    */
                 }).catch((error) => {
                     errorMessage = error.message
                     if (errorMessage == 'Failed to fetch' && location.protocol.toLowerCase() == 'https') {
@@ -113,6 +121,10 @@
         'cancel': {
             'pl': "Anuluj",
             'en': "Cancel"
+        },
+        'ok': {
+            'pl': "OK",
+            'en': "OK"
         },
         'login': {
             'pl': "Login",
