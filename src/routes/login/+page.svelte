@@ -42,6 +42,7 @@
     import { page } from '$app/stores';
 
     let errorMessage = ''
+    let submitted=false
 
     function isCloud() {
         return utils.isCloudSubdomain($page.url)
@@ -51,13 +52,15 @@
     }
     async function doLogin(event) {
         event.preventDefault()
+        if (submitted) return
+        errorMessage = ''
         const pwd = event.target.elements['password'].value
         const lg = event.target.elements['login'].value
         if (!dev) {
+            submitted=true
             const url = utils.getBackendUrl(location) + '/api/auth/v2'
             const headers = new Headers()
             headers.set('Authentication', 'Basic ' + btoa(lg + ":" + pwd));
-
             const result = fetch(
                 url,
                 {
@@ -69,6 +72,11 @@
                 })
                 .then(response => response.text())
                 .then(text => {
+                    if(text=='' || text==null) {
+                        errorMessage = utils.getLabel('failure', labels, $language)
+                        submitted=false
+                        return
+                    }
                     token.set(text)
                     const headers2 = new Headers()
                     headers2.set('Authentication', text);
@@ -84,12 +92,14 @@
                 })
                 .then(response => response.json())
                 .catch(error => {
-                    errorMessage = 'Nieudane logowanie'
-                    alert("HTTP-Error: " + error);
+                    errorMessage = utils.getLabel('failure', labels, $language)
+                    submitted=false
+                    //alert("HTTP-Error: " + error);
                     token.set(null)
                 })
 
                 result.then(user => {
+                    if(errorMessage!='') return
                     console.log('user after login', user)
                     profile.set(user)
                     goto('/')
@@ -133,6 +143,10 @@
         'not_registered': {
             'pl': "Jeżeli nie masz konta, ",
             'en': "If you don't have an account, "
+        },
+        'failure': {
+            'pl': "Nieudane logowanie",
+            'en': "Login failed"
         },
         'register': {
             'pl': "zarejestruj się",

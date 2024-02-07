@@ -18,11 +18,14 @@
     let mapElement;
     let map;
     let zoom = 13
+    let idxLatLon = { lat: 0, lon: 1 }
+    const _latitude = 'latitude'
+    const _longitude = 'longitude'
+
 
     //let first = false
     onMount(() => {
-        console.log('index', index)
-        showMyMap()
+        show()
     });
 
     onDestroy(async () => {
@@ -33,22 +36,28 @@
     });
 
 
-    function showMyMap(){
-        map = L.map(getMapElementId()).setView([51.73724466828256, 19.44138748417409], zoom);
+    function showMyMap(jsonData) {
+        map = L.map(getMapElementId()).setView([getLatitude(jsonData), getLongitude(jsonData)], zoom);
         L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
             maxZoom: 19,
             attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
         }).addTo(map);
     }
 
-    async function show() {
+    function show() {
+        console.log('getting data')
         try {
-            let promise = await sgxdata.getData(dev, apiUrl, config, filter, $token, transform)
+            let promise = sgxdata.getData(dev, apiUrl, config, filter, $token, transform)
                 .then(
                     (jsonData) => {
                         if (jsonData != null) {
-                            console.log('jsonData', jsonData)
-                            //showMap(jsonData)
+                            idxLatLon = getLatLonIndexes(jsonData)
+                            if (idxLatLon.lat == -1 || idxLatLon.lon == -1) {
+                                console.log('No latitude or longitude found in data')
+                                return
+                            }
+                            console.log('map jsonData', jsonData)
+                            showMap(jsonData)
                         }
                     }
                 )
@@ -85,6 +94,51 @@
         return $language + '-' + $language.toUpperCase()
     }
 
+    /**
+     * Get marker's popup content
+     * @param jsonData
+     */
+    function getDataTable(jsonData) {
+        let table = '' // '<div style="width:200px;">'
+        table += '<div class="row g-0" style="width:200px;">'
+        table += '<div class="txt border col-6 p-1">'
+            +utils.getLabel('measurement',labels,$language)+'</div><div class="txt border col-6 p-1">'
+            +utils.getLabel('value',labels,$language)+'</div>'
+        table += '</div>'
+        for (let j = 0; j < jsonData[jsonData.length - 1].length; j++) {
+            //don't show lat and lon
+            if (j == idxLatLon.lat || j == idxLatLon.lon) {
+                continue
+            }
+            table += '<div class="row g-0" style="width:200px;">'
+            table += '<div class="border col-6 txt p-1">' + jsonData[jsonData.length - 1][j]['name'] + '</div>'
+            table += '<div class="border col-6 value p-1 text-start">' + jsonData[jsonData.length - 1][j]['value'] + '</div>'
+            //table += '</div>'
+        }
+        table += '</div>'
+        return table
+    }
+
+    /**
+     * Get the latitude and longitude indexes from the data
+     * @param jsonData
+     * @returns {lan, lon}
+     */
+    function getLatLonIndexes(jsonData) {
+        let latIndex = -1
+        let lonIndex = -1
+        for (let i = 0; i < jsonData[0].length; i++) {
+            if (jsonData[0][i]['name'].toLowerCase() == _latitude) {
+                latIndex = i
+            }
+            if (jsonData[0][i]['name'].toLowerCase() == _longitude) {
+                lonIndex = i
+            }
+        }
+        return { lat: latIndex, lon: lonIndex }
+    }
+
+
     function showMap(jsonData) {
         console.log('showMap', jsonData)
         let lat = 0
@@ -94,19 +148,9 @@
         if (jsonData.length == 0 || jsonData[0].length < 1) {
             return
         }
-        let p1 = self.jsonData[0][0]['name'].toLowerCase()
-        let p2 = self.jsonData[0][1]['name'].toLowerCase()
-        let lonFirst = false
-        if ((p2 == 'latitude' && p1 == 'longitude') || (p2 == 'lat' && p1 == 'lon')) {
-            lonFirst = true
-        }
-        if (lonFirst) {
-            lat = parseFloat(jsonData[jsonData.length - 1][1]['value'])
-            lon = parseFloat(jsonData[jsonData.length - 1][0]['value'])
-        } else {
-            lat = parseFloat(jsonData[jsonData.length - 1][0]['value'])
-            lon = parseFloat(jsonData[jsonData.length - 1][1]['value'])
-        }
+        lat = parseFloat(jsonData[jsonData.length - 1][idxLatLon.lat]['value'])
+        lon = parseFloat(jsonData[jsonData.length - 1][idxLatLon.lon]['value'])
+
         //TODO getSelectedLocale()
         self.measureDate = new Date(jsonData[jsonData.length - 1][0]['timestamp']).toLocaleString(getSelectedLocale())
 
@@ -119,9 +163,16 @@
         }).addTo(map);
         let polyline = null
         let marker = null
+        let popupOptions = {
+            maxWidth: 200,
+            maxHeight: 200,
+        }
+        let markerOptions={
+            
+        }
         try {
             marker = L.marker([lat, lon])
-            marker.setPopupContent(lat + ',' + lon)
+            marker.bindPopup(getDataTable(jsonData), popupOptions).openPopup()
             marker.addTo(map);
         } catch (err) {
             console.log(err)
@@ -129,14 +180,9 @@
         if (jsonData.length > 0) {
             let tmpLat, tmpLon
             let latlngs = []
-            for (i = 0; i < jsonData.length; i++) {
-                if (lonFirst) {
-                    tmpLat = parseFloat(jsonData[i][1]['value'])
-                    tmpLon = parseFloat(jsonData[i][0]['value'])
-                } else {
-                    tmpLat = parseFloat(jsonData[i][0]['value'])
-                    tmpLon = parseFloat(jsonData[i][1]['value'])
-                }
+            for (let i = 0; i < jsonData.length; i++) {
+                tmpLat = parseFloat(jsonData[i][idxLatLon.lat]['value'])
+                tmpLon = parseFloat(jsonData[i][idxLatLon.lon]['value'])
                 if (!(isNaN(tmpLat) || isNaN(tmpLon))) {
                     latlngs.push([tmpLat, tmpLon])
                 }
@@ -148,7 +194,25 @@
             map.fitBounds(polyline.getBounds());
         }
     }
+
+    let labels = {
+        'measurement': {
+            'pl': "Pomiar",
+            'en': "Measurement",
+        },
+        'value': {
+            'pl': "Wartość",
+            'en': "Value",
+        }
+    }
 </script>
-<div class="p-1 pt-2 w-100" id={getMapElementId()}>
-    
-</div>
+<style>
+    .txt {
+        font-size: 0.6rem;
+    }
+
+    .value {
+        font-size: 0.6rem;
+    }
+</style>
+<div class="p-1 pt-2 w-100" id={getMapElementId()}></div>
