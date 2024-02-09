@@ -17,25 +17,25 @@
                     <tr>
                         <th scope="col" class="col-1">#</th>
                         <th scope="col" class="col-2">EUI</th>
-                        <th scope="col" class="col-9">{utils.getLabel('name', labels, $language)}</th>
-                        <th scope="col" class="col-2">{utils.getLabel('action',labels,$language)}</th>
+                        <th scope="col" class="col-8">{utils.getLabel('name', labels, $language)}</th>
+                        <th scope="col" class="col-1">{utils.getLabel('action',labels,$language)}</th>
                     </tr>
                 </thead>
                 <tbody>
                     {#each groups as config, index}
                     <tr>
                         <th scope="row" class="col-1">{offset+1+index}</th>
-                        <td class="col-3"><a href="/groups/{config.eui}">{config.eui}</a></td>
-                        <td class="col-9">{config.name}</td>
-                        <td class="col-2">
-                            {#if (utils.isObjectAdmin($profile, config.userID, $defaultOrganizationId))}
-                            <a href="/groups/{config.eui}/edit" title={utils.getLabel('configure',labels,$language)}><i class="bi bi-pencil-square link-dark"></i></a>
-                            <a href="" on:click|preventDefault={deleteSelected(config.eui)} title={utils.getLabel('delete',labels,$language)}><i
-                                class="bi bi-trash link-dark"></i></a>
-                            {/if}
+                        <td class="col-2"><a href="/groups/{config.eui}">{config.eui}</a></td>
+                        <td class="col-8">{config.name}</td>
+                        <td class="col-1">
                             <a href="/groups/{config.eui}/download"
                                     title={utils.getLabel('download',labels,$language)}><i
                                         class="bi bi-cloud-download me-2 link-dark"></i></a>
+                            {#if (utils.isObjectAdmin($profile, config.userID, $defaultOrganizationId))}
+                            <a href="/groups/{config.eui}/edit" title={utils.getLabel('configure',labels,$language)}><i class="bi bi-pencil-square me-2 link-dark"></i></a>
+                            <a href="" on:click|preventDefault={deleteSelected(config.eui)} title={utils.getLabel('delete',labels,$language)}><i
+                                class="bi bi-trash link-dark"></i></a>
+                            {/if}
                         </td>
                     </tr>
                     {/each}

@@ -7,11 +7,11 @@
         <span class="navbar-toggler-icon"></span>
     </button>
     <span class="d-none d-sm-inline">
-        <a class="me-3" href="/" on:click|preventDefault={setLanguagePl}>
-            <span style="color: white;">PL</span>
+        <a class="me-2" href="/" on:click|preventDefault={setLanguagePl}>
+            <img src="/img/flags/4x3/pl.svg" height="16px" title="język polski"/>
         </a>
-        <a class="me-3" href="/" on:click|preventDefault={setLanguageEn}>
-            <span style="color: white;">EN</span>
+        <a class="me-4" href="/" on:click|preventDefault={setLanguageEn}>
+            <img src="/img/flags/4x3/gb.svg" height="16px" title="english language"/>
         </a>
     </span>
 </header>
@@ -20,7 +20,7 @@
         <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse navbar-collapse">
             <div class="position-sticky pt-0 sidebar-sticky">
                 <ul class="nav flex-column">
-                    <li class="nav-item">
+                    <li class="nav-item mt-3">
                         <div class="nav-link">
                             <i class="h2 bi bi-person-circle me-2"></i>
                             {#if $isAuthenticated}
@@ -216,13 +216,19 @@
                     <li class="nav-item d-inline d-sm-none">
                         <div class="nav-link">
                             <a href="/" on:click|preventDefault={setLanguagePl}>
-                                <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">PL</span>
+                                <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                    <img class="border opacity-75" src="/img/flags/4x3/pl.svg" height="16px" title="język polski"/>
+                                </span>
                             </a>
-                            <a href="/" on:click|preventDefault={setLanguageEn}>
-                                <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">EN</span>
-                            </a>
+                            <a class="ms-2" href="/" on:click|preventDefault={setLanguageEn}>
+                                <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                    <img class="border opacity-75" src="/img/flags/4x3/gb.svg" height="16px" title="english language"/></span>
+                            </a> 
                         </div>
                     </li>
+                    <!--<li class="nav-item">
+                        <div class="nav-link" style="color: darkgray;">version: {platformInfo.version}</div>
+                    </li>-->
                 </ul>
             </div>
         </nav>
