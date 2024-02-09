@@ -4,7 +4,7 @@
 </div>
 <div class="row">
     <div class="col-12">
-        <DownloadForm eui={slug} callback={goBack} type="device"/>
+        <DownloadForm eui={slug} callback={goBack} type="group"/>
     </div>
 </div>
 
@@ -29,7 +29,7 @@
         previousPage = from?.url.pathname || previousPage
     })
     function goBack() {
-        goto("/devices");
+        goto("/groups");
     }
 
     

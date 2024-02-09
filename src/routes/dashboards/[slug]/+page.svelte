@@ -41,7 +41,7 @@
         {/if}
     </span>
 </div>
-<div class="dashboard-container" id={dashboardId}>
+<div class="dashboard-container overflow-auto {getRightPadding()}" id={dashboardId}>
     {#if items.length==0}
     <div class="alert alert-light mx-auto my-auto">{utils.getLabel('empty',labels,$language)}</div>
     {:else}
@@ -135,6 +135,7 @@
     import { invalidateAll } from '$app/navigation';
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { defaultOrganizationId } from '$lib/stores.js';
+    import { afterUpdate, tick } from 'svelte';
 
     import DashboardFilterForm from '$lib/components/DashboardFilterForm.svelte';
     import DashboardLinkForm from '$lib/components/DashboardLinkForm.svelte';
@@ -244,6 +245,15 @@
             }
         }
         return false
+    }
+
+    let getRightPadding = function(){
+        console.log('getRightPadding numberOfCols', numberOfCols)
+        if(numberOfCols==1){
+            return 'me-2'
+        }else{
+            return ''
+        }
     }
 
     let getRefreshInterval = function () {
@@ -410,6 +420,16 @@
     function linkFormCallback() {
         // do nothing
     }
+
+    const touchScrollAllow = async () => {
+    await tick()
+    for(let elm of document.querySelectorAll('.svlt-grid-item'))
+        elm.style.touchAction = 'auto'
+}
+
+    afterUpdate(()=>{
+        touchScrollAllow()
+    })
 
     let labels = {
         'refresh': {

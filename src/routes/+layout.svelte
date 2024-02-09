@@ -6,43 +6,36 @@
         data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
+    <span class="d-none d-sm-inline">
+        <a class="me-3" href="/" on:click|preventDefault={setLanguagePl}>
+            <span style="color: white;">PL</span>
+        </a>
+        <a class="me-3" href="/" on:click|preventDefault={setLanguageEn}>
+            <span style="color: white;">EN</span>
+        </a>
+    </span>
 </header>
 <div class="container-fluid">
     <div class="row">
         <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse navbar-collapse">
             <div class="position-sticky pt-0 sidebar-sticky">
-                <div class="nav flex-column">
-                    <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="h2 bi bi-person-circle me-2"></i>
-                        {#if $isAuthenticated}
-                        <span class="lead">{$profile.uid}</span>
-                        {:else}
-                        <span>{utils.getLabel('signin',labels,$language)}</span>
-                        {/if}
-                        <i class="bi bi-caret-down-fill ms-1"></i>
-                    </a>
-                    <ul class="dropdown-menu">
-                        {#if !$isAuthenticated}
-                        <li><a class="dropdown-item" href="/login">
-                                <span data-bs-toggle="collapse"
-                                    data-bs-target=".navbar-collapse.show">{utils.getLabel('signin',labels,$language)}</span>
-                            </a></li>
-
-                        {:else}
-                        <li><a class="dropdown-item" href="/" on:click={logout}>
-                                <span data-bs-toggle="collapse"
-                                    data-bs-target=".navbar-collapse.show">{utils.getLabel('signout',labels,$language)}</span></a>
-                        </li>
-                        {/if}
-                        <li><a class="dropdown-item" href="/" on:click|preventDefault={setLanguagePl}>
-                                <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">PL</span></a>
-                        </li>
-                        <li><a class="dropdown-item" href="/" on:click|preventDefault={setLanguageEn}>
-                                <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">EN</span></a>
-                        </li>
-                    </ul>
-                </div>
                 <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <div class="nav-link">
+                            <i class="h2 bi bi-person-circle me-2"></i>
+                            {#if $isAuthenticated}
+                            <span class="lead">{$profile.uid}</span>
+                            {:else}
+                            <a href="/login"
+                                class="link-body-emphasis link-underline-opacity-0 link-underline-opacity-0-hover"
+                                class:active={$page.url.pathname==='/login' }>
+                                <span data-bs-toggle="collapse"
+                                    data-bs-target=".navbar-collapse.show">{utils.getLabel('signin',labels,$language)}
+                                </span>
+                            </a>
+                            {/if}
+                        </div>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/' } href="/">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
@@ -50,14 +43,6 @@
                             </span>
                         </a>
                     </li>
-                    {#if isCloud() || dev==true}
-                        <li class="nav-item">
-                            <a class="nav-link" class:active={$page.url.pathname==='/account/register' } href="/account/register">
-                                <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                    <i class="bi bi-person-add me-2"></i>{utils.getLabel('signup',labels,$language)}
-                                </span>
-                            </a>
-                        {/if}
                     {#if $isAuthenticated}
                     {#if $profile && !utils.isDefaultOrganizationUser($profile)}
                     {#if !utils.isUserRole($profile, 'limited', false)}
@@ -153,7 +138,8 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" class:active={$page.url.pathname.startsWith('/account/settings') } href="/account/settings">
+                        <a class="nav-link" class:active={$page.url.pathname.startsWith('/account/settings') }
+                            href="/account/settings">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i class="bi bi-sliders me-2"></i>{utils.getLabel('settings',labels,$language)}
                             </span>
@@ -211,11 +197,38 @@
                         </a>
                     </li>
                     {/if}
+                    {#if $isAuthenticated}
+                    <li class="nav-item"><a class="nav-link" href="/" on:click={logout}>
+                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show"><i
+                                    class="bi bi-x-circle me-2"></i>{utils.getLabel('signout',labels,$language)}</span></a>
+                    </li>
+                    {/if}
+                    {#if (isCloud() || dev==true) && !$isAuthenticated}
+                    <li class="nav-item">
+                        <a class="nav-link" class:active={$page.url.pathname==='/account/register' }
+                            href="/account/register">
+                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                <i class="bi bi-person-add me-2"></i>{utils.getLabel('signup',labels,$language)}
+                            </span>
+                        </a>
+                    </li>
+                    {/if}
+                    <li class="nav-item d-inline d-sm-none">
+                        <div class="nav-link">
+                            <a href="/" on:click|preventDefault={setLanguagePl}>
+                                <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">PL</span>
+                            </a>
+                            <a href="/" on:click|preventDefault={setLanguageEn}>
+                                <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">EN</span>
+                            </a>
+                        </div>
+                    </li>
                 </ul>
             </div>
         </nav>
         <main class="col-md-9 col-lg-10 ms-sm-auto px-md-4">
-            {#if $isAuthenticated || $page.url.pathname=='/login' || $page.url.pathname=='/account/register' || $page.url.pathname=='/account/resetpassword' || $page.url.pathname=='/account/setpassword'}
+            {#if $isAuthenticated || $page.url.pathname=='/login' || $page.url.pathname=='/account/register' ||
+            $page.url.pathname=='/account/resetpassword' || $page.url.pathname=='/account/setpassword'}
             <slot></slot>
             {:else if $page.url.pathname!='/' && $page.url.pathname!='/login'}
             {goto('/')}
@@ -240,7 +253,8 @@
                             <!-- <button type="button" class="btn btn-lg btn-outline-primary w-100" on:click={()=>
                                 toast(utils.getLabel('notavailable',labels,$language),{duration:
                                 7000,})}>{utils.getLabel('register',labels,$language)}</button> -->
-                                <a href="/account/register" class="btn btn-lg btn-outline-primary w-100">{utils.getLabel('register',labels,$language)}</a>
+                            <a href="/account/register"
+                                class="btn btn-lg btn-outline-primary w-100">{utils.getLabel('register',labels,$language)}</a>
                         </div>
                     </div>
                 </div>
@@ -296,12 +310,18 @@
     }
 
     function logout() {
-        console.log("LOGOUT")
+        console.log('logout clicked')
         token.set(null)
         profile.set(null)
         language.set('pl')
         goto('/')
         return true
+    }
+
+    function doLogin() {
+        console.log('login clicked')
+        goto('/login')
+        return false
     }
 
     let structureExpanded = false;

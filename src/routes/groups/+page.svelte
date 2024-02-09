@@ -33,6 +33,9 @@
                             <a href="" on:click|preventDefault={deleteSelected(config.eui)} title={utils.getLabel('delete',labels,$language)}><i
                                 class="bi bi-trash link-dark"></i></a>
                             {/if}
+                            <a href="/groups/{config.eui}/download"
+                                    title={utils.getLabel('download',labels,$language)}><i
+                                        class="bi bi-cloud-download me-2 link-dark"></i></a>
                         </td>
                     </tr>
                     {/each}

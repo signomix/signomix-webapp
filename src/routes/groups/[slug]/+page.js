@@ -22,7 +22,7 @@ export const load = async ({ params, url }) => {
   
     const getSelectedConfig = async (serviceUrl) => {
       let config = null
-      if (params.slug == 'new' || (dev && browser)) {
+      if (params.slug == 'new' || (dev)) {
         config = newGroup
       } else {
         try {
@@ -49,5 +49,17 @@ export const load = async ({ params, url }) => {
       }
       return config
     }
+
+    const newGroup = {
+      "eui":"new",
+      "name":"",
+      "userID":"",
+      "team":"",
+      "administrators":"",
+      "channels":{},
+      "description":"",
+      "open":true
+      }
+
     return await getSelectedConfig(utils.getBackendUrl(url))
   }

@@ -1,8 +1,15 @@
 <div class="row">
     <div class="col-12">
-        <p>{utils.getLabel('info1',labels,$language)} <b>{eui}</b>
+        {#if type == 'device'}
+        <p>{utils.getLabel('info1d',labels,$language)} <b>{eui}</b>
             {utils.getLabel('info2',labels,$language)}
-    </p>
+        </p>
+        {/if}
+        {#if type == 'group'}
+        <p>{utils.getLabel('info1g',labels,$language)} <b>{eui}</b>
+            {utils.getLabel('info2',labels,$language)}
+        </p>
+        {/if}
     </div>
 </div>
 <form class="mb-2">
@@ -49,8 +56,14 @@
     </div>
     <div class="row">
         <div class="col-form-label">
+            {#if type == 'device'}
             <a href="/devices" class="btn btn-outline-secondary mt-1"
                 on:click|preventDefault={handleCancel}>{utils.getLabel('cancel',labels,$language)}</a>
+            {/if}
+            {#if type == 'group'}
+            <a href="/groups" class="btn btn-outline-secondary mt-1"
+                on:click|preventDefault={handleCancel}>{utils.getLabel('cancel',labels,$language)}</a>
+            {/if}
             <button class="btn btn-outline-primary me-4 mt-1"
                 on:click|preventDefault={handleDownload}>{utils.getLabel('save',labels,$language)}</button>
         </div>
@@ -75,6 +88,7 @@
 
     export let eui
     export let callback
+    export let type
 
     let docUrl = null
     let now = new Date();
@@ -123,12 +137,59 @@
         if (!validate()) {
             return
         }
+        if(type=='device'){
+            downloadDeviceData(eui, toDate, fromDate, zoneId)
+        }else if(type=='group'){
+            downloadGroupData(eui, toDate, fromDate, zoneId)
+        }else{
+            errorMessage = 'Invalid type'
+        }
+        
+    }
+
+    function downloadDeviceData(eui, toDate, fromDate, zoneId) {
         // zone list: Intl.supportedValuesOf('timeZone')
         // actual zone: Intl.DateTimeFormat().resolvedOptions().timeZone
         const headers = new Headers()
         let toDateEncoded = encodeURIComponent(utils.getDateApiISOFormat(toDate))
         let fromDateEncoded = encodeURIComponent(utils.getDateApiISOFormat(fromDate))
         let url = utils.getBackendUrl(location) + "/api/provider/v2/device/" + eui + "/*"
+            + "?query=from " + fromDateEncoded + " to " + toDateEncoded
+            + "&zone=" + zoneId
+        headers.set('Authentication', $token);
+        headers.set('Accept', 'text/csv');
+        let response = fetch(
+            url,
+            {
+                method: 'GET',
+                //referrerPolicy: 'strict-origin-when-cross-origin',
+                mode: 'cors',
+                headers: headers
+            }
+        ).then(response => response.blob())
+            .then(blob => {
+                docUrl = window.URL.createObjectURL(blob);
+            })
+            .catch((error) => {
+                if (!silent) {
+                    errorMessage = error.message
+                    if (errorMessage == 'Failed to fetch' && location.protocol.toLowerCase() == 'https') {
+                        errorMessage = errorMessage + ' Możliwa przyczyna: self signed nie są obsługiwane.'
+                    }
+                }
+                if (error.message == 'Failed to fetch') {
+                    error.message = utils.getLabel('failToFetch', labels, $language)
+                }
+            });
+    }
+
+    function downloadGroupData(eui, toDate, fromDate, zoneId) {
+        // zone list: Intl.supportedValuesOf('timeZone')
+        // actual zone: Intl.DateTimeFormat().resolvedOptions().timeZone
+        const headers = new Headers()
+        let toDateEncoded = encodeURIComponent(utils.getDateApiISOFormat(toDate))
+        let fromDateEncoded = encodeURIComponent(utils.getDateApiISOFormat(fromDate))
+        let url = utils.getBackendUrl(location) + "/api/provider/group/" + eui + "/*"
             + "?query=from " + fromDateEncoded + " to " + toDateEncoded
             + "&zone=" + zoneId
         headers.set('Authentication', $token);
@@ -173,9 +234,13 @@
             'pl': "Pobiernie danych",
             'en': "Download data"
         },
-        'info1': {
+        'info1d': {
             'pl': "Z urządzenia o identyfikatorze",
             'en': "From device with identifier"
+        },
+        'info1g': {
+            'pl': "Z grupy urządzeń o identyfikatorze",
+            'en': "From device group with identifier"
         },
         'info2': {
             'pl': "zostaną pobrane dane dotyczące wybranego zakresu czasu. Daty w generowanym pliku będą zapisane zgodnie z wybraną strefą czasową.",
