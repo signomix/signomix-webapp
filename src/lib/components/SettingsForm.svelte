@@ -92,8 +92,7 @@
             <label for="input-createdAt" class="form-label">{utils.getLabel('registration',labels,$language)}</label>
         </div>
         <div class="col-md-10">
-            <input type="text" class="form-control" id="input-createdAt" value={new Date(config.createdAt).toISOString()
-                } disabled>
+            <input type="text" class="form-control" id="input-createdAt" value={getDateAsString(config.createdAt)} disabled>
         </div>
     </div>
 
@@ -221,7 +220,7 @@
     {#if !readonly}
     <div class="row">
         <div class="col-form-label">
-            <a href="/account/settings" class="btn btn-outline-secondary mt-1">{utils.getLabel('cancel',labels,$language)}</a>
+            <a href="{backLocation}" class="btn btn-outline-secondary mt-1">{utils.getLabel('cancel',labels,$language)}</a>
             <button class="btn btn-outline-primary me-4 mt-1"
                 on:click={handleSave}>{utils.getLabel('save',labels,$language)}</button>
         </div>
@@ -239,6 +238,7 @@
     export let config
     export let callback
     export let readonly
+    export let backLocation
 
     console.log('config', config);
 
@@ -265,6 +265,14 @@
             return config.alertNotificationChannel.substring(config.alertNotificationChannel.indexOf(":") + 1)
         }
         return ''
+    }
+
+    function getDateAsString(d){
+        try{
+            return new Date(d).toISOString()
+        }catch(e){
+            return ''
+        }       
     }
 
     function handleSave(event) {

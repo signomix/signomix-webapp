@@ -1,9 +1,13 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h5>{utils.getLabel('title',labels, $language)}</h5><a href="/account/settings/edit" title="Edit"><i class="bi bi-gear h5 me-2 link-dark"></i></a>
+    {#await data}
+    <h5>{utils.getLabel('title',labels, $language)}</h5><i class="bi bi-gear h5 me-2 link-dark"></i>
+    {:then data}
+    <h5>{utils.getLabel('title',labels, $language)}</h5><a href="/organization/users/{data.uid}/edit" title="Edit"><i class="bi bi-gear h5 me-2 link-dark"></i></a>
+    {/await}
 </div>
 {#await data}
 {:then data}
-<SettingsForm config={data} callback={saveSettings} readonly={true} backLocation="/account/settings"/>
+<SettingsForm config={data} callback={saveSettings} readonly={true} backLocation="/organization/users"/>
 {/await}
 <script>
     import SettingsForm from '$lib/components/SettingsForm.svelte';
@@ -47,36 +51,6 @@
     }
 
     function saveSettings(config){
-        console.log("saveSettings: ",config);
-        /*
-        let data = {
-            "uid": data.settings.uid,
-            "settings": config
-        }
-        console.log("data: ",data);
-        fetch('/api/settings', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data),
-        }).then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                throw new Error('Something went wrong');
-            }
-        }).then(data => {
-            console.log(data);
-            if(data.status=="OK"){
-                alert("Zapisano ustawienia");
-            }else{
-                alert("Błąd zapisu ustawień");
-            }
-        }).catch((error) => {
-            console.error('Error:', error);
-        });
-        */
     }
 
     let labels = {

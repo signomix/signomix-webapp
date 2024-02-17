@@ -14,7 +14,7 @@ export const utils = {
     return url.protocol + '//' + x
   },
   isCloudSubdomain: function (url) {
-    return url.host.startsWith('cloud.')
+    return url.host.startsWith('cloud.') || url.host.endsWith(this.STANDARD_DOMAIN)
   },
   getSubdomain: function (url) {
     let idx=url.host.indexOf('.')
@@ -23,6 +23,16 @@ export const utils = {
     }
     let subdomain=url.host.substring(0, idx)
     return subdomain
+  },
+  isB2bService: function (url) {
+    return url.host.endsWith(this.B2B_DOMAIN)
+  },
+  getTenantName: function (url) {
+    if(url.host.endsWith(this.B2B_DOMAIN)){
+      return url.host.substring(0, url.host.indexOf('.' + this.B2B_DOMAIN))
+    }else{
+      return ''
+    }
   },
   getLocalDateFormat: function (dateString) {
     //zamienia ciąg znaków reprezentujący datę
@@ -170,26 +180,26 @@ export const utils = {
   },
   getUserType: function (name) {
     switch (name) {
-      case 'user': // default type, standard user
-        return 0
-      case 'owner': // owner, service admin
-        return 1
+      case 'user': 
+        return 0  // default type, standard user
+      case 'owner': 
+        return 1  // owner, service admin
       case 'application':
         return 2
-      case 'demo':
-        return 3
-      case 'free':  // free account
-        return 4
-      case 'primary': // primary account
-        return 5
+      case 'demo':  
+        return 3  // demo account
+      case 'free':  
+        return 4  // free account
+      case 'primary': 
+        return 5  // primary account
       case 'readonly':
         return 6
       case 'extended':
         return 7
-      case 'superuser': // superuser
-        return 8
-      case 'admin': // organization admin
-        return 9
+      case 'manag. admin': 
+        return 8  // superuser
+      case 'admin': 
+        return 9  // organization admin
       case 'anonymous':
         return 10
       case 'subscriber':
@@ -219,7 +229,7 @@ export const utils = {
       case 7:
         return 'extended'
       case 8:
-        return 'superuser'
+        return 'manag. admin'
       case 9:
         return 'admin'
       case 10:
@@ -242,11 +252,15 @@ export const utils = {
       return defaultResult
     }
   },
-  isDefaultOrganizationUser: function (userProfile) {
+  //// algorithm changed until work on organizations is completed
+  /*isDefaultOrganizationUser: function (userProfile) {
     console.log('isDefaultOrganizationUser', userProfile, defaultOrganizationIdValue)
     let result = userProfile.organization == defaultOrganizationIdValue
       || defaultOrganizationIdValue == null
     return result
+  },*/
+  isDefaultOrganizationUser: function (userProfile) {
+    return userProfile.type !=8
   },
   recalculate: function (value, rounding) {
     try {
@@ -258,8 +272,9 @@ export const utils = {
   AUTHORIZATION_FAILED: 0,
   AUTHENTICATION_FAILED: 1,
   FETCH: 3,
-  FETCH_STATUS: 4
-
+  FETCH_STATUS: 4,
+  STANDARD_DOMAIN: 'signomix.com',
+  B2B_DOMAIN: 'iot360.cloud'
 }
 
 /*

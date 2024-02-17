@@ -305,36 +305,30 @@ export const sgxhelper = {
                 switch (role) {
                     case 0:
                         return 'standard'
-                        break
                     case 1:
                         return 'system admin'
-                        break
                     case 2:
                         return 'application' //not used
-                        break
                     case 3:
                         return 'demo'
-                        break
                     case 4:
                         return 'free'
-                        break
                     case 5:
                         return 'primary'
                     case 6:
                         return 'readonly'
-                        break
                     case 7:
                         return 'extended'
-                        break
                     case 8:
-                        return 'demo'
-                        break
+                        return 'manag. admin' //administrator managing tenants
                     case 9:
-                        return 'administrator'
-                        break
+                        return 'administrator' //tenant admin
+                    case 10:
+                        return 'anonymous'
                     case 100:
                         return 'subscriber'
-                        break
+                    case 1000:
+                        return 'any'
                     default:
                         return 'misconfigured'
                 }
@@ -343,36 +337,30 @@ export const sgxhelper = {
                 switch (role) {
                     case 0:
                         return 'standard'
-                        break
                     case 1:
                         return 'administrator systemu'
-                        break
                     case 2:
                         return 'aplikacja' //not used
-                        break
                     case 3:
                         return 'demo'
-                        break
                     case 4:
                         return 'darmowe'
-                        break
                     case 5:
                         return 'primary'
                     case 6:
                         return 'tylko odczyt'
-                        break
                     case 7:
                         return 'rozszerzone'
-                        break
                     case 8:
-                        return 'demo'
-                        break
+                        return 'administrator zarz.' //administrator managing tenants
                     case 9:
-                        return 'administrator'
-                        break
+                        return 'administrator' //tenant admin
+                    case 10:
+                        return 'anonimowy'
                     case 100:
                         return 'subskrybent'
-                        break
+                    case 1000:
+                        return 'any'
                     default:
                         return 'błędnie skonfigurowane'
                 }

@@ -69,7 +69,7 @@
 -->
 {#await data}
 {:then data}
-<SettingsForm config={data} callback={saveSettings} readonly={false} />
+<SettingsForm config={data} callback={saveSettings} readonly={false} backLocation="/account/settings"/>
 {/await}
 <script>
     import SettingsForm from '$lib/components/SettingsForm.svelte';

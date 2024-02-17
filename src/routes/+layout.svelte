@@ -70,6 +70,24 @@
                             </span>
                         </a>
                     </li>
+                    <li class="nav-item ms-3">
+                        <a class="nav-link" class:active={$page.url.pathname==='/organization/users' }
+                            href="/organization/users">
+                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                <i class="bi bi-people me-2"></i>{utils.getLabel('users',labels,$language)}
+                            </span>
+                        </a>
+                    </li>
+                    {#if $profile.type==8}
+                    <li class="nav-item ms-3">
+                        <a class="nav-link" class:active={$page.url.pathname==='/organization/tenants' }
+                            href="/organization/tenants">
+                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                <i class="bi bi-houses me-2"></i>{utils.getLabel('tenants',labels,$language)}
+                            </span>
+                        </a>
+                    </li>
+                    {/if}
                     {/if}
                     {/if}
                     <li class="nav-item">
@@ -444,6 +462,14 @@
         'settings': {
             'pl': "Ustawienia",
             'en': "Settings"
+        },
+        'users': {
+            'pl': "Użytkownicy",
+            'en': "Users"
+        },
+        'tenants': {
+            'pl': "Klienci",
+            'en': "Tenants"
         },
         'administration': {
             'pl': "Administracja",
