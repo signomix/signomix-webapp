@@ -39,8 +39,8 @@
             <label for="input-phone" class="form-label">{utils.getLabel('mobile',labels,$language)}</label>
         </div>
         <div class="col-md-4">
-            <input type="tel" class="form-control" id="input-phone" bind:value={config.phone}
-                pattern="[0-9]" readonly={readonly}>
+            <input type="tel" class="form-control" id="input-phone" bind:value={config.phone} pattern="[0-9]"
+                readonly={readonly}>
         </div>
     </div>
 
@@ -49,10 +49,9 @@
             <label for="input-language" class="form-label">{utils.getLabel('language',labels,$language)}</label>
         </div>
         <div class="col-md-4">
-<!--             <input type="text" class="form-control" id="input-language" bind:value={config.preferredLanguage}
+            <!--             <input type="text" class="form-control" id="input-language" bind:value={config.preferredLanguage}
                 readonly={readonly}> -->
-            <select class="form-select" id="input-language" value={config.preferredLanguage}
-                readonly={readonly}>
+            <select class="form-select" id="input-language" value={config.preferredLanguage} readonly={readonly}>
                 <option value="pl">{utils.getLabel('polish',labels,$language)}</option>
                 <option value="en">{utils.getLabel('english',labels,$language)}</option>
             </select>
@@ -89,10 +88,24 @@
     {/if}
     <div class="row">
         <div class="col-md-2 col-form-label">
+            <label for="input-path" class="form-label">{utils.getLabel('path',labels,$language)}</label>
+        </div>
+        <div class="col-md-2">
+            <input type="text" class="form-control" id="input-pathRoot" value={pathRoot}
+                disabled>
+        </div>
+        <div class="col-md-8">
+            <input type="text" class="form-control" id="input-path" bind:value={pathExt}
+                readonly={readonly}>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2 col-form-label">
             <label for="input-createdAt" class="form-label">{utils.getLabel('registration',labels,$language)}</label>
         </div>
         <div class="col-md-10">
-            <input type="text" class="form-control" id="input-createdAt" value={getDateAsString(config.createdAt)} disabled>
+            <input type="text" class="form-control" id="input-createdAt" value={getDateAsString(config.createdAt)}
+                disabled>
         </div>
     </div>
 
@@ -105,7 +118,9 @@
     </div>
 
     <div class="row">
-        <div class="col-md-2"><h6>{utils.getLabel('type',labels,$language)}</h6></div>
+        <div class="col-md-2">
+            <h6>{utils.getLabel('type',labels,$language)}</h6>
+        </div>
         <div class="col-md-3">
             <h6>{utils.getLabel('channel',labels,$language)}</h6>
         </div>
@@ -204,7 +219,8 @@
     <div class="row">
         <div class="col">
             <div class="col-form-label  text-center">
-                <a href="/account/settings/password" class="btn btn-outline-danger mt-1">{utils.getLabel('changePassword',labels,$language)}</a>
+                <a href="/account/settings/password"
+                    class="btn btn-outline-danger mt-1">{utils.getLabel('changePassword',labels,$language)}</a>
             </div>
         </div>
         <div class="col">
@@ -220,7 +236,8 @@
     {#if !readonly}
     <div class="row">
         <div class="col-form-label">
-            <a href="{backLocation}" class="btn btn-outline-secondary mt-1">{utils.getLabel('cancel',labels,$language)}</a>
+            <a href="{backLocation}"
+                class="btn btn-outline-secondary mt-1">{utils.getLabel('cancel',labels,$language)}</a>
             <button class="btn btn-outline-primary me-4 mt-1"
                 on:click={handleSave}>{utils.getLabel('save',labels,$language)}</button>
         </div>
@@ -240,7 +257,29 @@
     export let readonly
     export let backLocation
 
+    let pathExt = ''
+    let pathRoot = getPathRoot()
+
     console.log('config', config);
+
+    function getPathRoot(){
+        let tmpRoot
+        if(config.path.indexOf('.')>-1){
+            pathExt=config.path.substring(config.path.indexOf('.')+1).replace(/\./g,'/')
+            tmpRoot=config.path.substring(0,config.path.indexOf('.'))
+        }else{
+            pathExt=''
+            tmpRoot=config.path
+        }
+        if(tmpRoot.length==0){
+            return ''
+        }
+        if(tmpRoot.endsWith('/')){
+            return tmpRoot
+        }else{
+            return tmpRoot+'/'
+        }
+    }
 
     function getChannelName(channel) {
         if (channel == 'general') {
@@ -267,12 +306,12 @@
         return ''
     }
 
-    function getDateAsString(d){
-        try{
+    function getDateAsString(d) {
+        try {
             return new Date(d).toISOString()
-        }catch(e){
+        } catch (e) {
             return ''
-        }       
+        }
     }
 
     function handleSave(event) {
@@ -284,21 +323,74 @@
             + ':' + document.getElementById('input-warningNotificationChannelConfig').value
         config.alertNotificationChannel = document.getElementById('input-alertNotificationChannel').value
             + ':' + document.getElementById('input-alertNotificationChannelConfig').value
+        config.path=(pathRoot+pathExt).replace(/\//g,'.')
         callback(config)
     }
     function handleCancel(event) {
         callback(null)
     }
-/*     function handlePassword(event) {
-        console.log('handlePassword')
-        goto('/account/settings/password')
-    } */
+    /*     function handlePassword(event) {
+            console.log('handlePassword')
+            goto('/account/settings/password')
+        } */
     function handleRemove(event) {
-        alert(utils.getLabel('alert_remove',labels,$language))
+        alert(utils.getLabel('alert_remove', labels, $language))
+    }
+
+    function canEdit(actualProfile, user) {
+        // system admin can edit all users
+        if (actualProfile.uid == user.uid || actualProfile.type == 1) {
+            return true
+        }
+        // admins can edit users from their organization
+        if (actualProfile.organization != utils.getDefaultOrganization()
+            && actualProfile.organization == user.organization) {
+            if (actualProfile.type == 9) {
+                // tenant admin can edit all users from the same tree path
+                // TODO: check path and compare with user path
+                    return true
+            } else if (actualProfile.type == 8) {
+                // managing admin can edit all users from his organization and tenants
+                return true
+            } else {
+                return false
+            }
+        }else{
+            return false
+        }
+    }
+
+    function getTypesAllowed(profile) {
+        let types = []
+        if (profile.type == 8) { // managing admin
+            types.push({ type: 0, name: 'standard' }) // standard
+            types.push({ type: 4, name: 'free' }) // free
+            types.push({ type: 8, name: 'mgn.admin' }) // managing admin
+            types.push({ type: 9, name: 'admin' }) // tenant admin
+        } else if (profile.type == 9) { // tenant admin
+            types.push({ type: 0, name: 'standard' }) // standard
+            types.push({ type: 4, name: 'free' }) // free
+            types.push({ type: 9, name: 'admin' }) // tenant admin
+        } else if (profile.type == 1) { // system admin
+            types.push({ type: 0, name: 'standard' }) // standard
+            types.push({ type: 1, name: 'sys.admin' }) // system admin
+            types.push({ type: 2, name: 'application' }) // application
+            types.push({ type: 3, name: 'demo' }) // demo
+            types.push({ type: 4, name: 'free' }) // free
+            types.push({ type: 5, name: 'primary' }) // primary
+            types.push({ type: 6, name: 'readonly' }) // readonly
+            types.push({ type: 7, name: 'extended' }) // extended
+            types.push({ type: 8, name: 'mgn.admin' }) // managing admin
+            types.push({ type: 9, name: 'admin' }) // tenant admin
+            types.push({ type: 10, name: 'anonymous' }) // anonymous
+            types.push({ type: 100, name: 'subscriber' }) // subscriber
+        }
+        return types
     }
 
     const apiUrl = utils.getBackendUrl(location) + '/api/core/organization/' + config.organization
     let promise = sgxdata.getOrganization(dev, apiUrl, $token);
+
 
 
     let labels = {

@@ -34,6 +34,9 @@ export const utils = {
       return ''
     }
   },
+  getDefaultOrganizationId: function () {
+    return defaultOrganizationIdValue
+  },
   getLocalDateFormat: function (dateString) {
     //zamienia ciąg znaków reprezentujący datę
     //z formatu stosowanego przez REST API
