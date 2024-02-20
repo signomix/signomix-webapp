@@ -58,7 +58,7 @@
         callback(null)
     }
 
-    const apiUrl = utils.getBackendUrl(location) + '/api/core/organization/'+$profile.organization
+    const apiUrl = utils.getBackendUrl(location) + '/api/organization/'+$profile.organization
     let promise = sgxdata.getOrganization(dev,apiUrl,$token);
 
     let labels = {

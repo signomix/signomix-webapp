@@ -263,7 +263,9 @@ export const utils = {
     return result
   },*/
   isDefaultOrganizationUser: function (userProfile) {
-    return userProfile.type !=8
+    //return userProfile.type !=8
+    let result = userProfile.organization == defaultOrganizationIdValue
+      || defaultOrganizationIdValue == null
   },
   recalculate: function (value, rounding) {
     try {

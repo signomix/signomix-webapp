@@ -10,8 +10,17 @@
             <label for="input-account" class="form-label">{utils.getLabel('account',labels,$language)}</label>
         </div>
         <div class="col-md-5">
-            <input disabled type="text" class="form-control" id="input-account"
-                value={sgxhelper.getAccountTypeName(config.type,$language).toUpperCase()}>
+            <select class="form-select" id="input-account" value="{config.type}" disabled={!isManager}
+                readonly={readonly}>
+                {#each getTypesAllowed() as type}
+                <option value={type.type}>{utils.getLabel(type.name,labels,$language)}</option>
+                {/each}
+            </select>
+            <!--
+            <input disabled={!isManager} type="text" class="form-control" id="input-account"
+                value={sgxhelper.getAccountTypeName(config.type,$language).toUpperCase()}
+                readonly={readonly}>
+            -->
         </div>
     </div>
     <div class="row">
@@ -69,11 +78,11 @@
             <label for="input-role" class="form-label">{utils.getLabel('roles',labels,$language)}</label>
         </div>
         <div class="col-md-10">
-            <input disabled type="text" class="form-control" id="input-role" bind:value={config.role}
+            <input disabled={!isManager} type="text" class="form-control" id="input-role" bind:value={config.role}
                 readonly={readonly}>
         </div>
     </div>
-    {#if config.organization!=0}
+    {#if config.organization!=utils.getDefaultOrganizationId()}
     {#await promise}
     {:then data}
     <div class="row">
@@ -91,12 +100,10 @@
             <label for="input-path" class="form-label">{utils.getLabel('path',labels,$language)}</label>
         </div>
         <div class="col-md-2">
-            <input type="text" class="form-control" id="input-pathRoot" value={pathRoot}
-                disabled>
+            <input type="text" class="form-control" id="input-pathRoot" value={pathRoot} disabled>
         </div>
         <div class="col-md-8">
-            <input type="text" class="form-control" id="input-path" bind:value={pathExt}
-                readonly={readonly}>
+            <input type="text" class="form-control" id="input-path" bind:value={pathExt} readonly={readonly}>
         </div>
     </div>
     <div class="row">
@@ -259,49 +266,58 @@
 
     let pathExt = ''
     let pathRoot = getPathRoot()
+    let isManager = canAdministrate(config)
 
     console.log('config', config);
 
-    function getPathRoot(){
+    function getPathRoot() {
         let tmpRoot
-        if(config.path.indexOf('.')>-1){
-            pathExt=config.path.substring(config.path.indexOf('.')+1).replace(/\./g,'/')
-            tmpRoot=config.path.substring(0,config.path.indexOf('.'))
-        }else{
-            pathExt=''
-            tmpRoot=config.path
+        if (config.path.indexOf('.') > -1) {
+            pathExt = config.path.substring(config.path.indexOf('.') + 1).replace(/\./g, '/')
+            tmpRoot = config.path.substring(0, config.path.indexOf('.'))
+        } else {
+            pathExt = ''
+            tmpRoot = config.path
         }
-        if(tmpRoot.length==0){
+        if (tmpRoot.length == 0) {
             return ''
         }
-        if(tmpRoot.endsWith('/')){
+        if (tmpRoot.endsWith('/')) {
             return tmpRoot
-        }else{
-            return tmpRoot+'/'
+        } else {
+            return tmpRoot + '/'
         }
     }
 
     function getChannelName(channel) {
-        if (channel == 'general') {
-            return config.generalNotificationChannel.substring(0, config.generalNotificationChannel.indexOf(":"))
-        } else if (channel == 'info') {
-            return config.infoNotificationChannel.substring(0, config.infoNotificationChannel.indexOf(":"))
-        } else if (channel == 'warning') {
-            return config.warningNotificationChannel.substring(0, config.warningNotificationChannel.indexOf(":"))
-        } else if (channel == 'alert') {
-            return config.alertNotificationChannel.substring(0, config.alertNotificationChannel.indexOf(":"))
+        try {
+            if (channel == 'general') {
+                return config.generalNotificationChannel.substring(0, config.generalNotificationChannel.indexOf(":"))
+            } else if (channel == 'info') {
+                return config.infoNotificationChannel.substring(0, config.infoNotificationChannel.indexOf(":"))
+            } else if (channel == 'warning') {
+                return config.warningNotificationChannel.substring(0, config.warningNotificationChannel.indexOf(":"))
+            } else if (channel == 'alert') {
+                return config.alertNotificationChannel.substring(0, config.alertNotificationChannel.indexOf(":"))
+            }
+        } catch (e) {
+            return ''
         }
         return ''
     }
     function getChannelConfig(channel) {
-        if (channel == 'general') {
-            return config.generalNotificationChannel.substring(config.generalNotificationChannel.indexOf(":") + 1)
-        } else if (channel == 'info') {
-            return config.infoNotificationChannel.substring(config.infoNotificationChannel.indexOf(":") + 1)
-        } else if (channel == 'warning') {
-            return config.warningNotificationChannel.substring(config.warningNotificationChannel.indexOf(":") + 1)
-        } else if (channel == 'alert') {
-            return config.alertNotificationChannel.substring(config.alertNotificationChannel.indexOf(":") + 1)
+        try {
+            if (channel == 'general') {
+                return config.generalNotificationChannel.substring(config.generalNotificationChannel.indexOf(":") + 1)
+            } else if (channel == 'info') {
+                return config.infoNotificationChannel.substring(config.infoNotificationChannel.indexOf(":") + 1)
+            } else if (channel == 'warning') {
+                return config.warningNotificationChannel.substring(config.warningNotificationChannel.indexOf(":") + 1)
+            } else if (channel == 'alert') {
+                return config.alertNotificationChannel.substring(config.alertNotificationChannel.indexOf(":") + 1)
+            }
+        } catch (e) {
+            return ''
         }
         return ''
     }
@@ -323,7 +339,7 @@
             + ':' + document.getElementById('input-warningNotificationChannelConfig').value
         config.alertNotificationChannel = document.getElementById('input-alertNotificationChannel').value
             + ':' + document.getElementById('input-alertNotificationChannelConfig').value
-        config.path=(pathRoot+pathExt).replace(/\//g,'.')
+        config.path = (pathRoot + pathExt).replace(/\//g, '.')
         callback(config)
     }
     function handleCancel(event) {
@@ -337,41 +353,42 @@
         alert(utils.getLabel('alert_remove', labels, $language))
     }
 
-    function canEdit(actualProfile, user) {
+    function canAdministrate(user) {
         // system admin can edit all users
-        if (actualProfile.uid == user.uid || actualProfile.type == 1) {
+        console.log('canAdministrate', $profile.uid, $profile.type, user.uid)
+        if ($profile.uid == user.uid || $profile.type == 1) {
             return true
         }
         // admins can edit users from their organization
-        if (actualProfile.organization != utils.getDefaultOrganization()
-            && actualProfile.organization == user.organization) {
-            if (actualProfile.type == 9) {
+        if ($profile.organization != utils.getDefaultOrganizationId()
+            && $profile.organization == user.organization) {
+            if ($profile.type == 9) {
                 // tenant admin can edit all users from the same tree path
                 // TODO: check path and compare with user path
-                    return true
-            } else if (actualProfile.type == 8) {
+                return true
+            } else if ($profile.type == 8) {
                 // managing admin can edit all users from his organization and tenants
                 return true
             } else {
                 return false
             }
-        }else{
+        } else {
             return false
         }
     }
 
-    function getTypesAllowed(profile) {
+    function getTypesAllowed() {
         let types = []
-        if (profile.type == 8) { // managing admin
+        if ($profile.type == 8) { // managing admin
             types.push({ type: 0, name: 'standard' }) // standard
             types.push({ type: 4, name: 'free' }) // free
             types.push({ type: 8, name: 'mgn.admin' }) // managing admin
             types.push({ type: 9, name: 'admin' }) // tenant admin
-        } else if (profile.type == 9) { // tenant admin
+        } else if ($profile.type == 9) { // tenant admin
             types.push({ type: 0, name: 'standard' }) // standard
             types.push({ type: 4, name: 'free' }) // free
             types.push({ type: 9, name: 'admin' }) // tenant admin
-        } else if (profile.type == 1) { // system admin
+        } else if ($profile.type == 1) { // system admin
             types.push({ type: 0, name: 'standard' }) // standard
             types.push({ type: 1, name: 'sys.admin' }) // system admin
             types.push({ type: 2, name: 'application' }) // application
@@ -388,7 +405,7 @@
         return types
     }
 
-    const apiUrl = utils.getBackendUrl(location) + '/api/core/organization/' + config.organization
+    const apiUrl = utils.getBackendUrl(location) + '/api/organization/' + config.organization
     let promise = sgxdata.getOrganization(dev, apiUrl, $token);
 
 
@@ -505,7 +522,56 @@
         'alert_remove': {
             'pl': 'Jeśli chcesz usunąć konto, skontaktuj się z administratorem wysyłąjąc wiadomość na adres signomix@experiot.pl z konta e-mail podanego podczas zakładania konta.',
             'en': 'If you want to remove your account, please contact administrator by sending e-mail to signomix@experiot pl from the e-mail address provided during account creation.'
+        },
+        'standard': {
+            'pl': 'Standardowe',
+            'en': 'Standard'
+        },
+        'free': {
+            'pl': 'Darmowe',
+            'en': 'Free'
+        },
+        'mgn.admin': {
+            'pl': 'Adm. zarządzający',
+            'en': 'Managing admin'
+        },
+        'admin': {
+            'pl': 'Administrator',
+            'en': 'Admin'
+        },
+        'sys.admin': {
+            'pl': 'Admin. systemowy',
+            'en': 'System admin'
+        },
+        'primary': {
+            'pl': 'Podstawowe',
+            'en': 'Primary'
+        },
+        'application': {
+            'pl': 'Aplikacja',
+            'en': 'Application'
+        },
+        'demo': {
+            'pl': 'Demo',
+            'en': 'Demo'
+        },
+        'readonly': {
+            'pl': 'Tylko do odczytu',
+            'en': 'Readonly'
+        },
+        'extended': {
+            'pl': 'Rozszerzone',
+            'en': 'Extended'
+        },
+        'anonymous': {
+            'pl': 'Anonimowe',
+            'en': 'Anonymous'
+        },
+        'subscriber': {
+            'pl': 'Subskrybent',
+            'en': 'Subscriber'
         }
+
 
     }
 

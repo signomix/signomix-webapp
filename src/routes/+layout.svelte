@@ -190,6 +190,14 @@
                                     class="bi bi-building me-2"></i><span>{utils.getLabel('organizations',labels,$language)}</span>
                         </a>
                     </li>
+                    <li class="nav-item ms-3">
+                        <a class="nav-link" class:active={$page.url.pathname==='/admin/users' }
+                            href="/admin/users">
+                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                <i
+                                    class="bi bi-people me-2"></i><span>{utils.getLabel('users',labels,$language)}</span>
+                        </a>
+                    </li>
                     {/if}
                     <!-- end Administration -->
                     {/if}

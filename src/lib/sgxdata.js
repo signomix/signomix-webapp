@@ -91,7 +91,7 @@ export const sgxdata = {
     try {
       return Promise.resolve(getSgxOrganizationData(devMode, apiUrl, token)).then((result) => result);
     } catch (e) {
-      console.log('getNotifications', e)
+      console.log('getOrganization', e)
       throw new Error(e);
     }
     //return Promise.resolve(getSgxNotifications(devMode, apiUrl, limit, offset, token)).then((result) => result);
@@ -161,11 +161,11 @@ const getSgxGroupData = async function (devMode, apiUrl, config, filter, token, 
   console.log('getSgxGroupData_2')
   const headers = new Headers()
   headers.set('Accept', 'application/json');
-  let endpoint = apiUrl + config.group + "/" + config.channel+"?tid="+token
+  let endpoint = apiUrl + config.group + "/" + config.channel + "?tid=" + token
   let query = applyFilter(config.query, filter);
-  if(query.length>0){
+  if (query.length > 0) {
     endpoint = endpoint + "&query=" + config.query
-  } 
+  }
   console.log('getSgxGroupData_3', endpoint)
   const res = await fetch(endpoint, { mode: 'cors', headers: headers });
   let data;
@@ -251,35 +251,35 @@ const getSgxAlertConfig = async function (devMode, apiUrl, userData, token) {
   if (devMode) {
     return {
       id: 1,
-      name:'Sala A - parametry środowiskowe',
-      active:true,
-      target:{
-        eui:'abc',
-        group:'asdf',
-        tag:{name:'tag1',value:'value1'}
+      name: 'Sala A - parametry środowiskowe',
+      active: true,
+      target: {
+        eui: 'abc',
+        group: 'asdf',
+        tag: { name: 'tag1', value: 'value1' }
+      },
+      conditions: [
+        {
+          measurement: 'temperature',
+          condition1: '<',
+          value: -10.0,
+          operator: 'or',
+          condition2: '>',
+          value2: 35.0
         },
-      conditions:[
-          {
-          measurement:'temperature',
-          condition1:'<',
-          value:-10.0,
-          operator:'or',
-          condition2:'>',
-          value2:35.0
-          },
-          {
-          measurement:'humidity',
-          condition1:'<',
-          value1:10.0
-          }
-        ],
-      result:{
-        alertType:'warning',
-        message:'treść komunikatu',
+        {
+          measurement: 'humidity',
+          condition1: '<',
+          value1: 10.0
+        }
+      ],
+      result: {
+        alertType: 'warning',
+        message: 'treść komunikatu',
         everytime: true,
         conditionOKMessage: true,
-        }
       }
+    }
   }
 }
 
@@ -297,11 +297,15 @@ const getSgxOrganizationData = async function (devMode, apiUrl, token) {
   headers.set('Authentication', token);
   const res = await fetch(apiUrl, { mode: 'cors', headers: headers });
   let data;
-  data = await res.json();
-  if (res.ok) {
-    return data;
-  } else {
-    throw new Error(res.statusText);
+  try {
+    data = await res.json();
+    if (res.ok) {
+      return data;
+    } else {
+      throw new Error(res.statusText);
+    }
+  } catch (e) {
+    throw new Error(e);
   }
 }
 
@@ -312,9 +316,9 @@ const getSgxDevices = async function (devMode, apiUrl, searchString, token) {
       return devicesExample
     } else {
       let s = searchString.split("=");
-      if(s[1]=='*'){
+      if (s[1] == '*') {
         return devicesExample
-      } else if(s[0] == 'eui') {
+      } else if (s[0] == 'eui') {
         return devicesExample.filter((device) => device.eui.includes(s[1].toUpperCase()))
       } else {
         return devicesExample.filter((device) => device.name.toLowerCase().includes(s[1].toLowerCase()))
@@ -344,9 +348,9 @@ const getSgxGroups = async function (devMode, apiUrl, searchString, token) {
       return groupsExample
     } else {
       let s = searchString.split("=");
-      if(s[1]=='*'){
+      if (s[1] == '*') {
         return groupsExample
-      } else if(s[0] == 'eui') {
+      } else if (s[0] == 'eui') {
         return groupsExample.filter((group) => group.eui.includes(s[1].toUpperCase()))
       } else {
         return groupsExample.filter((group) => group.name.toLowerCase().includes(s[1].toLowerCase()))
@@ -387,43 +391,43 @@ const getSgxGroup = async function (devMode, apiUrl, token) {
 }
 
 
-const applyFilter = function(query, filter){
+const applyFilter = function (query, filter) {
   console.log('applyFilter', query, filter)
-  var result=sweepSpaces(query)
-  if(filter==null || filter==undefined || filter=="undefined"){
+  var result = sweepSpaces(query)
+  if (filter == null || filter == undefined || filter == "undefined") {
     return result
   }
-  if(filter.from!=null && filter.from!=undefined && filter.from.length>0){
-      result=replaceDQL(result,'from',filter.from)
+  if (filter.from != null && filter.from != undefined && filter.from.length > 0) {
+    result = replaceDQL(result, 'from', filter.from)
   }
-  if(filter.to!=null && filter.to!=undefined && filter.to.length>0){
-      result=replaceDQL(result,'to',filter.to)
+  if (filter.to != null && filter.to != undefined && filter.to.length > 0) {
+    result = replaceDQL(result, 'to', filter.to)
   }
-  if(filter.project!=null && filter.project!=undefined && filter.project.length>0){
-      result=replaceDQL(result,'project',filter.project)
+  if (filter.project != null && filter.project != undefined && filter.project.length > 0) {
+    result = replaceDQL(result, 'project', filter.project)
   }
   console.log('applyFilter result', result)
   return result
 }
-function replaceDQL(query, key, value){
-  let a=''
-  let b=''
+function replaceDQL(query, key, value) {
+  let a = ''
+  let b = ''
   let q2
-  let idx1=query.indexOf(key)
-  if(idx1<0){
-      q2=query+' '+key+' '+value
-  }else{
-      a=query.substring(0,idx1)
-      let idx2=query.indexOf(' ',idx1+(key+' ').length)
-      if(idx2>0){
-          b=query.substring(idx2)
-      }
-      q2=a+key+' '+value+b
+  let idx1 = query.indexOf(key)
+  if (idx1 < 0) {
+    q2 = query + ' ' + key + ' ' + value
+  } else {
+    a = query.substring(0, idx1)
+    let idx2 = query.indexOf(' ', idx1 + (key + ' ').length)
+    if (idx2 > 0) {
+      b = query.substring(idx2)
+    }
+    q2 = a + key + ' ' + value + b
   }
-  console.log('replaceDQL query,key,value,result: '+query+','+key+','+value+','+q2)
+  console.log('replaceDQL query,key,value,result: ' + query + ',' + key + ',' + value + ',' + q2)
   return q2
 }
-function sweepSpaces(t){return t.trim().replace(/ +(?= )/g,'')}
+function sweepSpaces(t) { return t.trim().replace(/ +(?= )/g, '') }
 
 
 const groupDataExample = [

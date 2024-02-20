@@ -15,7 +15,7 @@ export async function load({url}) {
     if(!userauthenticated){
         return {}
     }
-    let apiUrl = utils.getBackendUrl(url) + '/api/core/organization/'+userprofile.organization
+    let apiUrl = utils.getBackendUrl(url) + '/api/organization/'+userprofile.organization
     console.log('load({url})', url)
     return await sgxdata.getOrganization(dev, apiUrl, usertoken)
 }

@@ -365,7 +365,7 @@
     }
 
     async function getOrganization(id) {
-        let apiUrl = utils.getBackendUrl(location) + '/api/core/organization/' + id
+        let apiUrl = utils.getBackendUrl(location) + '/api/organization/' + id
         await sgxdata.getOrganization(dev, apiUrl, $token)
         .then((response) => {
             if (response.status == 200) {

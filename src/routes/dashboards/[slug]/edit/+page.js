@@ -75,7 +75,7 @@ isAuthenticated.subscribe((value)=>userAuthenticated=value)
     const headers = new Headers()
     headers.set('Accept', 'application/json');
     headers.set('Authentication', usertoken);
-    await fetch(utils.getBackendUrl(url) + '/api/core/organization/' + id, { mode: 'cors', headers: headers })
+    await fetch(utils.getBackendUrl(url) + '/api/organization/' + id, { mode: 'cors', headers: headers })
       .then(response => {
         if (response.status == 200) {
           config = response.json()
