@@ -1,13 +1,17 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     {#await data}
-    <h5>{utils.getLabel('title',labels, $language)}</h5><i class="bi bi-gear h5 me-2 link-dark"></i>
+    <h5>{utils.getLabel('title',labels, $language)}</h5>
+    <!--<i class="bi bi-gear h5 me-2 link-dark"></i>-->
     {:then data}
-    <h5>{utils.getLabel('title',labels, $language)}</h5><a href="/organization/users/{data.uid}/edit" title="Edit"><i class="bi bi-gear h5 me-2 link-dark"></i></a>
+    <h5>{utils.getLabel('title',labels, $language)}</h5>
+    {#if utils.isHigherAccountType($profile, data)}
+    <a href="/organization/users/{data.uid}/edit" title="Edit"><i class="bi bi-gear h5 me-2 link-dark"></i></a>
+    {/if}
     {/await}
 </div>
 {#await data}
 {:then data}
-<SettingsForm config={data} callback={saveSettings} readonly={true} backLocation="/organization/users"/>
+<SettingsForm config={data} callback={saveSettings} readonly={true} backLocation="/admin/users"  setPassLocation="/admin/users/{data.uid}/password"/>
 {/await}
 <script>
     import SettingsForm from '$lib/components/SettingsForm.svelte';

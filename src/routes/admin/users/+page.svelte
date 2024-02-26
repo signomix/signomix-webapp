@@ -68,7 +68,7 @@
                         {#each users as config, index}
                         <tr>
                             <th scope="row" class="col-1">{offset+1+index}</th>
-                            <td class="col-2"><a href="/organization/users/{config.uid}">{config.uid}</a></td>
+                            <td class="col-2"><a href="/admin/users/{config.uid}">{config.uid}</a></td>
                             <td class="col-5">{config.name}</td>
                             <td class="col-2">{config.type}</td>
                             <td class="col-2 text-end">
@@ -157,7 +157,7 @@
         } else {
             let headers = new Headers();
 
-            let url = utils.getBackendUrl(location) + "/api/organization/users"
+            let url = utils.getBackendUrl(location) + "/api/user"
             url = url + '?offset=' + actualOffset + '&limit=' + limit
 
             if (loginFilter.length > 0) {

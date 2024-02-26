@@ -7,7 +7,7 @@
 </div>
 {#await data}
 {:then data}
-<SettingsForm config={data} callback={saveSettings} readonly={false} backLocation="/organization/users"/>
+<SettingsForm config={data} callback={saveSettings} readonly={false} backLocation="/organization/users" setPassLocation="/organization/users/{data.uid}/password"/>
 {/await}
 <script>
     import SettingsForm from '$lib/components/SettingsForm.svelte';

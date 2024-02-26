@@ -158,6 +158,21 @@ export const utils = {
     }
     return false
   },
+  isHigherAccountType: function (actualUserProfile, managedUserConfig) {
+    if(actualUserProfile==null || actualUserProfile==undefined) return false
+    if(managedUserConfig==null || managedUserConfig==undefined) return false
+    if(actualUserProfile.uid==managedUserConfig.uid) return true
+    switch (actualUserProfile.type) {
+      case 9: // admin
+        return managedUserConfig.type == 0 || managedUserConfig.type == 4 
+      case 8: // managing admin
+        return managedUserConfig.type == 0 || managedUserConfig.type == 4 || managedUserConfig.type == 9
+      case 1: // system admin (owner)
+        return true;
+      default:
+        return false
+    }
+  },
   isObjectAdmin: function (userProfile, objectOwner, defaultOrganizationId) {
     //user types
     //1 - service admin
@@ -200,9 +215,9 @@ export const utils = {
       case 'extended':
         return 7
       case 'manag. admin': 
-        return 8  // superuser
+        return 8  // can manage all organization tenants
       case 'admin': 
-        return 9  // organization admin
+        return 9  // tenant admin
       case 'anonymous':
         return 10
       case 'subscriber':
@@ -234,7 +249,7 @@ export const utils = {
       case 8:
         return 'manag. admin'
       case 9:
-        return 'admin'
+        return 'admin' // tenant admin
       case 10:
         return 'anonymous'
       case 100:

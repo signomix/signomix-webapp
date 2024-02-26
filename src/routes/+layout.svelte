@@ -333,7 +333,7 @@
         try {
             getInfo($page.url)
         } catch (e) {
-            //console.log(e)
+            console.log(e)
         }
     });
 

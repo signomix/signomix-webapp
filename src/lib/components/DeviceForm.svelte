@@ -165,6 +165,19 @@
                 readonly={readonly} />
         </div>
     </div>
+    {#if isNotDefaultOrganization()}
+    <div class="row">
+        <div class="col-md-2 col-form-label">
+            <label for="input-path" class="form-label">{utils.getLabel('path',labels,$language)}</label>
+        </div>
+        <div class="col-md-2">
+            <input type="text" class="form-control" id="input-pathRoot" value={pathRoot} disabled>
+        </div>
+        <div class="col-md-8">
+            <input type="text" class="form-control" id="input-path" bind:value={pathExt} readonly={readonly}>
+        </div>
+    </div>
+    {/if}
     <div class="row">
         <div class="col-md-2 col-form-label">
             <label for="input-tagname" class="form-label">{utils.getLabel('tagname',labels,$language)}</label>
@@ -179,7 +192,7 @@
             <input type="text" class="form-control" id="input-tagvalue" bind:value={tagValue} readonly={readonly}>
         </div>
     </div>
-    {#if config.organizationId>0}
+    {#if config.organizationId!=utils.getDefaultOrganizationId()}
     <div class="row">
         <div class="col-md-2 col-form-label">
             <label for="input-application" class="form-label">{utils.getLabel('application',labels,$language)}</label>
@@ -255,9 +268,38 @@
         tagName = tag[0]
         tagValue = tag[1]
     }
+    let pathExt = ''
+    let pathRoot = getPathRoot()
+
+    function getPathRoot() {
+        let tmpRoot
+        if(config.path==null || config.path==undefined){
+            return ''
+        }
+        if (config.path.indexOf('.') > -1) {
+            pathExt = config.path.substring(config.path.indexOf('.') + 1).replace(/\./g, '/')
+            tmpRoot = config.path.substring(0, config.path.indexOf('.'))
+        } else {
+            pathExt = ''
+            tmpRoot = config.path
+        }
+        if (tmpRoot.length == 0) {
+            return ''
+        }
+        if (tmpRoot.endsWith('/')) {
+            return tmpRoot
+        } else {
+            return tmpRoot + '/'
+        }
+    }
 
     function decide() {
         dialog.showModal()
+    }
+
+    function isNotDefaultOrganization() {
+        console.log('isNotDefaultOrganization', utils.getDefaultOrganizationId(), config.organizationId)
+        return config.organizationId != utils.getDefaultOrganizationId()
     }
 
     function handleSave(decision) {
@@ -278,6 +320,7 @@
         if(tagName!='' && tagValue!=''){
             config.tags = tagName+':'+tagValue
         }
+        config.path = (pathRoot + pathExt).replace(/\//g, '.')
 
         let errMessage = validate()
         if (errMessage != '') {
@@ -421,6 +464,10 @@
         'application': {
             'pl': "Aplikacja",
             'en': "Application"
+        },
+        'path': {
+            'pl': "Ścieżka",
+            'en': "Path"
         },
         'tagname': {
             'pl': "Nazwa tagu",

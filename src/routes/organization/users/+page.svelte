@@ -159,6 +159,9 @@
 
             let url = utils.getBackendUrl(location) + "/api/organization/users"
             url = url + '?offset=' + actualOffset + '&limit=' + limit + '&organization=' + $profile.organization
+            if($profile.tenant!=null){
+                url = url + '&tenant=' + $profile.tenant
+            }
 
             if (loginFilter.length > 0) {
                 url = url + '&search=login:' + loginFilter

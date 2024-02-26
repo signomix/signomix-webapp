@@ -226,16 +226,18 @@
     <div class="row">
         <div class="col">
             <div class="col-form-label  text-center">
-                <a href="/account/settings/password"
+                <a href="{setPassLocation}"
                     class="btn btn-outline-danger mt-1">{utils.getLabel('changePassword',labels,$language)}</a>
             </div>
         </div>
+        {#if config.uid == $profile.uid}
         <div class="col">
             <div class="col-form-label text-center">
                 <button class="btn btn-outline-danger mt-1"
                     on:click={handleRemove}>{utils.getLabel('deleteAccount',labels,$language)}</button>
             </div>
         </div>
+        {/if}
     </div>
 
     <hr>
@@ -263,6 +265,7 @@
     export let callback
     export let readonly
     export let backLocation
+    export let setPassLocation
 
     let pathExt = ''
     let pathRoot = getPathRoot()

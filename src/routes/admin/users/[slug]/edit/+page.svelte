@@ -7,7 +7,7 @@
 </div>
 {#await data}
 {:then data}
-<SettingsForm config={data} callback={saveSettings} readonly={false} backLocation="/organization/users"/>
+<SettingsForm config={data} callback={saveSettings} readonly={false} backLocation="/admin/users"  setPassLocation="/admin/users/{data.uid}/password"/>
 {/await}
 <script>
     import SettingsForm from '$lib/components/SettingsForm.svelte';
@@ -67,7 +67,7 @@
         ).then((response) => {
             if (response.status == 200) {
                 errorMessage = ''
-                goto('/organization/users')
+                goto('/admin/users')
             } else if (response.status == 401 || response.status == 403) {
                 token.set(null)
             } else {
