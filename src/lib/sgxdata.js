@@ -96,6 +96,15 @@ export const sgxdata = {
     }
     //return Promise.resolve(getSgxNotifications(devMode, apiUrl, limit, offset, token)).then((result) => result);
   },
+  getTenant: function (devMode, apiUrl, token) {
+    try {
+      return Promise.resolve(getSgxTenantData(devMode, apiUrl, token)).then((result) => result);
+    } catch (e) {
+      console.log('getTenant', e)
+      throw new Error(e);
+    }
+    //return Promise.resolve(getSgxNotifications(devMode, apiUrl, limit, offset, token)).then((result) => result);
+  },
   getDevices: function (devMode, apiUrl, searchString, token) {
     try {
       return Promise.resolve(getSgxDevices(devMode, apiUrl, searchString, token)).then((result) => result);
@@ -290,6 +299,32 @@ const getSgxOrganizationData = async function (devMode, apiUrl, token) {
       name: 'Default organization',
       code: '',
       description: ''
+    }
+  }
+  const headers = new Headers()
+  headers.set('Accept', 'application/json');
+  headers.set('Authentication', token);
+  const res = await fetch(apiUrl, { mode: 'cors', headers: headers });
+  let data;
+  try {
+    data = await res.json();
+    if (res.ok) {
+      return data;
+    } else {
+      throw new Error(res.statusText);
+    }
+  } catch (e) {
+    throw new Error(e);
+  }
+}
+
+const getSgxTenantData = async function (devMode, apiUrl, token) {
+  if (devMode) {
+    return {
+      id: 0,
+      organizationId: 1,
+      name: 'Default tenant',
+      root: ''
     }
   }
   const headers = new Headers()

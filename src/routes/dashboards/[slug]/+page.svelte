@@ -307,6 +307,7 @@
 
     let show = function () {
         dashboardConfig = data
+        setLinkConfig(dashboardConfig)
         blockChanges(dashboardConfig)
         mergeConfigs()
         console.log('dashboardConfig ', dashboardConfig)
@@ -372,7 +373,17 @@
     });
 
 
-
+    const setLinkConfig = function (config) {
+        if (config!=null && config!=undefined &&  config.shared) {
+            dashboardLinkConfig.link = 'https://view.signomix.com/' + config.sharedToken
+            dashboardLinkConfig.code = '<IFRAME \nsrc="https://view.signomix.com/'
+                    +config.sharedToken
+                    +'" \nwidth="600" \nheight="450">\n</IFRAME>'
+        }else{
+            dashboardLinkConfig.link = ''
+            dashboardLinkConfig.code = ''
+        }
+    }
     const blockChanges = function (config) {
         //set draggable and resizable to false
         config.items.forEach(function (item) {

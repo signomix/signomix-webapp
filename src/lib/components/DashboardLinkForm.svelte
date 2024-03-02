@@ -5,9 +5,6 @@
     <div class="container">
         <form>
             <div class="form-group">
-                This feature is not implemented yet.
-            </div>
-            <div class="form-group">
                 Link
                 <input type="text" class="form-control" bind:value={config.link}/>
             </div>

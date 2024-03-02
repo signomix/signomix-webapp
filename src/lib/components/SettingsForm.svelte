@@ -82,7 +82,20 @@
                 readonly={readonly}>
         </div>
     </div>
-    {#if config.organization!=utils.getDefaultOrganizationId()}
+    {#if config.tenant!=0 && config.organization!=utils.getDefaultOrganizationId()}
+    {#await promise2}
+    {:then data}
+    <div class="row">
+        <div class="col-md-2 col-form-label">
+            <label for="input-tenant" class="form-label">{utils.getLabel('tenant',labels,$language)}</label>
+        </div>
+        <div class="col-md-10">
+            <input type="text" class="form-control" id="input-tenant" value={data.name} disabled>
+        </div>
+    </div>
+    {/await}
+    {/if}
+    {#if config.organization!=utils.getDefaultOrganizationId() && config.tenant==0}
     {#await promise}
     {:then data}
     <div class="row">
@@ -408,9 +421,10 @@
         return types
     }
 
-    const apiUrl = utils.getBackendUrl(location) + '/api/organization/' + config.organization
-    let promise = sgxdata.getOrganization(dev, apiUrl, $token);
-
+    const organizationApiUrl = utils.getBackendUrl(location) + '/api/organization/' + config.organization
+    let promise = sgxdata.getOrganization(dev, organizationApiUrl, $token);
+    const tenantApiUrl = utils.getBackendUrl(location) + '/api/tenant/' + config.tenant
+    let promise2 = sgxdata.getTenant(dev, tenantApiUrl, $token);
 
 
     let labels = {
@@ -493,6 +507,10 @@
         'organization': {
             'en': 'Organization',
             'pl': 'Organizacja'
+        },
+        'tenant': {
+            'pl': 'Organizacja',
+            'en': 'Organization'
         },
         'changePassword': {
             'en': 'Change password',

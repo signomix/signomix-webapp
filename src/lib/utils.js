@@ -1,6 +1,6 @@
 import { defaultOrganizationId } from '$lib/stores.js';
 
-let defaultOrganizationIdValue
+let defaultOrganizationIdValue=1
 defaultOrganizationId.subscribe((value) => defaultOrganizationIdValue = value)
 
 export const utils = {
@@ -14,7 +14,8 @@ export const utils = {
     return url.protocol + '//' + x
   },
   isCloudSubdomain: function (url) {
-    return url.host.startsWith('cloud.') || url.host.endsWith(this.STANDARD_DOMAIN)
+    //return url.host.startsWith('cloud.') || url.host.endsWith(this.STANDARD_DOMAIN)
+    return !url.host.startsWith('app.')
   },
   getSubdomain: function (url) {
     let idx=url.host.indexOf('.')
@@ -281,6 +282,7 @@ export const utils = {
     //return userProfile.type !=8
     let result = userProfile.organization == defaultOrganizationIdValue
       || defaultOrganizationIdValue == null
+      return result
   },
   recalculate: function (value, rounding) {
     try {
