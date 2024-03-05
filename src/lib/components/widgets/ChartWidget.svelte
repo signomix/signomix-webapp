@@ -95,7 +95,7 @@
             console.log('jsonData.length', jsonData.length)
             for (var i = 0; i < jsonData.length; i++) {
                 labels.push(jsonData[i][0]['timestamp'])
-                console.log('push '+jsonData[i][0]['timestamp'])
+                //console.log('push '+jsonData[i][0]['timestamp'])
                 for (var j = 0; j < jsonData[i].length; j++) {
                     try {
                         tmpMeasures[j].push({ x: (new Date(jsonData[i][j]['timestamp']).toISOString()), y: jsonData[i][j]['value'] })
@@ -175,8 +175,8 @@
                         displayFormats: {
                             minute: 'HH:mm:ss',
                             hour: 'HH:mm:ss',
-                            day: 'D-MM',
-                            week: 'D-MM',
+                            day: 'd-MM',
+                            week: 'd-MM',
                             quarter: 'MMM-YYYY'
                         }
                     }

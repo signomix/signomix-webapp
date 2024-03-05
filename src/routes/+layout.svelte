@@ -8,10 +8,10 @@
     </button>
     <span class="d-none d-sm-inline">
         <a class="me-2" href="/" on:click|preventDefault={setLanguagePl}>
-            <img src="/img/flags/4x3/pl.svg" height="16px" title="język polski"/>
+            <img src="/img/flags/4x3/pl.svg" height="16px" title="język polski" />
         </a>
         <a class="me-4" href="/" on:click|preventDefault={setLanguageEn}>
-            <img src="/img/flags/4x3/gb.svg" height="16px" title="english language"/>
+            <img src="/img/flags/4x3/gb.svg" height="16px" title="english language" />
         </a>
     </span>
 </header>
@@ -37,7 +37,7 @@
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" class:active={$page.url.pathname==='/' } href="/">
+                        <a class="nav-link" class:active={$page.url.pathname==='/' } href="/" on:click={collapseOther}>
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i class="bi bi-house me-2"></i>{utils.getLabel('home',labels,$language)}
                             </span>
@@ -78,7 +78,7 @@
                             </span>
                         </a>
                     </li>
-                    {#if $profile.type==8}
+                    {#if $profile.type==8 && ($context==null || $context=='')}
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/organization/tenants' }
                             href="/organization/tenants">
@@ -91,7 +91,8 @@
                     {/if}
                     {/if}
                     <li class="nav-item">
-                        <a class="nav-link" class:active={$page.url.pathname==='/dashboards' } href="/dashboards">
+                        <a class="nav-link" class:active={$page.url.pathname==='/dashboards' } href="/dashboards"
+                            on:click={collapseOther}>
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i class="bi bi-columns-gap me-2"></i>{utils.getLabel('dashboards',labels,$language)}
                             </span>
@@ -146,7 +147,8 @@
                     {/if}
                     {#if isCloud() || !utils.isUserRole($profile, 'limited', false)}
                     <li class="nav-item">
-                        <a class="nav-link" class:active={$page.url.pathname==='/notifications' } href="/notifications">
+                        <a class="nav-link" class:active={$page.url.pathname==='/notifications' } href="/notifications"
+                            on:click={collapseOther}>
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i class="bi bi-megaphone me-2"></i>{utils.getLabel('notifications',labels,$language)}
                             </span>
@@ -157,7 +159,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname.startsWith('/account/settings') }
-                            href="/account/settings">
+                            href="/account/settings" on:click={collapseOther}>
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i class="bi bi-sliders me-2"></i>{utils.getLabel('settings',labels,$language)}
                             </span>
@@ -191,11 +193,9 @@
                         </a>
                     </li>
                     <li class="nav-item ms-3">
-                        <a class="nav-link" class:active={$page.url.pathname==='/admin/users' }
-                            href="/admin/users">
+                        <a class="nav-link" class:active={$page.url.pathname==='/admin/users' } href="/admin/users">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i
-                                    class="bi bi-people me-2"></i><span>{utils.getLabel('users',labels,$language)}</span>
+                                <i class="bi bi-people me-2"></i><span>{utils.getLabel('users',labels,$language)}</span>
                         </a>
                     </li>
                     {/if}
@@ -243,13 +243,15 @@
                         <div class="nav-link">
                             <a href="/" on:click|preventDefault={setLanguagePl}>
                                 <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                    <img class="border opacity-75" src="/img/flags/4x3/pl.svg" height="16px" title="język polski"/>
+                                    <img class="border opacity-75" src="/img/flags/4x3/pl.svg" height="16px"
+                                        title="język polski" />
                                 </span>
                             </a>
                             <a class="ms-2" href="/" on:click|preventDefault={setLanguageEn}>
                                 <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                    <img class="border opacity-75" src="/img/flags/4x3/gb.svg" height="16px" title="english language"/></span>
-                            </a> 
+                                    <img class="border opacity-75" src="/img/flags/4x3/gb.svg" height="16px"
+                                        title="english language" /></span>
+                            </a>
                         </div>
                     </li>
                     <!--<li class="nav-item">
@@ -261,6 +263,18 @@
         <main class="col-md-9 col-lg-10 ms-sm-auto px-md-4">
             {#if $isAuthenticated || $page.url.pathname=='/login' || $page.url.pathname=='/account/register' ||
             $page.url.pathname=='/account/resetpassword' || $page.url.pathname=='/account/setpassword'}
+            {#if $context!=null}
+            <div class="row m-1">
+                <div class="col w-100">
+                    <div class="alert alert-danger" role="alert">
+                        <a href="" on:click|preventDefault={setContext(null,'')}
+                            title={utils.getLabel('setcontext',labels,$language)}><i
+                                class="bi bi-box-arrow-left me-2 h5"></i></a>
+                        <span class="fw-bold">{$context}</span> {$contextRoot}/
+                    </div>
+                </div>
+            </div>
+            {/if}
             <slot></slot>
             {:else if $page.url.pathname!='/' && $page.url.pathname!='/login'}
             {goto('/')}
@@ -307,7 +321,7 @@
     import { poll } from '$lib/poll.js';
     import { dev } from '$app/environment';
     import { sgxdata } from '$lib/sgxdata.js';
-    import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
+    import { token, profile, language, isAuthenticated, context, contextRoot } from '$lib/usersession.js';
     import { getInfo, platformInfo, defaultOrganizationId } from '$lib/stores.js';
     import { Toaster, toast } from 'svelte-sonner'
 
@@ -345,6 +359,8 @@
         console.log('logout clicked')
         token.set(null)
         profile.set(null)
+        context.set(null)
+        contextRoot.set('')
         language.set('pl')
         goto('/')
         return true
@@ -356,21 +372,66 @@
         return false
     }
 
+    function setContext(tenant, root) {
+        return function (event) {
+            event.preventDefault();
+            context.set(tenant)
+            contextRoot.set(root)
+            goto('/organization/tenants')
+        }
+    }
+
     let structureExpanded = false;
     function toggleStructure(event) {
         structureExpanded = !structureExpanded;
+        if (structureExpanded) {
+            collapseOther('structure')
+        }
     }
     let administrationExpanded = false;
     function toggleAdministration(event) {
         administrationExpanded = !administrationExpanded;
+        if (administrationExpanded) {
+            collapseOther('administration')
+        }
     }
     let organizationExpanded = false;
     function toggleOrganization(event) {
         organizationExpanded = !organizationExpanded;
+        if (organizationExpanded) {
+            collapseOther('organization')
+        }
     }
     let analyticsExpanded = false;
     function toggleAnalytics(event) {
         analyticsExpanded = !analyticsExpanded;
+        if (analyticsExpanded) {
+            collapseOther('analytics')
+        }
+    }
+    function collapseOther(actual) {
+        if (actual == 'structure') {
+            administrationExpanded = false
+            organizationExpanded = false
+            analyticsExpanded = false
+        } else if (actual == 'administration') {
+            structureExpanded = false
+            organizationExpanded = false
+            analyticsExpanded = false
+        } else if (actual == 'organization') {
+            structureExpanded = false
+            administrationExpanded = false
+            analyticsExpanded = false
+        } else if (actual == 'analytics') {
+            structureExpanded = false
+            administrationExpanded = false
+            organizationExpanded = false
+        } else {
+            structureExpanded = false
+            administrationExpanded = false
+            organizationExpanded = false
+            analyticsExpanded = false
+        }
     }
 
     function setLanguagePl(event) {
