@@ -4,7 +4,7 @@
 </div>
 {:else}
 <div
-    class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-3 border-bottom">
     <h5>{utils.getLabel('title',labels,$language)}</h5>
     {#if nameFilter.length>0 || loginFilter.length>0 || pathFilter.length>0}
     <a title={utils.getLabel('filter',labels,$language)} on:click|preventDefault={switchFilter}>
@@ -59,20 +59,21 @@
                         <tr>
                             <th scope="col" class="col-1">#</th>
                             <th scope="col" class="col-2">Login</th>
-                            <th scope="col" class="col-5">{utils.getLabel('name',labels,$language)}</th>
-                            <th scope="col" class="col-2">{utils.getLabel('type',labels,$language)}</th>
-                            <th scope="col" class="col-2 text-end">{utils.getLabel('actions',labels,$language)}</th>
+                            <th scope="col" class="col-6">{utils.getLabel('name',labels,$language)}</th>
+                            <th scope="col" class="col-1">{utils.getLabel('type',labels,$language)}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {#each users as config, index}
                         <tr>
                             <th scope="row" class="col-1">{offset+1+index}</th>
+                            {#if isAuthorized($profile,config)}
                             <td class="col-2"><a href="/organization/users/{config.uid}">{config.uid}</a></td>
-                            <td class="col-5">{config.name}</td>
-                            <td class="col-2">{config.type}</td>
-                            <td class="col-2 text-end">
-                            </td>
+                            {:else}
+                            <td class="col-2">{config.uid}</td>
+                            {/if}
+                            <td class="col-6">{config.name} {config.surname}</td>
+                            <td class="col-1">{config.type}</td>
                         </tr>
                         {/each}
                     </tbody>
@@ -111,7 +112,7 @@
 {/await}
 {/if}
 <script>
-    import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
+    import { token, profile, language, isAuthenticated, context, contextRoot } from '$lib/usersession.js';
     import { utils } from '$lib/utils.js';
     import { dev } from '$app/environment';
     import { onMount } from 'svelte';
@@ -159,7 +160,10 @@
 
             let url = utils.getBackendUrl(location) + "/api/organization/users"
             url = url + '?offset=' + actualOffset + '&limit=' + limit + '&organization=' + $profile.organization
-            if($profile.tenant!=null){
+            
+            if($context!=null && $context!=''){
+                url = url + '&tenant=' + $context
+            }else if($profile.tenant!=null){
                 url = url + '&tenant=' + $profile.tenant
             }
 
@@ -270,6 +274,16 @@
         }
     }
 
+    function isAuthorized(userProfile, configElement){
+        if(userProfile.type==9 || userProfile.type==8){
+            return true
+        }else if(userProfile.uid==configElement.uid){
+            return true
+        }else{
+            return false
+        }
+    }
+
 
     let labels = {
         'title': {
@@ -277,7 +291,7 @@
             'en': "Users"
         },
         'name': {
-            'pl': "Nazwa",
+            'pl': "Imię Nazwisko",
             'en': "Name"
         },
         'type': {

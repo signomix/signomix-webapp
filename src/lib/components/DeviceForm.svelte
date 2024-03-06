@@ -11,8 +11,8 @@
             <label for="input-eui" class="form-label">{utils.getLabel('eui',labels,$language)}</label>
         </div>
         <div class="col-md-10">
-            <input type="text" class="form-control" id="input-eui" bind:value={newEui} disabled={readonly &&
-                !newDevice }>
+            <input type="text" class="form-control" id="input-eui" bind:value={newEui} disabled={readonly && !newDevice
+                }>
         </div>
     </div>
     <div class="row">
@@ -242,7 +242,7 @@
 </form>
 <script>
     import { utils } from '$lib/utils.js';
-    import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
+    import { token, profile, language, isAuthenticated, context, contextRoot } from '$lib/usersession.js';
     import { Toaster, toast } from 'svelte-sonner'
     import Dialog from '$lib/components/Dialog.svelte'
 
@@ -263,34 +263,53 @@
     let newEui = config.eui
     let tagName = ""
     let tagValue = ""
-    if (config.tags != null && config.tags!='') {
+    if (config.tags != null && config.tags != '') {
         let tag = config.tags.split(':')
         tagName = tag[0]
         tagValue = tag[1]
     }
-    let pathExt = ''
+
     let pathRoot = getPathRoot()
+    let pathExt = getPathExt()
 
     function getPathRoot() {
-        let tmpRoot
-        if(config.path==null || config.path==undefined){
-            return ''
-        }
-        if (config.path.indexOf('.') > -1) {
-            pathExt = config.path.substring(config.path.indexOf('.') + 1).replace(/\./g, '/')
-            tmpRoot = config.path.substring(0, config.path.indexOf('.'))
+        let tmpCtxRoot = $contextRoot
+        let result
+        if (tmpCtxRoot == null || tmpCtxRoot == undefined) {
+            tmpCtxRoot = ''
+        }else if (config.path == null || config.path == undefined || config.path == '') {
+            result = tmpCtxRoot.length > 0 ? tmpCtxRoot : ''
+        } else if (config.path.indexOf('.') > -1) {
+            result = config.path.substring(0, config.path.indexOf('.'))
         } else {
-            pathExt = ''
-            tmpRoot = config.path
+            result = config.path
         }
-        if (tmpRoot.length == 0) {
-            return ''
+        if (result.endsWith('.')) {
+            result = result.substring(0, result.length - 1)
         }
-        if (tmpRoot.endsWith('/')) {
-            return tmpRoot
+        result=result.replace(/\./g, '/')
+        console.log('getPathRoot', result)
+        return result
+    }
+    function getPathExt() {
+        let result
+        if (config.path == null || config.path == undefined || config.path == '') {
+            result= ''
+        }else if (config.path.indexOf('.') > -1) {
+            if (config.path.indexOf('.') == config.path.length - 1) {
+                result =''
+            } else {
+                result = config.path.substring(config.path.indexOf('.') + 1)
+            }
         } else {
-            return tmpRoot + '/'
+            result =''
         }
+        result = result.replace(/\./g, '/')
+        if(result.length>0 && !result.startsWith('/')){
+            result = '/'+result
+        }
+        console.log('getPathExt', result)
+        return result
     }
 
     function decide() {
@@ -312,13 +331,16 @@
         config.transmissionInterval = interval * 60000
         config.encoder = decoderScript.trim()
         config.code = processorScript.trim()
-        if(config.configuration!=null){
+        if (config.configuration != null) {
             config.configuration = config.configuration.trim()
-        }else{
+        } else {
             config.configuration = ''
         }
-        if(tagName!='' && tagValue!=''){
-            config.tags = tagName+':'+tagValue
+        if (tagName != '' && tagValue != '') {
+            config.tags = tagName + ':' + tagValue
+        }
+        if(pathExt.length>0 && !pathExt.startsWith('/')){
+            pathExt = '/'+pathExt
         }
         config.path = (pathRoot + pathExt).replace(/\//g, '.')
 

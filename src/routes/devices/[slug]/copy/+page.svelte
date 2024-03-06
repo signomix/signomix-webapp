@@ -1,5 +1,5 @@
 <div
-    class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-2 border-bottom">
+    class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-2 border-bottom">
     <h5>{utils.getLabel('title',labels,$language)}</h5>
     {#if data.eui!='new'}<a href="/devices/{data.eui}" title="{utils.getLabel('view',labels,$language)}"><i
             class="bi bi-eye h5 me-2 link-dark"></i></a>{/if}

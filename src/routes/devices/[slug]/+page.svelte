@@ -1,5 +1,5 @@
 <div
-    class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-3 border-bottom">
     <h5>{data.name}</h5>
     {#if (utils.isObjectAdmin($profile, data.userID, $defaultOrganizationId))}
     <a href="/devices/{data.eui}/edit" title={utils.getLabel('configure',labels,$language)}><i

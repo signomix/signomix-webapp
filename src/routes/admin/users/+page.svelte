@@ -4,7 +4,7 @@
 </div>
 {:else}
 <div
-    class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-3 border-bottom">
     <h5>{utils.getLabel('title',labels,$language)}</h5>
     {#if nameFilter.length>0 || loginFilter.length>0 || pathFilter.length>0}
     <a title={utils.getLabel('filter',labels,$language)} on:click|preventDefault={switchFilter}>

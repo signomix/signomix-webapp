@@ -6,7 +6,7 @@
 {#if utils.getSubdomain(location).toLowerCase() == 'cloud'}
 <div class="row">
     <div class="col-12">
-        <div class="alert alert-light mt-4" role="alert">
+        <div class="alert alert-light mt-3" role="alert">
             {utils.getLabel('info',labels,$language)}<br>
             {utils.getLabel('info2',labels,$language)}
         </div>
@@ -16,7 +16,7 @@
 {/if}
 {#await promise}
 {:then dashboards}
-<div class="row mt-4">
+<div class="row mt-3">
     <div class="col-12">
         <h5>{utils.getLabel('favourite',labels,$language)}</h5>
         <ul>

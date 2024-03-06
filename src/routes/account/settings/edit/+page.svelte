@@ -1,4 +1,4 @@
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-3 border-bottom">
     <h5>Ustawienia</h5><a href="/account/settings" title="View"><i class="bi bi-eye h5 me-2 link-dark"></i></a>
 </div>
 

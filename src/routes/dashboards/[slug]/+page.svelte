@@ -15,7 +15,7 @@
 {/if}
 
 <div
-    class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-3 border-bottom">
     <h5>{dashboardConfig.title}</h5>
     <span>
         <a title={utils.getLabel('refresh',labels,$language)} on:click={refreshView}><i class="bi bi-arrow-clockwise h5 me-2 link-dark"></i></a>

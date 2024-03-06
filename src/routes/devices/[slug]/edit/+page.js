@@ -1,5 +1,5 @@
 import { browser, dev } from '$app/environment';
-import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
+import { token, profile, language, isAuthenticated, context, contextRoot } from '$lib/usersession.js';
 import { utils } from '$lib/utils.js';
 
 export const load = async ({ params, url }) => {

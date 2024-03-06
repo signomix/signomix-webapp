@@ -4,7 +4,7 @@
 </div>
 {:else}
 <div
-    class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-3 border-bottom">
     <h5>{utils.getLabel('devices',labels,$language)}</h5>
     {#if nameFilter.length>0 || euiFilter.length>0 || tagName.length>0 || tagValue.length>0}
     <a title={utils.getLabel('filter',labels,$language)} on:click|preventDefault={switchFilter}>
@@ -35,13 +35,13 @@
     <div class="row">
         <div class="col-md-6">
             <label class="col-form-label" for="input-tagName">Tag name:</label>
-            <input type="text" id="input-tagName" bind:value={tagName} on:input={tagNameChanged} class="form-control mb-2"
-                aria-label="Search tag name">
+            <input type="text" id="input-tagName" bind:value={tagName} on:input={tagNameChanged}
+                class="form-control mb-2" aria-label="Search tag name">
         </div>
         <div class="col-md-6">
             <label class="col-form-label" for="input-tagValue">Tag value:</label>
-            <input type="text" id="input-tagValue" bind:value={tagValue} on:input={tagValueChanged} class="form-control mb-2"
-                aria-label="Search name">
+            <input type="text" id="input-tagValue" bind:value={tagValue} on:input={tagValueChanged}
+                class="form-control mb-2" aria-label="Search name">
         </div>
     </div>
     <div class="row">
@@ -126,7 +126,7 @@
 {/await}
 {/if}
 <script>
-    import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
+    import { token, profile, language, isAuthenticated, context, contextRoot } from '$lib/usersession.js';
     import { utils } from '$lib/utils.js';
     import { dev } from '$app/environment';
     import { onMount } from 'svelte';
@@ -185,6 +185,15 @@
                 offset = 0
             } else if (tagName.length > 0 && tagValue.length > 0) {
                 url = url + '&search=tag:' + tagName + ':' + tagValue
+                offset = 0
+            }
+
+            if (!utils.isDefaultOrganizationUser($profile)) {
+                url = url + '&organization=' + $profile.organization
+                if ($context > 0) {
+                    //context is not supperted yet but it is prepared for future use
+                    url = url + '&context=' + $context+'&path='+$contextRoot+'.*'
+                }
                 offset = 0
             }
             headers.set('Authentication', $token);

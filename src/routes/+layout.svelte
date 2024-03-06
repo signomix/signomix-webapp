@@ -20,7 +20,7 @@
         <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse navbar-collapse">
             <div class="position-sticky pt-0 sidebar-sticky">
                 <ul class="nav flex-column">
-                    <li class="nav-item mt-3">
+                    <li class="nav-item mt-2">
                         <div class="nav-link">
                             <i class="h2 bi bi-person-circle me-2"></i>
                             {#if $isAuthenticated}
@@ -263,18 +263,27 @@
         <main class="col-md-9 col-lg-10 ms-sm-auto px-md-4">
             {#if $isAuthenticated || $page.url.pathname=='/login' || $page.url.pathname=='/account/register' ||
             $page.url.pathname=='/account/resetpassword' || $page.url.pathname=='/account/setpassword'}
-            {#if $context!=null}
+            <!-- {#if $context!=null}
             <div class="row m-1">
                 <div class="col w-100">
                     <div class="alert alert-danger" role="alert">
+                        {utils.getLabel('context',labels,$language)}
                         <a href="" on:click|preventDefault={setContext(null,'')}
                             title={utils.getLabel('setcontext',labels,$language)}><i
-                                class="bi bi-box-arrow-left me-2 h5"></i></a>
+                                class="bi bi-box-arrow-left ms-1 me-2 h5"></i></a>
                         <span class="fw-bold">{$context}</span> {$contextRoot}/
                     </div>
                 </div>
             </div>
             {/if}
+            {#if $profile!=null && $profile.tenant!=null && $profile.tenant!=0}
+            <div class="row mt-1">
+                <div class="col w-100">
+                    {$profile.path}
+                </div>
+            </div>
+            {/if} -->
+            <PageHeader />
             <slot></slot>
             {:else if $page.url.pathname!='/' && $page.url.pathname!='/login'}
             {goto('/')}
@@ -324,6 +333,7 @@
     import { token, profile, language, isAuthenticated, context, contextRoot } from '$lib/usersession.js';
     import { getInfo, platformInfo, defaultOrganizationId } from '$lib/stores.js';
     import { Toaster, toast } from 'svelte-sonner'
+    import PageHeader  from '$lib/components/PageHeader.svelte'
 
     /* $: available=setAvailableOptions($profile)
 
@@ -372,14 +382,14 @@
         return false
     }
 
-    function setContext(tenant, root) {
+    /* function setContext(tenant, root) {
         return function (event) {
             event.preventDefault();
             context.set(tenant)
             contextRoot.set(root)
             goto('/organization/tenants')
         }
-    }
+    } */
 
     let structureExpanded = false;
     function toggleStructure(event) {
@@ -592,6 +602,10 @@
         'notavailable': {
             'pl': 'Rejestrowanie kont jest obecnie niedostępne. Spróbuj ponownie za dzień lub dwa.',
             'en': 'Account registration is currently unavailable. Try again in a day or two.'
+        },
+        'context': {
+            'pl': 'Kontekst:',
+            'en': 'Context:'
         },
     }
 </script>
