@@ -69,8 +69,8 @@
                         <tr>
                             <th scope="row" class="col-1">{offset+1+index}</th>
                             <td class="col-2"><a href="/admin/users/{config.uid}">{config.uid}</a></td>
-                            <td class="col-5">{config.name}</td>
-                            <td class="col-2">{config.type}</td>
+                            <td class="col-5">{config.name} {config.surname}</td>
+                            <td class="col-2">{sgxhelper.getAccountTypeName(config.type,$language)}</td>
                             <td class="col-2 text-end">
                             </td>
                         </tr>
@@ -83,7 +83,7 @@
     <div class="row">
         <div class="col-2">
             <a class="btn btn-outline-primary" role="button"
-                href="/organization/users/new/edit">{utils.getLabel('add',labels,$language)}</a>
+                href="/admin/users/new/edit">{utils.getLabel('add',labels,$language)}</a>
         </div>
         <div class="col-10">
             <nav aria-label="Table navigation">
@@ -113,6 +113,7 @@
 <script>
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { utils } from '$lib/utils.js';
+    import { sgxhelper } from '$lib/sgxhelper.js';
     import { dev } from '$app/environment';
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';

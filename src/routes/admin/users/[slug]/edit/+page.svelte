@@ -5,6 +5,9 @@
     <h5>{utils.getLabel('title',labels, $language)}</h5><a href="/organization/users/{data.uid}" title="View"><i class="bi bi-eye h5 me-2 link-dark"></i></a>
     {/await}
 </div>
+<Dialog title="Uwaga!" message={errorMessage} bind:dialog callback={closeDialog} 
+labels={[utils.getLabel('ok',labels, $language)]} color="danger">
+</Dialog>
 {#await data}
 {:then data}
 <SettingsForm config={data} callback={saveSettings} readonly={false} backLocation="/admin/users"  setPassLocation="/admin/users/{data.uid}/password"/>
@@ -15,9 +18,12 @@
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
     import { utils } from '$lib/utils.js';
+    import  Dialog  from '$lib/components/Dialog.svelte';
 
     let errorMessage = '';
     export let data;
+
+    let dialog
 
     onMount(async () => {
         if(!$isAuthenticated){
@@ -27,6 +33,11 @@
             console.log('settings',data);
         }
     });
+
+    function closeDialog() {
+        errorMessage = ''
+        dialog.close()
+    }
 
     function getChannelType(config){
         if(config.startsWith("SIGNOMIX")){
@@ -70,12 +81,19 @@
                 goto('/admin/users')
             } else if (response.status == 401 || response.status == 403) {
                 token.set(null)
+            } else if (response.status == 409) {
+                errorMessage= utils.getLabel('user_exists',labels,$language)
+                dialog.showModal()
             } else {
-                alert(
-                    utils.getMessage(utils.FETCH_STATUS)
-                        .replace('%1', response.status)
-                        .replace('%2', response.statusText)
-                )
+                errorMessage = utils.getMessage(utils.FETCH_STATUS)
+                    .replace('%1', response.status)
+                    .replace('%2', response.statusText)
+                dialog.showModal()
+                //alert(
+                //    utils.getMessage(utils.FETCH_STATUS)
+                //        .replace('%1', response.status)
+                //        .replace('%2', response.statusText)
+                //)
             }
         }).catch((error) => {
             errorMessage = error.message
@@ -90,6 +108,14 @@
         'title': {
             'pl': "Ustawienia konta",
             'en': "Account settings"
+        },
+        'user_exists': {
+            'pl': "Podany login użytkownika już jest zajęty",
+            'en': "The user login is already taken"
+        },
+        'ok': {
+            'pl': "OK",
+            'en': "OK"
         }
     }
 

@@ -73,7 +73,7 @@
                             <td class="col-2">{config.uid}</td>
                             {/if}
                             <td class="col-6">{config.name} {config.surname}</td>
-                            <td class="col-1">{config.type}</td>
+                            <td class="col-1">{sgxhelper.getAccountTypeName(config.type,$language)}</td>
                         </tr>
                         {/each}
                     </tbody>
@@ -82,10 +82,15 @@
         </div>
     </div>
     <div class="row">
+        {#if canAddUser()}
         <div class="col-2">
             <a class="btn btn-outline-primary" role="button"
                 href="/organization/users/new/edit">{utils.getLabel('add',labels,$language)}</a>
         </div>
+        {:else}
+        <div class="col-2">
+        </div>
+        {/if}
         <div class="col-10">
             <nav aria-label="Table navigation">
                 <ul class="pagination justify-content-end">
@@ -114,6 +119,7 @@
 <script>
     import { token, profile, language, isAuthenticated, context, contextRoot } from '$lib/usersession.js';
     import { utils } from '$lib/utils.js';
+    import { sgxhelper } from '$lib/sgxhelper.js';
     import { dev } from '$app/environment';
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
@@ -278,6 +284,16 @@
         if(userProfile.type==9 || userProfile.type==8){
             return true
         }else if(userProfile.uid==configElement.uid){
+            return true
+        }else{
+            return false
+        }
+    }
+
+    function canAddUser() {
+        if(utils.isDefaultOrganizationUser($profile)){
+            return true
+        }else if($profile.type==9 || $profile.type==8){
             return true
         }else{
             return false

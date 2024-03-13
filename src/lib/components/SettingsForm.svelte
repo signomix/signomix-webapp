@@ -4,18 +4,23 @@
             <label for="input-uid" class="form-label">{utils.getLabel('login',labels,$language)}</label>
         </div>
         <div class="col-md-5">
-            <input disabled type="text" class="form-control" id="input-uid" bind:value={config.uid}>
+            <input disabled={!isEditable('uid')} type="text" class="form-control" id="input-uid" bind:value={userLogin}
+                readonly={readonly||!isEditable('uid')}>
         </div>
         <div class="col-md-1 col-form-label">
             <label for="input-account" class="form-label">{utils.getLabel('account',labels,$language)}</label>
         </div>
         <div class="col-md-5">
-            <select class="form-select" id="input-account" value="{config.type}" disabled={!isManager}
+            {#if isEditable('type')}
+            <select class="form-select" id="input-account" value="{config.type}"
                 readonly={readonly}>
                 {#each getTypesAllowed() as type}
                 <option value={type.type}>{utils.getLabel(type.name,labels,$language)}</option>
                 {/each}
             </select>
+            {:else}
+            <input disabled={!isEditable('type')} type="text" class="form-control" id="input-account" value={sgxhelper.getAccountTypeName(config.type,$language)} readonly={readonly}>
+            {/if}
             <!--
             <input disabled={!isManager} type="text" class="form-control" id="input-account"
                 value={sgxhelper.getAccountTypeName(config.type,$language).toUpperCase()}
@@ -78,10 +83,11 @@
             <label for="input-role" class="form-label">{utils.getLabel('roles',labels,$language)}</label>
         </div>
         <div class="col-md-10">
-            <input disabled={!isManager} type="text" class="form-control" id="input-role" bind:value={config.role}
-                readonly={readonly}>
+            <input disabled={!isEditable('role')} type="text" class="form-control" id="input-role"
+                bind:value={config.role} readonly={readonly}>
         </div>
     </div>
+
     {#if config.tenant!=0 && config.organization!=utils.getDefaultOrganizationId()}
     {#await promise2}
     {:then data}
@@ -116,7 +122,7 @@
             <input type="text" class="form-control" id="input-pathRoot" value={pathRoot} disabled>
         </div>
         <div class="col-md-8">
-            <input type="text" class="form-control" id="input-path" bind:value={pathExt} readonly={readonly}>
+            <input disabled={!isEditable('pathExt')} type="text" class="form-control" id="input-path" bind:value={pathExt} readonly={readonly}>
         </div>
     </div>
     <div class="row">
@@ -237,13 +243,22 @@
     <hr>
 
     <div class="row">
+        {#if isEditable('password') && config.uid != $profile.uid}
+        <div class="row">
+            <div class="col-md-2 col-form-label">
+                <label for="input-password" class="form-label">{utils.getLabel('password',labels,$language)}</label>
+            </div>
+            <div class="col-md-10">
+                <input type="text" class="form-control" id="input-password" bind:value={password} readonly={readonly}>
+            </div>
+        </div>
+        {:else if config.uid == $profile.uid}
         <div class="col">
             <div class="col-form-label  text-center">
                 <a href="{setPassLocation}"
                     class="btn btn-outline-danger mt-1">{utils.getLabel('changePassword',labels,$language)}</a>
             </div>
         </div>
-        {#if config.uid == $profile.uid}
         <div class="col">
             <div class="col-form-label text-center">
                 <button class="btn btn-outline-danger mt-1"
@@ -270,7 +285,7 @@
     import { sgxhelper } from '$lib/sgxhelper.js';
     import { sgxdata } from '$lib/sgxdata.js';
     import { utils } from '$lib/utils.js';
-    import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
+    import { token, profile, language, isAuthenticated, context, contextRoot } from '$lib/usersession.js';
     import { dev } from '$app/environment';
     import { goto } from '$app/navigation';
 
@@ -280,29 +295,106 @@
     export let backLocation
     export let setPassLocation
 
-    let pathExt = ''
+
     let pathRoot = getPathRoot()
-    let isManager = canAdministrate(config)
+    let pathExt = getPathExt()
+    let userLogin = ''
+    let password = isNew() ? '' : null
 
     console.log('config', config);
+    if (!isNew()) {
+        userLogin = config.uid
+    }
+
+    function getUserTypeName(type) {
+        return utils.getLabel(sgxhelper.getAccountTypeName(type, $language))
+    }
+
+    function isEditable(fieldName) {
+        // system admin can edit all
+        if ($profile.type == 1) {
+            if (fieldName == 'uid' && !isNew()) {
+                return false
+            } else {
+                return true
+            }
+        }
+        // managing admin can edit all users from his organization and tenants
+        if ($profile.type == 9) {
+            if (fieldName == 'uid' && !isNew()) {
+                return false
+            } 
+            if ($profile.organization != config.organization) {
+                return false
+            }
+            if (fieldName == 'organization') {
+                return false
+            }
+            return true
+        }
+        // tenant admin can edit all users from the same tenant
+        if ($profile.type == 8) {
+            if (fieldName == 'uid' && !isNew()) {
+                return false
+            }
+            if ($profile.tenant != config.tenant) {
+                return false
+            }
+            if (fieldName == 'organization' || fieldName == 'tenant' || fieldName == 'path' || fieldName == 'pathRoot') {
+                return false
+            }
+            return true
+        }
+        // user can edit selected fields
+        if (fieldName=='name' || fieldName=='surname' || fieldName=='email' || fieldName=='phone' || fieldName=='phonePrefix' 
+        || fieldName=='preferredLanguage' 
+        || fieldName=='generalNotificationChannel' || fieldName=='infoNotificationChannel' || fieldName=='warningNotificationChannel' 
+        || fieldName=='alertNotificationChannel' || fieldName=='password') {
+            return true
+        }
+        return false
+    }
+    function isNew() {
+        return config.uid == null || config.uid == undefined || config.uid == 'new'
+    }
 
     function getPathRoot() {
-        let tmpRoot
-        if (config.path.indexOf('.') > -1) {
-            pathExt = config.path.substring(config.path.indexOf('.') + 1).replace(/\./g, '/')
-            tmpRoot = config.path.substring(0, config.path.indexOf('.'))
+        let tmpCtxRoot = $contextRoot
+        console.log('$contextRoot', tmpCtxRoot)
+        let result
+        if (tmpCtxRoot == null || tmpCtxRoot == undefined) {
+            tmpCtxRoot = ''
+        } else if (config.path == null || config.path == undefined || config.path == '') {
+            result = tmpCtxRoot.length > 0 ? tmpCtxRoot : ''
+        } else if (config.path.indexOf('.') > -1) {
+            result = config.path.substring(0, config.path.indexOf('.'))
         } else {
-            pathExt = ''
-            tmpRoot = config.path
+            result = config.path
         }
-        if (tmpRoot.length == 0) {
-            return ''
+        if (result.endsWith('.')) {
+            result = result.substring(0, result.length - 1)
         }
-        if (tmpRoot.endsWith('/')) {
-            return tmpRoot
+        console.log('getPathRoot', result)
+        return result
+    }
+    function getPathExt() {
+        let result
+        if (config.path == null || config.path == undefined || config.path == '') {
+            result = ''
+        } else if (config.path.indexOf('.') > -1) {
+            if (config.path.indexOf('.') == config.path.length - 1) {
+                result = ''
+            } else {
+                result = config.path.substring(config.path.indexOf('.') + 1)
+            }
         } else {
-            return tmpRoot + '/'
+            result = ''
         }
+        if (result.length > 0 && !result.startsWith('.')) {
+            result = '.' + result
+        }
+        console.log('getPathExt', result)
+        return result
     }
 
     function getChannelName(channel) {
@@ -347,6 +439,18 @@
     }
 
     function handleSave(event) {
+        config.uid = userLogin
+        config.path = ""
+        config.pathRoot = ""
+        config.tenant = 0
+        console.log('handleSave.passwod', password)
+        if ((isNew() && password != null && password.length > 0)
+         || isEditable('password') && config.uid != $profile.uid) {
+            config.password = password
+        }else{
+            console.log('password',password)
+            delete config.password
+        }
         config.generalNotificationChannel = document.getElementById('input-generalNotificationChannel').value
             + ':' + document.getElementById('input-generalNotificationChannelConfig').value
         config.infoNotificationChannel = document.getElementById('input-infoNotificationChannel').value
@@ -395,11 +499,14 @@
 
     function getTypesAllowed() {
         let types = []
+        console.log('$context while adding user', $context)
         if ($profile.type == 8) { // managing admin
             types.push({ type: 0, name: 'standard' }) // standard
             types.push({ type: 4, name: 'free' }) // free
-            types.push({ type: 8, name: 'mgn.admin' }) // managing admin
             types.push({ type: 9, name: 'admin' }) // tenant admin
+            if ($context == null) {
+                types.push({ type: 8, name: 'mgn.admin' }) // managing admin
+            }
         } else if ($profile.type == 9) { // tenant admin
             types.push({ type: 0, name: 'standard' }) // standard
             types.push({ type: 4, name: 'free' }) // free
@@ -424,8 +531,10 @@
     const organizationApiUrl = utils.getBackendUrl(location) + '/api/organization/' + config.organization
     let promise = sgxdata.getOrganization(dev, organizationApiUrl, $token);
     const tenantApiUrl = utils.getBackendUrl(location) + '/api/tenant/' + config.tenant
-    let promise2 = sgxdata.getTenant(dev, tenantApiUrl, $token);
-
+    let promise2 = {}
+    if (config.tenant != undefined && config.tenant != 0) {
+        promise2 = sgxdata.getTenant(dev, tenantApiUrl, $token);
+    }
 
     let labels = {
         'login': {
@@ -511,6 +620,10 @@
         'tenant': {
             'pl': 'Organizacja',
             'en': 'Organization'
+        },
+        'password': {
+            'en': 'Password',
+            'pl': 'Hasło'
         },
         'changePassword': {
             'en': 'Change password',

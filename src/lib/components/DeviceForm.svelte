@@ -274,11 +274,17 @@
 
     function getPathRoot() {
         let tmpCtxRoot = $contextRoot
+        console.log('$contextRoot', tmpCtxRoot)
+        console.log('config.path', config.path)
         let result
-        if (tmpCtxRoot == null || tmpCtxRoot == undefined) {
+        if (tmpCtxRoot == null || tmpCtxRoot == undefined || tmpCtxRoot == '') {
             tmpCtxRoot = ''
-        }else if (config.path == null || config.path == undefined || config.path == '') {
-            result = tmpCtxRoot.length > 0 ? tmpCtxRoot : ''
+        }else{
+            return tmpCtxRoot
+        }
+
+        if (config.path == null || config.path == undefined || config.path == '') {
+            result = tmpCtxRoot
         } else if (config.path.indexOf('.') > -1) {
             result = config.path.substring(0, config.path.indexOf('.'))
         } else {
@@ -287,12 +293,15 @@
         if (result.endsWith('.')) {
             result = result.substring(0, result.length - 1)
         }
-        result=result.replace(/\./g, '/')
+        //result=result.replace(/\./g, '/')
         console.log('getPathRoot', result)
         return result
     }
     function getPathExt() {
         let result
+        if($contextRoot != null && $contextRoot != undefined && $contextRoot != ''){
+            return ''
+        }
         if (config.path == null || config.path == undefined || config.path == '') {
             result= ''
         }else if (config.path.indexOf('.') > -1) {
@@ -304,9 +313,12 @@
         } else {
             result =''
         }
-        result = result.replace(/\./g, '/')
+        /* result = result.replace(/\./g, '/')
         if(result.length>0 && !result.startsWith('/')){
             result = '/'+result
+        } */
+        if(result.length>0 && !result.startsWith('.')){
+            result = '.'+result
         }
         console.log('getPathExt', result)
         return result
@@ -339,10 +351,14 @@
         if (tagName != '' && tagValue != '') {
             config.tags = tagName + ':' + tagValue
         }
-        if(pathExt.length>0 && !pathExt.startsWith('/')){
+        /* if(pathExt.length>0 && !pathExt.startsWith('/')){
             pathExt = '/'+pathExt
         }
-        config.path = (pathRoot + pathExt).replace(/\//g, '.')
+        config.path = (pathRoot + pathExt).replace(/\//g, '.') */
+        if(pathExt.length>0 && !pathExt.startsWith('.')){
+            pathExt = '.'+pathExt
+        }
+        config.path=pathRoot+pathExt
 
         let errMessage = validate()
         if (errMessage != '') {

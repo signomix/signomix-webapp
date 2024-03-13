@@ -299,10 +299,10 @@ export const sgxhelper = {
             return 'minute'
         }
     },
-    getAccountTypeName: function (role, language) {
+    getAccountTypeName: function (type, language) {
         switch (language) {
             case 'en':
-                switch (role) {
+                switch (type) {
                     case 0:
                         return 'standard'
                     case 1:
@@ -334,7 +334,7 @@ export const sgxhelper = {
                 }
                 break
             case 'pl':
-                switch (role) {
+                switch (type) {
                     case 0:
                         return 'standard'
                     case 1:

@@ -4,19 +4,35 @@
 	export let dialog
 	export let title
 	export let message
-	export let okLabel
-	export let cancelLabel
+	export let labels
 	export let callback
+	export let color
+
+	let okLabel='ok'
+	let cancelLabel='cancel'
+	let selectedColor = color!=undefined && color!=null && color!='' ? color : 'primary'
 
 	function getHint() {
-		let text = utils.getLabel('hint1', labels, $language)
-			+ (okLabel || utils.getLabel('ok', labels, $language))
-			+ utils.getLabel('hint2', labels, $language)
-			+ (cancelLabel || utils.getLabel('cancel', labels, $language))
-			+ utils.getLabel('hint3', labels, $language)
+		okLabel = utils.getLabel('ok', texts, $language)
+		cancelLabel = utils.getLabel('cancel', texts, $language)
+		let text
+		if(labels!=undefined && labels!=null && labels.length>0){
+			okLabel=labels[0]
+			if(labels.length>1){
+				cancelLabel=labels[1]
+			}
+		}
+		if(labels.length<2){
+			return ''
+		}
+		text = utils.getLabel('hint1', texts, $language)
+			+ (okLabel)
+			+ utils.getLabel('hint2', texts, $language)
+			+ (cancelLabel)
+			+ utils.getLabel('hint3', texts, $language)
 		return text
 	}
-	let labels = {
+	let texts = {
 		'hint1': {
 			'pl': "Naciśnij ",
 			'en': "Press "
@@ -44,24 +60,25 @@
 		border: none !important;
 		border-radius: calc(5px * var(--ratio));
 		box-shadow: 0 0 #0000, 0 0 #0000, 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-		padding: 1rem;
 		max-width: 400px;
+		z-index: 1000;
+		padding: 5px;
 	}
 </style>
 <dialog bind:this={dialog}>
-	<div class="text-center">
-		<h5 class="card-title mb-2">{title}</h5>
+	<div class="text-center alert alert-{selectedColor} px-2 py-1 m-0" style="padding: 0px; margin: 0px;">
+		<h5 class="card-title mt-1 mb-2">{title}</h5>
 		{#if message!=undefined && message!=null && message!=''}
 		<p>{message}</p>
 		{:else}
 	    <slot />
 		{/if}
 		<p><em>{getHint()}</em></p>
-		<div>
-			<button class="btn btn-outline-secondary" on:click={callback(false)}>{cancelLabel||utils.getLabel('cancel',
-				labels, $language)}</button>
-			<button class="btn btn-outline-primary" on:click={callback(true)}>{okLabel||utils.getLabel('ok', labels,
-				$language)}</button>
+		<div class="mb-1">
+			{#if labels.length>1}
+			<button class="btn btn-outline-{selectedColor}" on:click={callback(false)}>{cancelLabel}</button>
+			{/if}
+			<button class="btn btn-outline-{selectedColor}" on:click={callback(true)}>{okLabel}</button>
 		</div>
 	</div>
 </dialog>

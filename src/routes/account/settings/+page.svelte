@@ -12,6 +12,8 @@
     import { goto } from '$app/navigation';
     import { utils } from '$lib/utils.js';
 
+    export let data;
+
     onMount(async () => {
         if(!$isAuthenticated){
             console.log('redirect to login');
@@ -21,7 +23,6 @@
         }
     });
 
-    export let data;
 
     function getChannelType(config){
         if(config.startsWith("SIGNOMIX")){

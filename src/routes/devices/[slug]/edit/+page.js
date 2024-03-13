@@ -40,6 +40,17 @@ profile.subscribe((value) => userProfile = value)
     return config
   }
 
+  function getUserPath() {
+    console.log('userPofile.path: '+userProfile.path)
+    if(userProfile.path==null || userProfile.path == undefined ){
+      return ''
+    }else if(userProfile.path.endsWith('.ALL')){
+      return userProfile.path.substring(0, userProfile.path.length - 4)
+    }else{
+      return userProfile.path
+    }
+  }
+
   const newDevice = {
     template: null,
     name: "",
@@ -85,7 +96,8 @@ profile.subscribe((value) => userProfile = value)
     configurationMap: {},
     isNew: true,
     tags: "",
-    dashboard: true
+    dashboard: true,
+    path: getUserPath()
   }
 
   return await getSelectedConfig(utils.getBackendUrl(url))

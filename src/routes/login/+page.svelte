@@ -81,7 +81,8 @@
                     const headers2 = new Headers()
                     headers2.set('Authentication', text);
                     return fetch(
-                        utils.getBackendUrl(location) + '/api/core/user/' + lg,
+                        //utils.getBackendUrl(location) + '/api/core/user/' + lg,
+                        utils.getBackendUrl(location) + '/api/user/' + lg,
                         {
                             method: 'GET',
                             mode: 'cors',

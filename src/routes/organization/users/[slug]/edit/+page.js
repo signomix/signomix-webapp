@@ -1,4 +1,4 @@
-import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
+import { token, profile, language, isAuthenticated, context, contextRoot } from '$lib/usersession.js';
 import { dev } from '$app/environment';
 import { utils } from '$lib/utils.js';
 import { sgxdata } from '$lib/sgxdata.js';
@@ -20,6 +20,11 @@ export async function load({ params, url }) {
     const getSelectedConfig = async (serviceUrl) => {
         console.log('getSelectedConfig of user ['+params.slug+']')
         if (params.slug == 'new' || (dev && browser)) {
+            if(context!=null){
+                newUser.pathRoot=contextRoot
+            }else if(!utils.isDefaultOrganization(profile)){
+                newUser.pathRoot=profile.pathRoot
+            }
             return newUser
         } else {
             let apiUrl = serviceUrl + '/api/user/' + params.slug
