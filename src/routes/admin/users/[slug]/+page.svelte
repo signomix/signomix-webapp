@@ -5,7 +5,7 @@
     {:then data}
     <h5>{utils.getLabel('title',labels, $language)}</h5>
     {#if utils.isHigherAccountType($profile, data)}
-    <a href="/organization/users/{data.uid}/edit" title="Edit"><i class="bi bi-gear h5 me-2 link-dark"></i></a>
+    <a href="/admin/users/{data.uid}/edit" title="Edit"><i class="bi bi-gear h5 me-2 link-dark"></i></a>
     {/if}
     {/await}
 </div>

@@ -2,7 +2,7 @@
     {#await data}
     <h5>{utils.getLabel('title',labels, $language)}</h5><i class="bi bi-eye h5 me-2 link-dark"></i>
     {:then data}
-    <h5>{utils.getLabel('title',labels, $language)}</h5><a href="/organization/users/{data.uid}" title="View"><i class="bi bi-eye h5 me-2 link-dark"></i></a>
+    <h5>{utils.getLabel('title',labels, $language)}</h5><a href="/admin/users/{data.uid}" title="View"><i class="bi bi-eye h5 me-2 link-dark"></i></a>
     {/await}
 </div>
 <Dialog title="Uwaga!" message={errorMessage} bind:dialog callback={closeDialog} 

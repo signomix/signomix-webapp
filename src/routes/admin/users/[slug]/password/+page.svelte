@@ -75,7 +75,7 @@
     let errorMessage = ''
 
     function cancel() {
-        goto('/account/settings')
+        goto('/admin/users/'+slug)
     }
     function sendData() {
         if (!validateForm()) {

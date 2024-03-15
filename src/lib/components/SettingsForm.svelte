@@ -311,6 +311,7 @@
     }
 
     function isEditable(fieldName) {
+        console.log('isEditable', $profile.type, $profile.tenant, config.tenant, $profile.organization, config.organization)
         // system admin can edit all
         if ($profile.type == 1) {
             if (fieldName == 'uid' && !isNew()) {
@@ -320,7 +321,7 @@
             }
         }
         // managing admin can edit all users from his organization and tenants
-        if ($profile.type == 9) {
+        if ($profile.type == 8) {
             if (fieldName == 'uid' && !isNew()) {
                 return false
             } 
@@ -333,7 +334,7 @@
             return true
         }
         // tenant admin can edit all users from the same tenant
-        if ($profile.type == 8) {
+        if ($profile.type == 9) {
             if (fieldName == 'uid' && !isNew()) {
                 return false
             }
@@ -440,9 +441,17 @@
 
     function handleSave(event) {
         config.uid = userLogin
-        config.path = ""
-        config.pathRoot = ""
+        if(pathExt.length>0 && !pathExt.startsWith('.')){
+            pathExt = '.' + pathExt
+        }
+        config.path = pathRoot + pathExt
+        //config.pathRoot = ""
         config.tenant = 0
+        if($context!=null && $context!=undefined && $context>0){
+            config.tenant = $context
+            //config.path = $context.path
+            //config.pathRoot = $context.pathRoot
+        }
         console.log('handleSave.passwod', password)
         if ((isNew() && password != null && password.length > 0)
          || isEditable('password') && config.uid != $profile.uid) {
