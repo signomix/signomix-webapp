@@ -2,18 +2,18 @@
     {#await data}
     <h5>{utils.getLabel('title',labels, $language)}</h5><i class="bi bi-eye h5 me-2 link-dark"></i>
     {:then data}
-    <h5>{utils.getLabel('title',labels, $language)}</h5><a href="/admin/users/{data.uid}" title="View"><i class="bi bi-eye h5 me-2 link-dark"></i></a>
+    <h5>{utils.getLabel('title',labels, $language)}</h5><a href="/organization/users/{data.uid}" title="View"><i class="bi bi-eye h5 me-2 link-dark"></i></a>
     {/await}
 </div>
-<Dialog title="Uwaga!" message={errorMessage} bind:dialog1 callback={closeDialog} 
+<Dialog title="Uwaga!" message={errorMessage} bind:dialog callback={closeDialog} 
 labels={[utils.getLabel('ok',labels, $language)]} color="danger">
 </Dialog>
 {#await data}
 {:then data}
-<SettingsForm config={data} callback={saveSettings} readonly={false} backLocation="/admin/users"  setPassLocation="/admin/users/{data.uid}/password"/>
+<TenantForm config={data} callback={saveSettings} readonly={false}/>
 {/await}
 <script>
-    import SettingsForm from '$lib/components/SettingsForm.svelte';
+    import TenantForm from '$lib/components/TenantForm.svelte';
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
@@ -23,7 +23,7 @@ labels={[utils.getLabel('ok',labels, $language)]} color="danger">
     let errorMessage = '';
     export let data;
 
-    let dialog1
+    let dialog
 
     onMount(async () => {
         if(!$isAuthenticated){
@@ -36,44 +36,22 @@ labels={[utils.getLabel('ok',labels, $language)]} color="danger">
 
     function closeDialog() {
         errorMessage = ''
-        dialog1.close()
+        dialog.close()
     }
 
-    function getChannelType(config){
-        if(config.startsWith("SIGNOMIX")){
-            return "Application";
-        }else if(config.startsWith("SMTP")){
-            return "Email";
-        }else if(config.startsWith("SMS")){
-            return "SMS";
-        }else if(config.startsWith("WEBHOOK")){
-            return "Webhook";
-        }else{
-            return "Unknown";
-        }
-    }
-
-    function getChannelConfig(config){
-        console.log("config: ",config);
-        if(config.indexOf(":")>0){
-            return config.substring(config.indexOf(":")+1);
-        }else{
-            return "";
-        }
-    }
 
     function saveSettings(config){
         console.log("saveSettings: ",config);
         errorMessage=validate(config)
         if(errorMessage!=''){
-            dialog1.showModal()
+            dialog.showModal()
             return
         }
         const headers = new Headers()
         let method = config.newConfig ? 'POST' : 'PUT'
-        let url = utils.getBackendUrl(location) + "/api/user/"
+        let url = utils.getBackendUrl(location) + "/api/tenant/"
         if(method == 'PUT'){
-            url = url + config.uid
+            url = url + config.name
         }
         headers.set('Authentication', $token);
         headers.set('Content-Type', 'application/json');
@@ -83,17 +61,17 @@ labels={[utils.getLabel('ok',labels, $language)]} color="danger">
         ).then((response) => {
             if (response.status == 200) {
                 errorMessage = ''
-                goto('/admin/users')
+                goto('/organization/tenants')
             } else if (response.status == 401 || response.status == 403) {
                 token.set(null)
             } else if (response.status == 409) {
                 errorMessage= utils.getLabel('user_exists',labels,$language)
-                dialog1.showModal()
+                dialog.showModal()
             } else {
                 errorMessage = utils.getMessage(utils.FETCH_STATUS)
                     .replace('%1', response.status)
                     .replace('%2', response.statusText)
-                dialog1.showModal()
+                dialog.showModal()
                 //alert(
                 //    utils.getMessage(utils.FETCH_STATUS)
                 //        .replace('%1', response.status)
@@ -109,43 +87,18 @@ labels={[utils.getLabel('ok',labels, $language)]} color="danger">
         });
     }
 
-    function validate(cfg) {
-        if (isNaN(cfg.phone)) {
-            if (cfg.phone.startsWith("+") || cfg.phone.startsWith("0") || cfg.phone.length > 9 || cfg.phone.length == 0) {
-                return utils.getLabel('invalid_phone', labels, $language)
-            }
-        } else {
-            if (cfg.phone > 999999999) {
-                return utils.getLabel('invalid_phone', labels, $language)
-            }
-        }
-        if(cfg.phonePrefix!=null&&cfg.phonePrefix.length>0){
-            if(cfg.phonePrefix.charCodeAt(0)!=43){
-                cfg.phonePrefix = "+" + cfg.phonePrefix;
-            }
-            if(isNaN(cfg.phonePrefix)&&cfg.phonePrefix.length>0){
-                return utils.getLabel('invalid_phonePrefix', labels, $language)
-            }
-        }
+    function validate(cfg){
         return ""
     }
 
     let labels = {
         'title': {
-            'pl': "Ustawienia konta",
-            'en': "Account settings"
+            'pl': "Definicja klienta",
+            'en': "Tenant definition"
         },
         'user_exists': {
-            'pl': "Podany login użytkownika już jest zajęty",
-            'en': "The user login is already taken"
-        },
-        'invalid_phone': {
-            'pl': "Nieprawidłowy numer telefonu",
-            'en': "Invalid phone number"
-        },
-        'invalid_phonePrefix': {
-            'pl': "Nieprawidłowy prefix numeru telefonu",
-            'en': "Invalid phone prefix"
+            'pl': "Ten klient już istnieje",
+            'en': "This tenant already exists"
         },
         'ok': {
             'pl': "OK",

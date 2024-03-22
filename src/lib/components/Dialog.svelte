@@ -11,12 +11,15 @@
 	let okLabel='ok'
 	let cancelLabel='cancel'
 	let selectedColor = color!=undefined && color!=null && color!='' ? color : 'primary'
+	//let labelsArray=[]
 
 	function getHint() {
 		okLabel = utils.getLabel('ok', texts, $language)
 		cancelLabel = utils.getLabel('cancel', texts, $language)
 		let text
-		if(labels!=undefined && labels!=null && labels.length>0){
+		if(labels!=undefined && labels!=null && Array.isArray(labels) && labels.length>0){
+			console.log('labels:',labels)
+			//labelsArray=labels.split(';')
 			okLabel=labels[0]
 			if(labels.length>1){
 				cancelLabel=labels[1]

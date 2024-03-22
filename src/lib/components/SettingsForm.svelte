@@ -1,3 +1,5 @@
+<!-- <Dialog title="Uwaga!" message={errorMessage} bind:dialog callback={closeDialog} labels={["OK"]} color="danger">
+</Dialog> -->
 <form>
     <div class="row">
         <div class="col-md-1 col-form-label">
@@ -12,14 +14,14 @@
         </div>
         <div class="col-md-5">
             {#if isEditable('type')}
-            <select class="form-select" id="input-account" value="{config.type}"
-                readonly={readonly}>
+            <select class="form-select" id="input-account" value="{config.type}" readonly={readonly}>
                 {#each getTypesAllowed() as type}
                 <option value={type.type}>{utils.getLabel(type.name,labels,$language)}</option>
                 {/each}
             </select>
             {:else}
-            <input disabled={!isEditable('type')} type="text" class="form-control" id="input-account" value={sgxhelper.getAccountTypeName(config.type,$language)} readonly={readonly}>
+            <input disabled={!isEditable('type')} type="text" class="form-control" id="input-account"
+                value={sgxhelper.getAccountTypeName(config.type,$language)} readonly={readonly}>
             {/if}
             <!--
             <input disabled={!isManager} type="text" class="form-control" id="input-account"
@@ -53,7 +55,9 @@
             <label for="input-phone" class="form-label">{utils.getLabel('mobile',labels,$language)}</label>
         </div>
         <div class="col-md-4">
-            <input type="tel" class="form-control" id="input-phone" bind:value={config.phone} pattern="[0-9]"
+            <!--             <input type="tel" class="form-control" name="input-phone" id="input-phone" bind:value={config.phone} pattern="[0-9]"
+                readonly={readonly}> -->
+            <input type="text" class="form-control" name="input-phone" id="input-phone" bind:value={config.phone}
                 readonly={readonly}>
         </div>
     </div>
@@ -74,8 +78,10 @@
             <label for="input-phone_prefix" class="form-label">{utils.getLabel('phone_prefix',labels,$language)}</label>
         </div>
         <div class="col-md-4">
-            <input type="tel" class="form-control" id="input-phone_prefix" bind:value={config.phonePrefix}
-                pattern="[0-9]{3}" readonly={readonly}>
+            <!-- <input type="tel" class="form-control" id="input-phone_prefix" bind:value={config.phonePrefix}
+                pattern="[0-9]{3}" readonly={readonly}> -->
+            <input type="text" class="form-control" id="input-phone_prefix" bind:value={config.phonePrefix}
+                readonly={readonly}>
         </div>
     </div>
     <div class="row">
@@ -122,7 +128,8 @@
             <input type="text" class="form-control" id="input-pathRoot" value={pathRoot} disabled>
         </div>
         <div class="col-md-8">
-            <input disabled={!isEditable('pathExt')} type="text" class="form-control" id="input-path" bind:value={pathExt} readonly={readonly}>
+            <input disabled={!isEditable('pathExt')} type="text" class="form-control" id="input-path"
+                bind:value={pathExt} readonly={readonly}>
         </div>
     </div>
     <div class="row">
@@ -288,6 +295,7 @@
     import { token, profile, language, isAuthenticated, context, contextRoot } from '$lib/usersession.js';
     import { dev } from '$app/environment';
     import { goto } from '$app/navigation';
+    import Dialog from "$lib/components/Dialog.svelte";
 
     export let config
     export let callback
@@ -300,8 +308,18 @@
     let pathExt = getPathExt()
     let userLogin = ''
     let password = isNew() ? '' : null
+    let errorMessage = ''
+    let dialog
 
-    console.log('config', config);
+    /*     function closeDialog(result) {
+            console.log("closeDialog", result)
+            try { dialog.close() } catch (e) { }
+            if (result) {
+                handleSave(true)
+            }
+        } */
+
+    //console.log('config', config);
     if (!isNew()) {
         userLogin = config.uid
     }
@@ -311,7 +329,7 @@
     }
 
     function isEditable(fieldName) {
-        console.log('isEditable', $profile.type, $profile.tenant, config.tenant, $profile.organization, config.organization)
+        //console.log('isEditable', $profile.type, $profile.tenant, config.tenant, $profile.organization, config.organization)
         // system admin can edit all
         if ($profile.type == 1) {
             if (fieldName == 'uid' && !isNew()) {
@@ -324,7 +342,7 @@
         if ($profile.type == 8) {
             if (fieldName == 'uid' && !isNew()) {
                 return false
-            } 
+            }
             if ($profile.organization != config.organization) {
                 return false
             }
@@ -347,10 +365,10 @@
             return true
         }
         // user can edit selected fields
-        if (fieldName=='name' || fieldName=='surname' || fieldName=='email' || fieldName=='phone' || fieldName=='phonePrefix' 
-        || fieldName=='preferredLanguage' 
-        || fieldName=='generalNotificationChannel' || fieldName=='infoNotificationChannel' || fieldName=='warningNotificationChannel' 
-        || fieldName=='alertNotificationChannel' || fieldName=='password') {
+        if (fieldName == 'name' || fieldName == 'surname' || fieldName == 'email' || fieldName == 'phone' || fieldName == 'phonePrefix'
+            || fieldName == 'preferredLanguage'
+            || fieldName == 'generalNotificationChannel' || fieldName == 'infoNotificationChannel' || fieldName == 'warningNotificationChannel'
+            || fieldName == 'alertNotificationChannel' || fieldName == 'password') {
             return true
         }
         return false
@@ -361,7 +379,7 @@
 
     function getPathRoot() {
         let tmpCtxRoot = $contextRoot
-        console.log('$contextRoot', tmpCtxRoot)
+        //console.log('$contextRoot', tmpCtxRoot)
         let result
         if (tmpCtxRoot == null || tmpCtxRoot == undefined) {
             tmpCtxRoot = ''
@@ -375,7 +393,7 @@
         if (result.endsWith('.')) {
             result = result.substring(0, result.length - 1)
         }
-        console.log('getPathRoot', result)
+        //console.log('getPathRoot', result)
         return result
     }
     function getPathExt() {
@@ -394,7 +412,7 @@
         if (result.length > 0 && !result.startsWith('.')) {
             result = '.' + result
         }
-        console.log('getPathExt', result)
+        //console.log('getPathExt', result)
         return result
     }
 
@@ -441,23 +459,23 @@
 
     function handleSave(event) {
         config.uid = userLogin
-        if(pathExt.length>0 && !pathExt.startsWith('.')){
+        if (pathExt.length > 0 && !pathExt.startsWith('.')) {
             pathExt = '.' + pathExt
         }
         config.path = pathRoot + pathExt
         //config.pathRoot = ""
         config.tenant = 0
-        if($context!=null && $context!=undefined && $context>0){
+        if ($context != null && $context != undefined && $context > 0) {
             config.tenant = $context
             //config.path = $context.path
             //config.pathRoot = $context.pathRoot
         }
-        console.log('handleSave.passwod', password)
+        //console.log('handleSave.passwod', password)
         if ((isNew() && password != null && password.length > 0)
-         || isEditable('password') && config.uid != $profile.uid) {
+            || isEditable('password') && config.uid != $profile.uid) {
             config.password = password
-        }else{
-            console.log('password',password)
+        } else {
+            //console.log('password', password)
             delete config.password
         }
         config.generalNotificationChannel = document.getElementById('input-generalNotificationChannel').value
@@ -469,11 +487,28 @@
         config.alertNotificationChannel = document.getElementById('input-alertNotificationChannel').value
             + ':' + document.getElementById('input-alertNotificationChannelConfig').value
         config.path = (pathRoot + pathExt).replace(/\//g, '.')
+        try {
+            config.phone = config.phone.trim()
+        } catch (e) { }
+
+        /*errorMessage=validate(config)
+        if (errorMessage != "") {
+            dialog.showModal()
+            console.log("AFTER DIALOG");
+            return;
+        }*/
         callback(config)
     }
     function handleCancel(event) {
         callback(null)
     }
+    /*     function validate(cfg){
+            if(cfg.phone.startsWith("+") || cfg.phone.startsWith("0")||cfg.phone.length>9){
+                return "Invalid phone number"
+            }
+            return ""
+        } */
+
     /*     function handlePassword(event) {
             console.log('handlePassword')
             goto('/account/settings/password')
@@ -484,7 +519,7 @@
 
     function canAdministrate(user) {
         // system admin can edit all users
-        console.log('canAdministrate', $profile.uid, $profile.type, user.uid)
+        //console.log('canAdministrate', $profile.uid, $profile.type, user.uid)
         if ($profile.uid == user.uid || $profile.type == 1) {
             return true
         }
@@ -508,7 +543,7 @@
 
     function getTypesAllowed() {
         let types = []
-        console.log('$context while adding user', $context)
+        //console.log('$context while adding user', $context)
         if ($profile.type == 8) { // managing admin
             types.push({ type: 0, name: 'standard' }) // standard
             types.push({ type: 4, name: 'free' }) // free

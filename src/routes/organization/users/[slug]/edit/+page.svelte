@@ -2,15 +2,17 @@
     {#await data}
     <h5>{utils.getLabel('title',labels, $language)}</h5><i class="bi bi-eye h5 me-2 link-dark"></i>
     {:then data}
-    <h5>{utils.getLabel('title',labels, $language)}</h5><a href="/organization/users/{data.uid}" title="View"><i class="bi bi-eye h5 me-2 link-dark"></i></a>
+    <h5>{utils.getLabel('title',labels, $language)}</h5><a href="/organization/users/{data.uid}" title="View"><i
+            class="bi bi-eye h5 me-2 link-dark"></i></a>
     {/await}
 </div>
-<Dialog title="Uwaga!" message={errorMessage} bind:dialog callback={closeDialog} 
-labels={[utils.getLabel('ok',labels, $language)]} color="danger">
+<Dialog title="Uwaga!" message={errorMessage} bind:dialog callback={closeDialog} labels={[utils.getLabel('ok',labels,
+    $language)]} color="danger">
 </Dialog>
 {#await data}
 {:then data}
-<SettingsForm config={data} callback={saveSettings} readonly={false} backLocation="/organization/users" setPassLocation="/organization/users/{data.uid}/password"/>
+<SettingsForm config={data} callback={saveSettings} readonly={false} backLocation="/organization/users"
+    setPassLocation="/organization/users/{data.uid}/password" />
 {/await}
 <script>
     import SettingsForm from '$lib/components/SettingsForm.svelte';
@@ -18,7 +20,7 @@ labels={[utils.getLabel('ok',labels, $language)]} color="danger">
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
     import { utils } from '$lib/utils.js';
-    import  Dialog  from '$lib/components/Dialog.svelte';
+    import Dialog from '$lib/components/Dialog.svelte';
 
     let errorMessage = '';
     export let data;
@@ -26,11 +28,11 @@ labels={[utils.getLabel('ok',labels, $language)]} color="danger">
     let dialog
 
     onMount(async () => {
-        if(!$isAuthenticated){
+        if (!$isAuthenticated) {
             console.log('redirect to login');
             goto('/login');
-        }else{
-            console.log('settings',data);
+        } else {
+            console.log('settings', data);
         }
     });
 
@@ -39,35 +41,40 @@ labels={[utils.getLabel('ok',labels, $language)]} color="danger">
         dialog.close()
     }
 
-    function getChannelType(config){
-        if(config.startsWith("SIGNOMIX")){
+    function getChannelType(config) {
+        if (config.startsWith("SIGNOMIX")) {
             return "Application";
-        }else if(config.startsWith("SMTP")){
+        } else if (config.startsWith("SMTP")) {
             return "Email";
-        }else if(config.startsWith("SMS")){
+        } else if (config.startsWith("SMS")) {
             return "SMS";
-        }else if(config.startsWith("WEBHOOK")){
+        } else if (config.startsWith("WEBHOOK")) {
             return "Webhook";
-        }else{
+        } else {
             return "Unknown";
         }
     }
 
-    function getChannelConfig(config){
-        console.log("config: ",config);
-        if(config.indexOf(":")>0){
-            return config.substring(config.indexOf(":")+1);
-        }else{
+    function getChannelConfig(config) {
+        console.log("config: ", config);
+        if (config.indexOf(":") > 0) {
+            return config.substring(config.indexOf(":") + 1);
+        } else {
             return "";
         }
     }
 
-    function saveSettings(config){
-        console.log("saveSettings: ",config);
+    function saveSettings(config) {
+        console.log("saveSettings: ", config);
+        errorMessage = validate(config)
+        if (errorMessage != '') {
+            dialog.showModal()
+            return
+        }
         const headers = new Headers()
         let method = config.newConfig ? 'POST' : 'PUT'
         let url = utils.getBackendUrl(location) + "/api/user/"
-        if(method == 'PUT'){
+        if (method == 'PUT') {
             url = url + config.uid
         }
         headers.set('Authentication', $token);
@@ -82,7 +89,7 @@ labels={[utils.getLabel('ok',labels, $language)]} color="danger">
             } else if (response.status == 401 || response.status == 403) {
                 token.set(null)
             } else if (response.status == 409) {
-                errorMessage= utils.getLabel('user_exists',labels,$language)
+                errorMessage = utils.getLabel('user_exists', labels, $language)
                 dialog.showModal()
             } else {
                 errorMessage = utils.getMessage(utils.FETCH_STATUS)
@@ -104,6 +111,27 @@ labels={[utils.getLabel('ok',labels, $language)]} color="danger">
         });
     }
 
+    function validate(cfg) {
+        if (isNaN(cfg.phone)) {
+            if (cfg.phone.startsWith("+") || cfg.phone.startsWith("0") || cfg.phone.length > 9 || cfg.phone.length == 0) {
+                return utils.getLabel('invalid_phone', labels, $language)
+            }
+        } else {
+            if (cfg.phone > 999999999) {
+                return utils.getLabel('invalid_phone', labels, $language)
+            }
+        }
+        if(cfg.phonePrefix!=null&&cfg.phonePrefix.length>0){
+            if(cfg.phonePrefix.charCodeAt(0)!=43){
+                cfg.phonePrefix = "+" + cfg.phonePrefix;
+            }
+            if(isNaN(cfg.phonePrefix)&&cfg.phonePrefix.length>0){
+                return utils.getLabel('invalid_phonePrefix', labels, $language)
+            }
+        }
+        return ""
+    }
+
     let labels = {
         'title': {
             'pl': "Ustawienia konta",
@@ -112,6 +140,14 @@ labels={[utils.getLabel('ok',labels, $language)]} color="danger">
         'user_exists': {
             'pl': "Podany login użytkownika już jest zajęty",
             'en': "The user login is already taken"
+        },
+        'invalid.phone': {
+            'pl': "Nieprawidłowy numer telefonu",
+            'en': "Invalid phone number"
+        },
+        'invalid.phonePrefix': {
+            'pl': "Nieprawidłowy prefiks telefonu",
+            'en': "Invalid phone prefix"
         },
         'ok': {
             'pl': "OK",
