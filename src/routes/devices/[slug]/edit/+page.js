@@ -84,7 +84,7 @@ profile.subscribe((value) => userProfile = value)
     retentionTime: 0,
     administrators: ",",
     configuration: "",
-    orgApplicationId: 0,
+    orgApplicationId: 1,
     applicationConfig: null,
     organizationId: userProfile.organization,
     writable: true,

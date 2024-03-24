@@ -46,13 +46,21 @@ export const load = async ({ params, url }) => {
         if (item['1'] !== null) {
           item['1'] = item['_el1']
           delete item['_el1']
-        }
+        }/* else if(item['1']==undefined && item['_el1']!=undefined){
+          item['1'] = item['_el1']
+          delete item['_el1']
+        } */
         if (item['10'] !== null) {
           item['10'] = item['_el10']
           delete item['_el10']
-        }
+        }/* else if(item['10']==undefined && item['_el10']!=undefined){
+          item['10'] = item['_el10']
+          delete item['_el10']
+        } */
+        cfg.items[i] = item
       }
     }
+    console.log('cfg after transform:',cfg)
     return cfg
   }
 

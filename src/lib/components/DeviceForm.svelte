@@ -1,5 +1,5 @@
 <Dialog bind:dialog callback={handleSave} title={utils.getLabel('saveQuestion',labels,$language)}
-    okLabel={utils.getLabel('save',labels,$language)}>
+    labels={[utils.getLabel('save',labels,$language),'cancel']}>
     {#if measurementChanged}
     <span class="text-danger"><b>{utils.getLabel('changedMeasurements',labels,$language)}</b></span><br>
     {utils.getLabel('changedMeasurementsDescription',labels,$language)}

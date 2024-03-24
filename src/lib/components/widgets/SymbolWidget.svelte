@@ -21,7 +21,7 @@
     });
     function recalculate(value) {
         try{
-        return Number.parseFloat(value).toFixed(config.rounding);
+            return Number.parseFloat(value).toFixed(config.rounding);
         }catch(e){
             return value;
         }

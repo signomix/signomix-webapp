@@ -3,16 +3,17 @@
 -->
 <div class="text-right p-1">
     <div class="container">
+        {#if config[index]!=undefined && config[index]!=null}
         <form>
             <nav>
                 <div class="nav nav-underline" id="nav-tab">
                     <a class="nav-link {selectedTab==='basic'?'active':''}" type="button"
                         on:click={selectBasic}>Basic</a>
-                    {#if config[index]!=undefined && config[index].type!='text'}
+                    {#if getType(index)!='text'}
                     <a class="nav-link {selectedTab==='extended'?'active':''}" type="button"
                         on:click={selectExtended}>Details</a>
                     {/if}
-                    {#if config[index]!=undefined && config[index].type=='chart' || config[index].type=='groupchart'}
+                    {#if getType(index)=='chart' || getType(index)=='groupchart'}
                     <a class="nav-link {selectedTab==='chart'?'active':''}" type="button" on:click={selectChart}>Chart
                         opt.</a>
                     {/if}
@@ -32,19 +33,19 @@
                     <label for="type">Type</label>
                     <select id="type" class="form-control form-control-sm" bind:value={config[index].type}>
                         {#each widgets.types as widgetType}
-                        <option selected={widgetType==config[index].type} value={widgetType}>{widgetType}</option>
+                        <option selected={widgetType==getType(index)} value={widgetType}>{widgetType}</option>
                         {/each}
                         {#each widgets.localTypes as widgetType}
-                        <option selected={widgetType==config[index].type} value={widgetType}>{widgetType}</option>
+                        <option selected={widgetType==getType(index)} value={widgetType}>{widgetType}</option>
                         {/each}
                         {#each widgets.communityTypes as widgetType}
-                        <option selected={widgetType==config[index].type} value={widgetType}>{widgetType}</option>
+                        <option selected={widgetType==getType(index)} value={widgetType}>{widgetType}</option>
                         {/each}
                     </select>
-                    <label class="form-label">Type {config[index].type} description</label>
+                    <label class="form-label">Type {getType(index)} description</label>
                 </div>
 
-                {#if widgets.isVisible(config[index].type, 'dev_id') && widgets.isVisible(config[index].type, 'group')}
+                {#if widgets.isVisible(getType(index), 'dev_id') && widgets.isVisible(getType(index), 'group')}
                 <div class="mb-2">
                     {#if singleDevice==1}
                     <input class="form-check-input" type="radio" name="gr" id="groupRadio1" value="1" 
@@ -86,14 +87,14 @@
                     on:click={() => (showGroupSelectorModal = true)}>...</button>
                 </div>
                 {/if}
-                {#if widgets.isVisible(config[index].type, 'imageUrl')}
+                {#if widgets.isVisible(getType(index), 'imageUrl')}
                 <div class="mb-2">
                     <label for="imageUrl" class="form-channels">Image URL</label>
                     <input type="text" class="form-control form-control-sm" id="imageUrl"
                         bind:value={config[index].imageUrl}>
                 </div>
                 {/if}
-                {#if widgets.isVisible(config[index].type, 'dashboardID')}
+                {#if widgets.isVisible(getType(index), 'dashboardID')}
                 <div class="mb-2">
                     <label for="dashboardID" class="form-channels">dashboard EUI</label>
                     <input type="text" class="form-control form-control-sm" id="dashboardID"
@@ -104,53 +105,53 @@
             {/if}
             {#if selectedTab === 'extended'}
             <div class="p-1 mt-2">
-                {#if widgets.isVisible(config[index].type, 'channel')}
+                {#if widgets.isVisible(getType(index), 'channel')}
                 <div class="mb-2">
                     <label for="channel" class="form-channels">Data name(s)</label>
                     <input type="text" class="form-control form-control-sm" id="channel"
                         bind:value={config[index].channel}>
                 </div>
                 {/if}
-                {#if widgets.isVisible(config[index].type, 'channel_translated')}
+                {#if widgets.isVisible(getType(index), 'channel_translated')}
                 <div class="mb-2">
                     <label for="channel_translated" class="form-channels">Names on widget</label>
                     <input type="text" class="form-control form-control-sm" id="channel_translated"
                         bind:value={config[index].channel_translated}>
                 </div>
                 {/if}
-                {#if widgets.isVisible(config[index].type, 'query')}
+                {#if widgets.isVisible(getType(index), 'query')}
                 <div class="mb-2">
                     <label for="query" class="form-label">Data range</label>
                     <input type="text" class="form-control form-control-sm" id="query" bind:value={config[index].query}>
                 </div>
                 {/if}
-                {#if widgets.isVisible(config[index].type, 'rounding')}
+                {#if widgets.isVisible(getType(index), 'rounding')}
                 <div class="mb-2">
                     <label for="rounding" class="form-channels">Value rounding</label>
                     <input type="text" class="form-control form-control-sm" id="rounding"
                         bind:value={config[index].rounding}>
                 </div>
                 {/if}
-                {#if widgets.isVisible(config[index].type, 'unit')}
+                {#if widgets.isVisible(getType(index), 'unit')}
                 <div class="mb-2">
                     <label for="unit" class="form-label">Unit</label>
                     <input type="text" class="form-control form-control-sm" id="unit"
                         bind:value={config[index].unitName}>
                 </div>
                 {/if}
-                {#if widgets.isVisible(config[index].type, 'range')}
+                {#if widgets.isVisible(getType(index), 'range')}
                 <div class="mb-2">
                     <label for="range" class="form-label">Alert rule</label>
                     <input type="text" class="form-control form-control-sm" id="range" bind:value={config[index].range}>
                 </div>
                 {/if}
-                {#if widgets.isVisible(config[index].type, 'icon')}
+                {#if widgets.isVisible(getType(index), 'icon')}
                 <div class="mb-2">
                     <label for="icon" class="form-channels">Icon</label>
                     <input type="text" class="form-control form-control-sm" id="icon" bind:value={config[index].icon}>
                 </div>
                 {/if}
-                {#if widgets.isVisible(config[index].type, 'commandType')}
+                {#if widgets.isVisible(getType(index), 'commandType')}
                 <div class="p-1 mt-2">
                     <label for="commandType">Command type</label>
                     <select id="commandType" class="form-control form-control-sm"
@@ -161,7 +162,7 @@
                     </select>
                 </div>
                 {/if}
-                {#if widgets.isVisible(config[index].type, 'role')}
+                {#if widgets.isVisible(getType(index), 'role')}
                 <div class="mb-2">
                     <label for="role" class="form-label">Role</label>
                     <input type="text" class="form-control form-control-sm" id="role" bind:value={config[index].role}>
@@ -175,12 +176,12 @@
             <div class="p-1 mt-2">
                 <label for="chart_type">Typ wykresu</label>
                 <select id="chart_type" class="form-control form-control-sm" bind:value={config[index].chartType}>
-                    {#if config[index].type=='chart'}
+                    {#if getType(index)=='chart'}
                     {#each widgets.chartTypes as chartType}
                     <option selected={chartType==config[index].chartType} value={chartType}>{chartType}</option>
                     {/each}
                     {/if}
-                    {#if config[index].type=='groupchart'}
+                    {#if getType(index)=='groupchart'}
                     {#each widgets.groupchartTypes as chartType}
                     <option selected={chartType==config[index].chartType} value={chartType}>{chartType}</option>
                     {/each}
@@ -240,7 +241,7 @@
             {/if}
             <!-- widget instance configuration -->
             {#if selectedTab === 'config'}
-            {#if widgets.isVisible(config[index].type, 'app_id')}
+            {#if widgets.isVisible(getType(index), 'app_id')}
             <div class="mb-2">
                 <label for="app_id" class="form-label">Application ID</label>
                 <input type="text" class="form-control form-control-sm" id="app_id" bind:value={config[index].app_id}>
@@ -271,6 +272,14 @@
                 </button>
             </div>
         </form>
+        {:else}
+        <div class="alert alert-danger" role="alert">
+            Brak konfiguracji
+        </div>
+        <div class="mt-2">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+        </div>
+        {/if}
     </div>
 
 </div>
@@ -297,7 +306,7 @@
     let myDevices = []
 
     onMount(() => {
-        if(config[index].group == undefined || config[index].group == null || config[index].group == ''){
+        if(config[index]!=undefined && (config[index].group == undefined || config[index].group == null || config[index].group == '')){
             singleDevice = 1
             isSingleDevice=true
             console.log('group',config[index].group)
@@ -345,6 +354,13 @@
     function setSingleDevice() {
         config[index].group=''
         singleDevice=1
+    }
+    function getType(index){
+        try{
+            return config[index].type
+        }catch(e){
+            console.log('getType error',e)
+        }
     }
 
 
