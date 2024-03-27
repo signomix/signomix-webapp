@@ -81,9 +81,11 @@
                                         class="bi bi-cloud-download me-2 link-dark"></i></a>
                                 <a href="/devices/{config.eui}/copy" title={utils.getLabel('copy',labels,$language)}><i
                                         class="bi bi-copy me-2 link-dark"></i></a>
+                                {#if sgxhelper.hasObjectAccess($profile,true,1,config,'Device')}
                                 <a href="/devices/{config.eui}/edit"
                                     title={utils.getLabel('configure',labels,$language)}><i
                                         class="bi bi-gear me-2 link-dark"></i></a>
+                                {/if}
                                 <a href="" on:click|preventDefault={deleteSelected(config.eui)}
                                     title={utils.getLabel('delete',labels,$language)}><i
                                         class="bi bi-trash link-dark"></i></a>
@@ -131,6 +133,7 @@
     import { dev } from '$app/environment';
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
+    import { sgxhelper } from '$lib/sgxhelper.js';
     //import { dialogs } from "svelte-dialogs";
 
     //export let data

@@ -3,7 +3,7 @@
     {utils.getLabel('notlogged',labels,$language)}
 </div>
 {:else}
-{#if utils.getSubdomain(location).toLowerCase() == 'cloud'}
+<!-- {#if utils.getSubdomain(location).toLowerCase() == 'cloud'}
 <div class="row">
     <div class="col-12">
         <div class="alert alert-light mt-3" role="alert">
@@ -13,7 +13,7 @@
     </div>
 
 </div>
-{/if}
+{/if} -->
 {#await promise}
 {:then dashboards}
 <div class="row mt-3">

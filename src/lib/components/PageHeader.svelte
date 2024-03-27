@@ -14,7 +14,7 @@
 {#if $profile!=null && !utils.isDefaultOrganizationUser($profile) && $profile.tenant!=null && $profile.tenant!=0}
 <div class="row mt-1">
     <div class="col w-100">
-        {$profile.path}
+        <i class="bi bi-box me-2"></i>{$profile.path.replace('.ALL','.*')}
     </div>
 </div>
 {/if}

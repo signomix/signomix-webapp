@@ -1,7 +1,8 @@
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-3 border-bottom">
     <h5>{data.name}</h5>
-    {#if (utils.isObjectAdmin($profile, data.userID, $defaultOrganizationId))}
+    <!--{#if (utils.isObjectAdmin($profile, data.userID, $defaultOrganizationId))}-->
+    {#if sgxhelper.hasObjectAccess($profile,true,1,data,'Device')}
     <a href="/devices/{data.eui}/edit" title={utils.getLabel('configure',labels,$language)}><i
         class="bi bi-gear h5 me-2 link-dark"></i></a>
     {/if}
@@ -20,6 +21,7 @@
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { defaultOrganizationId } from '$lib/stores.js';
     import DeviceForm from '$lib/components/DeviceForm.svelte';
+    import { sgxhelper } from '$lib/sgxhelper.js';
 
     export let data
     let errorMessage = ''

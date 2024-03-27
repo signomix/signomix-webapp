@@ -367,5 +367,111 @@ export const sgxhelper = {
                 break
             default:
         }
+    },
+    hasObjectAccess: function(profile, writeAccess, defaultOrganizationId, accessedObject, objectType) {
+        if (accessedObject === null) {
+            console.error("Accessed object is null");
+            return false;
+        }
+        if (profile.type === 1) {
+            return true;
+        }
+        let owner = null;
+        let team = null;
+        let admins = null;
+        let organizationId = 0;
+        let tenantId = 0;
+        let isPublic = false;
+        let path = "";
+    
+        switch(objectType) {
+            case 'Dashboard':
+                team = accessedObject.team;
+                admins = accessedObject.administrators;
+                owner = accessedObject.userID;
+                organizationId = accessedObject.organizationId;
+                isPublic = accessedObject.isShared;
+                break;
+            case 'Device':
+                team = accessedObject.team;
+                admins = accessedObject.administrators;
+                owner = accessedObject.userID;
+                organizationId = accessedObject.organizationId;
+                isPublic = accessedObject.team.includes(",public,");
+                path = accessedObject.path;
+                break;
+            case 'DeviceGroup':
+                team = accessedObject.team;
+                admins = accessedObject.administrators;
+                owner = accessedObject.userID;
+                organizationId = accessedObject.organization;
+                isPublic = accessedObject.team.includes(",public,");
+                break;
+            case 'SentinelConfig':
+                team = accessedObject.team;
+                admins = accessedObject.administrators;
+                owner = accessedObject.userId;
+                organizationId = accessedObject.organizationId;
+                isPublic = accessedObject.team.includes(",public,");
+                break;
+            default:
+                console.error("Unknown object type: " + objectType);
+                return false;
+        }
+    
+        //console.info(`hasObjectAccess: ${user.uid} ${owner} ${team} ${admins} ${organizationId} ${tenantId} ${isPublic} ${path} ${writeAccess} ${user.path}`);
+    
+        if (owner === profile.uid) {
+            return true;
+        }
+        if (profile.uid.toLowerCase() === "public") {
+            return isPublic;
+        }
+        if (profile.organization === defaultOrganizationId) {
+            if (admins.includes("," + profile.uid + ",")) {
+                return true;
+            }
+            if (!writeAccess) {
+                if (team.includes("," + profile.uid + ",")) {
+                    return true;
+                }
+            }
+        } else {
+            if (profile.tenant < 1) {
+                if (!writeAccess) {
+                    if (profile.organization === organizationId) {
+                        return true;
+                    }
+                } else {
+                    if (profile.organization === organizationId && profile.type === 8) {
+                        return true;
+                    }
+                }
+            } else {
+                if (profile.organization !== organizationId) {
+                    return false;
+                }
+                let readAccess = false;
+                let parentPath;
+                let withChildren = false;
+                if (profile.path.endsWith(".ALL") || profile.path.endsWith(".*")) {
+                    parentPath = profile.path.substring(0, profile.path.lastIndexOf("."));
+                    withChildren = true;
+                } else {
+                    parentPath = profile.path;
+                }
+                if (path.toLowerCase() === parentPath) {
+                    readAccess = true;
+                } else if (withChildren) {
+                    readAccess = path.startsWith(parentPath + ".");
+                }
+                if (writeAccess) {
+                    return readAccess && profile.type === 9;
+                } else {
+                    return readAccess;
+                }
+            }
+        }
+        return false;
     }
 }
