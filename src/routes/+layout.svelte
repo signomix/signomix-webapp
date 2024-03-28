@@ -527,8 +527,8 @@
             'en': "Applications"
         },
         'structure': {
-            'pl': "Struktura",
-            'en': "Structure"
+            'pl': "Infrastruktura",
+            'en': "Infrastructure"
         },
         'dashboards': {
             'pl': "Pulpity",

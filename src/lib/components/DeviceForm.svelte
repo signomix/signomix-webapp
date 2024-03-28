@@ -7,20 +7,25 @@
 </Dialog>
 <ul class="nav nav-underline mb-2">
     <li class="nav-item">
-    <a class="nav-link" class:active={activeTab=='basic'} on:click|preventDefault={setActiveTab} name="basic" href="#">{utils.getLabel('basic',labels,$language)}</a>
+        <a class="nav-link" class:active={activeTab=='basic' } on:click|preventDefault={setActiveTab} name="basic"
+            href="#">{utils.getLabel('basic',labels,$language)}</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" class:active={activeTab=='extended'} on:click|preventDefault={setActiveTab} name="extended" href="#">{utils.getLabel('extended',labels,$language)}</a>
+        <a class="nav-link" class:active={activeTab=='extended' } on:click|preventDefault={setActiveTab} name="extended"
+            href="#">{utils.getLabel('extended',labels,$language)}</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" class:active={activeTab=='code'} on:click|preventDefault={setActiveTab} name="code" href="#">{utils.getLabel('code',labels,$language)}</a>
+        <a class="nav-link" class:active={activeTab=='code' } on:click|preventDefault={setActiveTab} name="code"
+            href="#">{utils.getLabel('code',labels,$language)}</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" class:active={activeTab=='infrastructure'} on:click|preventDefault={setActiveTab} name="infrastructure" href="#" >{utils.getLabel('infrastructure',labels,$language)}.</a>
+        <a class="nav-link" class:active={activeTab=='infrastructure' } on:click|preventDefault={setActiveTab}
+            name="infrastructure" href="#">{utils.getLabel('infrastructure',labels,$language)}.</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" class:active={activeTab=='description'} on:click|preventDefault={setActiveTab} name="description" href="#" >{utils.getLabel('description',labels,$language)}</a>
-      </li>
+        <a class="nav-link" class:active={activeTab=='description' } on:click|preventDefault={setActiveTab}
+            name="description" href="#">{utils.getLabel('description',labels,$language)}</a>
+    </li>
 </ul>
 <form class="mb-2">
     {#if activeTab=='basic'}
@@ -29,7 +34,8 @@
             <label for="input-eui" class="form-label">{utils.getLabel('eui',labels,$language)}</label>
         </div>
         <div class="col-md-9">
-            <input type="text" class="form-control" id="input-eui" bind:value={newEui} disabled={readonly && !newDevice}>
+            <input type="text" class="form-control" id="input-eui" bind:value={newEui} disabled={readonly &&
+                !newDevice}>
         </div>
     </div>
     <div class="row">
@@ -211,7 +217,7 @@
     {/if}
     {:else if activeTab=='description'}
     <div class="row">
-<!--         <div class="col-md-3 col-form-label">
+        <!--         <div class="col-md-3 col-form-label">
             <label for="input-interval" class="form-label">{utils.getLabel('description',labels,$language)}</label>
         </div> -->
         <div class="col-md-12">
@@ -236,7 +242,8 @@
             <input type="text" class="form-control" id="input-project" bind:value={config.project} readonly={readonly}>
         </div>
     </div>
-    <div class="row">
+    <hr class="my-2">
+<!--     <div class="row">
         <div class="col-md-2 col-form-label">
             <label for="input-tagname" class="form-label">{utils.getLabel('tagname',labels,$language)}</label>
         </div>
@@ -249,8 +256,18 @@
         <div class="col-md-4">
             <input type="text" class="form-control" id="input-tagvalue" bind:value={tagValue} readonly={readonly}>
         </div>
+    </div> -->
+    <div class="row">
+        <div class="col-md-12 mb-2">
+            <b>{utils.getLabel('tags',labels,$language)}</b>
+        </div>
     </div>
-
+    <div class="row">
+        <div class="col-md-12">
+            <Table header={tagTableLabels} columns={tagTableNames}
+                data={tagArray} createAllowed={!readonly} updateAllowed={!readonly} deleteAllowed={!readonly} />
+        </div>
+    </div>
     {/if}
     {#if !readonly}
     <div class="row">
@@ -268,6 +285,7 @@
     import { token, profile, language, isAuthenticated, context, contextRoot } from '$lib/usersession.js';
     import { Toaster, toast } from 'svelte-sonner'
     import Dialog from '$lib/components/Dialog.svelte'
+    import Table from '$lib/components/Table.svelte'
 
     export let config
     export let callback
@@ -284,13 +302,29 @@
     //
     let originalEui = config.eui
     let newEui = config.eui
+    let tagArray = []
+    let tagTableLabels = []
     let tagName = ""
     let tagValue = ""
+
     if (config.tags != null && config.tags != '') {
-        let tag = config.tags.split(':')
-        tagName = tag[0]
-        tagValue = tag[1]
+        let tagDefinitions = config.tags.split(';')
+        tagDefinitions.forEach(tagDef => {
+            let oneTag = tagDef.split(':')
+            tagArray.push({ name: oneTag[0], value: oneTag[1] })
+        });
     }
+    let tagTableNames=['name','value']
+
+    if (tagArray.length > 0) {
+        tagName = tagArray[0].name
+        tagValue = tagArray[0].value
+    }
+    /*     if (config.tags != null && config.tags != '') {
+            let tag = config.tags.split(':')
+            tagName = tag[0]
+            tagValue = tag[1]
+        } */
 
     let activeTab = 'basic'
 
@@ -304,7 +338,7 @@
         let result
         if (tmpCtxRoot == null || tmpCtxRoot == undefined || tmpCtxRoot == '') {
             tmpCtxRoot = ''
-        }else{
+        } else {
             return tmpCtxRoot
         }
 
@@ -330,18 +364,18 @@
         }
         */
         if (config.path == null || config.path == undefined || config.path == '') {
-            result= ''
-        }else if (config.path.indexOf('.') > -1) {
+            result = ''
+        } else if (config.path.indexOf('.') > -1) {
             if (config.path.indexOf('.') == config.path.length - 1) {
-                result =''
+                result = ''
             } else {
                 result = config.path.substring(config.path.indexOf('.') + 1)
             }
         } else {
-            result =''
+            result = ''
         }
-        if(result.length>0 && !result.startsWith('.')){
-            result = '.'+result
+        if (result.length > 0 && !result.startsWith('.')) {
+            result = '.' + result
         }
         console.log('getPathExt', result)
         return result
@@ -380,13 +414,17 @@
         } else {
             config.configuration = ''
         }
-        if (tagName != '' && tagValue != '') {
+/*         if (tagName != '' && tagValue != '') {
             config.tags = tagName + ':' + tagValue
+        } */
+        config.tags = ''
+        tagArray.forEach(tag => {
+            config.tags += tag.name + ':' + tag.value + ';'
+        })
+        if (pathExt.length > 0 && !pathExt.startsWith('.')) {
+            pathExt = '.' + pathExt
         }
-        if(pathExt.length>0 && !pathExt.startsWith('.')){
-            pathExt = '.'+pathExt
-        }
-        config.path=pathRoot+pathExt
+        config.path = pathRoot + pathExt
 
         let errMessage = validate()
         if (errMessage != '') {
@@ -535,6 +573,10 @@
             'pl': "Ścieżka",
             'en': "Path"
         },
+        'tags': {
+            'pl': "Znaczniki",
+            'en': "Tags"
+        },
         'tagname': {
             'pl': "Nazwa tagu",
             'en': "Tag name"
@@ -542,6 +584,18 @@
         'tagvalue': {
             'pl': "Wartość tagu",
             'en': "Tag value"
+        },
+        'name': {
+            'pl': "Nazwa",
+            'en': "Name"
+        },
+        'value': {
+            'pl': "Wartość",
+            'en': "Value"
+        },
+        'action': {
+            'pl': "Akcja",
+            'en': "Action"
         },
         'dashboard': {
             'pl': "Domyślny pulpit tworzony automatycznie",
@@ -616,4 +670,5 @@
             'en': "Description"
         },
     }
+    tagTableLabels = [utils.getLabel('name',labels,$language), utils.getLabel('value',labels,$language), utils.getLabel('action',labels,$language)]
 </script>
