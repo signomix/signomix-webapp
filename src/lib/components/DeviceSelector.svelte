@@ -3,7 +3,7 @@
 	import { token } from '$lib/usersession.js';
 	import { dev } from '$app/environment';
 	import { utils } from '$lib/utils.js';
-
+  	import { language } from "$lib/usersession.js";
 	export let showDeviceSelectorModal; // boolean
 	export let callback //function
 
@@ -14,6 +14,9 @@
 	let limit = 20
 	let euiToSearch=''
 	let nameToSearch=''
+	let pathToSearch=''
+	let tagNameToSearch=''
+	let tagValueToSearch=''
 
 	$: if (dialog && showDeviceSelectorModal) {
 		dialog.showModal();
@@ -25,24 +28,59 @@
 	function searchEui(event) {
 		if (event.target.value.length >= 0) {
 			nameToSearch=''
+			pathToSearch=''
+			tagNameToSearch=''
+			tagValueToSearch=''
 			let url = utils.getBackendUrl(location) + "/api/core/device"
 			url = url + '?offset=' + offset + '&limit=' + limit
 			promise = sgxdata.getDevices(dev, url, 'search=eui:' + euiToSearch, $token, limit, offset)
+		}
+	}
+	function searchPath(event) {
+		if (event.target.value.length >= 0) {
+			nameToSearch=''
+			euiToSearch=''
+			tagNameToSearch=''
+			tagValueToSearch=''
+			let url = utils.getBackendUrl(location) + "/api/core/device"
+			url = url + '?offset=' + offset + '&limit=' + limit
+			promise = sgxdata.getDevices(dev, url, 'search=path:' + pathToSearch, $token, limit, offset)
 		}
 	}
 
 	function searchName(event) {
 		if (event.target.value.length >= 0) {
 			euiToSearch=''
+			pathToSearch=''
+			tagNameToSearch=''
+			tagValueToSearch=''
 			let url = utils.getBackendUrl(location) + "/api/core/device"
 			url = url + '?offset=' + offset + '&limit=' + limit
 			promise = sgxdata.getDevices(dev, url, 'search=name:' + nameToSearch ,$token, limit, offset)
 		}
 	}
 
+	function searchTag(event) {
+		if (event.target.value.length >= 0) {
+			nameToSearch=''
+			euiToSearch=''
+			pathToSearch=''
+			let url = utils.getBackendUrl(location) + "/api/core/device"
+			url = url + '?offset=' + offset + '&limit=' + limit
+			promise = sgxdata.getDevices(dev, url, 'search=tag:' + tagNameToSearch+':'+tagValueToSearch, $token, limit, offset)
+		}
+	}
+
 	function handleSelected(eui) {
 		callback(eui)
 		dialog.close()
+	}
+
+	let labels = {
+        'close': {
+            'pl': 'Zamknij',
+			'en': 'Close'
+        }
 	}
 
 </script>
@@ -66,6 +104,19 @@
 			</div>
 			<div class="col">
 				<input type="text" id="name" class="form-control" placeholder="Nazwa" bind:value={nameToSearch} on:input={searchName} />
+			</div>
+		</div>
+		<div class="row">
+			<div class="col">
+				<input type="text" id="tname`" class="form-control" placeholder="Tag name" bind:value={tagNameToSearch}  />
+			</div>
+			<div class="col">
+				<input type="text" id="tvalue" class="form-control" placeholder="Tag value" bind:value={tagValueToSearch} on:input={searchTag} />
+			</div>
+		</div>
+		<div class="row">
+			<div class="col">
+				<input type="text" id="path`" class="form-control" placeholder="Ścieżka" bind:value={pathToSearch} on:input={searchPath} />
 			</div>
 		</div>
 		<div class="row">
@@ -96,7 +147,7 @@
 			</div>
 		</div>
 		<hr />
-		<button class="btn btn-primary" autofocus on:click={()=> dialog.close()}>close modal</button>
+		<button class="btn btn-primary" autofocus on:click={()=> dialog.close()}>{utils.getLabel('close',labels,$language)}</button>
 	</div>
 </dialog>
 

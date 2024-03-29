@@ -65,7 +65,7 @@
         <div class="row">
             <div class="col-form-label">
                 <button class="btn btn-outline-secondary mt-1"
-                    on:click={goBack}>{utils.getLabel('cancel',labels,$language)}</button>
+                    on:click|preventDefault={goBack}>{utils.getLabel('cancel',labels,$language)}</button>
                 <button class="btn btn-outline-primary me-4 mt-1" on:click={saveDashboard} disabled={modified==false}><i
                         class="bi bi-save me-2"></i> {utils.getLabel('save',labels,$language)}
                 </button>
@@ -136,8 +136,8 @@
     afterNavigate(({ from }) => {
         previousPage = from?.url.pathname || previousPage
     })
-    function goBack() {
-        //console.log('goBack: ', previousPage);
+    function goBack(event) {
+        console.log('goBack: ', event);
         goto("/dashboards");
     }
 

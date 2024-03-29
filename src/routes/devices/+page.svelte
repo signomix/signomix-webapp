@@ -45,6 +45,13 @@
         </div>
     </div>
     <div class="row">
+        <div class="col-md-12">
+            <label class="col-form-label" for="input-path">Path:</label>
+            <input type="text" id="input-path" bind:value={devicePath} on:input={pathChanged}
+                class="form-control mb-2" aria-label="Search device path">
+        </div>
+    </div>
+    <div class="row">
         <div class="col">
             <button on:click={handleSearch} class="btn btn-outline-primary mb-2" type="button">Szukaj</button>
             <button on:click={handleClearFilter} class="btn btn-outline-secondary mb-2" type="button">Wyczyść</button>
@@ -143,6 +150,7 @@
     let nameFilter = ''
     let tagName = ''
     let tagValue = ''
+    let devicePath = ''
     let showFilter = false
 
     let promise = getDevices(offset)
@@ -188,6 +196,9 @@
                 offset = 0
             } else if (tagName.length > 0 && tagValue.length > 0) {
                 url = url + '&search=tag:' + tagName + ':' + tagValue
+                offset = 0
+            } else if (devicePath.length > 0 ) {
+                url = url + '&search=path:' + devicePath
                 offset = 0
             }
 
@@ -247,6 +258,7 @@
         nameFilter = ''
         tagName = ''
         tagValue = ''
+        devicePath = ''
         promise = getDevices(offset);
     }
     function isFilterSet() {
@@ -257,21 +269,32 @@
         nameFilter = ''
         tagName = ''
         tagValue = ''
+        devicePath = ''
     }
     function nameChanged(event) {
         console.log('nameChanged', event)
         euiFilter = ''
         tagName = ''
         tagValue = ''
+        devicePath = ''
     }
     function tagNameChanged(event) {
         console.log('tagNameChanged', event)
         euiFilter = ''
         nameFilter = ''
+        devicePath = ''
     }
     function tagValueChanged(event) {
         console.log('tagValueChanged', event)
         euiFilter = ''
+        nameFilter = ''
+        devicePath
+    }
+    function pathChanged(event) {
+        console.log('pathChanged', event)
+        euiFilter = ''
+        tagName = ''
+        tagValue = ''
         nameFilter = ''
     }
 
