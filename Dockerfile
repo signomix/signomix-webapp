@@ -1,5 +1,6 @@
 # Build the first stage with alpine node image and name as build
-FROM node:20.9.0-alpine3.18 as build
+#FROM node:20.9.0-alpine3.18 as build
+FROM node:lts-alpine3.19 as build
 
 # update and install the latest dependencies on docker base image
 # Add non root user to the docker image and set the user
@@ -14,10 +15,12 @@ COPY --chown=svelteuser:svelteuser . /app
 
 # install all the project npm dependencies and 
 # build the svelte project to generate the artifacts in build directory
-RUN npm install && npm run build
+RUN npm install -g npm@10.5.2 && npm run build
 
 # we are using multi stage build process to keep the image size as small as possible
-FROM node:18-alpine3.17
+#FROM node:18-alpine3.17
+FROM node:lts-alpine3.19
+
 # update and install latest dependencies, add dumb-init package
 # add and set non root user
 RUN apk update && apk upgrade && apk add dumb-init && adduser -D svelteuser
