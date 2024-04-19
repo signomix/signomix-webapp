@@ -1,4 +1,4 @@
-<script>
+	<script>
 	import { utils } from '$lib/utils.js';
 	import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
 	export let dialog
@@ -25,7 +25,7 @@
 				cancelLabel=labels[1]
 			}
 		}
-		if(labels.length<2){
+		if(labels!=undefined && labels!=null && labels.length<2){
 			return ''
 		}
 		text = utils.getLabel('hint1', texts, $language)
@@ -78,7 +78,7 @@
 		{/if}
 		<p><em>{getHint()}</em></p>
 		<div class="mb-1">
-			{#if labels.length>1}
+			{#if labels!=undefined && labels!=null && labels.length>1}
 			<button class="btn btn-outline-{selectedColor}" on:click={callback(false)}>{cancelLabel}</button>
 			{/if}
 			<button class="btn btn-outline-{selectedColor}" on:click={callback(true)}>{okLabel}</button>
