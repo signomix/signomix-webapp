@@ -15,7 +15,7 @@ COPY --chown=svelteuser:svelteuser . /app
 
 # install all the project npm dependencies and 
 # build the svelte project to generate the artifacts in build directory
-RUN npm install -g npm@10.5.2 && npm run build
+RUN npm install && npm run build
 
 # we are using multi stage build process to keep the image size as small as possible
 #FROM node:18-alpine3.17
