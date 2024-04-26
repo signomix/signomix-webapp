@@ -1,15 +1,17 @@
 import { defaultOrganizationId } from '$lib/stores.js';
 
-let defaultOrganizationIdValue=1
+let defaultOrganizationIdValue = 1
 defaultOrganizationId.subscribe((value) => defaultOrganizationIdValue = value)
 
 export const utils = {
   getBackendUrl: function (url) {
     let x = url.host
-    if (x.startsWith('app.')) {
-      x = x.substring(4)
-    }else if (x.startsWith('cloud.')) {
-      x = x.substring(6)
+    if (!x.endsWith('localhost')) {
+      if (x.startsWith('app.')) {
+        x = x.substring(4)
+      } else if (x.startsWith('cloud.')) {
+        x = x.substring(6)
+      }
     }
     return url.protocol + '//' + x
   },
@@ -18,20 +20,20 @@ export const utils = {
     return !url.host.startsWith('app.')
   },
   getSubdomain: function (url) {
-    let idx=url.host.indexOf('.')
-    if(idx<1){
+    let idx = url.host.indexOf('.')
+    if (idx < 1) {
       return ''
     }
-    let subdomain=url.host.substring(0, idx)
+    let subdomain = url.host.substring(0, idx)
     return subdomain
   },
   isB2bService: function (url) {
     return url.host.endsWith(this.B2B_DOMAIN)
   },
   getTenantName: function (url) {
-    if(url.host.endsWith(this.B2B_DOMAIN)){
+    if (url.host.endsWith(this.B2B_DOMAIN)) {
       return url.host.substring(0, url.host.indexOf('.' + this.B2B_DOMAIN))
-    }else{
+    } else {
       return ''
     }
   },
@@ -149,8 +151,8 @@ export const utils = {
 
   },
   isServiceAvailable: function (userProfile, serviceName) {
-    let SMS=1 // 0b00000001 
-    let SUPPORT=2 // 0b00000010
+    let SMS = 1 // 0b00000001 
+    let SUPPORT = 2 // 0b00000010
     switch (serviceName.toUpperCase()) {
       case 'SMS':
         return SMS & userProfile.services == SMS
@@ -160,12 +162,12 @@ export const utils = {
     return false
   },
   isHigherAccountType: function (actualUserProfile, managedUserConfig) {
-    if(actualUserProfile==null || actualUserProfile==undefined) return false
-    if(managedUserConfig==null || managedUserConfig==undefined) return false
-    if(actualUserProfile.uid==managedUserConfig.uid) return true
+    if (actualUserProfile == null || actualUserProfile == undefined) return false
+    if (managedUserConfig == null || managedUserConfig == undefined) return false
+    if (actualUserProfile.uid == managedUserConfig.uid) return true
     switch (actualUserProfile.type) {
       case 9: // admin
-        return managedUserConfig.type == 0 || managedUserConfig.type == 4 
+        return managedUserConfig.type == 0 || managedUserConfig.type == 4
       case 8: // managing admin
         return managedUserConfig.type == 0 || managedUserConfig.type == 4 || managedUserConfig.type == 9
       case 1: // system admin (owner)
@@ -199,25 +201,25 @@ export const utils = {
   },
   getUserType: function (name) {
     switch (name) {
-      case 'user': 
+      case 'user':
         return 0  // default type, standard user
-      case 'owner': 
+      case 'owner':
         return 1  // owner, service admin
       case 'application':
         return 2
-      case 'demo':  
+      case 'demo':
         return 3  // demo account
-      case 'free':  
+      case 'free':
         return 4  // free account
-      case 'primary': 
+      case 'primary':
         return 5  // primary account
       case 'readonly':
         return 6
       case 'extended':
         return 7
-      case 'manag. admin': 
+      case 'manag. admin':
         return 8  // can manage all organization tenants
-      case 'admin': 
+      case 'admin':
         return 9  // tenant admin
       case 'anonymous':
         return 10
@@ -282,7 +284,7 @@ export const utils = {
     //return userProfile.type !=8
     let result = userProfile.organization == defaultOrganizationIdValue
       || defaultOrganizationIdValue == null
-      return result
+    return result
   },
   recalculate: function (value, rounding) {
     try {
