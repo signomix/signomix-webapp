@@ -179,8 +179,10 @@ const getSgxGroupData = async function (devMode, apiUrl, config, filter, token, 
   const res = await fetch(endpoint, { mode: 'cors', headers: headers });
   let data;
   if (transformFunction == null || transformFunction == undefined) {
+    console.log('getSgxGroupData_4')
     data = await res.json();
   } else {
+    console.log('getSgxGroupData_5')
     data = await transformFunction(config, res.json());
   }
   if (res.ok) {
@@ -428,6 +430,9 @@ const getSgxGroup = async function (devMode, apiUrl, token) {
 
 const applyFilter = function (query, filter) {
   console.log('applyFilter', query, filter)
+  if(query == null || query == undefined || query == "undefined") {
+    return ''
+  }
   var result = sweepSpaces(query)
   if (filter == null || filter == undefined || filter == "undefined") {
     return result

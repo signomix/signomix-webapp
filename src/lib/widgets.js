@@ -131,6 +131,90 @@ export const widgets = {
         } else {
             return fieldName;
         }
+    },
+    getTypeNames: function (){
+        return {
+            'button': {
+                en: 'Button',
+                pl: 'Przycisk'
+            },
+            'chart': {
+                en: 'Chart',
+                pl: 'Wykres'
+            },
+            'groupchart': {
+                en: 'Group chart',
+                pl: 'Wykres grupowy'
+            },
+            'date': {
+                en: 'Date',
+                pl: 'Data'
+            },
+            'devinfo': {
+                en: 'Device info',
+                pl: 'Informacje o urządzeniu'
+            },
+            'image': {
+                en: 'Image',
+                pl: 'Obraz'
+            },
+            'led': {
+                en: 'LED',
+                pl: 'LED'
+            },
+            'link': {
+                en: 'Link',
+                pl: 'Odnośnik'
+            },
+            'map': {
+                en: 'Map',
+                pl: 'Mapa'
+            },
+            'multimap': {
+                en: 'Group map',
+                pl: 'Mapa grupowa'
+            },
+            'multitrack': {
+                en: 'Group routes',
+                pl: 'Trasy grupowe'
+            },
+            'plan': {
+                en: 'Plan',
+                pl: 'Plan'
+            },
+            'raw': {
+                en: 'Raw data',
+                pl: 'Surowe dane'
+            },
+            'report': {
+                en: 'Group report',
+                pl: 'Raport grupowy'
+            },
+            'symbol': {
+                pl: 'Karta wartości',
+                en: 'Value card'
+            },
+            'stopwatch': {
+                en: 'Stopwatch',
+                pl: 'Stoper'
+            },
+            'time': {
+                en: 'Time',
+                pl: 'Czas'
+            },
+            'text': {
+                en: 'Text',
+                pl: 'Tekst'
+            },
+            'canvas_placeholder': {
+                en: 'Canvas placeholder',
+                pl: 'Miejsce na rysunek'
+            },
+            'chart_placeholder': {
+                en: 'Chart placeholder',
+                pl: 'Miejsce na wykres'
+            }
+        }
     }
 }
 

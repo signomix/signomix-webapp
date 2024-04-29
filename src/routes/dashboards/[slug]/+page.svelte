@@ -77,6 +77,8 @@
             <ReportWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'map'===getWidgetType(index)}
             <MapWidget index={index} bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+            {:else if 'multimap'===getWidgetType(index)}
+            <GroupMapWidget index={index} bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'chart'===getWidgetType(index)}
             <ChartWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'groupchart'===getWidgetType(index)}
@@ -153,9 +155,9 @@
     import StackedBarWidget from '$lib/components/widgets/StackedBarWidget.svelte';
     import ReportWidget from '$lib/components/widgets/ReportWidget.svelte';
     import MapWidget from '$lib/components/widgets/MapWidget.svelte';
+    import GroupMapWidget from '$lib/components/widgets/GroupMapWidget.svelte';
 
     export let data
-
 
     let errorMessage = ''
     let dashboardId = 'dashboard' + 0 //TODO

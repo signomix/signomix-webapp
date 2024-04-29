@@ -49,11 +49,15 @@
     }
 
     function getDate(data) {
-        let date;
-        if (config.group != undefined && config.group != null && config.group != '') {
-            date = new Date(data[0][0][0].timestamp).toLocaleString()
-        } else {
-            date = new Date(data[0][0].timestamp).toLocaleString()
+        let date = '';
+        try {
+            if (config.group != undefined && config.group != null && config.group != '') {
+                date = new Date(data[0][0][0].timestamp).toLocaleString()
+            } else {
+                date = new Date(data[0][0].timestamp).toLocaleString()
+            }
+        } catch (e) {
+            //console.log('error', e)
         }
         return date
     }
@@ -79,6 +83,7 @@
             {/if}
             {:else}
             <div style="height: {parentHeight-32}px; overflow-y: scroll;">
+                {#if data!=undefined && data.length!=undefined && data.length >0 && data[0][0] != undefined}
                 {#if isGroup()}
                 <table class="table table-sm table-responsive-sm">
                     <thead class="text-bg-primary">
@@ -119,6 +124,7 @@
                         {/each}
                     </tbody>
                 </table>
+                {/if}
                 {/if}
             </div>
             {/if}

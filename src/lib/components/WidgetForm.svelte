@@ -33,7 +33,7 @@
                     <label for="type">Type</label>
                     <select id="type" class="form-control form-control-sm" bind:value={config[index].type}>
                         {#each widgets.types as widgetType}
-                        <option selected={widgetType==getType(index)} value={widgetType}>{widgetType}</option>
+                        <option selected={widgetType==getType(index)} value={widgetType}>{utils.getLabel(widgetType,widgets.getTypeNames(),$language)}</option>
                         {/each}
                         {#each widgets.localTypes as widgetType}
                         <option selected={widgetType==getType(index)} value={widgetType}>{widgetType}</option>
@@ -47,44 +47,43 @@
 
                 {#if widgets.isVisible(getType(index), 'dev_id') && widgets.isVisible(getType(index), 'group')}
                 <div class="mb-2">
-                    {#if singleDevice==1}
-                    <input class="form-check-input" type="radio" name="gr" id="groupRadio1" value="1" 
-                     on:click={setSingleDevice} checked >
+                    {#if singleDeviceMode==1}
+                    <input class="form-check-input" type="radio" name="gr" id="groupRadio1" value="1"
+                        on:click={setSingleDevice} checked>
                     {:else}
-                    <input class="form-check-input" type="radio" name="gr" id="groupRadio1" value="1" 
-                     on:click={setSingleDevice}>
+                    <input class="form-check-input" type="radio" name="gr" id="groupRadio1" value="1"
+                        on:click={setSingleDevice}>
                     {/if}
                     <label class="form-check-label" for="groupRadio1">
-                        Single device {singleDevice}
+                        Single device {singleDeviceMode}
                     </label>
-                    {#if singleDevice==0}
-                    <input class="form-check-input ms-2" type="radio" name="gr" id="groupRadio2"  value="0" 
-                     on:click={setGroup} checked >
-                    {:else} 
-                    <input class="form-check-input ms-2" type="radio" name="gr" id="groupRadio2"  value="0" 
-                     on:click={setGroup} >
+                    {#if singleDeviceMode==0}
+                    <input class="form-check-input ms-2" type="radio" name="gr" id="groupRadio2" value="0"
+                        on:click={setGroup} checked>
+                    {:else}
+                    <input class="form-check-input ms-2" type="radio" name="gr" id="groupRadio2" value="0"
+                        on:click={setGroup}>
                     {/if}
                     <label class="form-check-label" for="gropuRadio2">
-                        Group of devices {singleDevice}
+                        Group of devices {singleDeviceMode}
                     </label>
                 </div>
                 {/if}
-                {#if singleDevice==1}
+                {#if singleDeviceMode==1}
                 <div class="input-group mb-2">
                     <label for="dev_id" class="form-label me-2">EUI</label>
                     <input type="text" class="form-control form-control-sm" id="dev_id"
                         bind:value={config[index].dev_id}>
-                        <button type="button" class="btn btn-outline-secondary"
-                        on:click={() => (showDeviceSelectorModal = true)}>...</button>
+                    <button type="button" class="btn btn-outline-secondary" on:click={()=> (showDeviceSelectorModal =
+                        true)}>...</button>
                 </div>
                 {/if}
-                {#if  singleDevice==0}
+                {#if singleDeviceMode==0}
                 <div class="input-group mb-2">
                     <label for="group" class="form-label me-2">Group</label>
-                    <input type="text" class="form-control form-control-sm" id="group" 
-                    bind:value={config[index].group}>
-                    <button type="button" class="btn btn-outline-secondary"
-                    on:click={() => (showGroupSelectorModal = true)}>...</button>
+                    <input type="text" class="form-control form-control-sm" id="group" bind:value={config[index].group}>
+                    <button type="button" class="btn btn-outline-secondary" on:click={()=> (showGroupSelectorModal =
+                        true)}>...</button>
                 </div>
                 {/if}
                 {#if widgets.isVisible(getType(index), 'imageUrl')}
@@ -290,6 +289,7 @@
 <script>
     import widgets from '$lib/widgets.js';
     import sgxdata from '$lib/sgxdata.js';
+    import { utils } from '$lib/utils.js';
     import { profile, token, language, isAuthenticated } from '$lib/usersession.js';
     import { onMount } from 'svelte';
     import DeviceSelector from '$lib/components/DeviceSelector.svelte';
@@ -299,22 +299,29 @@
     export let callback
 
     let selectedTab = 'basic'
-    let singleDevice = 0
-    let isSingleDevice = false
+    // singleDeviceMode: 0 - group, 1 - single device, 2 - group or single device
+    let singleDeviceMode = 0
+    //let isSingleDevice = false
     let showDeviceSelectorModal = false;
     let showGroupSelectorModal = false;
     let myDevices = []
 
+    $: if (config[index].type == 'groupchart' || config[index].type == 'multimap' || config[index].type == 'plan' || config[index].type == 'report') {
+        singleDeviceMode = 0
+    } else {
+        singleDeviceMode = 1
+    }
+
     onMount(() => {
-        if(config[index]!=undefined && (config[index].group == undefined || config[index].group == null || config[index].group == '')){
-            singleDevice = 1
-            isSingleDevice=true
-            console.log('group',config[index].group)
+        if (config[index] != undefined && (config[index].group == undefined || config[index].group == null || config[index].group == '')) {
+            singleDeviceMode = 1
+            //isSingleDevice=true
+            console.log('group', config[index].group)
         } else {
-            singleDevice = 0
-            isSingleDevice=false
+            singleDeviceMode = 0
+            //isSingleDevice=false
         }
-        console.log('singleDevice', singleDevice)
+        console.log('singleDeviceMode', singleDeviceMode)
     });
 
     function setDevice(selectedDevice) {
@@ -347,19 +354,19 @@
         selectedTab = 'config'
     }
     function setGroup() {
-        config[index].dev_id=''
-        singleDevice=0
+        config[index].dev_id = ''
+        singleDeviceMode = 0
 
     }
     function setSingleDevice() {
-        config[index].group=''
-        singleDevice=1
+        config[index].group = ''
+        singleDeviceMode = 1
     }
-    function getType(index){
-        try{
+    function getType(index) {
+        try {
             return config[index].type
-        }catch(e){
-            console.log('getType error',e)
+        } catch (e) {
+            console.log('getType error', e)
         }
     }
 
