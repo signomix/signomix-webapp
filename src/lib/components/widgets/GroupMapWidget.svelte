@@ -22,8 +22,8 @@
     const _latitude = 'latitude'
     const _longitude = 'longitude'
 
-    var calcAlert= false
-    let rangeName=''
+    var calcAlert = false
+    let rangeName = ''
 
     //let first = false
     onMount(() => {
@@ -31,42 +31,23 @@
     });
 
     onDestroy(async () => {
-        if (map) {
+        if (map != undefined && map != null) {
             console.log('Unloading Leaflet map.');
             map.remove();
         }
     });
 
+    afterUpdate(() => {
+        show()
+    });
 
-    function showMyMap(jsonData) {
-        map = L.map(getMapElementId()).setView([getLatitude(jsonData), getLongitude(jsonData)], zoom);
-        L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-            maxZoom: 19,
-            attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-        }).addTo(map);
-    }
 
     function show() {
-        console.log('multimap config', config)
-        console.log('getting data')
-        
-        // marker colors
-        /*calcAlert=(self.range!='' && self.range.indexOf('@')>0)
-        if(calcAlert){
-            rangeName=self.range.substring(self.range.indexOf('@')+1)
-        }
-        */
-
         try {
             let promise = sgxdata.getGroupData(dev, apiUrl, config, filter, $token, transform)
                 .then(
                     (jsonData) => {
                         if (jsonData != null) {
-                            //idxLatLon = getLatLonIndexes(jsonData)
-                            //if (idxLatLon.lat == -1 || idxLatLon.lon == -1) {
-                            //    console.log('No latitude or longitude found in data')
-                            //    return
-                            //}
                             console.log('groupmap jsonData', jsonData)
                             showMap(jsonData)
                         }
@@ -133,7 +114,7 @@
             }
             table += '<div class="row g-0" style="width:200px;">'
             table += '<div class="border col-6 txt p-1">' + dataElement[j]['name'] + '</div>'
-            table += '<div class="border col-6 value p-1 text-start">' + dataElement[j]['value'] + '</div>'
+            table += '<div class="border col-6 value p-1 text-start">' + sgxhelper.getRounded(dataElement[j]['value'],config.rounding) + '</div>'
             table += '</div>'
         }
         //
@@ -175,7 +156,9 @@
         //TODO getSelectedLocale()
         //self.measureDate = new Date(jsonData[jsonData.length - 1][0]['timestamp']).toLocaleString(getSelectedLocale())
 
-
+        if (map != undefined && map != null) {
+            map.remove()
+        }
         map = L.map(getMapElementId())
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -190,6 +173,12 @@
         let markerOptions = {
 
         }
+        // marker colors
+        let calcAlert = (config.range != '' && config.range.indexOf('@') > 0)
+        let rangeName = ''
+        if (calcAlert) {
+            rangeName = config.range.substring(config.range.indexOf('@') + 1)
+        }
         let location;
         let markerArray = []
         for (let i = 0; i < jsonData.length; i++) {
@@ -197,15 +186,15 @@
                 location = getLatLon(jsonData[i][0])
                 console.log('latlngs', location)
                 //marker = L.marker(location)
-                marker = new L.CircleMarker(L.latLng(location.lat, location.lon),{
-                    radius: 12,
+                marker = new L.CircleMarker(L.latLng(location.lat, location.lon), {
+                    radius: 10,
                     stroke: true,
                     color: 'black',
                     opacity: 1,
                     weight: 1,
                     fill: true,
-                    fillColor: getMarkerColor(0,calcAlert),
-                    fillOpacity: 0.3
+                    fillColor: getMarkerColor(jsonData[i][0], calcAlert, rangeName, config.range),
+                    fillOpacity: 0.5
                 })
 
                 marker.bindPopup(getDataTable(jsonData[i][0], false), popupOptions).openPopup()
@@ -215,51 +204,37 @@
             }
         }
         let group = L.featureGroup(markerArray).addTo(map);
-        /* if (jsonData.length > 0) {
-            let tmpLat, tmpLon
-            let latlngs = []
-            for (let i = 0; i < jsonData.length; i++) {
-                tmpLat = parseFloat(jsonData[i][idxLatLon.lat]['value'])
-                tmpLon = parseFloat(jsonData[i][idxLatLon.lon]['value'])
-                if (!(isNaN(tmpLat) || isNaN(tmpLon))) {
-                    latlngs.push([tmpLat, tmpLon])
-                }
-            }
-            polyline = L.polyline(latlngs, {
-                color: '#0095FF'
-            }).addTo(map);
-            // zoom the map to the polyline
-            map.fitBounds(polyline.getBounds());
-        } */
         map.fitBounds(group.getBounds());
     }
 
-    function getMarkerColor(point,calcAlert){
-        let result='green'
-        return result
-        /*
-        if(!calcAlert){
+    function getMarkerColor(point, calcAlert, rangeName, range) {
+        console.log('getMarkerColor', point, calcAlert, rangeName, range)
+        console.log('getMarkerColor point length: ', point.length)
+        let result = 'green'
+        if (!calcAlert) {
             return result
         }
-        for(var i=0;i<point.length;i++){
-            if(point[i]){
-                if(point[i].name==self.rangeName){
-                    switch(getAlertLevel(self.range, point[i].value, point[i]['timestamp'])){
-                        case 1:
-                            result='yellow'
-                            break
-                        case 2:
-                            result='red'
-                            break
-                        case 3:
-                            result='grey'
-                            break
-                    }
+        for (var i = 0; i < point.length; i++) {
+            console.log('getMarkerColor point name: ', point[i].name)
+            if (point[i].name == rangeName) {
+                console.log('getMarkerColor', point[i].name, point[i].value, point[i]['timestamp'])
+                switch (sgxhelper.getAlertLevel(range, point[i].value, point[i]['timestamp'])) {
+                    case 1:
+                        result = 'yellow'
+                        break
+                    case 2:
+                        result = 'red'
+                        break
+                    case 3:
+                        result = 'grey'
+                        break
                 }
+            } else {
+                console.log('getMarkerColor point name: ', point[i].name)
             }
         }
+        console.log('getMarkerColor result:', result)
         return result
-        */
     }
 
     let labels = {

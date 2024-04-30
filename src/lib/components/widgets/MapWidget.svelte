@@ -29,20 +29,15 @@
     });
 
     onDestroy(async () => {
-        if (map) {
+        if (map!=undefined && map!=null) {
             console.log('Unloading Leaflet map.');
             map.remove();
         }
     });
 
-
-    function showMyMap(jsonData) {
-        map = L.map(getMapElementId()).setView([getLatitude(jsonData), getLongitude(jsonData)], zoom);
-        L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-            maxZoom: 19,
-            attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-        }).addTo(map);
-    }
+    afterUpdate(() => {
+        show()
+    });
 
     function show() {
         console.log('getting data')
@@ -152,9 +147,12 @@
         lon = parseFloat(jsonData[jsonData.length - 1][idxLatLon.lon]['value'])
 
         //TODO getSelectedLocale()
-        self.measureDate = new Date(jsonData[jsonData.length - 1][0]['timestamp']).toLocaleString(getSelectedLocale())
+        //self.measureDate = new Date(jsonData[jsonData.length - 1][0]['timestamp']).toLocaleString(getSelectedLocale())
 
 
+        if(map!=undefined && map!=null){
+            map.remove()
+        }
         map = L.map(getMapElementId())
         map.setView([lat, lon], zoom)
 
