@@ -29,7 +29,7 @@
     });
 
     onDestroy(async () => {
-        if (map!=undefined && map!=null) {
+        if (map != undefined && map != null) {
             console.log('Unloading Leaflet map.');
             map.remove();
         }
@@ -93,13 +93,19 @@
      * Get marker's popup content
      * @param jsonData
      */
-    function getDataTable(jsonData) {
+    function getDataTable(jsonData, withHeader) {
         let table = '' // '<div style="width:200px;">'
+        // device EUI
         table += '<div class="row g-0" style="width:200px;">'
-        table += '<div class="txt border col-6 p-1">'
-            +utils.getLabel('measurement',labels,$language)+'</div><div class="txt border col-6 p-1">'
-            +utils.getLabel('value',labels,$language)+'</div>'
+        table += '<div class="border col-12 txt p-1"><b>' + jsonData[0][0]['deviceEUI'] + '</b></div>'
         table += '</div>'
+        if (withHeader) {
+            table += '<div class="row g-0" style="width:200px;">'
+            table += '<div class="txt border col-6 p-1">'
+                + utils.getLabel('measurement', labels, $language) + '</div><div class="txt border col-6 p-1">'
+                + utils.getLabel('value', labels, $language) + '</div>'
+            table += '</div>'
+        }
         for (let j = 0; j < jsonData[jsonData.length - 1].length; j++) {
             //don't show lat and lon
             if (j == idxLatLon.lat || j == idxLatLon.lon) {
@@ -108,9 +114,8 @@
             table += '<div class="row g-0" style="width:200px;">'
             table += '<div class="border col-6 txt p-1">' + jsonData[jsonData.length - 1][j]['name'] + '</div>'
             table += '<div class="border col-6 value p-1 text-start">' + jsonData[jsonData.length - 1][j]['value'] + '</div>'
-            //table += '</div>'
+            table += '</div>'
         }
-        table += '</div>'
         return table
     }
 
@@ -150,7 +155,7 @@
         //self.measureDate = new Date(jsonData[jsonData.length - 1][0]['timestamp']).toLocaleString(getSelectedLocale())
 
 
-        if(map!=undefined && map!=null){
+        if (map != undefined && map != null) {
             map.remove()
         }
         map = L.map(getMapElementId())
@@ -165,12 +170,12 @@
             maxWidth: 200,
             maxHeight: 200,
         }
-        let markerOptions={
-            
+        let markerOptions = {
+
         }
         try {
             marker = L.marker([lat, lon])
-            marker.bindPopup(getDataTable(jsonData), popupOptions).openPopup()
+            marker.bindPopup(getDataTable(jsonData, false), popupOptions).openPopup()
             marker.addTo(map);
         } catch (err) {
             console.log(err)
@@ -183,6 +188,19 @@
                 tmpLon = parseFloat(jsonData[i][idxLatLon.lon]['value'])
                 if (!(isNaN(tmpLat) || isNaN(tmpLon))) {
                     latlngs.push([tmpLat, tmpLon])
+                }
+                if (i == 0) {
+                    marker = new L.CircleMarker(L.latLng(tmpLat, tmpLon), {
+                        radius: 4,
+                        stroke: true,
+                        color: 'black',
+                        opacity: 1,
+                        weight: 1,
+                        fill: true,
+                        fillColor: 'gray',
+                        fillOpacity: 0.5
+                    })
+                    marker.addTo(map);
                 }
             }
             polyline = L.polyline(latlngs, {

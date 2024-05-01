@@ -193,7 +193,7 @@
                     opacity: 1,
                     weight: 1,
                     fill: true,
-                    fillColor: getMarkerColor(jsonData[i][0], calcAlert, rangeName, config.range),
+                    fillColor: sgxhelper.getMarkerColor(jsonData[i][0], calcAlert, rangeName, config.range),
                     fillOpacity: 0.5
                 })
 
@@ -207,17 +207,13 @@
         map.fitBounds(group.getBounds());
     }
 
-    function getMarkerColor(point, calcAlert, rangeName, range) {
-        console.log('getMarkerColor', point, calcAlert, rangeName, range)
-        console.log('getMarkerColor point length: ', point.length)
+/*     function getMarkerColor(point, calcAlert, rangeName, range) {
         let result = 'green'
         if (!calcAlert) {
             return result
         }
         for (var i = 0; i < point.length; i++) {
-            console.log('getMarkerColor point name: ', point[i].name)
             if (point[i].name == rangeName) {
-                console.log('getMarkerColor', point[i].name, point[i].value, point[i]['timestamp'])
                 switch (sgxhelper.getAlertLevel(range, point[i].value, point[i]['timestamp'])) {
                     case 1:
                         result = 'yellow'
@@ -229,13 +225,10 @@
                         result = 'grey'
                         break
                 }
-            } else {
-                console.log('getMarkerColor point name: ', point[i].name)
             }
         }
-        console.log('getMarkerColor result:', result)
         return result
-    }
+    } */
 
     let labels = {
         'measurement': {

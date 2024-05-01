@@ -64,6 +64,28 @@ export const sgxhelper = {
         }
         return 0;
     },
+    getMarkerColor: function(point, calcAlert, rangeName, range) {
+        let result = 'green'
+        if (!calcAlert) {
+            return result
+        }
+        for (var i = 0; i < point.length; i++) {
+            if (point[i].name == rangeName) {
+                switch (this.getAlertLevel(range, point[i].value, point[i]['timestamp'])) {
+                    case 1:
+                        result = 'yellow'
+                        break
+                    case 2:
+                        result = 'red'
+                        break
+                    case 3:
+                        result = 'grey'
+                        break
+                }
+            }
+        }
+        return result
+    },
     isNotResponding: function (rule, tstamp) {
         let currentTime = Date.now()
         return (Date.now() - tstamp) > rule.value1
