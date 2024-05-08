@@ -32,7 +32,7 @@
 
     onDestroy(async () => {
         if (map != undefined && map != null) {
-            console.log('Unloading Leaflet map.');
+            //console.log('Unloading Leaflet map.');
             map.remove();
         }
     });
@@ -48,7 +48,7 @@
                 .then(
                     (jsonData) => {
                         if (jsonData != null) {
-                            console.log('groupmap jsonData', jsonData)
+                            //console.log('groupmap jsonData', jsonData)
                             showMap(jsonData)
                         }
                     }
@@ -129,9 +129,9 @@
     function getLatLon(dataElement) {
         let latitude = 0
         let longitude = 0
-        console.log('getLatLon', dataElement)
+        //console.log('getLatLon', dataElement)
         for (let i = 0; i < dataElement.length; i++) {
-            console.log('element', i, dataElement[i])
+            //console.log('element', i, dataElement[i])
             if (dataElement[i]['name'].toLowerCase() == _latitude) {
                 latitude = parseFloat(dataElement[i]['value'])
             }
@@ -144,7 +144,7 @@
 
 
     function showMap(jsonData) {
-        console.log('showMap', jsonData)
+        //console.log('showMap', jsonData)
         let lat = 0
         let lon = 0
         let zoom = 15
@@ -174,9 +174,9 @@
 
         }
         // marker colors
-        let calcAlert = (config.range != '' && config.range.indexOf('@') > 0)
+        let calcAlert = (config.range!=undefined && config.range!=null && config.range != '' && config.range.indexOf('@') > 0)
         let rangeName = ''
-        if (calcAlert) {
+        if (calcAlert && config.range.indexOf('@') > 0){
             rangeName = config.range.substring(config.range.indexOf('@') + 1)
         }
         let location;
@@ -184,7 +184,7 @@
         for (let i = 0; i < jsonData.length; i++) {
             try {
                 location = getLatLon(jsonData[i][0])
-                console.log('latlngs', location)
+                //console.log('latlngs', location)
                 //marker = L.marker(location)
                 marker = new L.CircleMarker(L.latLng(location.lat, location.lon), {
                     radius: 10,

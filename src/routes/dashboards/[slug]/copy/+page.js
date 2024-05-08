@@ -44,7 +44,7 @@ isAuthenticated.subscribe((value)=>userAuthenticated=value)
           await fetch(endpoint, { headers: headers }).then(response => {
             if (response.status == 200) {
               config = response.json()
-              console.log('CONFIG', config)
+              //console.log('CONFIG', config)
             } else if (response.status == 401 || response.status == 403) {
               token.set(null)
             } else {

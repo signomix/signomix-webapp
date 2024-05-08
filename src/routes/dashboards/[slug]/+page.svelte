@@ -34,7 +34,7 @@
             <i class="bi bi-funnel h5 me-2 link-dark"></i>
             {/if}
         </a>
-        {#if (utils.isObjectAdmin($profile, data.userID, $defaultOrganizationId) && !utils.isUserRole($profile, 'limited', false))}
+        {#if (utils.isObjectAdmin($profile, data.userID, $defaultOrganizationId, dashboardConfig.administrators, dashboardConfig.team) && !utils.isUserRole($profile, 'limited', false))}
         <a href="/dashboards/{data.id}/edit" title={utils.getLabel('configure',labels,$language)}><i
                 class="bi bi-gear h5 me-2 link-dark"></i></a>
         {/if}
@@ -54,9 +54,9 @@
             {#if 'chartjs'===getWidgetType(index)}
             <ChartjsWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
             {:else if 'canvas'===getWidgetType(index)}
-            <CanvasWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
+            <CanvasWidgetExample index={index} bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'canvas_placeholder'===getWidgetType(index)}
-            <CanvasWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
+            <CanvasWidgetExample index={index} bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'chart_placeholder'===getWidgetType(index)}
             <ChartjsWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
             {:else if 'symbol'===getWidgetType(index)}
@@ -79,6 +79,8 @@
             <MapWidget index={index} bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'multimap'===getWidgetType(index)}
             <GroupMapWidget index={index} bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+            {:else if 'multitrack'===getWidgetType(index)}
+            <TracksWidget index={index} bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'chart'===getWidgetType(index)}
             <ChartWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'groupchart'===getWidgetType(index)}
@@ -87,10 +89,10 @@
             {:else if 'stacked'===getWidgetChartType(index)}
             <StackedBarWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else}
-            <CanvasWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
+            <CanvasWidgetExample index={index} bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {/if}
             {:else}
-            <CanvasWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
+            <CanvasWidgetExample index={index} bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {/if }
             {/if}<!-- isRoleOK -->
         </div>
@@ -156,6 +158,7 @@
     import ReportWidget from '$lib/components/widgets/ReportWidget.svelte';
     import MapWidget from '$lib/components/widgets/MapWidget.svelte';
     import GroupMapWidget from '$lib/components/widgets/GroupMapWidget.svelte';
+    import TracksWidget from '$lib/components/widgets/TracksWidget.svelte';
 
     export let data
 
@@ -210,7 +213,7 @@
     let getWidgetChartType = function (idx) {
         try {
             if ('chart' === dashboardConfig.widgets[idx].type || 'groupchart' === dashboardConfig.widgets[idx].type) {
-                console.log('chartType', dashboardConfig.widgets[idx].chartType)
+                //console.log('chartType', dashboardConfig.widgets[idx].chartType)
                 return dashboardConfig.widgets[idx].chartType
             } else {
                 return 'unknown'
@@ -234,8 +237,8 @@
         }catch(e){
             //console.log(e)
         }
-        console.log('userRoles', userRoles)
-        console.log('widgetRoles', widgetRoles)
+        //console.log('userRoles', userRoles)
+        //console.log('widgetRoles', widgetRoles)
         // remove empty roles
         widgetRoles = widgetRoles.filter(function(entry) { return entry.trim() != ''; });
         if(widgetRoles.length==0){
@@ -250,7 +253,7 @@
     }
 
     let getRightPadding = function(){
-        console.log('getRightPadding numberOfCols', numberOfCols)
+        //console.log('getRightPadding numberOfCols', numberOfCols)
         if(numberOfCols==1){
             return 'me-2'
         }else{
@@ -312,8 +315,8 @@
         setLinkConfig(dashboardConfig)
         blockChanges(dashboardConfig)
         mergeConfigs()
-        console.log('dashboardConfig ', dashboardConfig)
-        console.log('SHOW dashboard ' + dashboardConfig.id)
+        //console.log('dashboardConfig ', dashboardConfig)
+        //console.log('SHOW dashboard ' + dashboardConfig.id)
         //console.log('dashboardConfig ', dashboardConfig)
         items = dashboardConfig.items
         cols = [
@@ -323,7 +326,7 @@
     }
 
     let findApplication = function (id) {
-        console.log('findApplication', applications)
+        //console.log('findApplication', applications)
         for (let i = 0; i < applications.length; i++) {
             if (applications[i].id == id) {
                 return applications[i]
@@ -350,12 +353,10 @@
 
     let interval
     afterNavigate(({ from, to }) => {
-        console.log('afterNavigate', from, to);
+        //console.log('afterNavigate', from, to);
         if (!$isAuthenticated) {
             console.log('redirect to login');
             goto('/login');
-        } else {
-            console.log('settings', data);
         }
         if (!dev) {
             applications = getApplications()
@@ -368,7 +369,6 @@
         show()
     })
     beforeNavigate(({ from, to }) => {
-        console.log('beforeNavigate', from, to);
         clearInterval(interval);
     })
     onMount(() => {

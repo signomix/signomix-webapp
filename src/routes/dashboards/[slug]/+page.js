@@ -60,7 +60,7 @@ export const load = async ({ params, url }) => {
         cfg.items[i] = item
       }
     }
-    console.log('cfg after transform:',cfg)
+    //console.log('cfg after transform:',cfg)
     return cfg
   }
 

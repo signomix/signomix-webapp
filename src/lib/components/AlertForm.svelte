@@ -19,7 +19,7 @@
   let timeShift = config.timeShift == undefined ? 1 : config.timeShift
   let hysteresis = config.hysteresis == undefined ? 0 : config.hysteresis
 
-  console.log('conditionOk/everyTime: ' + conditionOk + '/' + everyTime)
+  //console.log('conditionOk/everyTime: ' + conditionOk + '/' + everyTime)
 
   let selectedTarget = 1;
   let targets = [{
@@ -127,7 +127,7 @@
     selectedTarget = 1;
   }
 
-  console.log('selectedTarget', selectedTarget)
+  //console.log('selectedTarget', selectedTarget)
 
   /*   if (config.result.conditionOkMessage == null || config.result.conditionOkMessage == undefined) {
       config.result.conditionOkMessage = false;
@@ -139,7 +139,7 @@
   let dialog
 
   function closeDialog(result) {
-    console.log("closeDialog", result)
+    //console.log("closeDialog", result)
     try { dialog.close() } catch (e) { }
     if (result) {
       handleSave(true)
@@ -147,7 +147,7 @@
   }
 
   function targetChange(event) {
-    console.log("Target change to", selectedTarget);
+    //console.log("Target change to", selectedTarget);
 
     if (selectedTarget === 1) {
       config.target.group = null;
@@ -160,7 +160,7 @@
     } else {
       config.target.eui = null;
       config.target.group = null;
-      console.log("cleared eui group");
+      //console.log("cleared eui group");
     }
   }
 
@@ -184,7 +184,7 @@
     if (isDisabled) {
       config.conditions[0].condition2 = null;
       config.conditions[0].value2 = null;
-      console.log("optional conditions cleared!");
+      //console.log("optional conditions cleared!");
     }
   }
 
@@ -198,7 +198,7 @@
     if (isDisabled) {
       config.conditions[i].condition2 = null;
       config.conditions[i].value2 = null;
-      console.log("optional conditions cleared!");
+      //console.log("optional conditions cleared!");
     }
   }
 
@@ -246,7 +246,7 @@
       }
       if (errorMessage != "") {
         dialog.showModal()
-        console.log("AFTER DIALOG");
+        //console.log("AFTER DIALOG");
         return;
       }
     }
@@ -277,8 +277,8 @@
     let regex = /{[^}]*}/g;
     let keywords = ['{info}', '{tag.name}', '{tag.value}', '{target.eui}', '{target.name}', '{device.eui}', '{device.name}', '{var}', '{value}']
     let matches = text.match(regex);
-    console.log('keywords', keywords)
-    console.log('matches', matches)
+    //console.log('keywords', keywords)
+    //console.log('matches', matches)
     let result = ''
     let unknownVariables = []
     if (matches != null) {

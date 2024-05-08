@@ -10,7 +10,7 @@ export const getInfo=async (url)=>{
     fetch(infoUrl)
         .then(response => response.json())
         .then(data => {
-            console.log('layout data', data)
+            //console.log('layout data', data)
             platformInfo.set(data)
             defaultOrganizationId.set(data.defaultOrganizationId)
             return {}

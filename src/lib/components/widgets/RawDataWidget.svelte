@@ -13,7 +13,7 @@
     const apiUrl = utils.getBackendUrl(location) + '/api/provider/v2/device/'
     let parentHeight = 0;
 
-    console.log('RawDataWidget config', config)
+    //console.log('RawDataWidget config', config)
     let promise
     if(config.group != undefined && config.group != null && config.group != '') {
         promise = sgxdata.getGroupData(dev,apiUrl,config,filter,$token);

@@ -3,7 +3,7 @@ export const sgxsentinel = {
     try {
       return Promise.resolve(getSgxSignals(devMode, apiUrl, limit, offset, token)).then((result) => result);
     } catch (e) {
-      console.log('getSignals', e)
+      //console.log('getSignals', e)
       throw new Error(e);
     }
     //return Promise.resolve(getSgxNotifications(devMode, apiUrl, limit, offset, token)).then((result) => result);
@@ -12,7 +12,7 @@ export const sgxsentinel = {
     try {
       return Promise.resolve(getSgxSentinels(devMode, apiUrl, limit, offset, token)).then((result) => result);
     } catch (e) {
-      console.log('getSentinels', e)
+      //console.log('getSentinels', e)
       throw new Error(e);
     }
     //return Promise.resolve(getSgxNotifications(devMode, apiUrl, limit, offset, token)).then((result) => result);
@@ -82,7 +82,7 @@ const getSgxSignals = async function (devMode, apiUrl, limit, offset, token) {
       throw new Error('error1');
     }
   } catch (e) {
-    console.log('getSgxSignals', e)
+    //console.log('getSgxSignals', e)
     throw new Error(e);
   }
 }
@@ -155,7 +155,7 @@ const getSgxSentinels = async function (devMode, apiUrl, limit, offset, token) {
       throw new Error('error1');
     }
   } catch (e) {
-    console.log('getSgxSentinels', e)
+    //console.log('getSgxSentinels', e)
     throw new Error(e);
   }
 }
@@ -202,7 +202,7 @@ const getSgxSentinel = async function (devMode, apiUrl, token, transform) {
       throw new Error('error1');
     }
   } catch (e) {
-    console.log('getSgxSentinels', e)
+    //console.log('getSgxSentinels', e)
     throw new Error(e);
   }
 }

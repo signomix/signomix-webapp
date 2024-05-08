@@ -1,8 +1,8 @@
 <!--
     bindings: https://learn.svelte.dev/tutorial/text-inputs
 -->
-<div class="canvas text-right p-1" id={parentId}>
-    <canvas bind:this={canvas} on:click={onWidgetClick} id={canvasId}></canvas>
+<div class="canvas text-right p-1" id={parentId} on:click={onWidgetClick}>
+    <canvas bind:this={canvas} id={canvasId} on:click={onWidgetClick}></canvas>
 </div>
 <style>
     .canvas {
@@ -47,12 +47,14 @@
 
     function onWidgetClick(event) {
         //console.log('canvas ', canvasId, ' ', parentDiv.offsetWidth);
+        front = !front
     }
 
     let show = function () {
-        jsonData = JSON.parse(rawdata)
-        dataAvailable = true;
-        drawContent()
+        //jsonData = JSON.parse(rawdata)
+        //dataAvailable = true;
+        //drawContent()
+        drawDefault()
     }
 
     let drawContent = function () {
@@ -103,6 +105,11 @@
         ctx.lineTo(canvas.width - 20, 0)
 
         ctx.stroke()
+
+        //title text
+        ctx.font = 'bold 12px Courier New';
+        ctx.fillStyle = 'rgb(0, 0, 0)';
+        ctx.fillText('>' + config.title + '<', 26, 12);
     }
 
 

@@ -78,7 +78,7 @@ export const utils = {
     //na format stosowany przez REST API
     //REST API zamieni znak '~' w definicji offsetu czasu na '+'
     if (dateString === null || dateString === undefined || dateString.trim().length === 0) {
-      console.log('getDateApiISOFormat: null dateString')
+      //console.log('getDateApiISOFormat: null dateString')
       return ''
     }
     //
@@ -131,7 +131,7 @@ export const utils = {
     try {
       return labels[name][language]
     } catch (err) {
-      console.log('getLabel error: ' + err)
+      //console.log('getLabel error: ' + err)
       return name
     }
   },
@@ -176,7 +176,7 @@ export const utils = {
         return false
     }
   },
-  isObjectAdmin: function (userProfile, objectOwner, defaultOrganizationId) {
+  isObjectAdmin: function (userProfile, objectOwner, defaultOrganizationId, objectAdmins, objectTeam) {
     //user types
     //1 - service admin
     //9 - organization admin
@@ -186,17 +186,19 @@ export const utils = {
     data.isOwner = userProfile.uid == objectOwner
     data.isServiceAdmin = userProfile.type == 1
     data.isOrganizationAdmin = userProfile.type == 9
+    data.isObjectAdmin = objectAdmins!=undefined && objectAdmins!=null && objectAdmins.includes(','+userProfile.uid+',')
+    data.isObjectTeamMember = objectTeam!=undefined && objectTeam!=null && objectTeam.includes(','+userProfile.uid+',')
 
     if (data.isDefault) {
-      result = userProfile.type == 1 || userProfile.uid == objectOwner
+      result = userProfile.type == 1 || userProfile.uid == objectOwner || data.isObjectAdmin
     } else {
       // Service admin or organization admin can manage objects of his organization
       // Object owners which are not service admin or organization admin 
       // are not allowed to manage objects of his organization
       result = userProfile.type == 9 || userProfile.type == 1
     }
-    data.hasAccess = result
-    console.log('isObjectAdmin', data)
+    data.hasAdminRights = result
+    //console.log('isObjectAdmin', data)
     return result
   },
   getUserType: function (name) {
@@ -269,13 +271,13 @@ export const utils = {
       roles = userProfile.role.toLowerCase().split(',')
       return roles.includes(roleName.toLowerCase())
     } catch (err) {
-      console.log("error getting user's role. Returning " + defaultResult)
+      //console.log("error getting user's role. Returning " + defaultResult)
       return defaultResult
     }
   },
   //// algorithm changed until work on organizations is completed
   /*isDefaultOrganizationUser: function (userProfile) {
-    console.log('isDefaultOrganizationUser', userProfile, defaultOrganizationIdValue)
+    //console.log('isDefaultOrganizationUser', userProfile, defaultOrganizationIdValue)
     let result = userProfile.organization == defaultOrganizationIdValue
       || defaultOrganizationIdValue == null
     return result

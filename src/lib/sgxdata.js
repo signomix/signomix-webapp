@@ -26,7 +26,7 @@ export const sgxdata = {
       timestamps.push(channels)
     }
     let result = { timestamps: timestamps }
-    console.log('timestamps', JSON.stringify(result))
+    //console.log('timestamps', JSON.stringify(result))
     return timestamps
   },
   getMultiChannelExample: function (eui, channelNamesString, count) {
@@ -50,21 +50,21 @@ export const sgxdata = {
       }
       timestamps.push(channels)
     }
-    console.log('timestamps', timestamps)
+    //console.log('timestamps', timestamps)
     return timestamps
   },
   getData: function (devMode, apiUrl, config, filter, token, transformFunction) {
     return Promise.resolve(getSgxData2(devMode, apiUrl, config, filter, token, transformFunction)).then((result) => result);
   },
   getGroupData: function (devMode, apiUrl, config, filter, token, transformFunction) {
-    console.log('getGroupData', devMode, apiUrl, config, filter, token, transformFunction)
+    //console.log('getGroupData', devMode, apiUrl, config, filter, token, transformFunction)
     return Promise.resolve(getSgxGroupData(devMode, apiUrl, config, filter, token, transformFunction)).then((result) => result);
   },
   getNotifications: function (devMode, apiUrl, limit, offset, token) {
     try {
       return Promise.resolve(getSgxNotifications(devMode, apiUrl, limit, offset, token)).then((result) => result);
     } catch (e) {
-      console.log('getNotifications', e)
+      //console.log('getNotifications', e)
       throw new Error(e);
     }
     //return Promise.resolve(getSgxNotifications(devMode, apiUrl, limit, offset, token)).then((result) => result);
@@ -73,7 +73,7 @@ export const sgxdata = {
     try {
       return Promise.resolve(getSgxUserSettings(devMode, apiUrl, userData, token)).then((result) => result);
     } catch (e) {
-      console.log('getUserSettings', e)
+      //console.log('getUserSettings', e)
       throw new Error(e);
     }
     //return Promise.resolve(getSgxUserSettings(devMode, apiUrl, token)).then((result) => result);
@@ -82,7 +82,7 @@ export const sgxdata = {
     try {
       return Promise.resolve(getSgxAlertConfig(devMode, apiUrl, userData, token)).then((result) => result);
     } catch (e) {
-      console.log('getUserSettings', e)
+      //console.log('getUserSettings', e)
       throw new Error(e);
     }
     //return Promise.resolve(getSgxUserSettings(devMode, apiUrl, token)).then((result) => result);
@@ -91,7 +91,7 @@ export const sgxdata = {
     try {
       return Promise.resolve(getSgxOrganizationData(devMode, apiUrl, token)).then((result) => result);
     } catch (e) {
-      console.log('getOrganization', e)
+      //console.log('getOrganization', e)
       throw new Error(e);
     }
     //return Promise.resolve(getSgxNotifications(devMode, apiUrl, limit, offset, token)).then((result) => result);
@@ -100,7 +100,7 @@ export const sgxdata = {
     try {
       return Promise.resolve(getSgxTenantData(devMode, apiUrl, token)).then((result) => result);
     } catch (e) {
-      console.log('getTenant', e)
+      //console.log('getTenant', e)
       throw new Error(e);
     }
     //return Promise.resolve(getSgxNotifications(devMode, apiUrl, limit, offset, token)).then((result) => result);
@@ -109,7 +109,7 @@ export const sgxdata = {
     try {
       return Promise.resolve(getSgxDevices(devMode, apiUrl, searchString, token)).then((result) => result);
     } catch (e) {
-      console.log('getDevices', e)
+      //console.log('getDevices', e)
       throw new Error(e);
     }
   },
@@ -117,7 +117,7 @@ export const sgxdata = {
     try {
       return Promise.resolve(getSgxGroups(devMode, apiUrl, searchString, token)).then((result) => result);
     } catch (e) {
-      console.log('getGroups', e)
+      //console.log('getGroups', e)
       throw new Error(e);
     }
   },
@@ -125,7 +125,7 @@ export const sgxdata = {
     try {
       return Promise.resolve(getSgxGroups(devMode, apiUrl, '', token)).then((result) => result[0]);
     } catch (e) {
-      console.log('getGroup', e)
+      //console.log('getGroup', e)
       throw new Error(e);
     }
   }
@@ -159,7 +159,7 @@ const getSgxData2 = async function (devMode, apiUrl, config, filter, token, tran
 }
 
 const getSgxGroupData = async function (devMode, apiUrl, config, filter, token, transformFunction) {
-  console.log('getSgxGroupData_1', devMode, apiUrl, config, filter, token, transformFunction)
+  //console.log('getSgxGroupData_1', devMode, apiUrl, config, filter, token, transformFunction)
   if (devMode) {
     if (transformFunction == null || transformFunction == undefined) {
       return groupDataExample
@@ -167,7 +167,7 @@ const getSgxGroupData = async function (devMode, apiUrl, config, filter, token, 
       return await transformFunction(config, groupDataExample)
     }
   }
-  console.log('getSgxGroupData_2')
+  //console.log('getSgxGroupData_2')
   const headers = new Headers()
   headers.set('Accept', 'application/json');
   let endpoint = apiUrl + config.group + "/" + config.channel + "?tid=" + token
@@ -175,14 +175,14 @@ const getSgxGroupData = async function (devMode, apiUrl, config, filter, token, 
   if (query.length > 0) {
     endpoint = endpoint + "&query=" + config.query
   }
-  console.log('getSgxGroupData_3', endpoint)
+  //console.log('getSgxGroupData_3', endpoint)
   const res = await fetch(endpoint, { mode: 'cors', headers: headers });
   let data;
   if (transformFunction == null || transformFunction == undefined) {
-    console.log('getSgxGroupData_4')
+    //console.log('getSgxGroupData_4')
     data = await res.json();
   } else {
-    console.log('getSgxGroupData_5')
+    //console.log('getSgxGroupData_5')
     data = await transformFunction(config, res.json());
   }
   if (res.ok) {
@@ -219,7 +219,7 @@ const getSgxNotifications = async function (devMode, apiUrl, limit, offset, toke
       throw new Error(text);
     }
   } catch (e) {
-    console.log('getSgxNotifications', e)
+    //console.log('getSgxNotifications', e)
     throw new Error(e);
   }
 }
@@ -379,7 +379,7 @@ const getSgxDevices = async function (devMode, apiUrl, searchString, token) {
   }
 }
 const getSgxGroups = async function (devMode, apiUrl, searchString, token) {
-  //console.log('getSgxGroups', 'devmode=',devMode, apiUrl, 'search=',searchString, 'token=',token)
+  ////console.log('getSgxGroups', 'devmode=',devMode, apiUrl, 'search=',searchString, 'token=',token)
   if (devMode) {
     if (searchString == null || searchString == undefined || searchString == "") {
       return groupsExample
@@ -429,7 +429,7 @@ const getSgxGroup = async function (devMode, apiUrl, token) {
 
 
 const applyFilter = function (query, filter) {
-  console.log('applyFilter', query, filter)
+  //console.log('applyFilter', query, filter)
   if(query == null || query == undefined || query == "undefined") {
     return ''
   }
@@ -446,7 +446,7 @@ const applyFilter = function (query, filter) {
   if (filter.project != null && filter.project != undefined && filter.project.length > 0) {
     result = replaceDQL(result, 'project', filter.project)
   }
-  console.log('applyFilter result', result)
+  //console.log('applyFilter result', result)
   return result
 }
 function replaceDQL(query, key, value) {
@@ -464,7 +464,7 @@ function replaceDQL(query, key, value) {
     }
     q2 = a + key + ' ' + value + b
   }
-  console.log('replaceDQL query,key,value,result: ' + query + ',' + key + ',' + value + ',' + q2)
+  //console.log('replaceDQL query,key,value,result: ' + query + ',' + key + ',' + value + ',' + q2)
   return q2
 }
 function sweepSpaces(t) { return t.trim().replace(/ +(?= )/g, '') }

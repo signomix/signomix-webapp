@@ -353,7 +353,7 @@
  */
 
     onMount(async () => {
-        console.log('onMount', $page)
+        //console.log('onMount', $page)
         try {
             getInfo($page.url)
         } catch (e) {

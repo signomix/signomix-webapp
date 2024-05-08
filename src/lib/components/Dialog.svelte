@@ -18,7 +18,7 @@
 		cancelLabel = utils.getLabel('cancel', texts, $language)
 		let text
 		if(labels!=undefined && labels!=null && Array.isArray(labels) && labels.length>0){
-			console.log('labels:',labels)
+			//console.log('labels:',labels)
 			//labelsArray=labels.split(';')
 			okLabel=labels[0]
 			if(labels.length>1){

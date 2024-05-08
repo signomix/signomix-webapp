@@ -130,7 +130,9 @@
         } else {
             data.id='new'
             data.title=utils.getLabel('copy',labels,$language)+data.title
-            console.log('settings', data);
+            data.shared=false
+            data.sharedToken=null
+            //console.log('settings', data);
         }
     });
 
@@ -145,7 +147,7 @@
 
     let currentConfigureIndex = -1;
     let modified = false;
-    let defaultOrganizationId = 0
+    //let defaultOrganizationId = 0
 
     const cols = [
         [1500, 10],
@@ -163,14 +165,14 @@
     const id = () => "_" + Math.random().toString(36).substr(2, 9);
 
     function onChange({ detail }) {
-        console.log('onChange: ', detail);
+        //console.log('onChange: ', detail);
         modified = true
-        console.log(data)
+        //console.log(data)
     }
 
     function saveDashboard() {
         data.items = gridHelp.normalize(data.items, COLS);
-        console.log(data)
+        //console.log(data)
         if (data.version == 1) {
             if (!confirm('Zapisana konfiguracja pulpitu jest w wersji 1.0. \nPo zaktualizowaniu do wersji 2 nie będzie możliwe wyświetlenie go w starszej wersji aplikacji?\n Zapisać?')) {
                 return;
@@ -271,8 +273,8 @@
     function transformBack(cfg) {
         // TODO: layout will be OK when configured for 10 columns: for 1 column layout widget height will be always 1 row
         // TODO: it should be possible preserve widget height when changing layout from 10 to 1 column
-        console.log('transformBack')
-        console.log(cfg)
+        //console.log('transformBack')
+        //console.log(cfg)
         for (let i = 0; i < cfg.items.length; i++) {
             let item = cfg.items[i]
             if (item['_el1'] !== null) {
@@ -285,17 +287,17 @@
                 //delete item['10']
             }
         }
-        console.log(cfg)
+        //console.log(cfg)
         return cfg
     }
 
     function setCurrentConfigureIndex(idx) {
         currentConfigureIndex = idx;
-        console.log('New currentConfigureIndex: ', currentConfigureIndex);
+        //console.log('New currentConfigureIndex: ', currentConfigureIndex);
     }
 
     function widgetFormCallback(idx, cfg) {
-        console.log('testCallback ', idx, cfg);
+        //console.log('testCallback ', idx, cfg);
         if(widgets.singleValueTypes.includes(cfg.type)) {
             cfg.query = 'last 1'
         }
@@ -303,7 +305,7 @@
     }
 
     function addWidget() {
-        console.log('addWidget');
+        //console.log('addWidget');
         modified = true
 
         data.widgets.push({
@@ -344,11 +346,11 @@
 
         data.items = [...data.items, ...[newItem]];
 
-        console.log('widgets_data size ' + data.widgets.length + ' items size ' + data.items.length);
+        //console.log('widgets_data size ' + data.widgets.length + ' items size ' + data.items.length);
     }
 
     function removeItem(itemIndex) {
-        console.log(itemIndex);
+        //console.log(itemIndex);
 
         if (itemIndex > -1) {
             data.items.splice(itemIndex, 1);
@@ -357,7 +359,7 @@
 
         data.items = gridHelp.normalize(data.items, COLS);
 
-        console.log('widgets_data size ' + data.widgets.length + ' items size ' + data.items.length);
+        //console.log('widgets_data size ' + data.widgets.length + ' items size ' + data.items.length);
         modified = true;
     }
 

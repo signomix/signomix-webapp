@@ -47,7 +47,7 @@
     }
 
     function getPlan(data, description){
-        console.log(data)
+        //console.log(data)
         let svgDef=config.description
         if(svgDef==undefined || svgDef==null || svgDef==''){
             return emptyPlan()

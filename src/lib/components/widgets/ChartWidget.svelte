@@ -45,7 +45,7 @@
 
     async function transform(widgetConfig, rawData) {
         let jsonData = await rawData;
-        console.log('jsonData', jsonData)
+        //console.log('jsonData', jsonData)
         let namesTranslated = []
         if (config.channel_translated !== null && config.channel_translated !== undefined) {
             namesTranslated = config.channel_translated.split(',')
@@ -82,7 +82,7 @@
         ]
         let dTmp
         let tmpValue
-        console.log('multiLine', multiLine)
+        //console.log('multiLine', multiLine)
         if (true) {
             let tmpDataset = new Array(jsonData.length)
             for (var i = 0; i < jsonData.length; i++) {
@@ -92,7 +92,7 @@
             for (var i = 0; i < jsonData.length; i++) {
                 tmpMeasures[i] = []
             }
-            console.log('jsonData.length', jsonData.length)
+            //console.log('jsonData.length', jsonData.length)
             for (var i = 0; i < jsonData.length; i++) {
                 labels.push(jsonData[i][0]['timestamp'])
                 //console.log('push '+jsonData[i][0]['timestamp'])
@@ -198,7 +198,7 @@
             data: chartData,
             options: chartOptions
         }
-        console.log(JSON.stringify(charConfig))
+        //console.log(JSON.stringify(charConfig))
         return charConfig
     }
 

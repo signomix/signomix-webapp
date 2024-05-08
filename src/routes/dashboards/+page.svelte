@@ -67,7 +67,7 @@
                             <td class="col-5"><a href="/dashboards/{config.id}">{config.title}</a></td>
                             <td class="col-2">
                                 <a href="/dashboards/{config.id}/copy"><i class="bi bi-copy link-dark"></i></a>
-                                {#if (utils.isObjectAdmin($profile, config.userID, $defaultOrganizationId))}
+                                {#if (utils.isObjectAdmin($profile, config.userID, $defaultOrganizationId, config.administrators, config.team)  && !utils.isUserRole($profile, 'limited', false))}
                                 <a href="/dashboards/{config.id}/edit"><i
                                         class="bi bi-pencil-square ms-2 link-dark"></i></a>
                                 <a href="" on:click|preventDefault={deleteSelected(config.id)}
@@ -202,25 +202,25 @@
         promise = getConfigs();
     }
     function handleDoNothing(event) {
-        console.log(event)
+        //console.log(event)
     }
     function handleSearch(event) {
-        console.log('handleSearch', event)
+        //console.log('handleSearch', event)
         promise = getConfigs(offset);
     }
     function idChanged(event) {
-        console.log('idChanged', event)
+        //console.log('idChanged', event)
         titleFilter = ''
     }
     function titleChanged(event) {
-        console.log('titleChanged', event)
+        //console.log('titleChanged', event)
         idFilter = ''
     }
 
     function toggleFav(id, favourite) {
         return function (event) {
             event.preventDefault();
-            console.log('toggle fav', id, favourite)
+            //console.log('toggle fav', id, favourite)
             let headers = new Headers();
             headers.set('Authentication', $token);
             promise = fetch(utils.getBackendUrl(location) + '/api/core/favourite/dashboards/' + id, { headers: headers, method: favourite ? 'POST' : 'DELETE' })
