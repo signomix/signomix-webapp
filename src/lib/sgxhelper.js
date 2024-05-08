@@ -70,6 +70,9 @@ export const sgxhelper = {
             return result
         }
         for (var i = 0; i < point.length; i++) {
+            if(point[i]==undefined || point[i]==null) {
+                continue
+            }
             if (point[i].name == rangeName) {
                 switch (this.getAlertLevel(range, point[i].value, point[i]['timestamp'])) {
                     case 1:

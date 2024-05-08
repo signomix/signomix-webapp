@@ -107,6 +107,9 @@
         }
         // measurements
         for (let j = 0; j < dataElement.length; j++) {
+            if(dataElement[j]==undefined || dataElement[j]==null){
+                continue
+            }
             //don't show lat and lon
             valueName = dataElement[j]['name'].toLowerCase()
             if (valueName == _latitude || valueName == _longitude) {
@@ -131,6 +134,9 @@
         let longitude = 0
         //console.log('getLatLon', dataElement)
         for (let i = 0; i < dataElement.length; i++) {
+            if(dataElement[i]==undefined || dataElement[i]==null){
+                continue
+            }
             //console.log('element', i, dataElement[i])
             if (dataElement[i]['name'].toLowerCase() == _latitude) {
                 latitude = parseFloat(dataElement[i]['value'])
@@ -182,6 +188,9 @@
         let location;
         let markerArray = []
         for (let i = 0; i < jsonData.length; i++) {
+            if(jsonData[i]==undefined || jsonData[i]==null){
+                continue
+            }
             try {
                 location = getLatLon(jsonData[i][0])
                 //console.log('latlngs', location)
