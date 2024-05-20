@@ -186,7 +186,7 @@
             let headers = new Headers();
 
             let url = utils.getBackendUrl(location) + "/api/core/device"
-            url = url + '?offset=' + actualOffset + '&limit=' + limit + '&full=true'
+            url = url + '?offset=' + actualOffset + '&limit=' + limit + '&full=false'
 
             if (euiFilter.length > 0) {
                 url = url + '&search=eui:' + euiFilter

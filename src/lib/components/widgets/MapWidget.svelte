@@ -93,7 +93,7 @@
      * Get marker's popup content
      * @param jsonData
      */
-    function getDataTable(jsonData, withHeader) {
+    function getDataTable(jsonData, dataPosition, withHeader) {
         let table = '' // '<div style="width:200px;">'
         // device EUI
         table += '<div class="row g-0" style="width:200px;">'
@@ -106,14 +106,14 @@
                 + utils.getLabel('value', labels, $language) + '</div>'
             table += '</div>'
         }
-        for (let j = 0; j < jsonData[jsonData.length - 1].length; j++) {
+        for (let j = 0; j < jsonData[dataPosition].length; j++) {
             //don't show lat and lon
             if (j == idxLatLon.lat || j == idxLatLon.lon) {
                 continue
             }
             table += '<div class="row g-0" style="width:200px;">'
-            table += '<div class="border col-6 txt p-1">' + jsonData[jsonData.length - 1][j]['name'] + '</div>'
-            table += '<div class="border col-6 value p-1 text-start">' + jsonData[jsonData.length - 1][j]['value'] + '</div>'
+            table += '<div class="border col-6 txt p-1">' + jsonData[dataPosition][j]['name'] + '</div>'
+            table += '<div class="border col-6 value p-1 text-start">' + jsonData[dataPosition][j]['value'] + '</div>'
             table += '</div>'
         }
         return table
@@ -140,16 +140,26 @@
 
 
     function showMap(jsonData) {
+        //TODO: handle case when there is no data (all values in jsonData are null)
         //console.log('showMap', jsonData)
         let lat = 0
         let lon = 0
         let zoom = 15
+        let lastDataPosition = jsonData.length - 1
 
         if (jsonData.length == 0 || jsonData[0].length < 1) {
             return
         }
-        lat = parseFloat(jsonData[jsonData.length - 1][idxLatLon.lat]['value'])
-        lon = parseFloat(jsonData[jsonData.length - 1][idxLatLon.lon]['value'])
+        for(let i=jsonData.length - 1; i>=0; i--){
+            if(jsonData[i][idxLatLon.lat]['value'] != null && jsonData[i][idxLatLon.lon]['value'] != null){
+                lat = parseFloat(jsonData[i][idxLatLon.lat]['value'])
+                lon = parseFloat(jsonData[i][idxLatLon.lon]['value'])
+                lastDataPosition = i
+                break
+            }
+        }
+/*         lat = parseFloat(jsonData[jsonData.length - 1][idxLatLon.lat]['value'])
+        lon = parseFloat(jsonData[jsonData.length - 1][idxLatLon.lon]['value']) */
 
         //TODO getSelectedLocale()
         //self.measureDate = new Date(jsonData[jsonData.length - 1][0]['timestamp']).toLocaleString(getSelectedLocale())
@@ -175,11 +185,12 @@
         }
         try {
             marker = L.marker([lat, lon])
-            marker.bindPopup(getDataTable(jsonData, false), popupOptions).openPopup()
+            marker.bindPopup(getDataTable(jsonData, lastDataPosition, false), popupOptions).openPopup()
             marker.addTo(map);
         } catch (err) {
             console.log(err)
         }
+        let first = true;
         if (jsonData.length > 0) {
             let tmpLat, tmpLon
             let latlngs = []
@@ -188,8 +199,12 @@
                 tmpLon = parseFloat(jsonData[i][idxLatLon.lon]['value'])
                 if (!(isNaN(tmpLat) || isNaN(tmpLon))) {
                     latlngs.push([tmpLat, tmpLon])
+                }else{
+                    //skip if lat or lon is not a number
+                    continue
                 }
-                if (i == 0) {
+                if (first) {
+                    first = false
                     marker = new L.CircleMarker(L.latLng(tmpLat, tmpLon), {
                         radius: 4,
                         stroke: true,

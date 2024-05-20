@@ -19,6 +19,11 @@
     <h5>{dashboardConfig.title}</h5>
     <span>
         <a title={utils.getLabel('refresh',labels,$language)} on:click={refreshView}><i class="bi bi-arrow-clockwise h5 me-2 link-dark"></i></a>
+        {#if isMobile}
+        <i class="bi bi-phone-fill h5 me-2 link-dark" on:click="{switchMobile}"></i>
+        {:else}
+        <i class="bi bi-phone h5 me-2 link-dark" on:click="{switchMobile}"></i>
+        {/if}
         {#if dashboardConfig.shared}
         <a title="Dashboard access" data-bs-toggle="modal" data-bs-target="#linkModal"
             on:click|preventDefault={showLink}>
@@ -41,10 +46,12 @@
         {/if}
     </span>
 </div>
-<div class="dashboard-container overflow-auto {getRightPadding()}" id={dashboardId}>
+<div class="dashboard-container" id={dashboardId}>
     {#if items.length==0}
     <div class="alert alert-light mx-auto my-auto">{utils.getLabel('empty',labels,$language)}</div>
     {:else}
+    <div class="row h-100">
+        <div class="{numberOfGridCols}">
     <Grid gap={[2,2]} bind:items={items} rowHeight={100} let:item {cols} let:index on:resize={handleResize}
         on:mount={handleMount}>
         <div class={getBorderClass(index)}>
@@ -97,6 +104,11 @@
             {/if}<!-- isRoleOK -->
         </div>
     </Grid>
+</div>
+{#if isMobile}
+<div class="col-1 d-block bg-secondary bg-opacity-25"></div>
+{/if}
+</div>
     {/if}
 </div>
 <!-- Filter modal -->
@@ -135,11 +147,10 @@
     import gridHelp from "svelte-grid/build/helper/index.mjs";
     import { dev } from '$app/environment';
     import { utils } from '$lib/utils.js';
-    import { goto, afterNavigate, beforeNavigate } from '$app/navigation';
+    import { goto, afterNavigate, beforeNavigate/*, afterUpdate , tick */  } from '$app/navigation';
     import { invalidateAll } from '$app/navigation';
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { defaultOrganizationId } from '$lib/stores.js';
-    import { afterUpdate, tick } from 'svelte';
 
     import DashboardFilterForm from '$lib/components/DashboardFilterForm.svelte';
     import DashboardLinkForm from '$lib/components/DashboardLinkForm.svelte';
@@ -186,6 +197,13 @@
         }
     ]
 
+    let isMobile = false
+    let numberOfGridCols
+    $: if(isMobile){
+        numberOfGridCols = 'col-11'
+    }else{
+        numberOfGridCols = 'col-12'
+    }
 
     // Documentation of cols
     // https://github.com/vaheqelyan/svelte-grid/issues/140
@@ -193,10 +211,10 @@
 
     let getBorderClass = function (idx) {
         try {
-            if(dashboardConfig.widgets[idx].type=='link'){
-                return 'dashboard-widget content bg-white'
-            }else{
-                return 'dashboard-widget content bg-white border border-primary rounded-1'
+            if (dashboardConfig.widgets[idx].type == 'link') {
+                return 'dashboard-widget content bg-white display'
+            } else {
+                return 'dashboard-widget content bg-white display h-100 border border-primary rounded-1'
             }
         } catch (e) {
             return ''
@@ -252,14 +270,14 @@
         return false
     }
 
-    let getRightPadding = function(){
+    /* let getRightPadding = function(){
         //console.log('getRightPadding numberOfCols', numberOfCols)
         if(numberOfCols==1){
-            return 'me-2'
+            return 'me-3'
         }else{
             return ''
         }
-    }
+    } */
 
     let getRefreshInterval = function () {
         const defaultInterval = 300
@@ -434,15 +452,15 @@
         // do nothing
     }
 
-    const touchScrollAllow = async () => {
+/*     const touchScrollAllow = async () => {
     await tick()
     for(let elm of document.querySelectorAll('.svlt-grid-item'))
         elm.style.touchAction = 'auto'
-}
+} */
 
-    afterUpdate(()=>{
+/*     afterUpdate(()=>{
         touchScrollAllow()
-    })
+    }) */
 
     let labels = {
         'refresh': {
@@ -481,6 +499,11 @@
             'pl': "ukryte (brak uprawnień)",
             'en': "hidden (no permissions)"
         },
+    }
+
+    let switchMobile = function(){
+        isMobile = !isMobile
+        refreshView()
     }
 
 </script>
