@@ -102,8 +102,7 @@
                     {#if isCloud() || !utils.isUserRole($profile, 'limited', false)}
                     <li class="nav-item">
                         <a class="nav-link" class:active={false} on:click={toggleStructure}>
-                            <span><i
-                                    class="bi bi-diagram-3 me-2"></i><span>{utils.getLabel('structure',labels,$language)}</span>
+                            <span><i class="bi bi-diagram-3 me-2"></i><span>{utils.getLabel('structure',labels,$language)}</span>
                         </a>
                     </li>
                     {/if}
@@ -111,31 +110,27 @@
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/devices' } href="/devices">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i
-                                    class="bi bi-hdd-network me-2"></i><span>{utils.getLabel('devices',labels,$language)}</span>
+                                <i class="bi bi-hdd-network me-2"></i><span>{utils.getLabel('devices',labels,$language)}</span>
                         </a>
                     </li>
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/groups' } href="/groups">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i
-                                    class="bi bi-hdd-stack me-2"></i><span>{utils.getLabel('groups',labels,$language)}</span>
+                                <i class="bi bi-hdd-stack me-2"></i><span>{utils.getLabel('groups',labels,$language)}</span>
                         </a>
                     </li>
                     {/if}
                     <!-- Analytics -->
                     <li class="nav-item">
                         <a class="nav-link" class:active={false} on:click={toggleAnalytics}>
-                            <span><i
-                                    class="bi bi-database me-2"></i><span>{utils.getLabel('analytics',labels,$language)}</span>
+                            <span><i class="bi bi-database me-2"></i><span>{utils.getLabel('analytics',labels,$language)}</span>
                         </a>
                     </li>
                     {#if analyticsExpanded}
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/sentinels' } href="/sentinels">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i
-                                    class="bi bi-list-check me-2"></i><span>{utils.getLabel('sentinels',labels,$language)}</span>
+                                <i class="bi bi-list-check me-2"></i><span>{utils.getLabel('sentinels',labels,$language)}</span>
                         </a>
                     </li>
                     <li class="nav-item ms-3">
@@ -157,14 +152,39 @@
                             {/if}
                         </a>
                     </li>
+                    <!-- ACCOUNT -->
                     <li class="nav-item">
+                        <a class="nav-link" class:active={false} on:click={toggleAccount}>
+                            <span><i class="bi bi-person me-2"></i><span>{utils.getLabel('account',labels,$language)}</span>
+                        </a>
+                    </li>
+                    {#if accountExpanded}
+                    <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname.startsWith('/account/settings') }
-                            href="/account/settings" on:click={collapseOther}>
+                            href="/account/settings">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i class="bi bi-sliders me-2"></i>{utils.getLabel('settings',labels,$language)}
                             </span>
                         </a>
-                    </li>
+                        </li>
+                        <li class="nav-item ms-3">
+                        <a class="nav-link" class:active={$page.url.pathname.startsWith('/account/notifications') }
+                            href="/account/notifications">
+                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                <i class="bi bi-mailbox me-2"></i>{utils.getLabel('notifications',labels,$language)}
+                            </span>
+                        </a>
+                        </li>
+                        <li class="nav-item ms-3">
+                        <a class="nav-link" class:active={$page.url.pathname.startsWith('/account/billing') }
+                            href="/account/billing">
+                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                <i class="bi bi-coin me-2"></i>{utils.getLabel('billing',labels,$language)}
+                            </span>
+                        </a>
+                        </li>
+                    {/if}
+                    <!-- end ACCOUNT -->
                     {/if}
                     {#if $profile.type==1}
                     <!-- Administration -->
@@ -419,28 +439,45 @@
             collapseOther('analytics')
         }
     }
+    let accountExpanded = false;
+    function toggleAccount(event) {
+        accountExpanded = !accountExpanded;
+        if (accountExpanded) {
+            collapseOther('account')
+        }
+    }
     function collapseOther(actual) {
         if (actual == 'structure') {
             administrationExpanded = false
             organizationExpanded = false
             analyticsExpanded = false
+            accountExpanded = false
         } else if (actual == 'administration') {
             structureExpanded = false
             organizationExpanded = false
             analyticsExpanded = false
+            accountExpanded = false
         } else if (actual == 'organization') {
             structureExpanded = false
             administrationExpanded = false
             analyticsExpanded = false
+            accountExpanded = false
         } else if (actual == 'analytics') {
             structureExpanded = false
             administrationExpanded = false
             organizationExpanded = false
+            accountExpanded = false
+        } else if (actual == 'account') {
+            structureExpanded = false
+            administrationExpanded = false
+            organizationExpanded = false
+            analyticsExpanded = false
         } else {
             structureExpanded = false
             administrationExpanded = false
             organizationExpanded = false
             analyticsExpanded = false
+            accountExpanded = false
         }
     }
 
@@ -570,6 +607,10 @@
             'pl': "Brak dostępu do API serwisu",
             'en': "Service API unaviable"
         },
+        'account': {
+            'pl': "Konto",
+            'en': "Account"
+        },
         'applications': {
             'pl': 'Aplikacje',
             'en': 'Applications'
@@ -581,6 +622,10 @@
         'alerts': {
             'pl': 'Alerty',
             'en': 'Alerts'
+        },
+        'billing': {
+            'pl': 'Płatności',
+            'en': 'Payments'
         },
         'sentinels': {
             'pl': 'Reguły',
