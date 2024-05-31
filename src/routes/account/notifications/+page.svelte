@@ -3,7 +3,7 @@
 </div>
 {#await data}
 {:then data}
-<NotificationsForm config={data} callback={saveSettings} readonly={true} backLocation="/account/settings"  setPassLocation="/account/settings/password"/>
+<NotificationsForm config={data} callback={saveSettings} readonly={true} backLocation="/account/notifications"/>
 {/await}
 <script>
     import NotificationsForm from '$lib/components/NotificationsForm.svelte';

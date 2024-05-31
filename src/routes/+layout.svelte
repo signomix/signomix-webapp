@@ -183,6 +183,14 @@
                             </span>
                         </a>
                         </li>
+                        <li class="nav-item ms-3">
+                            <a class="nav-link" class:active={$page.url.pathname.startsWith('/account/development') }
+                                href="/account/development">
+                                <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                    <i class="bi bi-code-square me-2"></i>{utils.getLabel('development',labels,$language)}
+                                </span>
+                            </a>
+                            </li>
                     {/if}
                     <!-- end ACCOUNT -->
                     {/if}
@@ -652,5 +660,9 @@
             'pl': 'Kontekst:',
             'en': 'Context:'
         },
+        'development': {
+            'en': 'Development',
+            'pl': 'Development'
+        }
     }
 </script>

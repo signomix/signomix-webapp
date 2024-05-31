@@ -4,10 +4,10 @@
 
 {#await data}
 {:then data}
-<SettingsForm config={data} callback={saveSettings} readonly={false} backLocation="/account/settings"  setPassLocation="/account/settings/password"/>
+<NotificationsForm config={data} callback={saveSettings} readonly={false} backLocation="/account/notifications"/>
 {/await}
 <script>
-    import SettingsForm from '$lib/components/SettingsForm.svelte';
+    import NotificationsForm from '$lib/components/NotificationsForm.svelte';
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';

@@ -1,13 +1,10 @@
-<!-- <Dialog title="Uwaga!" message={errorMessage} bind:dialog callback={closeDialog} labels={["OK"]} color="danger">
-</Dialog> -->
 <form>
     <div class="row">
         <div class="col-md-1 col-form-label">
             <label for="input-uid" class="form-label">{utils.getLabel('login',labels,$language)}</label>
         </div>
         <div class="col-md-11">
-            <input disabled={!isEditable('uid')} type="text" class="form-control" id="input-uid" bind:value={userLogin}
-                readonly={readonly||!isEditable('uid')}>
+            <input disabled type="text" class="form-control" id="input-uid" bind:value={config.uid}>
         </div>
     </div>
 
@@ -128,123 +125,19 @@
     {/if}
 </form>
 <script>
-    import { sgxhelper } from '$lib/sgxhelper.js';
-    import { sgxdata } from '$lib/sgxdata.js';
     import { utils } from '$lib/utils.js';
     import { token, profile, language, isAuthenticated, context, contextRoot } from '$lib/usersession.js';
     import { dev } from '$app/environment';
     import { goto } from '$app/navigation';
-    import Dialog from "$lib/components/Dialog.svelte";
 
     export let config
     export let callback
     export let readonly
     export let backLocation
-    export let setPassLocation
 
 
-    let pathRoot = getPathRoot()
-    let pathExt = getPathExt()
     let userLogin = ''
-    let password = isNew() ? '' : null
     let errorMessage = ''
-    let dialog
-
-    if (!isNew()) {
-        userLogin = config.uid
-    }
-
-    function getUserTypeName(type) {
-        return utils.getLabel(sgxhelper.getAccountTypeName(type, $language))
-    }
-
-    function isEditable(fieldName) {
-        //console.log('isEditable', $profile.type, $profile.tenant, config.tenant, $profile.organization, config.organization)
-        // system admin can edit all
-        if ($profile.type == 1) {
-            if (fieldName == 'uid' && !isNew()) {
-                return false
-            } else {
-                return true
-            }
-        }
-        // managing admin can edit all users from his organization and tenants
-        if ($profile.type == 8) {
-            if (fieldName == 'uid' && !isNew()) {
-                return false
-            }
-            if ($profile.organization != config.organization) {
-                return false
-            }
-            if (fieldName == 'organization') {
-                return false
-            }
-            return true
-        }
-        // tenant admin can edit all users from the same tenant
-        if ($profile.type == 9) {
-            if (fieldName == 'uid' && !isNew()) {
-                return false
-            }
-            if ($profile.tenant != config.tenant) {
-                return false
-            }
-            if (fieldName == 'organization' || fieldName == 'tenant' || fieldName == 'path' || fieldName == 'pathRoot') {
-                return false
-            }
-            return true
-        }
-        // user can edit selected fields
-        if (fieldName == 'name' || fieldName == 'surname' || fieldName == 'email' || fieldName == 'phone' || fieldName == 'phonePrefix'
-            || fieldName == 'preferredLanguage'
-            || fieldName == 'generalNotificationChannel' || fieldName == 'infoNotificationChannel' || fieldName == 'warningNotificationChannel'
-            || fieldName == 'alertNotificationChannel' || fieldName == 'password') {
-            return true
-        }
-        return false
-    }
-    function isNew() {
-        return config.uid == null || config.uid == undefined || config.uid == 'new'
-    }
-
-    function getPathRoot() {
-        let tmpCtxRoot = $contextRoot
-        //console.log('$contextRoot', tmpCtxRoot)
-        let result
-        if (tmpCtxRoot == null || tmpCtxRoot == undefined) {
-            tmpCtxRoot = ''
-        } else if (config.path == null || config.path == undefined || config.path == '') {
-            result = tmpCtxRoot.length > 0 ? tmpCtxRoot : ''
-        } else if (config.path.indexOf('.') > -1) {
-            result = config.path.substring(0, config.path.indexOf('.'))
-        } else {
-            result = config.path
-        }
-        if (result.endsWith('.')) {
-            result = result.substring(0, result.length - 1)
-        }
-        //console.log('getPathRoot', result)
-        return result
-    }
-    function getPathExt() {
-        let result
-        if (config.path == null || config.path == undefined || config.path == '') {
-            result = ''
-        } else if (config.path.indexOf('.') > -1) {
-            if (config.path.indexOf('.') == config.path.length - 1) {
-                result = ''
-            } else {
-                result = config.path.substring(config.path.indexOf('.') + 1)
-            }
-        } else {
-            result = ''
-        }
-        if (result.length > 0 && !result.startsWith('.')) {
-            result = '.' + result
-        }
-        //console.log('getPathExt', result)
-        return result
-    }
 
     function getChannelName(channel) {
         try {
@@ -279,35 +172,7 @@
         return ''
     }
 
-    function getDateAsString(d) {
-        try {
-            return new Date(d).toISOString()
-        } catch (e) {
-            return ''
-        }
-    }
-
     function handleSave(event) {
-        config.uid = userLogin
-        if (pathExt.length > 0 && !pathExt.startsWith('.')) {
-            pathExt = '.' + pathExt
-        }
-        config.path = pathRoot + pathExt
-        //config.pathRoot = ""
-        config.tenant = 0
-        if ($context != null && $context != undefined && $context > 0) {
-            config.tenant = $context
-            //config.path = $context.path
-            //config.pathRoot = $context.pathRoot
-        }
-        //console.log('handleSave.passwod', password)
-        if ((isNew() && password != null && password.length > 0)
-            || isEditable('password') && config.uid != $profile.uid) {
-            config.password = password
-        } else {
-            //console.log('password', password)
-            delete config.password
-        }
         config.generalNotificationChannel = document.getElementById('input-generalNotificationChannel').value
             + ':' + document.getElementById('input-generalNotificationChannelConfig').value
         config.infoNotificationChannel = document.getElementById('input-infoNotificationChannel').value
@@ -316,98 +181,15 @@
             + ':' + document.getElementById('input-warningNotificationChannelConfig').value
         config.alertNotificationChannel = document.getElementById('input-alertNotificationChannel').value
             + ':' + document.getElementById('input-alertNotificationChannelConfig').value
-        config.path = (pathRoot + pathExt).replace(/\//g, '.')
-        try {
-            config.phone = config.phone.trim()
-        } catch (e) { }
-
-        /*errorMessage=validate(config)
-        if (errorMessage != "") {
-            dialog.showModal()
-            console.log("AFTER DIALOG");
-            return;
-        }*/
+        //prevent saving parameters other than notification channels
+        config.name = null
+        config.surname = null
+        config.email = null
+        //console.log('save: ',config)
         callback(config)
     }
     function handleCancel(event) {
         callback(null)
-    }
-    /*     function validate(cfg){
-            if(cfg.phone.startsWith("+") || cfg.phone.startsWith("0")||cfg.phone.length>9){
-                return "Invalid phone number"
-            }
-            return ""
-        } */
-
-    /*     function handlePassword(event) {
-            console.log('handlePassword')
-            goto('/account/settings/password')
-        } */
-    function handleRemove(event) {
-        alert(utils.getLabel('alert_remove', labels, $language))
-    }
-
-    function canAdministrate(user) {
-        // system admin can edit all users
-        //console.log('canAdministrate', $profile.uid, $profile.type, user.uid)
-        if ($profile.uid == user.uid || $profile.type == 1) {
-            return true
-        }
-        // admins can edit users from their organization
-        if ($profile.organization != utils.getDefaultOrganizationId()
-            && $profile.organization == user.organization) {
-            if ($profile.type == 9) {
-                // tenant admin can edit all users from the same tree path
-                // TODO: check path and compare with user path
-                return true
-            } else if ($profile.type == 8) {
-                // managing admin can edit all users from his organization and tenants
-                return true
-            } else {
-                return false
-            }
-        } else {
-            return false
-        }
-    }
-
-    function getTypesAllowed() {
-        let types = []
-        //console.log('$context while adding user', $context)
-        if ($profile.type == 8) { // managing admin
-            types.push({ type: 0, name: 'standard' }) // standard
-            types.push({ type: 4, name: 'free' }) // free
-            types.push({ type: 9, name: 'admin' }) // tenant admin
-            if ($context == null) {
-                types.push({ type: 8, name: 'mgn.admin' }) // managing admin
-            }
-        } else if ($profile.type == 9) { // tenant admin
-            types.push({ type: 0, name: 'standard' }) // standard
-            types.push({ type: 4, name: 'free' }) // free
-            types.push({ type: 9, name: 'admin' }) // tenant admin
-        } else if ($profile.type == 1) { // system admin
-            types.push({ type: 0, name: 'standard' }) // standard
-            types.push({ type: 1, name: 'sys.admin' }) // system admin
-            types.push({ type: 2, name: 'application' }) // application
-            types.push({ type: 3, name: 'demo' }) // demo
-            types.push({ type: 4, name: 'free' }) // free
-            types.push({ type: 5, name: 'primary' }) // primary
-            types.push({ type: 6, name: 'readonly' }) // readonly
-            types.push({ type: 7, name: 'extended' }) // extended
-            types.push({ type: 8, name: 'mgn.admin' }) // managing admin
-            types.push({ type: 9, name: 'admin' }) // tenant admin
-            types.push({ type: 10, name: 'anonymous' }) // anonymous
-            types.push({ type: 100, name: 'subscriber' }) // subscriber
-        }
-        return types
-    }
-
-    const organizationApiUrl = utils.getBackendUrl(location) + '/api/organization/' + config.organization
-    let promise = sgxdata.getOrganization(dev, organizationApiUrl, $token);
-    const tenantApiUrl = utils.getBackendUrl(location) + '/api/tenant/' + config.tenant
-    let promise2 = {}
-    if (config.tenant != undefined && config.tenant != 0) {
-        promise2 = sgxdata.getTenant(dev, tenantApiUrl, $token);
     }
 
     let labels = {
