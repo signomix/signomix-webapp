@@ -142,7 +142,7 @@
         </div>
     </div>
 
-    <hr>
+<!--     <hr>
 
     <div class="row">
         <div class="col">
@@ -247,7 +247,8 @@
         </div>
     </div>
 
-    <hr>
+ -->    
+ <hr>
 
     <div class="row">
         {#if isEditable('password') && config.uid != $profile.uid}
