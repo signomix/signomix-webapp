@@ -6,7 +6,6 @@
         <h6>
             {utils.getLabel('tokens',labels, $language)}
         </h6>
-        <p>{utils.getLabel('description',labels, $language)}</p>
     </div>
 </div>
 {#if newTokenPromise==null}
@@ -15,7 +14,11 @@
         {#await promise}
         <p>{utils.getLabel('loading',labels, $language)}</p>
         {:then data}
-        <p>{utils.getLabel('tokenValidUntil',labels, $language)} {getLocalDataFromEpoch(data)}</p>
+        {#if isNaN(data)}
+        <p>{utils.getLabel('noTokensFound',labels, $language)}</p>
+        {:else}
+        <p>{utils.getLabel('tokenValidUntil',labels, $language)} {getLocalDataFromEpoch(data, $language)}</p>
+        {/if}
         {:catch error}
         <p>error: {error.message}</p>
         {/await}
@@ -28,7 +31,7 @@
         {#await newTokenPromise}
         <p>{utils.getLabel('loading',labels, $language)}</p>
         {:then data}
-        <p>{utils.getLabel('tokenCreated',labels, $language)} {data}</p>
+        <p>{utils.getLabel('tokenCreated',labels, $language)} <b>{data}</b></p>
         <p>{utils.getLabel('remember',labels, $language)}</p>
         {:catch error}
         <p>error: {error.message}</p>
@@ -38,15 +41,12 @@
 {/if}
 <div class="row">
     <div class="col-12">
-        <button type="button" class="btn btn-danger me-2" on:click={removeToken}>{utils.getLabel('removeToken',labels,$language)}</button>
-        <button type="button" class="btn btn-primary ms-2" on:click={createNewToken}>{utils.getLabel('create',labels,$language)}</button>
+        <button type="button" class="btn btn-outline-primary ms-2" on:click={createNewToken}>{utils.getLabel('create',labels,$language)}</button>
+        <button type="button" class="btn btn-outline-danger me-2" on:click={removeToken}>{utils.getLabel('removeToken',labels,$language)}</button>
     </div>
 </div>
 
-<Dialog2 bind:dialog2 callback={doRemove} title={utils.getLabel('removeQuestion',labels,$language)}
-    labels={['OK','cancel']}>
-</Dialog2>
-<Dialog bind:dialog callback={doCreate} title={utils.getLabel('createQuestion',labels,$language)}
+<Dialog bind:dialog callback={doSelectedAction} message={dialogText} title={utils.getLabel('alert',labels,$language)}
     labels={['OK','cancel']}>
 </Dialog>
 <script>
@@ -55,7 +55,6 @@
     import { goto } from '$app/navigation';
     import { utils } from '$lib/utils.js';
     import Dialog from '$lib/components/Dialog.svelte'
-    import Dialog2 from '$lib/components/Dialog2.svelte'
 
     onMount(async () => {
         if (!$isAuthenticated) {
@@ -63,9 +62,6 @@
             goto('/login');
         }
     });
-    
-    let locale;
-    $: locale = $language=='pl'?'pl-PL':'en-US';
 
     let promise = fetch('/api/auth/token', {
         method: 'GET',
@@ -79,19 +75,45 @@
 
     let newTokenPromise = null;
     let dialog;
-    let dialog2;
+    let selectedAction = null;
+
+    let dialogText
+    $: if(selectedAction=='create'){
+        dialogText = utils.getLabel('createQuestion', labels, $language)
+    } else if(selectedAction=='remove'){
+        dialogText = utils.getLabel('removeQuestion', labels, $language)
+    } else{
+        dialogText = ''
+    }
+
+    function getDialogText() {
+        if (selectedAction == 'create') {
+            return utils.getLabel('createQuestion', labels, $language);
+        } else if (selectedAction == 'remove') {
+            return utils.getLabel('removeQuestion', labels, $language);
+        }
+    }
+
+    function doSelectedAction(decision) {
+        if (selectedAction == 'create') {
+            doCreate(decision);
+        } else if (selectedAction == 'remove') {
+            doRemove(decision);
+        }
+    }
 
     function createNewToken() {
-        console.log('dialog', dialog);
+        selectedAction = 'create';
         dialog.showModal();
     }
 
     function doCreate(decision) {
         dialog.close()
+        selectedAction = null;
         if (!decision) {
             return
         }
-        newTokenPromise = fetch('/api/auth/token?lifetime=' + 1000, {
+        newTokenPromise = fetch('/api/auth/token?lifetime=' + 5259600, { //10 years
             method: 'POST',
             headers: {
                 'Authentication': $token,
@@ -103,12 +125,13 @@
     }
 
     function removeToken() {
-        console.log('dialog2', dialog2);
-        dialog2.showModal();
+        selectedAction = 'remove';
+        dialog.showModal();
     }
 
     function doRemove(decision) {
-        dialog2.close()
+        dialog.close()
+        selectedAction = null;
         if (!decision) {
             return
         }
@@ -134,20 +157,11 @@
         });
     }
 
-    function getLocalDataFromEpoch(milliseconds) {
+    function getLocalDataFromEpoch(milliseconds, language) {
         console.log("milliseconds", milliseconds);
         try {
-/*             const options = {
-                hour12: false,
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric'
-            }; */
             let date = new Date(Number(milliseconds));
-            //return date.toLocaleString(undefined, options);
-            return new Intl.DateTimeFormat(locale, {
+            return new Intl.DateTimeFormat(language=='pl'?'pl-PL':'en-US', {
                 dateStyle: 'long',
                 timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
             }).format(date)
@@ -156,18 +170,6 @@
             return e;
         }
     }
-
-    /*         let promise = fetch('/api/auth/token?lifetime='+1000, {
-                method: 'POST',
-                headers: {
-                    'Authentication': $token,
-                }
-            }).then(response => response.text()).then(data => {
-                console.log(data);
-                return data;
-            });  */
-
-
 
     let labels = {
         'tokens': {
@@ -211,16 +213,16 @@
             'en': "Remove token"
         },
         'alert': {
-            'pl': "Uwaga! Utworzenie nowego tokenu spowoduje usunięcie aktualnego. Czy na pewno chcesz kontynuować?",
-            'en': "Warning! Creating new token will remove the current one. Are you sure you want to continue?"
+            'pl': "Uwaga!",
+            'en': "Warning!"
         },
         'removeQuestion': {
             'pl': "Czy na pewno chcesz usunąć token?",
             'en': "Are you sure you want to remove the token?"
         },
         'createQuestion': {
-            'pl': "Czy na pewno chcesz utworzyć nowy token?",
-            'en': "Are you sure you want to create new token?"
+            'pl': " Utworzenie nowego tokenu spowoduje usunięcie aktualnego. Czy na pewno chcesz utworzyć nowy token?",
+            'en': " Creating new token will remove the current one. Are you sure you want to create new token?"
         },
     }
 </script>
