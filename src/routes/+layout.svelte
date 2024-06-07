@@ -241,7 +241,7 @@
                             </span>
                         </a>
                     </li>
-                    <li class="nav-item">
+<!--                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/documentation' }
                             href="https://signomix.com/app#!doc,toc" target="_blank">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
@@ -249,7 +249,8 @@
                                     class="bi bi-question-circle me-2"></i>{utils.getLabel('documentation_old',labels,$language)}
                             </span>
                         </a>
-                    </li>
+                    </li> 
+-->
                     {/if}
                     {#if $isAuthenticated}
                     <li class="nav-item"><a class="nav-link" href="/" on:click={logout}>
