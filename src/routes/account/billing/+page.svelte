@@ -1,90 +1,87 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-3 border-bottom">
-    <h5>{utils.getLabel('title',labels, $language)}</h5><a href="/account/settings/edit" title="Edit"><i class="bi bi-gear h5 me-2 link-dark"></i></a>
+    <h5>{utils.getLabel('title',labels, $language)}</h5>
 </div>
 {#await data}
 {:then data}
-<SettingsForm config={data} callback={saveSettings} readonly={true} backLocation="/account/settings"  setPassLocation="/account/settings/password"/>
+<div class="row mb-3">
+    <div class="col-md-12">
+        <div class="card">
+            <BillingPlanDetails actualPlan={$profile.type} />
+        </div>
+    </div>
+</div>
+{#if utils.isDefaultOrganizationUser($profile)}
+<div class="row mb-3">
+    <div class="col-md-4 mb-3">
+        <div class="card h-100">
+            <BillingPlanDetails actualPlan={$profile.type} targetPlan={0} />
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card h-100">
+            <BillingPlanDetails actualPlan={$profile.type} targetPlan={5} />
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card h-100">
+            <BillingPlanDetails actualPlan={$profile.type} targetPlan={100} />
+        </div>
+    </div>
+</div>
+{/if}
+
+{:catch error}
+<div class="alert alert-danger" role="alert">
+    {error.message}
+</div>
 {/await}
+
 <script>
     import SettingsForm from '$lib/components/SettingsForm.svelte';
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
     import { utils } from '$lib/utils.js';
+    import BillingPlanDetails from '$lib/components/BillingPlanDetails.svelte';
 
     export let data;
 
     onMount(async () => {
-        if(!$isAuthenticated){
+        if (!$isAuthenticated) {
             console.log('redirect to login');
             goto('/login');
-        }else{
-            console.log('settings',data);
         }
     });
 
-
-    function getChannelType(config){
-        if(config.startsWith("SIGNOMIX")){
-            return "Application";
-        }else if(config.startsWith("SMTP")){
-            return "Email";
-        }else if(config.startsWith("SMS")){
-            return "SMS";
-        }else if(config.startsWith("WEBHOOK")){
-            return "Webhook";
-        }else{
-            return "Unknown";
-        }
-    }
-
-    function getChannelConfig(config){
-        console.log("config: ",config);
-        if(config.indexOf(":")>0){
-            return config.substring(config.indexOf(":")+1);
-        }else{
-            return "";
-        }
-    }
-
-    function saveSettings(config){
-        console.log("saveSettings: ",config);
-        /*
-        let data = {
-            "uid": data.settings.uid,
-            "settings": config
-        }
-        console.log("data: ",data);
-        fetch('/api/settings', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data),
-        }).then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                throw new Error('Something went wrong');
-            }
-        }).then(data => {
-            console.log(data);
-            if(data.status=="OK"){
-                alert("Zapisano ustawienia");
-            }else{
-                alert("Błąd zapisu ustawień");
-            }
-        }).catch((error) => {
-            console.error('Error:', error);
-        });
-        */
-    }
-
     let labels = {
         'title': {
-            'pl': "Ustawienia konta",
-            'en': "Account settings"
-        }
+            'en': "Billing",
+            'pl': "Płatności"
+        },
+        'free': {
+            'en': "Free account",
+            'pl': "Konto darmowe"
+        },
+        'standard': {
+            'en': "Standard account",
+            'pl': "Konto standardowe"
+        },
+        'premium': {
+            'en': "Premium account",
+            'pl': "Konto premium"
+        },
+        'professional': {
+            'en': "Professional account",
+            'pl': "Konto profesjonalne"
+        },
+        'organization': {
+            'en': "Organization account",
+            'pl': "Konto organizacyjne"
+        },
+        'changePlan': {
+            'en': "Change plan",
+            'pl': "Zmień plan"
+        },
     }
 
 </script>

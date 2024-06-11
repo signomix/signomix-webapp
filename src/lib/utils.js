@@ -4,6 +4,11 @@ let defaultOrganizationIdValue = 1
 defaultOrganizationId.subscribe((value) => defaultOrganizationIdValue = value)
 
 export const utils = {
+  /**
+   * Returns the URL of the backend service based on the URL of subdomain
+   * @param {string} url - URL of the frontend service
+   * @returns {string} URL of the backend service
+   */
   getBackendUrl: function (url) {
     let x = url.host
     if (!x.endsWith('localhost')) {
@@ -15,6 +20,11 @@ export const utils = {
     }
     return url.protocol + '//' + x
   },
+  /**
+   * Returns information if the URL is a subdomain of the cloud service
+   * @param {string} url - URL of subdomain
+   * @returns {boolean} true if the URL is a subdomain of the cloud service
+   */
   isCloudSubdomain: function (url) {
     //return url.host.startsWith('cloud.') || url.host.endsWith(this.STANDARD_DOMAIN)
     return !url.host.startsWith('app.')
@@ -37,9 +47,22 @@ export const utils = {
       return ''
     }
   },
+  /**
+   * Return ID of the default organization
+   * @returns {number} default organization id
+   */
   getDefaultOrganizationId: function () {
     return defaultOrganizationIdValue
   },
+  /**
+   * Transforms the date string from the REST API format to the format required by the HTML datetime-local input
+   * @param {string} dateString - date string in the REST API format
+   * @returns {string} date string in the HTML datetime-local format or empty string if the input is null, undefined or empty
+   * @example
+   * // returns '2023-03-02T12:10'
+   * getLocalDateFormat('2023-03-02T12:10:27')
+   * @example
+   */
   getLocalDateFormat: function (dateString) {
     //zamienia ciąg znaków reprezentujący datę
     //z formatu stosowanego przez REST API
@@ -201,6 +224,11 @@ export const utils = {
     //console.log('isObjectAdmin', data)
     return result
   },
+  /**
+   * Returns the user type based on the name
+   * @param {string} name 
+   * @returns {number} user type
+   */
   getUserType: function (name) {
     switch (name) {
       case 'user':
@@ -233,6 +261,11 @@ export const utils = {
         return -1
     }
   },
+  /**
+   * Returns the user type name based on the type
+   * @param {number} type
+   * @returns {string} user type name
+   */
   getUserTypeName: function (type) {
     switch (type) {
       case 0:
@@ -264,6 +297,48 @@ export const utils = {
       default:
         return 'unknown'
     }
+  },
+  /**
+   * Returns account types allowed to be changed for the user of the given profile
+   * @param {object} userProfile - user profile
+   * @returns {Array} list of account types allowed to be changed
+   * @example
+   * // returns [0, 5]
+   * getAccountChangeTypesAllowed({type: 4})
+   */
+  getAccountChangeTypesAllowed: function (userProfile) {
+    let result = []
+    if(!this.isDefaultOrganizationUser(userProfile)){
+      return result
+    }
+    if (userProfile.type == 4) {
+      result.push(0) // free -> user
+      result.push(5) // free -> primary
+    } else if (userProfile.type == 5) {
+      result.push(0) // primary -> user
+      result.push(4) // primary -> free
+    } else if (userProfile.type == 0) {
+      result.push(5) // user -> primary
+      result.push(4) // user -> free
+
+    }
+    return result
+  },
+  /**
+   * Returns information if the account type change is allowed for the user of the given profile
+   * @param {object} userProfile - user profile
+   * @param {number} newType - new account type
+   * @returns {boolean} true if the account type change is allowed
+   * @example
+   * // returns true
+   * isAccountTypeChangeAllowed({type: 4}, 0)
+   */
+  isAccountTypeChangeAllowed: function (userProfile, newType) {
+    if(!this.isDefaultOrganizationUser(userProfile)){
+      return false
+    }
+    let allowedTypes = this.getAccountChangeTypesAllowed(userProfile)
+    return allowedTypes.includes(newType)
   },
   isUserRole: function (userProfile, roleName, defaultResult) {
     let roles
