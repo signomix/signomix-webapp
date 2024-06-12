@@ -8,7 +8,7 @@
     <div class="alert alert-success" role="alert">
         <p><b>Zamówienie zostało zarejestrowane.</b></p>
         <p>Wkrótce, na podany w zamówieniu adres e-mail otrzymasz potwierdzenie wraz informacją na temat płatności.</p>
-        <p><b>Jeżeli potwierdzenie nie dotrze w ciągu 24 godzin</b>, prosimy o kontakt poprzez wysłanie 
+        <p><b>Jeżeli potwierdzenie nie dotrze w ciągu 24 godzin</b>, prosimy o kontakt poprzez wysłanie
             wiadomości na adres contact@experiot.pl
         </p>
     </div>
@@ -16,7 +16,7 @@
     {#if (data.targetAccountType == "100")}
     <div class="alert alert-warning" role="alert">
         <p><b>Uwaga!</b></p>
-        <p>Wybrany plan jest dostępny po wcześniejszym podpisaniu umowy utrzymaniowej z administratorem 
+        <p>Wybrany plan jest dostępny po wcześniejszym podpisaniu umowy utrzymaniowej z administratorem
             serwisu signomix.com. W celu uzyskania dodatkowych informacji prosimy o kontakt poprzez
             wysłanie wiadomości na adres contact@experiot.pl
         </p>
@@ -29,23 +29,25 @@
                 <input type="text" class="form-control" id="userLogin" bind:value={$profile.uid} readonly disabled>
             </div>
             <div class="col-md-6">
-                <label for="accountType" class="form-label">Account Type</label>
-                <select class="form-select" id="accountType" required>
+                <label for="accountType" class="form-label">Zamawiasz jako</label>
+                <select class="form-select" id="accountType" required bind:value={vatField}>
                     <option value="" selected disabled>Select account type</option>
-                    <option value="personal">Personal</option>
-                    <option value="business">Business</option>
+                    <option value="false">Osoba prywatna</option>
+                    <option value="true">Firma</option>
                 </select>
             </div>
         </div>
         <div class="mb-3">
-            <label for="paymentPeriod" class="form-label">Payment Period</label>
+            <label for="paymentPeriod" class="form-label">Okres płatności</label>
             <div>
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="paymentPeriod" id="monthly" value="monthly" required>
+                    <input checked={selectedYearly===false} on:change={onChange} class="form-check-input" type="radio"
+                        name="paymentPeriod" id="monthly" value=false required>
                     <label class="form-check-label" for="monthly">Monthly</label>
                 </div>
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="paymentPeriod" id="yearly" value="yearly" required>
+                    <input checked={selectedYearly===true} on:change={onChange} class="form-check-input" type="radio"
+                        name="paymentPeriod" id="yearly" value="true" required>
                     <label class="form-check-label" for="yearly">Yearly</label>
                 </div>
             </div>
@@ -58,49 +60,57 @@
             </div>
             <div class="col-md-6">
                 <label for="surname" class="form-label">Surname</label>
-                <input type="text" class="form-control" id="surname">
+                <input type="text" class="form-control" id="surname" bind:value={order.surname}>
             </div>
         </div>
 
+        {#if vatField}
         <div class="row mb-3">
             <div class="col-md-6" id="companyNameField">
                 <label for="companyName" class="form-label">Company Name</label>
-                <input type="text" class="form-control" id="companyName">
+                <input type="text" class="form-control" id="companyName" bind:value={order.companyName} required>
             </div>
             <div class="col-md-6">
                 <label for="vat" class="form-label">VAT</label>
-                <input type="text" class="form-control" id="vat">
+                <input type="text" class="form-control" id="vat" bind:value={order.vat} required>
             </div>
         </div>
+        {/if}
 
         <div class="row mb-3">
             <div class="col-md-6">
                 <label for="address" class="form-label">Address</label>
-                <input type="text" class="form-control" id="address" required>
+                <input type="text" class="form-control" id="address" bind:value={order.address} required>
             </div>
             <div class="col-md-6">
                 <label for="city" class="form-label">City</label>
-                <input type="text" class="form-control" id="city" required>
+                <input type="text" class="form-control" id="city" bind:value={order.city} required>
             </div>
         </div>
 
         <div class="row mb-3">
             <div class="col-md-6">
                 <label for="zip" class="form-label">Zip Code</label>
-                <input type="text" class="form-control" id="zip" required>
+                <input type="text" class="form-control" id="zip" bind:value={order.zip} required>
             </div>
             <div class="col-md-6">
                 <label for="country" class="form-label">Country</label>
-                <input type="text" class="form-control" id="country" required>
+                <!--                 <input type="text" class="form-control" id="country" bind:value={order.country} required> -->
+                <select class="form-select" id="country" bind:value={order.country} required>
+                    <option value="" selected disabled>Wybierz kraj</option>
+                    <option value="poland">Polska</option>
+
+                </select>
             </div>
         </div>
 
         <div class="mb-3">
             <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" required>
+            <input type="email" class="form-control" id="email" bind:value={order.email}
+                oninvalid="this.setCustomValidity('Podaj adres e-mail')" oninput="this.setCustomValidity('')" required>
         </div>
 
-        <button type="button" class="btn btn-primary" on:click|preventDefault={sendForm}>Submit</button>
+        <button type="button" class="btn btn-primary" on:click|preventDefault={validateForm}>Submit</button>
     </form>
     {/if}
     {/if}
@@ -114,13 +124,15 @@
 
     export let data;
     let formSent = false;
+    let selectedYearly = false;
+    let vatField = false;
 
     let order = {
         uid: $profile.uid,
         userNumber: $profile.number,
         targetType: data.targetAccountType,
         uid: $profile.uid,
-        email:$profile.email,
+        email: $profile.email,
         name: $profile.name,
         surname: $profile.surname,
         companyName: '',
@@ -130,7 +142,7 @@
         zip: '',
         country: '',
         accountType: $profile.type,
-        paymentYearly: false
+        paymentYearly: selectedYearly
     };
 
     onMount(async () => {
@@ -140,9 +152,23 @@
         }
     });
 
+    function onChange(event) {
+        selectedYearly = event.currentTarget.value;
+    }
+
+    function validateForm() {
+        let form = document.getElementById('registrationForm');
+        if (form.checkValidity()) {
+            sendForm();
+        } else {
+            form.reportValidity();
+        }
+    }
+
     function sendForm() {
         console.log('sendForm');
         console.log(order);
+        order.paymentYearly = selectedYearly;
         /* fetch('http://localhost:3000/api/order', {
             method: 'POST',
             headers: {
