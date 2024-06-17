@@ -5,12 +5,20 @@
 {:then data}
 <div class="container">
     {#if formSent}
+    {#await orderId then orderId}
     <div class="alert alert-success" role="alert">
-        <p><b>Zamówienie zostało zarejestrowane.</b></p>
-        <p>Wkrótce, na podany w zamówieniu adres e-mail otrzymasz potwierdzenie wraz informacją na temat płatności.</p>
+        <p><b>Zarejestrowane zostało zamówienie nr {orderId}.</b></p>
+        <p>Wkrótce, na podany w zamówieniu adres e-mail {order.email} otrzymasz potwierdzenie wraz informacją na temat płatności.</p>
         <p><b>Jeżeli potwierdzenie nie dotrze w ciągu 24 godzin</b>, prosimy o kontakt poprzez wysłanie
             wiadomości na adres contact@experiot.pl
         </p>
+    </div>
+    {/await}
+    {:else if errorMessage}
+    <div class="alert alert-danger" role="alert">
+        <p><b>Wystąpił błąd podczas przetwarzania zamówienia.</b></p>
+        <p>Prosimy o kontakt poprzez wysłanie wiadomości na adres contact@experiot.pl</p>
+        <p>Komunikat błędu: {errorMessage}</p>
     </div>
     {:else}
     {#if (data.targetAccountType == "100")}
@@ -31,9 +39,8 @@
             <div class="col-md-6">
                 <label for="accountType" class="form-label">Zamawiasz jako</label>
                 <select class="form-select" id="accountType" required bind:value={vatField}>
-                    <option value="" selected disabled>Select account type</option>
-                    <option value="false">Osoba prywatna</option>
-                    <option value="true">Firma</option>
+                    <option value={false}>Osoba prywatna</option>
+                    <option value={true}>Firma</option>
                 </select>
             </div>
         </div>
@@ -42,7 +49,8 @@
             <div>
                 <div class="form-check form-check-inline">
                     <input checked={selectedYearly===false} on:change={onChange} class="form-check-input" type="radio"
-                        name="paymentPeriod" id="monthly" value=false required>
+                        name="paymentPeriod" id="monthly" value=false 
+                        oninvalid="this.setCustomValidity('Wybierz okres płatności')" oninput="this.setCustomValidity('')" required>
                     <label class="form-check-label" for="monthly">Monthly</label>
                 </div>
                 <div class="form-check form-check-inline">
@@ -56,23 +64,27 @@
         <div class="row mb-3">
             <div class="col-md-6">
                 <label for="name" class="form-label">Name</label>
-                <input type="text" class="form-control" id="name" bind:value={order.name}>
+                <input type="text" class="form-control" id="name" bind:value={order.name}
+                oninvalid="this.setCustomValidity('Podaj imię')" oninput="this.setCustomValidity('')" required>
             </div>
             <div class="col-md-6">
                 <label for="surname" class="form-label">Surname</label>
-                <input type="text" class="form-control" id="surname" bind:value={order.surname}>
+                <input type="text" class="form-control" id="surname" bind:value={order.surname}
+                oninvalid="this.setCustomValidity('Podaj nazwisko')" oninput="this.setCustomValidity('')" required>
             </div>
         </div>
 
-        {#if vatField}
+        {#if vatField===true}
         <div class="row mb-3">
             <div class="col-md-6" id="companyNameField">
                 <label for="companyName" class="form-label">Company Name</label>
-                <input type="text" class="form-control" id="companyName" bind:value={order.companyName} required>
+                <input type="text" class="form-control" id="companyName" bind:value={order.companyName} 
+                oninvalid="this.setCustomValidity('Podaj nazwę firmy')" oninput="this.setCustomValidity('')" required>
             </div>
             <div class="col-md-6">
                 <label for="vat" class="form-label">VAT</label>
-                <input type="text" class="form-control" id="vat" bind:value={order.vat} required>
+                <input type="text" class="form-control" id="vat" bind:value={order.vat} 
+                oninvalid="this.setCustomValidity('Podaj nr VAT')" oninput="this.setCustomValidity('')" required>
             </div>
         </div>
         {/if}
@@ -80,24 +92,29 @@
         <div class="row mb-3">
             <div class="col-md-6">
                 <label for="address" class="form-label">Address</label>
-                <input type="text" class="form-control" id="address" bind:value={order.address} required>
+                <input type="text" class="form-control" id="address" bind:value={order.address} 
+                oninvalid="this.setCustomValidity('Podaj adres')" oninput="this.setCustomValidity('')" required>
             </div>
             <div class="col-md-6">
                 <label for="city" class="form-label">City</label>
-                <input type="text" class="form-control" id="city" bind:value={order.city} required>
+                <input type="text" class="form-control" id="city" bind:value={order.city} 
+                oninvalid="this.setCustomValidity('Podaj nazwę miasta')" oninput="this.setCustomValidity('')" required>
             </div>
         </div>
 
         <div class="row mb-3">
             <div class="col-md-6">
                 <label for="zip" class="form-label">Zip Code</label>
-                <input type="text" class="form-control" id="zip" bind:value={order.zip} required>
+                <input type="text" class="form-control" id="zip" bind:value={order.zip} 
+                oninvalid="this.setCustomValidity('Podaj kod pocztowy')" oninput="this.setCustomValidity('')" required>
             </div>
             <div class="col-md-6">
                 <label for="country" class="form-label">Country</label>
                 <!--                 <input type="text" class="form-control" id="country" bind:value={order.country} required> -->
-                <select class="form-select" id="country" bind:value={order.country} required>
-                    <option value="" selected disabled>Wybierz kraj</option>
+                <select class="form-select" id="country" bind:value={order.country}
+                    oninvalid="this.setCustomValidity('Wybierz kraj')" oninput="this.setCustomValidity('')"
+                    required>
+                    <!-- <option value="" selected="{order.country==''}" disabled>Wybierz kraj</option> -->
                     <option value="poland">Polska</option>
 
                 </select>
@@ -124,25 +141,41 @@
 
     export let data;
     let formSent = false;
+    let orderId = null;
+    let errorMessage = false;
     let selectedYearly = false;
     let vatField = false;
+
+    let pricing = {
+        '0': {
+            'monthly': 0,
+            'yearly': 0,
+        },
+        '5': {
+            'monthly': 5,
+            'yearly': 50
+        },
+        '100': {
+            'monthly': 100,
+            'yearly': 1000
+        }
+    }
 
     let order = {
         uid: $profile.uid,
         userNumber: $profile.number,
+        accountType: $profile.type,
         targetType: data.targetAccountType,
-        uid: $profile.uid,
-        email: $profile.email,
         name: $profile.name,
         surname: $profile.surname,
+        email: $profile.email,
         companyName: '',
         vat: '',
         address: '',
         city: '',
         zip: '',
-        country: '',
-        accountType: $profile.type,
-        paymentYearly: selectedYearly
+        country: 'poland',
+        yearly: selectedYearly
     };
 
     onMount(async () => {
@@ -168,22 +201,26 @@
     function sendForm() {
         console.log('sendForm');
         console.log(order);
-        order.paymentYearly = selectedYearly;
-        /* fetch('http://localhost:3000/api/order', {
+        order.yearly = selectedYearly;
+        fetch('/api/order', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + $token
+                'Authentication': $token
             },
             body: JSON.stringify(order)
         }).then(response => {
             if (response.ok) {
                 formSent = true;
+                orderId = response.text();
             } else {
+                errorMessage=response.statusText;
                 console.log('error');
             }
-        }); */
-        formSent = true;
+        }).catch(error => {
+            console.log(error);
+            errorMessage=error;
+        })
     }
 
     let labels = {

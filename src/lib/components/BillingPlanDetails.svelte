@@ -7,7 +7,18 @@
     {#if (targetPlan === undefined || targetPlan === null)}
     <h4 class="card-title">{utils.getLabel(getUserTypeName(actualPlan),labels, $language)}</h4>
     {:else}
-    <h4 class="card-title">{utils.getLabel(getUserTypeName(targetPlan),labels, $language)}</h4>
+    <h4 class="card-title text-center">{utils.getLabel(getUserTypeName(targetPlan),labels, $language)}</h4>
+    {/if}
+    {#if !(targetPlan === undefined || targetPlan === null) && pricing !== undefined}
+    <div class="row">
+        <div class="col-md-12 text-center my-2">
+            {#if yearly}
+            <h4 class="card-text">{pricing[targetPlan][$language].yearly}</h4>
+            {:else}
+            <h4 class="card-text">{pricing[targetPlan][$language].monthly}</h4>
+            {/if}
+        </div>
+    </div>
     {/if}
     <div class="row">
         {#if !(targetPlan === undefined || targetPlan === null)}
@@ -67,6 +78,8 @@
     import { utils } from '$lib/utils';
     export let actualPlan;
     export let targetPlan;
+    export let pricing;
+    export let yearly
 
     /** Returns the name of the user type.
      * Similar to the function in src/lib/utils.js but with limited names available.
@@ -127,8 +140,8 @@
 
     let labels = {
         yourPlan: {
-            en: "Your plan",
-            pl: "Twój plan"
+            en: "Your current plan",
+            pl: "Twój aktualny plan"
         },
         planDetails: {
             en: 'Plan details:',
