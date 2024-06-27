@@ -334,8 +334,8 @@
             'en': 'System admin'
         },
         'primary': {
-            'pl': 'Podstawowe',
-            'en': 'Primary'
+            'pl': 'Premium',
+            'en': 'Premium'
         },
         'application': {
             'pl': 'Aplikacja',

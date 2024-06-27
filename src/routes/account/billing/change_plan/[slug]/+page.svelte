@@ -148,16 +148,16 @@
 
     let pricing = {
         '0': {
-            'monthly': 0,
-            'yearly': 0,
+            'monthly': 50,
+            'yearly': 550,
         },
         '5': {
-            'monthly': 5,
-            'yearly': 50
+            'monthly': 200,
+            'yearly': 2200
         },
         '100': {
-            'monthly': 100,
-            'yearly': 1000
+            'monthly': 200,
+            'yearly': 2200
         }
     }
 
@@ -175,7 +175,7 @@
         city: '',
         zip: '',
         country: 'poland',
-        yearly: selectedYearly
+        yearly: selectedYearly,
     };
 
     onMount(async () => {
