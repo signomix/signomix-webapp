@@ -36,7 +36,7 @@
             </div>
             <div class="col-md-11">
                 <input type="text" disabled class="form-control" id="input-organization"
-                    value={data.organizationName}>
+                    value={data.organizationName} on:input={onChange}>
             </div>
         </div>
         {/if}
@@ -45,7 +45,7 @@
                 <label for="input-title" class="form-label">{utils.getLabel('dashboard_title',labels,$language)}</label>
             </div>
             <div class="col-md-11">
-                <input type="text" class="form-control" id="input-name" bind:value={data.title}>
+                <input type="text" class="form-control" id="input-name" bind:value={data.title} on:input={onChange}>
             </div>
         </div>
         <div class="row">
@@ -53,13 +53,13 @@
                 <label for="input-team" class="form-label">{utils.getLabel('widget_team',labels,$language)}</label>
             </div>
             <div class="col-md-4">
-                <input type="text" class="form-control" id="input-team" bind:value={data.team}>
+                <input type="text" class="form-control" id="input-team" bind:value={data.team} on:input={onChange}>
             </div>
             <div class="col-md-2 col-form-label">
                 <label for="input-admins" class="form-label">{utils.getLabel('widget_admins',labels,$language)}</label>
             </div>
             <div class="col-md-5">
-                <input type="text" class="form-control" id="input-admins" bind:value={data.administrators}>
+                <input type="text" class="form-control" id="input-admins" bind:value={data.administrators} on:input={onChange}>
             </div>
         </div>
         <div class="row">

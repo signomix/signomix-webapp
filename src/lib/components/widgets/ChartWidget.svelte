@@ -80,6 +80,22 @@
             'rgb(255, 205, 86, 0.2)', //yellow
             'rgb(201, 203, 207, 0.2)'//grey
         ]
+
+        let customConfig = null;
+        if (widgetConfig.config !== null && widgetConfig.config !== undefined) {
+            try {
+                customConfig = JSON.parse(widgetConfig.config)
+                if (customConfig.borderColors !== null && customConfig.borderColors !== undefined) {
+                    borderColors = customConfig.borderColors
+                }
+                if (customConfig.areaColors !== null && customConfig.areaColors !== undefined) {
+                    areaColors = customConfig.areaColors
+                }
+            } catch (err) {
+                console.log('ChartWidget - error parsing customConfig', err)
+            }
+        }
+
         let dTmp
         let tmpValue
         //console.log('multiLine', multiLine)
@@ -98,7 +114,12 @@
                 //console.log('push '+jsonData[i][0]['timestamp'])
                 for (var j = 0; j < jsonData[i].length; j++) {
                     try {
-                        tmpMeasures[j].push({ x: (new Date(jsonData[i][j]['timestamp']).toISOString()), y: jsonData[i][j]['value'] })
+                        tmpMeasures[j].push(
+                            {
+                                x: (new Date(jsonData[i][j]['timestamp']).toISOString()),
+                                y: getTransformedValue(customConfig, j, jsonData[i][j]['value'])
+                            }
+                        )
                         if (j == 0 && jsonData[i][j]['timestamp'] < dFirst) { dFirst = jsonData[i][j]['timestamp'] }
                         if (jsonData[i][j]['timestamp'] > dLast) { dLast = jsonData[i][j]['timestamp'] }
                     } catch (err) { }
@@ -110,8 +131,8 @@
                         label: jsonData[0].length > 0 ? getChannelNameTranslated(namesTranslated, j, jsonData[0][j]['name']) : '',
                         borderWidth: 1,
                         data: tmpMeasures[j],
-                        backgroundColor: areaColors[(j%7)],
-                        borderColor: borderColors[(j%7)],
+                        backgroundColor: areaColors[(j % 7)],
+                        borderColor: borderColors[(j % 7)],
                         fill: widgetConfig.chartArea,
                         spanGaps: true
                     }
@@ -201,6 +222,20 @@
         //console.log(JSON.stringify(charConfig))
         return charConfig
     }
+
+    function getTransformedValue(configuration, index, originalValue) {
+            let resultValue = originalValue
+            try {
+                if (configuration != null && configuration.multipliers != undefined && configuration.multipliers != null) {
+                    if (configuration.multipliers.length > index) {
+                        resultValue = resultValue * configuration.multipliers[index]
+                    }
+                }
+            } catch (err) {
+                //console.log('ChartWidget config - error parsing multipliers', err)
+            }
+            return resultValue
+        }
 
     function toLocaleTimeStringSupportsLocales() {
         try {

@@ -125,8 +125,8 @@
      * @returns {lan, lon}
      */
     function getLatLonIndexes(jsonData) {
-        let latIndex = -1
-        let lonIndex = -1
+        let latIndex = 0
+        let lonIndex = 1
         for (let i = 0; i < jsonData[0].length; i++) {
             if (jsonData[0][i]['name'].toLowerCase() == _latitude) {
                 latIndex = i
