@@ -41,7 +41,7 @@
 {:else}
 <div class="row mb-3">
     <div class="col-md-12 mb-3">
-        <div class="card h-100">
+        <div class="card h-100 p-2">
             <p>{utils.getLabel('organizationComment',labels, $language)}</p>
         </div>
     </div>

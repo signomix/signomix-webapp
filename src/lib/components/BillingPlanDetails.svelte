@@ -24,38 +24,34 @@
         {#if !(targetPlan === undefined || targetPlan === null)}
         <div class="col-md-12">
             <p class="card-text">{utils.getLabel('planDetails',labels, $language)}</p>
+            {#if utils.isDefaultOrganizationUser($profile)  && (targetPlan == 4 || targetPlan == 5 || targetPlan == 0)}
             <ul>
                 <li>{getNumberOfDataSources(targetPlan)+' '+utils.getLabel('dataSources',labels, $language)}</li>
                 <li>{getDataRetentionDays(targetPlan)+' '+utils.getLabel('dataRetention',labels, $language)}</li>
                 <li>{utils.getLabel(getSupportName(targetPlan),labels, $language)}</li>
             </ul>
+            {:else}
+            <ul>
+                <li>{utils.getLabel('organizationDataSources',labels, $language)}</li>
+                <li>{utils.getLabel('organizationDataRetention',labels, $language)}</li>
+                <li>{utils.getLabel(getSupportName(targetPlan),labels, $language)}</li>
+            </ul>         
+            {/if}
         </div>
         {:else}
         <div class="col-md-6">
             <h6 class="card-text">{utils.getLabel('planDetails',labels, $language)}</h6>
-            {#if actualPlan === 4}
+            {#if utils.isDefaultOrganizationUser($profile)}
             <ul>
-                <li>5 data sources</li>
-                <li>7 days data retention</li>
-                <li>community support</li>
-            </ul>
-            {:else if actualPlan === 5}
-            <ul>
-                <li>50 data sources</li>
-                <li>1 year data retention</li>
-                <li>support via GitHub dedicated issue tracker</li>
-            </ul>
-            {:else if actualPlan === 0}
-            <ul>
-                <li>20 data sources</li>
-                <li>30 days data retention</li>
-                <li>e-mail support</li>
+                <li>{getNumberOfDataSources(actualPlan)+' '+utils.getLabel('dataSources',labels, $language)}</li>
+                <li>{getDataRetentionDays(actualPlan)+' '+utils.getLabel('dataRetention',labels, $language)}</li>
+                <li>{utils.getLabel(getSupportName(actualPlan),labels, $language)}</li>
             </ul>
             {:else}
             <ul>
-                <li>number of data sources dependent on signed contract</li>
-                <li>data retention dependent on signed contract</li>
-                <li>support via dedicated GitHub issue tracker</li>
+                <li>{utils.getLabel('organizationDataSources',labels, $language)}</li>
+                <li>{utils.getLabel('organizationDataRetention',labels, $language)}</li>
+                <li>{utils.getLabel(getSupportName(actualPlan),labels, $language)}</li>
             </ul>
             {/if}
         </div>
@@ -69,7 +65,7 @@
 {#if !(targetPlan === undefined || targetPlan === null)}
 <div class="card-footer">
     <a href="/account/billing/change_plan/{targetPlan}"
-    class="btn-sticked btn btn-outline-primary">{utils.getLabel('changePlan',labels,$language)}</a>
+        class="btn-sticked btn btn-outline-primary">{utils.getLabel('changePlan',labels,$language)}</a>
 </div>
 {/if}
 
@@ -87,54 +83,70 @@
      * @returns {string} - the name of the user type
      */
     function getUserTypeName(type) {
-        switch (type) {
-            case 0:
-                return 'user';
-            case 4:
-                return 'free';
-            case 5:
-                return 'primary';
-            default:
-                return 'otherAccountType';
+        if (utils.isDefaultOrganizationUser($profile)) {
+            switch (type) {
+                case 0:
+                    return 'user';
+                case 4:
+                    return 'free';
+                case 5:
+                    return 'primary';
+                default:
+                    return 'otherAccountType';
+            }
+        } else {
+            return 'organizationType';
         }
     }
 
-    function getDataRetentionDays(accountType){
-        switch (accountType) {
-            case 0:
-                return 30;
-            case 4:
-                return 7;
-            case 5:
-                return 365;
-            default:
-                return 'dependent on signed contract';
+    function getDataRetentionDays(accountType) {
+        if (utils.isDefaultOrganizationUser($profile)) {
+            switch (accountType) {
+                case 0:
+                    return 30;
+                case 4:
+                    return 7;
+                case 5:
+                    return 365;
+                default:
+                    return 'depend on the agreement';
+            }
+        } else {
+            return 'depend on the agreement';
         }
     }
 
-    function getSupportName(accountType){
-        switch (accountType) {
-            case 0:
-                return 'emailSupport';
-            case 4:
-                return 'communitySupport';
-            case 5:
-                return 'trackerSupport';
-            default:
-                return 'trackerSupport';
+    function getSupportName(accountType) {
+        if (utils.isDefaultOrganizationUser($profile)) {
+            switch (accountType) {
+                case 0:
+                    return 'emailSupport';
+                case 4:
+                    return 'communitySupport';
+                case 5:
+                    return 'trackerSupport';
+                default:
+                    return 'otherSupport';
+            }
+        }else{
+            return 'otherSupport';
         }
     }
 
-    function getNumberOfDataSources(accountType){
-        switch (accountType) {
-            case 0:
-                return 20;
-            case 4:
-                return 5;
-            case 5:
-                return 50;
-            default:
-                return 'dependent on signed contract';
+    function getNumberOfDataSources(accountType) {
+        if (utils.isDefaultOrganizationUser($profile)) {
+            switch (accountType) {
+                case 0:
+                    return 20;
+                case 4:
+                    return 5;
+                case 5:
+                    return 50;
+                default:
+                    return 'depend on the agreement';
+            }
+        } else {
+            return 'depend on the agreement';
         }
     }
 
@@ -176,6 +188,10 @@
             pl: 'Konto Premium'
         },
         otherAccountType: {
+            pl: 'Konto dedykowane',
+            en: 'Dedicated account'
+        },
+        organizationType: {
             pl: 'Konto organizacyjne',
             en: 'Organization account'
         },
@@ -184,8 +200,8 @@
             pl: 'źródeł danych'
         },
         dataRetention: {
-            en: 'data retention',
-            pl: 'retencji danych'
+            pl: 'dniowy okres retencji danych',
+            en: 'days data retention period'
         },
         emailSupport: {
             en: 'e-mail support',
@@ -198,6 +214,18 @@
         trackerSupport: {
             en: 'support via GitHub dedicated issue tracker',
             pl: 'wsparcie poprzez dedykowany system zgłoszeń na GitHubie'
-        }
+        },
+        otherSupport: {
+            pl: 'rodzaj wsparcia zależy od umowy',
+            en: 'type of support depends on the agreement'
+        },
+        organizationDataSources: {
+            pl: 'liczba źródeł danych zależy od umowy',
+            en: 'number of data sources depends on the agreement'
+        },
+        organizationDataRetention: {
+            pl: 'okres retencji danych zależy od umowy',
+            en: 'data retention period depends on the agreement'            
+        },
     }
 </script>

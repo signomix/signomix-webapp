@@ -23,10 +23,8 @@
     {:else}
     {#if (data.targetAccountType == "100")}
     <div class="alert alert-warning" role="alert">
-        <p><b>Uwaga!</b></p>
-        <p>Wybrany plan jest dostępny po wcześniejszym podpisaniu umowy utrzymaniowej z administratorem
-            serwisu signomix.com. W celu uzyskania dodatkowych informacji prosimy o kontakt poprzez
-            wysłanie wiadomości na adres contact@experiot.pl
+        <p><b>{utils.getLabel('attention',labels, $language)}</b></p>
+        <p>{utils.getLabel('message',labels, $language)}
         </p>
     </div>
     {:else}
@@ -227,6 +225,14 @@
         'title': {
             'pl': "Zamówienie subskrypcji",
             'en': "Subscription order"
+        },
+        'attention': {
+            'pl': "Uwaga!",
+            'en': "Attention!"
+        },
+        'message': {
+            'pl': "Wybrany plan jest dostępny po wcześniejszym podpisaniu umowy utrzymaniowej z administratorem serwisu signomix.com. W celu uzyskania dodatkowych informacji prosimy o kontakt poprzez wysłanie wiadomości na adres contact@experiot.pl",
+            'en': "The selected plan is available after signing a maintenance agreement with the signomix.com service administrator. For additional information, please contact us by sending a message to contact@experiot.pl"
         }
     }
 </script>
