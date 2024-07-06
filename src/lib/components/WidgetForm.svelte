@@ -155,6 +155,7 @@
                 <div class="mb-2">
                     <label for="icon" class="form-channels">Icon</label>
                     <input type="text" class="form-control form-control-sm" id="icon" bind:value={config[index].icon}>
+                    <small class="text-xs">User defined icons (optional) - separate with a colon</small>
                 </div>
                 {/if}
                 {#if widgets.isVisible(selectedType, 'commandType')}

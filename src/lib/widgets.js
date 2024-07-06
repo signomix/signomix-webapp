@@ -54,7 +54,7 @@ export const widgets = {
         date: ['dev_id','channel', 'query'],
         devinfo: ['dev_id',],
         image: ['imageUrl'],
-        led: ['dev_id','channel', 'range', 'query'],
+        led: ['dev_id','channel', 'range', 'query','icon'],
         link: ['dashboardID'],
         map: ['dev_id','channel', 'query','rounding'],
         multimap: ['group','channel', 'range', 'query','rounding'],

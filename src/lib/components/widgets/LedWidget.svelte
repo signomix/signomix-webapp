@@ -52,7 +52,19 @@
     }
     function getIconName(data) {
         let level = sgxhelper.getAlertLevel(config.range, utils.recalculate(data.value,config.rounding), data.timestamp);
-        switch (level) {
+        let icons = ['bi-emoji-smile-fill', 'bi-emoji-neutral-fill', 'bi-emoji-frown-fill', 'bi-emoji-expressionless-fill']
+        if(config.icon!=undefined && config.icon!=null && config.icon!=''){
+            let optIcons = config.icon.split(':')
+            for(let i=0;i<optIcons.length;i++){
+                icons[i] = optIcons[i]
+            }
+        }
+        if(level>=0 && level<icons.length){
+            return icons[level]
+        }else{
+            return 'bi-emoji-expressionless'
+        }
+        /* switch (level) {
             case 0:
                 return 'bi-emoji-smile-fill'
             case 1:
@@ -63,7 +75,7 @@
                 return 'bi-emoji-expressionless-fill'
             default:
                 return 'bi-emoji-expressionless'
-        }
+        } */
     }
 </script>
 <div class="p-1 w-100" on:click={switchView}>
