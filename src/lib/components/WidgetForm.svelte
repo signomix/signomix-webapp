@@ -9,23 +9,22 @@
                 <div class="nav nav-underline" id="nav-tab">
                     {#if activeTabs.basic}
                     <a class="nav-link {selectedTab==='basic'?'active':''}" type="button"
-                        on:click={selectBasic}>Basic</a>
+                        on:click={selectBasic}>{utils.getLabel('basic',labels,$language)}</a>
                     {/if}
                     {#if activeTabs.extended}
                     <a class="nav-link {selectedTab==='extended'?'active':''}" type="button"
-                        on:click={selectExtended}>Details</a>
+                        on:click={selectExtended}>{utils.getLabel('details',labels,$language)}</a>
                     {/if}
                     {#if activeTabs.chart}
-                    <a class="nav-link {selectedTab==='chart'?'active':''}" type="button" on:click={selectChart}>Chart
-                        opt.</a>
+                    <a class="nav-link {selectedTab==='chart'?'active':''}" type="button" on:click={selectChart}>{utils.getLabel('chart_opt',labels,$language)}</a>
                     {/if}
                     {#if activeTabs.config}
                     <a class="nav-link {selectedTab==='config'?'active':''}" type="button"
-                        on:click={selectConfig}>Config</a>
+                        on:click={selectConfig}>{utils.getLabel('config',labels,$language)}</a>
                     {/if}
                     {#if activeTabs.desc}
                     <a class="nav-link {selectedTab==='desc'?'active':''}" type="button"
-                        on:click={selectDesc}>Description</a>
+                        on:click={selectDesc}>{utils.getLabel('description',labels,$language)}</a>
                     {/if}
                 </div>
             </nav>
@@ -36,7 +35,7 @@
                     <input type="text" class="form-control form-control-sm" id="title" bind:value={config[index].title}>
                 </div>
                 <div class="mb-2">
-                    <label for="type">Type</label>
+                    <label for="type">{utils.getLabel('type',labels,$language)}</label>
                     <select id="type" class="form-select form-select-sm" bind:value={config[index].type}>
                         {#each widgets.types as widgetType}
                         <option selected={widgetType==selectedType} value={widgetType}>
@@ -49,7 +48,7 @@
                         <option selected={widgetType==selectedType} value={widgetType}>{widgetType}</option>
                         {/each}
                     </select>
-                    <label class="form-label">Type {selectedType} description</label>
+                    <!-- <label class="form-label">{utils.getLabel(getSelectedTypeDescCode(selectedType),labels,$language)}</label> -->
                 </div>
 
                 {#if widgets.isVisible(selectedType, 'dev_id') && widgets.isVisible(selectedType, 'group')}
@@ -62,7 +61,7 @@
                         on:click={setSingleDevice}>
                     {/if}
                     <label class="form-check-label" for="groupRadio1">
-                        Single device
+                        {utils.getLabel('single_device',labels,$language)}
                     </label>
                     {#if singleDeviceMode==0}
                     <input class="form-check-input ms-2" type="radio" name="gr" id="groupRadio2" value="0"
@@ -72,13 +71,13 @@
                         on:click={setGroup}>
                     {/if}
                     <label class="form-check-label" for="gropuRadio2">
-                        Group of devices
+                        {utils.getLabel('group_of_devices',labels,$language)}
                     </label>
                 </div>
                 {/if}
                 {#if singleDeviceMode==1 && widgets.isVisible(selectedType, 'dev_id')}
                 <div class="input-group mb-2">
-                    <label for="dev_id" class="form-label me-2">EUI</label>
+                    <label for="dev_id" class="form-label me-2">{utils.getLabel('eui',labels,$language)}</label>
                     <input type="text" class="form-control form-control-sm" id="dev_id"
                         bind:value={config[index].dev_id}>
                     <button type="button" class="btn btn-outline-secondary" on:click={()=> (showDeviceSelectorModal =
@@ -87,7 +86,7 @@
                 {/if}
                 {#if singleDeviceMode==0 && widgets.isVisible(selectedType, 'group')}
                 <div class="input-group mb-2">
-                    <label for="group" class="form-label me-2">Group</label>
+                    <label for="group" class="form-label me-2">{utils.getLabel('group',labels,$language)}</label>
                     <input type="text" class="form-control form-control-sm" id="group" bind:value={config[index].group}>
                     <button type="button" class="btn btn-outline-secondary" on:click={()=> (showGroupSelectorModal =
                         true)}>...</button>
@@ -95,14 +94,14 @@
                 {/if}
                 {#if widgets.isVisible(selectedType, 'imageUrl')}
                 <div class="mb-2">
-                    <label for="imageUrl" class="form-channels">Image URL</label>
+                    <label for="imageUrl" class="form-channels">{utils.getLabel('image_url',labels,$language)}</label>
                     <input type="text" class="form-control form-control-sm" id="imageUrl"
                         bind:value={config[index].imageUrl}>
                 </div>
                 {/if}
                 {#if widgets.isVisible(selectedType, 'dashboardID')}
                 <div class="mb-2">
-                    <label for="dashboardID" class="form-channels">dashboard EUI</label>
+                    <label for="dashboardID" class="form-channels">{utils.getLabel('dashboard_eui',labels,$language)}</label>
                     <input type="text" class="form-control form-control-sm" id="dashboardID"
                         bind:value={config[index].dashboardID}>
                 </div>
@@ -113,54 +112,54 @@
             <div class="p-1 mt-2">
                 {#if widgets.isVisible(selectedType, 'channel')}
                 <div class="mb-2">
-                    <label for="channel" class="form-channels">Data name(s)</label>
+                    <label for="channel" class="form-channels">{utils.getLabel('measurements',labels,$language)}</label>
                     <input type="text" class="form-control form-control-sm" id="channel"
                         bind:value={config[index].channel}>
                 </div>
                 {/if}
                 {#if widgets.isVisible(selectedType, 'channel_translated')}
                 <div class="mb-2">
-                    <label for="channel_translated" class="form-channels">Names on widget</label>
+                    <label for="channel_translated" class="form-channels">{utils.getLabel('names_on_widget',labels,$language)}</label>
                     <input type="text" class="form-control form-control-sm" id="channel_translated"
                         bind:value={config[index].channel_translated}>
                 </div>
                 {/if}
                 {#if widgets.isVisible(selectedType, 'query')}
                 <div class="mb-2">
-                    <label for="query" class="form-label">Data range</label>
+                    <label for="query" class="form-label">{utils.getLabel('data_range',labels,$language)}</label>
                     <input type="text" class="form-control form-control-sm" id="query" bind:value={config[index].query}>
                 </div>
                 {/if}
                 {#if widgets.isVisible(selectedType, 'rounding')}
                 <div class="mb-2">
-                    <label for="rounding" class="form-channels">Value rounding</label>
+                    <label for="rounding" class="form-channels">{utils.getLabel('rounding',labels,$language)}</label>
                     <input type="text" class="form-control form-control-sm" id="rounding"
                         bind:value={config[index].rounding}>
                 </div>
                 {/if}
                 {#if widgets.isVisible(selectedType, 'unit')}
                 <div class="mb-2">
-                    <label for="unit" class="form-label">Unit</label>
+                    <label for="unit" class="form-label">{utils.getLabel('unit',labels,$language)}</label>
                     <input type="text" class="form-control form-control-sm" id="unit"
                         bind:value={config[index].unitName}>
                 </div>
                 {/if}
                 {#if widgets.isVisible(selectedType, 'range')}
                 <div class="mb-2">
-                    <label for="range" class="form-label">Alert rule</label>
+                    <label for="range" class="form-label">{utils.getLabel('alert_rule',labels,$language)}</label>
                     <input type="text" class="form-control form-control-sm" id="range" bind:value={config[index].range}>
                 </div>
                 {/if}
                 {#if widgets.isVisible(selectedType, 'icon')}
                 <div class="mb-2">
-                    <label for="icon" class="form-channels">Icon</label>
+                    <label for="icon" class="form-channels">{utils.getLabel('icons',labels,$language)}</label>
                     <input type="text" class="form-control form-control-sm" id="icon" bind:value={config[index].icon}>
                     <small class="text-xs">User defined icons (optional) - separate with a colon</small>
                 </div>
                 {/if}
                 {#if widgets.isVisible(selectedType, 'commandType')}
                 <div class="p-1 mt-2">
-                    <label for="commandType">Command type</label>
+                    <label for="commandType">{utils.getLabel('command_type',labels,$language)}</label>
                     <select id="commandType" class="form-select form-select-sm" bind:value={config[index].commandType}>
                         <option selected={'plain'==config[index].commandType} value="plain">PLAIN</option>
                         <option selected={'hex'==config[index].commandType} value="hex">HEX</option>
@@ -170,7 +169,7 @@
                 {/if}
                 {#if widgets.isVisible(selectedType, 'role')}
                 <div class="mb-2">
-                    <label for="role" class="form-label">Role</label>
+                    <label for="role" class="form-label">{utils.getLabel('role',labels,$language)}</label>
                     <input type="text" class="form-control form-control-sm" id="role" bind:value={config[index].role}>
                 </div>
                 {/if}
@@ -180,7 +179,7 @@
             <!-- chart options -->
             {#if selectedTab === 'chart'}
             <div class="p-1 mt-2">
-                <label for="chart_type">Typ wykresu</label>
+                <label for="chart_type">{utils.getLabel('chart_type',labels,$language)}</label>
                 <select id="chart_type" class="form-select form-select-sm" bind:value={config[index].chartType}>
                     {#if selectedType=='chart'}
                     {#each widgets.chartTypes as chartType}
@@ -208,12 +207,12 @@
             -->
             <div class="p-1 mt-2">
                 <div class="form-check form-switch form-check-inline">
-                    <label class="form-check-label me-1" for="chart-markers">markery</label>
+                    <label class="form-check-label me-1" for="chart-markers">{utils.getLabel('markers',labels,$language)}</label>
                     <input type="checkbox" class="form-check-input" id="chart-markers"
                         bind:checked={config[index].chartMarkers}>
                 </div>
                 <div class="form-check form-switch form-check-inline">
-                    <label class="form-check-label me-1" for="chart-area">obszar</label>
+                    <label class="form-check-label me-1" for="chart-area">{utils.getLabel('area',labels,$language)}</label>
                     <input type="checkbox" class="form-check-input" id="chart-area"
                         bind:checked={config[index].chartArea}>
                 </div>
@@ -229,22 +228,22 @@
             -->
             {/if}
             <div class="p-1 mt-2">
-                <label for="format">Data character</label>
+                <label for="format">{utils.getLabel('data_characteristic',labels,$language)}</label>
                 <select id="format" class="form-select form-select-sm" bind:value={config[index].format}>
                     <option selected={'standard'==config[index].format} value='standard'>standard</option>
                     <option selected={'timeseries'==config[index].format} value='timeseries'>timeseries</option>
                 </select>
             </div>
             <div class="p-1 mt-2">
-                <label for="format">Czas na osi X</label>
+                <label for="format">{utils.getLabel('time_on_x',labels,$language)}</label>
                 <select id="format" class="form-select form-select-sm" bind:value={config[index].timeUnit}>
                     <option value="" selected={config[index].timeUnit=='' || config[index].timeUnit==undefined}>
-                        automatic setting</option>
-                    <option value="quarter" selected={config[index].timeUnit=='quarter' }>quarters</option>
-                    <option value="week" selected={config[index].timeUnit=='week' }>weeks</option>
-                    <option value="day" selected={config[index].timeUnit=='day' }>days</option>
-                    <option value="hour" selected={config[index].timeUnit=='hour' }>hours</option>
-                    <option value="minute" selected={config[index].timeUnit=='minute' }>minutes</option>
+                        {utils.getLabel('auto_setting',labels,$language)}</option>
+                    <option value="quarter" selected={config[index].timeUnit=='quarter' }>{utils.getLabel('quarters',labels,$language)}</option>
+                    <option value="week" selected={config[index].timeUnit=='week' }>{utils.getLabel('weeks',labels,$language)}</option>
+                    <option value="day" selected={config[index].timeUnit=='day' }>{utils.getLabel('days',labels,$language)}</option>
+                    <option value="hour" selected={config[index].timeUnit=='hour' }>{utils.getLabel('hours',labels,$language)}</option>
+                    <option value="minute" selected={config[index].timeUnit=='minute' }>{utils.getLabel('minutes',labels,$language)}</option>
                 </select>
             </div>
             {/if}
@@ -252,12 +251,12 @@
             {#if selectedTab === 'config'}
             {#if widgets.isVisible(selectedType, 'app_id') && $profile.organization!=$defaultOrganizationId}
             <div class="mb-2">
-                <label for="app_id" class="form-label">Application ID</label>
+                <label for="app_id" class="form-label">{utils.getLabel('application_id',labels,$language)}</label>
                 <input type="text" class="form-control form-control-sm" id="app_id" bind:value={config[index].app_id}>
             </div>
             {/if}
             <div class="p-1 mt-2">
-                <label for="config">Configuration</label>
+                <label for="config">{utils.getLabel('configuration',labels,$language)}</label>
                 <textarea id="config" class="form-control mt-1" style="font-size: 14px" rows="5"
                     bind:value={config[index].config}></textarea>
                 <small class="text-xs">Optional widget configuration (JSON)</small>
@@ -267,7 +266,7 @@
             <!-- widget description -->
             {#if selectedTab === 'desc'}
             <div class="p-1 mt-2">
-                <label for="description">Opis kontrolki</label>
+                <label for="description">{utils.getLabel('widget_description',labels,$language)}</label>
                 <textarea id="description" class="form-control mt-1" style="font-size: 14px" rows="5"
                     bind:value={config[index].description}></textarea>
                 <small class="text-xs">Dla kontrolek typu 'ramka informacyjna' pojawi się w ramce.</small>
@@ -275,9 +274,9 @@
             </div>
             {/if}
             <div class="mt-2">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{utils.getLabel('cancel',labels,$language)}</button>
                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal" on:click={handleClick}>
-                    Zapisz
+                    {utils.getLabel('save',labels,$language)}
                 </button>
             </div>
         </form>
@@ -286,7 +285,7 @@
             Brak konfiguracji
         </div>
         <div class="mt-2">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{utils.getLabel('cancel',labels,$language)}</button>
         </div>
         {/if}
     </div>
@@ -459,5 +458,203 @@
     function setSingleDevice() {
         config[index].group = ''
         singleDeviceMode = 1
+    }
+
+    function getSelectedTypeDescCode(type){
+        switch (type) {
+            case 'button':
+                return 'button_desc'
+            case 'chart':
+                return 'chart_desc'
+            case 'groupchart':
+                return 'groupchart_desc'
+            case 'date':
+                return 'date_desc'
+            case 'devinfo':
+                return 'devinfo_desc'
+            case 'image':
+                return 'image_desc'
+            case 'led':
+                return 'led_desc'
+            case 'link':
+                return 'link_desc'
+            case 'map':
+                return 'map_desc'
+            case 'multimap':
+                return 'multimap_desc'
+            case 'multitrack':
+                return 'multitrack_desc'
+            case 'plan':
+                return 'plan_desc'
+            case 'raw':
+                return 'raw_desc'
+            case 'report':
+                return 'report_desc'
+            case 'symbol':
+                return 'symbol_desc'
+            case 'stopwatch':
+                return 'stopwatch_desc'
+            case 'time':
+                return 'time_desc'
+            case 'text':
+                return 'text_desc'
+            case 'canvas_placeholder':
+                return 'canvas_placeholder_desc'
+            case 'chart_placeholder':
+                return 'chart_placeholder_desc'
+            default:
+                return 'text_desc'
+        }
+    }
+
+    let labels = {
+        'cancel': {
+            'en': 'Cancel',
+            'pl': 'Anuluj',
+        },
+        'save': {
+            'en': 'Save',
+            'pl': 'Zapisz',
+        },
+        'application_id': {
+            'en': 'Application ID',
+            'pl': 'ID Aplikacji',
+        },
+        'configuration': {
+            'en': 'Configuration',
+            'pl': 'Konfiguracja',
+        },
+        'description': {
+            'en': 'Description',
+            'pl': 'Opis',
+        },
+        'basic': {
+            'en': 'Basic',
+            'pl': 'Podstawowe',
+        },
+        'config': {
+            'en': 'Configuration',
+            'pl': 'Konfiguracja',
+        },
+        'details': {
+            'en': 'Details',
+            'pl': 'Szczegóły',
+        },
+        'chart_opt': {
+            'en': 'Chart options',
+            'pl': 'Opcje wykresu',
+        },
+        'type': {
+            'en': 'Type',
+            'pl': 'Typ',
+        },
+        'single_device': {
+            'en': 'Single device',
+            'pl': 'Pojedyncze urządzenie',
+        },
+        'group_of_devices': {
+            'en': 'Group of devices',
+            'pl': 'Grupa urządzeń',
+        },
+        'eui': {
+            'en': 'EUI',
+            'pl': 'EUI',
+        },
+        'group': {
+            'en': 'Group',
+            'pl': 'Grupa',
+        },
+        'image_url': {
+            'en': 'Image URL',
+            'pl': 'Adres obrazka',
+        },
+        'dashboard_eui': {
+            'en': 'Dashboard EUI',
+            'pl': 'EUI Dashboardu',
+        },
+        'widget_description': {
+            'en': 'Widget description',
+            'pl': 'Opis widżetu',
+        },
+        'measurements': {
+            'en': 'Measurement names',
+            'pl': 'Nazwy pomiarów',
+        },
+        'names_on_widget': {
+            'en': 'Names on widget',
+            'pl': 'Nazwy na kontrolce',
+        },
+        'data_range': {
+            'en': 'Data range',
+            'pl': 'Zakres danych',
+        },
+        'rounding': {
+            'pl': 'Zaokrąglenie wartości',
+            'en': 'Rounding',
+        },
+        'unit': {
+            'pl': 'Nazwa jednostki miary',
+            'en': 'Unit name',
+        },
+        'alert_rule': {
+            'en': 'Alert rule',
+            'pl': 'Reguła alarmu',
+        },
+        'icons': {
+            'pl': 'Ikony',
+            'en': 'Icons',
+        },
+        'command_type': {
+            'pl': 'Typ komendy',
+            'en': 'Command type',
+        },
+        'role': {
+            'pl': 'Rola użytkownika',
+            'en': 'User role',
+        },
+        'chart_type': {
+            'pl': 'Typ wykresu',
+            'en': 'Chart type',
+        },
+        'markers': {
+            'pl': 'Znaczniki',
+            'en': 'Markers',
+        },
+        'area': {
+            'pl': 'Obszar',
+            'en': 'Area',
+        },
+        'data_characteristic': {
+            'pl': 'Charakterystyka danych',
+            'en': 'Data characteristic',
+        },
+        'time_on_x': {
+            'pl': 'Czas na osi X',
+            'en': 'Time on X axis',
+        },
+        'auto_setting': {
+            'pl': 'Automatyczne ustawienie',
+            'en': 'Auto setting',
+        },
+        'quarters': {
+            'pl': 'Kwartały',
+            'en': 'Quarters',
+        },
+        'weeks': {
+            'pl': 'Tygodnie',
+            'en': 'Weeks',
+        },
+        'days': {
+            'pl': 'Dni',
+            'en': 'Days',
+        },
+        'hours': {
+            'pl': 'Godziny',
+            'en': 'Hours',
+        },
+        'minutes': {
+            'pl': 'Minuty',
+            'en': 'Minutes',
+        }
     }
 </script>
