@@ -187,8 +187,8 @@ export const widgets = {
                 pl: 'Surowe dane'
             },
             'report': {
-                en: 'Group report',
-                pl: 'Raport grupowy'
+                pl: 'Tabela z danymi',
+                en: 'Data table'
             },
             'symbol': {
                 pl: 'Karta wartości',
