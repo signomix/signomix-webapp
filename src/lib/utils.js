@@ -364,6 +364,9 @@ export const utils = {
     return result
   },
   recalculate: function (value, rounding) {
+    if(isNaN(value)){
+      return value
+    }
     try {
       return Number.parseFloat(value).toFixed(rounding);
     } catch (e) {

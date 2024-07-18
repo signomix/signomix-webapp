@@ -7,6 +7,14 @@ export const sgxdata = {
       return this.getMultiChannelExample(eui, channelNames, count)
     }
   },
+  getReportDataExample: function (eui, channelNames, count) {
+    let channels = channelNames.split(",");
+    if (channels.length === 1) {
+      return null
+    } else {
+      return null
+    }
+  },
   getOneChannelExample: function (eui, channelName, count) {
     let timestamps = [];
     let measurement = {}
@@ -59,6 +67,9 @@ export const sgxdata = {
   getGroupData: function (devMode, apiUrl, config, filter, token, transformFunction) {
     //console.log('getGroupData', devMode, apiUrl, config, filter, token, transformFunction)
     return Promise.resolve(getSgxGroupData(devMode, apiUrl, config, filter, token, transformFunction)).then((result) => result);
+  },
+  getReportData: function (devMode, apiUrl, config, filter, token, transformFunction) {
+    return Promise.resolve(getSgxReportData(devMode, apiUrl, config, filter, token, transformFunction)).then((result) => result);
   },
   getNotifications: function (devMode, apiUrl, limit, offset, token) {
     try {
@@ -191,6 +202,33 @@ const getSgxGroupData = async function (devMode, apiUrl, config, filter, token, 
     throw new Error(text);
   }
 
+}
+
+const getSgxReportData = async function (devMode, apiUrl, config, filter, token, transformFunction) {
+  if (devMode) {
+    if (transformFunction == null || transformFunction == undefined) {
+      return sgxdata.getReportDataExample(config.dev_id, config.channel, 10)
+    } else {
+      return await transformFunction(config, sgxdata.getDataExample(config.dev_id, config.channel, 10))
+    }
+  }
+  const headers = new Headers()
+  headers.set('Accept', 'application/json');
+  headers.set('Authentication', token);
+  let query = applyFilter(config.query, filter);
+  const endpoint = apiUrl + "?query=" + query;
+  const res = await fetch(endpoint, { mode: 'cors', headers: headers });
+  let data;
+  if (transformFunction == null || transformFunction == undefined) {
+    data = await res.json();
+  } else {
+    data = await transformFunction(config, res.json());
+  }
+  if (res.ok) {
+    return data;
+  } else {
+    throw new Error(text);
+  }
 }
 
 const getSgxNotifications = async function (devMode, apiUrl, limit, offset, token) {
