@@ -70,6 +70,8 @@
             <SymbolWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'text'===getWidgetType(index)}
             <TextWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+            {:else if 'devinfo'===getWidgetType(index)}
+            <InfoWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'image'===getWidgetType(index)}
             <ImageWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'link'===getWidgetType(index)}
@@ -158,6 +160,7 @@
     import ChartjsWidgetExample from '$lib/components/widgets/ChartjsWidgetExample.svelte';
     import SymbolWidget from '$lib/components/widgets/SymbolWidget.svelte';
     import TextWidget from '$lib/components/widgets/TextWidget.svelte';
+    import InfoWidget from '$lib/components/widgets/InfoWidget.svelte';
     import ImageWidget from '$lib/components/widgets/ImageWidget.svelte';
     import LedWidget from '$lib/components/widgets/LedWidget.svelte';
     import InternalLink from '$lib/components/widgets/InternalLink.svelte';

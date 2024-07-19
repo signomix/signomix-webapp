@@ -151,8 +151,8 @@ export const widgets = {
                 pl: 'Data'
             },
             'devinfo': {
-                en: 'Device info',
-                pl: 'Informacje o urządzeniu'
+                pl: 'Informacje o źródle danych',
+                en: 'Data source info'
             },
             'image': {
                 en: 'Image',

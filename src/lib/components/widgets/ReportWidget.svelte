@@ -4,7 +4,7 @@
     import { sgxdata } from '$lib/sgxdata.js';
     import { sgxhelper } from '$lib/sgxhelper.js';
     import { dev } from '$app/environment';
-    import { onMount } from 'svelte';
+    //import { onMount } from 'svelte';
     import { afterUpdate } from 'svelte';
 
     export let config
