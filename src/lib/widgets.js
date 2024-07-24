@@ -48,7 +48,7 @@ export const widgets = {
     },
     typeFields: {
         default: ['title', 'type', 'role','config', 'app_id'],
-        button: ['dev_id','channel', 'commandType'],
+        button: ['dev_id','commandType', 'commandText', 'commandJSON'],
         chart: ['dev_id','channel', 'query', 'format', 'chartType','channel_translated'],
         groupchart: ['group','channel','channel_translated','query','format','chartType'],
         date: ['dev_id','channel', 'query'],
@@ -59,7 +59,7 @@ export const widgets = {
         map: ['dev_id','channel', 'query','rounding'],
         multimap: ['group','channel', 'range', 'query','rounding'],
         multitrack: ['group','channel','query','rounding'],
-        plan: ['group','channel','range', 'query'],
+        plan: ['group','channel','range', 'query','channel_translated'],
         raw: ['dev_id','group','channel', 'query'],
         report: ['dev_id','group','channel','channel_translated','rounding','query'],
         text: [],

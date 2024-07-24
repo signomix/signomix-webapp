@@ -1,7 +1,7 @@
 	<script>
 	import { utils } from '$lib/utils.js';
 	import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
-	export let dialog2
+	export let dialog
 	export let title
 	export let message
 	export let labels
@@ -59,7 +59,7 @@
 	}	
 </script>
 <style>
-	dialog2 {
+	dialog {
 		border: none !important;
 		border-radius: calc(5px * var(--ratio));
 		box-shadow: 0 0 #0000, 0 0 #0000, 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -68,7 +68,7 @@
 		padding: 5px;
 	}
 </style>
-<dialog2 bind:this={dialog2}>
+<dialog bind:this={dialog}>
 	<div class="text-center alert alert-{selectedColor} px-2 py-1 m-0" style="padding: 0px; margin: 0px;">
 		<h5 class="card-title mt-1 mb-2">{title}</h5>
 		{#if message!=undefined && message!=null && message!=''}
@@ -84,4 +84,4 @@
 			<button class="btn btn-outline-{selectedColor}" on:click={callback(true)}>{okLabel}</button>
 		</div>
 	</div>
-</dialog2>
+</dialog>

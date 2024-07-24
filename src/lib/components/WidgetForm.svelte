@@ -167,6 +167,19 @@
                     </select>
                 </div>
                 {/if}
+                {#if widgets.isVisible(selectedType, 'commandText') && config[index].commandType!='json'}
+                <div class="mb-2">
+                    <label for="commandText" class="form-channels">{utils.getLabel('commandText',labels,$language)}</label>
+                    <input type="text" class="form-control form-control-sm" id="commandText" bind:value={config[index].commandText}>
+                    <small class="text-xs">Text to send as command</small>
+                </div>
+                {/if}
+                {#if widgets.isVisible(selectedType, 'commandJSON') && config[index].commandType=='json'}
+                <label for="commandJSON">{utils.getLabel('commandJSON',labels,$language)}</label>
+                <textarea id="commandJSON" class="form-control mt-1" style="font-size: 14px" rows="5"
+                    bind:value={config[index].commandJSON}></textarea>
+                <small class="text-xs">JSON to send as command</small>
+                {/if}
                 {#if widgets.isVisible(selectedType, 'role')}
                 <div class="mb-2">
                     <label for="role" class="form-label">{utils.getLabel('role',labels,$language)}</label>

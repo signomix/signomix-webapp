@@ -70,12 +70,14 @@
             <SymbolWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'text'===getWidgetType(index)}
             <TextWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+            {:else if 'button'===getWidgetType(index)}
+            <ButtonWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'devinfo'===getWidgetType(index)}
             <InfoWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'image'===getWidgetType(index)}
             <ImageWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'link'===getWidgetType(index)}
-            <InternalLink bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+            <InternalLinkWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'led'===getWidgetType(index)}
             <LedWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
             {:else if 'raw'===getWidgetType(index)}
@@ -163,7 +165,7 @@
     import InfoWidget from '$lib/components/widgets/InfoWidget.svelte';
     import ImageWidget from '$lib/components/widgets/ImageWidget.svelte';
     import LedWidget from '$lib/components/widgets/LedWidget.svelte';
-    import InternalLink from '$lib/components/widgets/InternalLink.svelte';
+    import InternalLinkWidget from '$lib/components/widgets/InternalLinkWidget.svelte';
     import RawDataWidget from '$lib/components/widgets/RawDataWidget.svelte';
     import ChartWidget from '$lib/components/widgets/ChartWidget.svelte';
     import PlanWidget from '$lib/components/widgets/PlanWidget.svelte';
@@ -173,6 +175,7 @@
     import MapWidget from '$lib/components/widgets/MapWidget.svelte';
     import GroupMapWidget from '$lib/components/widgets/GroupMapWidget.svelte';
     import TracksWidget from '$lib/components/widgets/TracksWidget.svelte';
+    import ButtonWidget from '$lib/components/widgets/ButtonWidget.svelte';
 
     export let data
 
@@ -214,7 +217,7 @@
 
     let getBorderClass = function (idx) {
         try {
-            if (dashboardConfig.widgets[idx].type == 'link') {
+            if (dashboardConfig.widgets[idx].type == 'link' || dashboardConfig.widgets[idx].type == 'button') {
                 return 'dashboard-widget content bg-white display'
             } else {
                 return 'dashboard-widget content bg-white display h-100 border border-primary rounded-1'
