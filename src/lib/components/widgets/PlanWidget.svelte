@@ -63,7 +63,7 @@
         let w = document.getElementById(parentId).clientWidth
         let h = document.getElementById(parentId).clientHeight
         let sw = 1000
-        let sh = 300
+        let sh = 1000
         let ws = w / sw
         let hs = h / sh
         return ws < hs ? ws : hs
