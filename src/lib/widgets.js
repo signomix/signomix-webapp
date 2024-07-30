@@ -65,7 +65,7 @@ export const widgets = {
         text: [],
         stopwatch: ['dev_id','channel', 'query'],
         time: ['dev_id','channel', 'query'],
-        symbol: ['dev_id','channel','channel_translated','range','unit', 'rounding', 'icon', 'query'],
+        symbol: ['dev_id','channel','range','unit', 'rounding', 'icon', 'query'],
     },
     chartFields: {
         line: ['timeUnit','cubicInterpolation'],

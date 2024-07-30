@@ -119,6 +119,9 @@
             console.log('data[i]', data[i])
             oneDev = cTemplate
             deviceLocation = getDeviceLocation(data[i])
+            if(deviceLocation.x==null || deviceLocation.y==null){
+                continue
+            }
             oneDev = oneDev.replace('_x', deviceLocation.x)
             oneDev = oneDev.replace('_y', deviceLocation.y)
             oneDev = oneDev.replace('_c', getMarkerColor(data[i]))
@@ -139,8 +142,11 @@
     }
 
     let getDeviceLocation = function (data) {
-        let location = { x: 0, y: 0 }
+        let location = { x: null, y: null }
         for(let i=0;i<data[0].length;i++){
+            if(data[0][i]==null || data[0][i]==undefined){
+                continue
+            }
             if(data[0][i].name=='latitude'){
                 location.x=data[0][i].value
             }else if(data[0][i].name=='longitude'){
