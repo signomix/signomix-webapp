@@ -259,6 +259,22 @@
                     <option value="minute" selected={config[index].timeUnit=='minute' }>{utils.getLabel('minutes',labels,$language)}</option>
                 </select>
             </div>
+            <div class="p-1 mt-2">
+                <div class="form-check form-switch form-check-inline">
+                    <label class="form-check-label me-1" for="chart-axis-options">{utils.getLabel('axis_options',labels,$language)}</label>
+                    <input type="checkbox" class="form-check-input" id="chart-axis-options"
+                        bind:checked={config[index].axisOptions}>
+                </div>
+            </div>
+            {#if config[index].axisOptions}
+            <div class="p-1 mt-2">
+                <div class="form-check form-switch form-check-inline">
+                    <label class="form-check-label me-1" for="chart-y-axis-autoscale">{utils.getLabel('y_axis_autoscale',labels,$language)}</label>
+                    <input type="checkbox" class="form-check-input" id="chart-y-axis-autoscale"
+                        bind:checked={config[index].yAxisAutoScale}>
+                </div>
+            </div>
+            {/if}
             {/if}
             <!-- widget instance configuration -->
             {#if selectedTab === 'config'}
@@ -629,14 +645,6 @@
             'pl': 'Typ wykresu',
             'en': 'Chart type',
         },
-        'markers': {
-            'pl': 'Znaczniki',
-            'en': 'Markers',
-        },
-        'area': {
-            'pl': 'Obszar',
-            'en': 'Area',
-        },
         'data_characteristic': {
             'pl': 'Charakterystyka danych',
             'en': 'Data characteristic',
@@ -668,6 +676,22 @@
         'minutes': {
             'pl': 'Minuty',
             'en': 'Minutes',
-        }
+        },
+        'markers': {
+            'pl': 'Pokazuj znaczniki na wykresie',
+            'en': 'Show markers on chart',
+        },
+        'area': {
+            'pl': 'Zaznacz obszar na wykresie',
+            'en': 'Fill area on chart',
+        },
+        'axis_options': {
+            'pl': 'Opcje osi',
+            'en': 'Axis options',
+        },
+        'y_axis_autoscale': {
+            'pl': 'Automatyczne skalowanie osi Y',
+            'en': 'Y axis autoscale',
+        },
     }
 </script>

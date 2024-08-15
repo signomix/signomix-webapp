@@ -45,7 +45,7 @@
 
     async function transform(widgetConfig, rawData) {
         let jsonData = await rawData;
-        //console.log('jsonData', jsonData)
+        //console.log('jsonData', JSON.stringify(jsonData))
         let namesTranslated = []
         if (config.channel_translated !== null && config.channel_translated !== undefined) {
             namesTranslated = config.channel_translated.split(',')
@@ -105,7 +105,7 @@
                 tmpDataset[i] = []
             }
             let tmpMeasures = new Array(jsonData.length)
-            for (var i = 0; i < jsonData.length; i++) {
+            for (var i = 0; i < jsonData[0].length; i++) {
                 tmpMeasures[i] = []
             }
             //console.log('jsonData.length', jsonData.length)
@@ -168,7 +168,6 @@
             )
 
         }
-        //console.log('chartData', chartData)
 
         chartData.labels = labels
         if (toLocaleTimeStringSupportsLocales()) {
@@ -185,9 +184,7 @@
             pointStyle: widgetConfig.chartMarkers,
             tension: 0,
             scales: {
-                y: {
-                    suggestedMin: 0
-                },
+                y: getYScaleOptions(widgetConfig),
                 x: {
                     type: (config.format == 'timeseries' ? 'timeseries' : 'time'),
                     type: 'time',
@@ -196,9 +193,9 @@
                         displayFormats: {
                             minute: 'HH:mm:ss',
                             hour: 'HH:mm:ss',
-                            day: 'd-MM',
-                            week: 'd-MM',
-                            quarter: 'MMM-YYYY'
+                            day: 'D-MM',
+                            week: 'D-MM',
+                            quarter: 'MM YYYY'
                         }
                     }
                 }
@@ -221,6 +218,14 @@
         }
         //console.log(JSON.stringify(charConfig))
         return charConfig
+    }
+
+    function getYScaleOptions(widgetConfig){
+        if(widgetConfig.yAxisAutoScale){
+            return {}
+        } else {
+            return { suggestedMin: 0 }
+        }
     }
 
     function getTransformedValue(configuration, index, originalValue) {

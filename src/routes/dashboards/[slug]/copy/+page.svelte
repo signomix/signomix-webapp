@@ -301,6 +301,9 @@
         if(widgets.singleValueTypes.includes(cfg.type)) {
             //cfg.query = 'last 1'
         }
+        if(!cfg.axisOptions){
+            cfg.yAxisAutoScale=false
+        }
         modified = true
     }
 
