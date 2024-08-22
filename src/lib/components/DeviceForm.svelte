@@ -110,6 +110,15 @@
                 value={utils.getLocalDateFormatFromTimestamp(config.lastSeen)}>
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-3 col-form-label">
+            <label for="input-created" class="form-label">{utils.getLabel('created',labels,$language)}</label>
+        </div>
+        <div class="col-md-9">
+            <input disabled type="datetime-local" class="form-control" id="input-created"
+                value={utils.getLocalDateFormatFromTimestamp(config.createdAt)}>
+        </div>
+    </div>
     {:else if activeTab=='code'}
     <div class="row">
         <div class="col-md-3 col-form-label">
@@ -608,6 +617,11 @@
         'seen': {
             'pl': "Ostatnio widziany",
             'en': "Last seen"
+        }
+        ,
+        'created': {
+            'pl': "Data rejestracji",
+            'en': "Registration date"
         },
         'cancel': {
             'pl': "Anuluj",
