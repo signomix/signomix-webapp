@@ -39,9 +39,9 @@
                 aria-label="Search tag name">
         </div>
         <div class="col-md-6">
-            <label class="col-form-label" for="input-tenantName">REMOVE:</label>
-            <input type="text" id="input-tenantName" class="form-control mb-2"
-                aria-label="Search name">
+            <label class="col-form-label" for="input-roleName">Rola:</label>
+            <input type="text" id="input-roleName"  bind:value={roleFilter} on:input={roleFilterChanged} class="form-control mb-2"
+                aria-label="Search role">
         </div>
     </div>
     <div class="row">
@@ -125,6 +125,7 @@
     let loginFilter = ''
     let nameFilter = ''
     let pathFilter = ''
+    let roleFilter = ''
     let showFilter = false
 
     let promise = getUsers(offset)
@@ -169,6 +170,9 @@
                 offset = 0
             } else if (pathFilter.length > 0) {
                 url = url + '&search=path:' + pathFilter
+                offset = 0
+            } else if (roleFilter.length > 0) {
+                url = url + '&search=role:' + roleFilter
                 offset = 0
             }
             headers.set('Authentication', $token);
@@ -218,25 +222,35 @@
         loginFilter = ''
         nameFilter = ''
         pathFilter = ''
+        roleFilter = ''
         promise = getUsers(offset);
     }
     function isFilterSet() {
-        return loginFilter.length > 0 || nameFilter.length > 0 || pathFilter.length > 0 
+        return loginFilter.length > 0 || nameFilter.length > 0 || pathFilter.length > 0 || roleFilter.length > 0
     }
     function loginFilterChanged(event) {
         console.log('loginFilterChanged', event)
         nameFilter = ''
         pathFilter = ''
+        roleFilter = ''
     }
     function nameChanged(event) {
         console.log('nameChanged', event)
         loginFilter = ''
         pathFilter = ''
+        roleFilter = ''
     }
     function pathFilterChanged(event) {
         console.log('pathFilterChanged', event)
         loginFilter = ''
         nameFilter = ''
+        roleFilter = ''
+    }
+    function roleFilterChanged(event) {
+        console.log('roleFilterChanged', event)
+        loginFilter = ''
+        nameFilter = ''
+        pathFilter = ''
     }
 
     function showUploadForm(eui) {
