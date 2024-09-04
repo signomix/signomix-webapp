@@ -51,8 +51,10 @@
                     <!-- <label class="form-label">{utils.getLabel(getSelectedTypeDescCode(selectedType),labels,$language)}</label> -->
                 </div>
 
-                {#if widgets.isVisible(selectedType, 'dev_id') && widgets.isVisible(selectedType, 'group')}
+                {#if widgets.isVisible(selectedType, 'dev_id') || widgets.isVisible(selectedType, 'group') || widgets.isVisible(selectedType, 'reportSelector')}
                 <div class="mb-2">
+                    <label for="data_source">{utils.getLabel('data_source',labels,$language)}</label>
+                    <div id="data_source">
                     {#if singleDeviceMode==1}
                     <input class="form-check-input" type="radio" name="gr" id="groupRadio1" value="1"
                         on:click={setSingleDevice} checked>
@@ -73,6 +75,17 @@
                     <label class="form-check-label" for="gropuRadio2">
                         {utils.getLabel('group_of_devices',labels,$language)}
                     </label>
+                    {#if singleDeviceMode==2}
+                    <input class="form-check-input ms-2" type="radio" name="gr" id="groupRadio3" value="2"
+                        on:click={setReport} checked>
+                    {:else}
+                    <input class="form-check-input ms-2" type="radio" name="gr" id="groupRadio3" value="2"
+                        on:click={setReport}>
+                    {/if}
+                    <label class="form-check-label" for="gropuRadio3">
+                        {utils.getLabel('report',labels,$language)}
+                    </label>
+                    </div>
                 </div>
                 {/if}
                 {#if singleDeviceMode==1 && widgets.isVisible(selectedType, 'dev_id')}
@@ -110,14 +123,14 @@
             {/if}
             {#if selectedTab === 'extended'}
             <div class="p-1 mt-2">
-                {#if widgets.isVisible(selectedType, 'channel')}
+                {#if widgets.isVisible(selectedType, 'channel') && singleDeviceMode!=2}
                 <div class="mb-2">
                     <label for="channel" class="form-channels">{utils.getLabel('measurements',labels,$language)}</label>
                     <input type="text" class="form-control form-control-sm" id="channel"
                         bind:value={config[index].channel}>
                 </div>
                 {/if}
-                {#if widgets.isVisible(selectedType, 'channel_translated')}
+                {#if widgets.isVisible(selectedType, 'channel_translated') && singleDeviceMode!=2}
                 <div class="mb-2">
                     <label for="channel_translated" class="form-channels">{utils.getLabel('names_on_widget',labels,$language)}</label>
                     <input type="text" class="form-control form-control-sm" id="channel_translated"
@@ -125,10 +138,18 @@
                 </div>
                 {/if}
                 {#if widgets.isVisible(selectedType, 'query')}
+                {#if singleDeviceMode==2}
+                <div class="mb-2">
+                    <label for="query" class="form-label">{utils.getLabel('data_range',labels,$language)}</label>
+                    <textarea class="form-control form-control-sm" id="query" bind:value={config[index].query}
+                    rows="3" cols="50"></textarea>
+                </div>
+                {:else}
                 <div class="mb-2">
                     <label for="query" class="form-label">{utils.getLabel('data_range',labels,$language)}</label>
                     <input type="text" class="form-control form-control-sm" id="query" bind:value={config[index].query}>
                 </div>
+                {/if}
                 {/if}
                 {#if widgets.isVisible(selectedType, 'rounding')}
                 <div class="mb-2">
@@ -338,7 +359,8 @@
     export let callback
 
     let selectedTab = 'basic'
-    // singleDeviceMode: 0 - group, 1 - single device, 2 - group or single device
+    // singleDeviceMode: 0 - group, 1 - single device, 2 - report
+    let reportType = false
     let singleDeviceMode = 0
     let showDeviceSelectorModal = false;
     let showGroupSelectorModal = false;
@@ -352,6 +374,7 @@
     }
 
     $: selectedType = config[index].type
+
 
     /* $: if (config[index].type == 'groupchart' || config[index].type == 'multimap' || config[index].type == 'plan' || config[index].type == 'report') {
         singleDeviceMode = 0
@@ -435,7 +458,14 @@
 
     onMount(() => {
         config[index].type = config[index].type || 'text'
-        if (config[index].dev_id != undefined && config[index].dev_id != null && config[index].dev_id != '') {
+        try{
+            reportType=config[index].query.toLowerCase().includes('class') || config[index].query.toLowerCase().includes('report')
+        }catch(e){
+            //reportType=false
+        }
+        if(config[index].query!=undefined && config[index].query!=null && reportType){
+            singleDeviceMode = 2
+        }else if (config[index].dev_id != undefined && config[index].dev_id != null && config[index].dev_id != '') {
             singleDeviceMode = 1
         } else if (config[index].group != undefined && config[index].group != null && config[index].group != '') {
             singleDeviceMode = 0
@@ -487,6 +517,12 @@
     function setSingleDevice() {
         config[index].group = ''
         singleDeviceMode = 1
+    }
+    function setReport() {
+        config[index].dev_id = ''
+        config[index].group = ''
+        singleDeviceMode = 2
+
     }
 
     function getSelectedTypeDescCode(type){
@@ -577,6 +613,10 @@
             'en': 'Type',
             'pl': 'Typ',
         },
+        'data_source': {
+            'en': 'Data source',
+            'pl': 'Źródło danych',
+        },
         'single_device': {
             'en': 'Single device',
             'pl': 'Pojedyncze urządzenie',
@@ -584,6 +624,10 @@
         'group_of_devices': {
             'en': 'Group of devices',
             'pl': 'Grupa urządzeń',
+        },
+        'report': {
+            'en': 'Report',
+            'pl': 'Raport',
         },
         'eui': {
             'en': 'EUI',
@@ -614,8 +658,8 @@
             'pl': 'Nazwy na kontrolce',
         },
         'data_range': {
-            'en': 'Data range',
-            'pl': 'Zakres danych',
+            'en': 'Data range (DQL)',
+            'pl': 'Zakres danych (DQL)',
         },
         'rounding': {
             'pl': 'Zaokrąglenie wartości',

@@ -17,7 +17,7 @@
 
     //console.log('ReportWidget config', config)
     let promise
-    if (config.query != undefined && config.query != null && config.query != '' && config.query.toLowerCase().includes('class')) {
+    if (config.query != undefined && config.query != null && (config.query.toLowerCase().includes('class') || config.query.toLowerCase().includes('report'))) {
         apiUrl = utils.getBackendUrl(location) + '/api/reports/single/'
         promise = sgxdata.getReportData(dev, apiUrl, config, filter, $token, transformData);
     } else {
@@ -31,7 +31,7 @@
     }
 
     afterUpdate(() => {
-        if (config.query != undefined && config.query != null && config.query != '' && config.query.toLowerCase().includes('class')) {
+        if (config.query != undefined && config.query != null && (config.query.toLowerCase().includes('class') || config.query.toLowerCase().includes('report'))) {
             apiUrl = utils.getBackendUrl(location) + '/api/reports/single/'
             promise = sgxdata.getReportData(dev, apiUrl, config, filter, $token, transformData);
         } else {
