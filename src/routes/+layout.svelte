@@ -102,7 +102,8 @@
                     {#if isCloud() || !utils.isUserRole($profile, 'limited', false)}
                     <li class="nav-item">
                         <a class="nav-link" class:active={false} on:click={toggleStructure}>
-                            <span><i class="bi bi-diagram-3 me-2"></i><span>{utils.getLabel('structure',labels,$language)}</span>
+                            <span><i
+                                    class="bi bi-diagram-3 me-2"></i><span>{utils.getLabel('structure',labels,$language)}</span>
                         </a>
                     </li>
                     {/if}
@@ -110,27 +111,31 @@
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/devices' } href="/devices">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-hdd-network me-2"></i><span>{utils.getLabel('devices',labels,$language)}</span>
+                                <i
+                                    class="bi bi-hdd-network me-2"></i><span>{utils.getLabel('devices',labels,$language)}</span>
                         </a>
                     </li>
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/groups' } href="/groups">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-hdd-stack me-2"></i><span>{utils.getLabel('groups',labels,$language)}</span>
+                                <i
+                                    class="bi bi-hdd-stack me-2"></i><span>{utils.getLabel('groups',labels,$language)}</span>
                         </a>
                     </li>
                     {/if}
                     <!-- Analytics -->
                     <li class="nav-item">
                         <a class="nav-link" class:active={false} on:click={toggleAnalytics}>
-                            <span><i class="bi bi-database me-2"></i><span>{utils.getLabel('analytics',labels,$language)}</span>
+                            <span><i
+                                    class="bi bi-database me-2"></i><span>{utils.getLabel('analytics',labels,$language)}</span>
                         </a>
                     </li>
                     {#if analyticsExpanded}
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/sentinels' } href="/sentinels">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-list-check me-2"></i><span>{utils.getLabel('sentinels',labels,$language)}</span>
+                                <i
+                                    class="bi bi-list-check me-2"></i><span>{utils.getLabel('sentinels',labels,$language)}</span>
                         </a>
                     </li>
                     <li class="nav-item ms-3">
@@ -155,7 +160,8 @@
                     <!-- ACCOUNT -->
                     <li class="nav-item">
                         <a class="nav-link" class:active={false} on:click={toggleAccount}>
-                            <span><i class="bi bi-person me-2"></i><span>{utils.getLabel('account',labels,$language)}</span>
+                            <span><i
+                                    class="bi bi-person me-2"></i><span>{utils.getLabel('account',labels,$language)}</span>
                         </a>
                     </li>
                     {#if accountExpanded}
@@ -166,31 +172,31 @@
                                 <i class="bi bi-sliders me-2"></i>{utils.getLabel('settings',labels,$language)}
                             </span>
                         </a>
-                        </li>
-                        <li class="nav-item ms-3">
+                    </li>
+                    <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname.startsWith('/account/notifications') }
                             href="/account/notifications">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i class="bi bi-mailbox me-2"></i>{utils.getLabel('notifications',labels,$language)}
                             </span>
                         </a>
-                        </li>
-                        <li class="nav-item ms-3">
+                    </li>
+                    <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname.startsWith('/account/billing') }
                             href="/account/billing">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i class="bi bi-coin me-2"></i>{utils.getLabel('billing',labels,$language)}
                             </span>
                         </a>
-                        </li>
-                        <li class="nav-item ms-3">
-                            <a class="nav-link" class:active={$page.url.pathname.startsWith('/account/development') }
-                                href="/account/development">
-                                <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                    <i class="bi bi-code-square me-2"></i>{utils.getLabel('development',labels,$language)}
-                                </span>
-                            </a>
-                            </li>
+                    </li>
+                    <li class="nav-item ms-3">
+                        <a class="nav-link" class:active={$page.url.pathname.startsWith('/account/development') }
+                            href="/account/development">
+                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                <i class="bi bi-code-square me-2"></i>{utils.getLabel('development',labels,$language)}
+                            </span>
+                        </a>
+                    </li>
                     {/if}
                     <!-- end ACCOUNT -->
                     {/if}
@@ -241,7 +247,7 @@
                             </span>
                         </a>
                     </li>
-<!--                     <li class="nav-item">
+                    <!--                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/documentation' }
                             href="https://signomix.com/app#!doc,toc" target="_blank">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
@@ -286,6 +292,9 @@
                     <!--<li class="nav-item">
                         <div class="nav-link" style="color: darkgray;">version: {platformInfo.version}</div>
                     </li>-->
+                    <li class="nav-item">
+                        <div class="nav-link" style="color: darkgray;">{$webappRelease}/{$platformRelease}</div>
+                    </li>
                 </ul>
             </div>
         </nav>
@@ -360,26 +369,9 @@
     import { dev } from '$app/environment';
     import { sgxdata } from '$lib/sgxdata.js';
     import { token, profile, language, isAuthenticated, context, contextRoot } from '$lib/usersession.js';
-    import { getInfo, platformInfo, defaultOrganizationId } from '$lib/stores.js';
+    import { getInfo, platformInfo, defaultOrganizationId, platformRelease, webappRelease } from '$lib/stores.js';
     import { Toaster, toast } from 'svelte-sonner'
-    import PageHeader  from '$lib/components/PageHeader.svelte'
-
-    /* $: available=setAvailableOptions($profile)
-
-    function isAvailable(endpoint){
-        let result = available.includes(endpoint)
-        console.log('isAvailable', available, endpoint, result)
-        return result
-    }
-    function setAvailableOptions(userProfile){
-        console.log('setAvailableOptions', userProfile)
-        if(utils.isUserRole(userProfile, 'limited')){
-            return []
-        }else{
-            return ['/documentation']
-        }
-    }
- */
+    import PageHeader from '$lib/components/PageHeader.svelte'
 
     onMount(async () => {
         //console.log('onMount', $page)

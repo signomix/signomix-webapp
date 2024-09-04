@@ -43,7 +43,7 @@
             <h6 class="card-text">{utils.getLabel('planDetails',labels, $language)}</h6>
             {#if utils.isDefaultOrganizationUser($profile)}
             <ul>
-                <li>{getNumberOfDataSources(actualPlan)+' '+utils.getLabel('dataSources',labels, $language)}</li>
+                <li>{getNumberOfDataSources(actualPlan)+' '+utils.getLabel('dataSources',labels, $language)} <InfoText></InfoText></li>
                 <li>{getDataRetentionDays(actualPlan)+' '+utils.getLabel('dataRetention',labels, $language)}</li>
                 <li>{utils.getLabel(getSupportName(actualPlan),labels, $language)}</li>
             </ul>
@@ -72,6 +72,7 @@
 <script>
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { utils } from '$lib/utils';
+    import InfoText from '$lib/components/InfoText.svelte';
     export let actualPlan;
     export let targetPlan;
     export let pricing;
