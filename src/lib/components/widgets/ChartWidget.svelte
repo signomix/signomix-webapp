@@ -13,7 +13,8 @@
     export let filter
 
     let errorMessage = '';
-    const apiUrl = utils.getBackendUrl(location) + '/api/provider/v2/device/'
+    let apiUrl
+    let reportInUse = false
 
     let chartCanvas
     let ctx
@@ -31,11 +32,24 @@
     var myChart
     async function show(ctx) {
         try {
-            let promise = await sgxdata.getData(dev, apiUrl, config, filter, $token, transform)
-                .then(function (data) {
-                    if (myChart) myChart.destroy()
-                    myChart = new Chart(ctx, data);
-                })
+            let promise
+            if (config.query != undefined && config.query != null && (config.query.toLowerCase().includes('class') || config.query.toLowerCase().includes('report'))) {
+                apiUrl = utils.getBackendUrl(location) + '/api/reports/single/'
+                reportInUse = true
+                promise = await sgxdata.getReportData(dev, apiUrl, config, filter, $token, transform)
+                    .then(function (data) {
+                        if (myChart) myChart.destroy()
+                        myChart = new Chart(ctx, data);
+                    })
+            } else {
+                apiUrl = utils.getBackendUrl(location) + '/api/provider/v2/device/'
+                promise = await sgxdata.getData(dev, apiUrl, config, filter, $token, transform)
+                    .then(function (data) {
+                        if (myChart) myChart.destroy()
+                        myChart = new Chart(ctx, data);
+                    })
+            }
+
         } catch (error) {
             errorMessage = error.message;
             console.log('error', errorMessage);
@@ -45,7 +59,15 @@
 
     async function transform(widgetConfig, rawData) {
         let jsonData = await rawData;
-        //console.log('jsonData', JSON.stringify(jsonData))
+        if (reportInUse) {
+            return transformReportData(widgetConfig, jsonData)
+        } else {
+            return transformData(widgetConfig, jsonData)
+        }
+    }
+
+    function transformData(widgetConfig, jsonData) {
+        console.log('chart data', JSON.stringify(jsonData))
         let namesTranslated = []
         if (config.channel_translated !== null && config.channel_translated !== undefined) {
             namesTranslated = config.channel_translated.split(',')
@@ -166,7 +188,6 @@
                     spanGaps: true
                 }
             )
-
         }
 
         chartData.labels = labels
@@ -220,8 +241,140 @@
         return charConfig
     }
 
-    function getYScaleOptions(widgetConfig){
-        if(widgetConfig.yAxisAutoScale){
+    function transformReportData(widgetConfig, jsonData) {
+        console.log('chart report data', JSON.stringify(jsonData))
+        let namesTranslated = []
+        if (config.channel_translated !== null && config.channel_translated !== undefined) {
+            namesTranslated = config.channel_translated.split(',')
+        }
+ 
+        let chartData = {
+            labels: [],
+            datasets: []
+        }
+
+        //let firstDate = ''
+        //let lastDate = ''
+        //let dFirst, dLast;
+        //let measures = []
+        let labels = []
+
+        let borderColors = [
+            'rgb(54, 162, 235)', //blue
+            'rgb(255, 99, 132)', //red
+            'rgb(75, 192, 192)', //green
+            'rgb(255, 159, 64)', //orange
+            'rgb(153, 102, 255)', //purple
+            'rgb(255, 205, 86)', //yellow
+            'rgb(201, 203, 207)'//grey
+        ]
+        let areaColors = [
+            'rgba(54, 162, 235, 0.2)', //blue
+            'rgba(255, 99, 132, 0.2)', //red
+            'rgba(75, 192, 192, 0.2)', //green
+            'rgba(255, 159, 64, 0.2)', //orange
+            'rgb(153, 102, 255, 0.2)', //purple
+            'rgb(255, 205, 86, 0.2)', //yellow
+            'rgb(201, 203, 207, 0.2)'//grey
+        ]
+
+        let customConfig = null;
+        if (widgetConfig.config !== null && widgetConfig.config !== undefined) {
+            try {
+                customConfig = JSON.parse(widgetConfig.config)
+                if (customConfig.borderColors !== null && customConfig.borderColors !== undefined) {
+                    borderColors = customConfig.borderColors
+                }
+                if (customConfig.areaColors !== null && customConfig.areaColors !== undefined) {
+                    areaColors = customConfig.areaColors
+                }
+            } catch (err) {
+                console.log('ChartWidget - error parsing customConfig', err)
+            }
+        }
+
+        let dFirst = jsonData.datasets[0].data[0].timestamp
+        let dLast = jsonData.datasets[0].data[jsonData.datasets[0].size - 1].timestamp
+        if (true) {
+            for (var j = 0; j < jsonData.headers[0].columns.length; j++) {
+                let measures = []
+                for(var i = 0; i< jsonData.datasets[0].size; i++){
+                    measures.push(
+                        {
+                            x: (new Date(jsonData.datasets[0].data[i].timestamp).toISOString()),
+                            y: getTransformedValue(customConfig, j, jsonData.datasets[0].data[i].values[j])
+                        }
+                    )
+                }
+                chartData.datasets.push(
+                    {
+                        label: jsonData.headers[0].columns[j],
+                        borderWidth: 1,
+                        data: measures,
+                        backgroundColor: areaColors[(j % 7)],
+                        borderColor: borderColors[(j % 7)],
+                        fill: widgetConfig.chartArea,
+                        spanGaps: true
+                    }
+                )
+            }
+        } else {
+            //
+        }
+
+        chartData.labels = labels
+        /* if (toLocaleTimeStringSupportsLocales()) {
+            firstDate = new Date(dFirst).toLocaleDateString('pl')
+            lastDate = new Date(dLast).toLocaleDateString('pl')
+        } else {
+            firstDate = new Date(dFirst).toISOString().substring(0, 10)
+            lastDate = new Date(dLast).toISOString().substring(0, 10)
+        } */
+        let chartOptions = {
+            responsive: true,
+            animation: false,
+            maintainAspectRatio: false,
+            pointStyle: widgetConfig.chartMarkers,
+            tension: 0,
+            scales: {
+                y: getYScaleOptions(widgetConfig),
+                x: {
+                    type: (config.format == 'timeseries' ? 'timeseries' : 'time'),
+                    type: 'time',
+                    time: {
+                        unit: sgxhelper.getChartUnit(dFirst, dLast, config.timeUnit),
+                        displayFormats: {
+                            minute: 'HH:mm:ss',
+                            hour: 'HH:mm:ss',
+                            day: 'D-MM',
+                            week: 'D-MM',
+                            quarter: 'MM YYYY'
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: config.title,
+                        font: { weight: 'bold' }
+                    }
+                }
+            }
+        }
+        let charConfig = {
+            type: config.chartType,
+            data: chartData,
+            options: chartOptions
+        }
+        //console.log(JSON.stringify(charConfig))
+        return charConfig
+    }
+
+    function getYScaleOptions(widgetConfig) {
+        if (widgetConfig.yAxisAutoScale) {
             return {}
         } else {
             return { suggestedMin: 0 }
@@ -229,18 +382,18 @@
     }
 
     function getTransformedValue(configuration, index, originalValue) {
-            let resultValue = originalValue
-            try {
-                if (configuration != null && configuration.multipliers != undefined && configuration.multipliers != null) {
-                    if (configuration.multipliers.length > index) {
-                        resultValue = resultValue * configuration.multipliers[index]
-                    }
+        let resultValue = originalValue
+        try {
+            if (configuration != null && configuration.multipliers != undefined && configuration.multipliers != null) {
+                if (configuration.multipliers.length > index) {
+                    resultValue = resultValue * configuration.multipliers[index]
                 }
-            } catch (err) {
-                //console.log('ChartWidget config - error parsing multipliers', err)
             }
-            return resultValue
+        } catch (err) {
+            //console.log('ChartWidget config - error parsing multipliers', err)
         }
+        return resultValue
+    }
 
     function toLocaleTimeStringSupportsLocales() {
         try {
