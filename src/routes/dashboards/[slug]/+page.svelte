@@ -18,12 +18,18 @@
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-3 border-bottom">
     <h5>{dashboardConfig.title}</h5>
     <span>
-        <a title={utils.getLabel('refresh',labels,$language)} on:click={refreshView}><i class="bi bi-arrow-clockwise h5 me-2 link-dark"></i></a>
+        {#if !isViewMode($viewMode)}
+        <a title={utils.getLabel('refresh',labels,$language)} on:click={refreshView}><i
+                class="bi bi-arrow-clockwise h5 me-2 link-dark"></i></a>
+        {/if}
         {#if isMobile}
         <i class="bi bi-phone-fill h5 me-2 link-dark" on:click="{switchMobile}"></i>
         {:else}
         <i class="bi bi-phone h5 me-2 link-dark" on:click="{switchMobile}"></i>
         {/if}
+        {#if isViewMode($viewMode)}
+        <div class="badge rounded-pill text-bg-light h5 me-2">{secondsToRefresh}</div>
+        {:else}
         {#if dashboardConfig.shared}
         <a title="Dashboard access" data-bs-toggle="modal" data-bs-target="#linkModal"
             on:click|preventDefault={showLink}>
@@ -39,9 +45,11 @@
             <i class="bi bi-funnel h5 me-2 link-dark"></i>
             {/if}
         </a>
-        {#if (utils.isObjectAdmin($profile, data.userID, $defaultOrganizationId, dashboardConfig.administrators, dashboardConfig.team) && !utils.isUserRole($profile, 'limited', false))}
+        {#if (utils.isObjectAdmin($profile, data.userID, $defaultOrganizationId, dashboardConfig.administrators,
+        dashboardConfig.team) && !utils.isUserRole($profile, 'limited', false))}
         <a href="/dashboards/{data.id}/edit" title={utils.getLabel('configure',labels,$language)}><i
                 class="bi bi-gear h5 me-2 link-dark"></i></a>
+        {/if}
         {/if}
         {/if}
     </span>
@@ -51,68 +59,75 @@
     <div class="alert alert-light mx-auto my-auto">{utils.getLabel('empty',labels,$language)}</div>
     {:else}
     <div class="row h-100">
-        <div class="{numberOfGridCols}">
-    <Grid gap={[2,2]} bind:items={items} rowHeight={100} let:item {cols} let:index on:resize={handleResize}
-        on:mount={handleMount}>
-        <div class={getBorderClass(index)}>
-            {#if !isRoleOK(index)}
-            <div class="alert alert-light mx-auto my-auto">{utils.getLabel('hidden',labels,$language)}</div>
-            {:else}
-            {#if 'chartjs'===getWidgetType(index)}
-            <ChartjsWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
-            {:else if 'canvas'===getWidgetType(index)}
-            <CanvasWidgetExample index={index} bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
-            {:else if 'canvas_placeholder'===getWidgetType(index)}
-            <CanvasWidgetExample index={index} bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
-            {:else if 'chart_placeholder'===getWidgetType(index)}
-            <ChartjsWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
-            {:else if 'symbol'===getWidgetType(index)}
-            <SymbolWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
-            {:else if 'text'===getWidgetType(index)}
-            <TextWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
-            {:else if 'button'===getWidgetType(index)}
-            <ButtonWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
-            {:else if 'devinfo'===getWidgetType(index)}
-            <InfoWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
-            {:else if 'image'===getWidgetType(index)}
-            <ImageWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
-            {:else if 'link'===getWidgetType(index)}
-            <InternalLinkWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
-            {:else if 'led'===getWidgetType(index)}
-            <LedWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
-            {:else if 'raw'===getWidgetType(index)}
-            <RawDataWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
-            {:else if 'plan'===getWidgetType(index)}
-            <PlanWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
-            {:else if 'report'===getWidgetType(index)}
-            <ReportWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
-            {:else if 'map'===getWidgetType(index)}
-            <MapWidget index={index} bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
-            {:else if 'multimap'===getWidgetType(index)}
-            <GroupMapWidget index={index} bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
-            {:else if 'multitrack'===getWidgetType(index)}
-            <TracksWidget index={index} bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
-            {:else if 'chart'===getWidgetType(index)}
-            <ChartWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
-            {:else if 'groupchart'===getWidgetType(index)}
-            {#if 'doughnut'===getWidgetChartType(index)}
-            <DoughnutWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
-            {:else if 'stacked'===getWidgetChartType(index)}
-            <StackedBarWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
-            {:else}
-            <CanvasWidgetExample index={index} bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
-            {/if}
-            {:else}
-            <CanvasWidgetExample index={index} bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
-            {/if }
-            {/if}<!-- isRoleOK -->
+        <div class="{numberOfGridCols} d-block">
+            <Grid gap={[2,2]} bind:items={items} rowHeight={100} let:item {cols} let:index on:resize={handleResize}
+                on:mount={handleMount}>
+                <div class={getBorderClass(index)}>
+                    {#if !isRoleOK(index)}
+                    <div class="alert alert-light mx-auto my-auto">{utils.getLabel('hidden',labels,$language)}</div>
+                    {:else}
+                    {#if 'chartjs'===getWidgetType(index)}
+                    <ChartjsWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
+                    {:else if 'canvas'===getWidgetType(index)}
+                    <CanvasWidgetExample index={index} bind:config={dashboardConfig.widgets[index]}
+                        bind:filter={dashboardFilter} />
+                    {:else if 'canvas_placeholder'===getWidgetType(index)}
+                    <CanvasWidgetExample index={index} bind:config={dashboardConfig.widgets[index]}
+                        bind:filter={dashboardFilter} />
+                    {:else if 'chart_placeholder'===getWidgetType(index)}
+                    <ChartjsWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
+                    {:else if 'symbol'===getWidgetType(index)}
+                    <SymbolWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else if 'text'===getWidgetType(index)}
+                    <TextWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else if 'button'===getWidgetType(index)}
+                    <ButtonWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else if 'devinfo'===getWidgetType(index)}
+                    <InfoWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else if 'image'===getWidgetType(index)}
+                    <ImageWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else if 'link'===getWidgetType(index)}
+                    <InternalLinkWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else if 'led'===getWidgetType(index)}
+                    <LedWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else if 'raw'===getWidgetType(index)}
+                    <RawDataWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else if 'plan'===getWidgetType(index)}
+                    <PlanWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else if 'report'===getWidgetType(index)}
+                    <ReportWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else if 'map'===getWidgetType(index)}
+                    <MapWidget index={index} bind:config={dashboardConfig.widgets[index]}
+                        bind:filter={dashboardFilter} />
+                    {:else if 'multimap'===getWidgetType(index)}
+                    <GroupMapWidget index={index} bind:config={dashboardConfig.widgets[index]}
+                        bind:filter={dashboardFilter} />
+                    {:else if 'multitrack'===getWidgetType(index)}
+                    <TracksWidget index={index} bind:config={dashboardConfig.widgets[index]}
+                        bind:filter={dashboardFilter} />
+                    {:else if 'chart'===getWidgetType(index)}
+                    <ChartWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else if 'groupchart'===getWidgetType(index)}
+                    {#if 'doughnut'===getWidgetChartType(index)}
+                    <DoughnutWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else if 'stacked'===getWidgetChartType(index)}
+                    <StackedBarWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else}
+                    <CanvasWidgetExample index={index} bind:config={dashboardConfig.widgets[index]}
+                        bind:filter={dashboardFilter} />
+                    {/if}
+                    {:else}
+                    <CanvasWidgetExample index={index} bind:config={dashboardConfig.widgets[index]}
+                        bind:filter={dashboardFilter} />
+                    {/if }
+                    {/if}<!-- isRoleOK -->
+                </div>
+            </Grid>
         </div>
-    </Grid>
-</div>
-{#if isMobile}
-<div class="col-1 d-block bg-secondary bg-opacity-25"></div>
-{/if}
-</div>
+        {#if isMobile}
+        <div class="col-1 d-block bg-secondary bg-opacity-25"></div>
+        {/if}
+    </div>
     {/if}
 </div>
 <!-- Filter modal -->
@@ -151,9 +166,9 @@
     import gridHelp from "svelte-grid/build/helper/index.mjs";
     import { dev } from '$app/environment';
     import { utils } from '$lib/utils.js';
-    import { goto, afterNavigate, beforeNavigate/*, afterUpdate , tick */  } from '$app/navigation';
+    import { goto, afterNavigate, beforeNavigate/*, afterUpdate , tick */ } from '$app/navigation';
     import { invalidateAll } from '$app/navigation';
-    import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
+    import { token, profile, language, isAuthenticated, viewMode } from '$lib/usersession.js';
     import { defaultOrganizationId } from '$lib/stores.js';
 
     import DashboardFilterForm from '$lib/components/DashboardFilterForm.svelte';
@@ -205,15 +220,18 @@
 
     let isMobile = false
     let numberOfGridCols
-    $: if(isMobile){
+    $: if (isMobile) {
         numberOfGridCols = 'col-11'
-    }else{
+    } else {
         numberOfGridCols = 'col-12'
     }
 
     // Documentation of cols
     // https://github.com/vaheqelyan/svelte-grid/issues/140
     let cols = {}
+
+    const defaultInterval = 60
+    let secondsToRefresh = defaultInterval
 
     let getBorderClass = function (idx) {
         try {
@@ -255,17 +273,17 @@
         } catch (e) {
             //console.log(e)
         }
-        let widgetRoles =[]
-        try{
+        let widgetRoles = []
+        try {
             widgetRoles = dashboardConfig.widgets[index].role.split(',')
-        }catch(e){
+        } catch (e) {
             //console.log(e)
         }
         //console.log('userRoles', userRoles)
         //console.log('widgetRoles', widgetRoles)
         // remove empty roles
-        widgetRoles = widgetRoles.filter(function(entry) { return entry.trim() != ''; });
-        if(widgetRoles.length==0){
+        widgetRoles = widgetRoles.filter(function (entry) { return entry.trim() != ''; });
+        if (widgetRoles.length == 0) {
             return true
         }
         for (let role of widgetRoles) {
@@ -385,27 +403,51 @@
         if (!dev) {
             applications = getApplications()
         }
-        clearInterval(interval);
-        interval = setInterval(() => {
-            invalidateAll()
-            show()
-        }, getRefreshInterval());
+        if (viewMode != 'view') {
+            clearInterval(interval);
+            interval = setInterval(() => {
+                invalidateAll()
+                show()
+            }, getRefreshInterval());
+        }
         show()
     })
     beforeNavigate(({ from, to }) => {
         clearInterval(interval);
     })
+
     onMount(() => {
+        if (viewMode == 'view') {
+            const interval2 = setInterval(() => {
+                secondsToRefresh = secondsToRefresh - 1
+                if (secondsToRefresh == 0) {
+                    refreshView()
+                }
+            }, 1000);
+            return () => {
+                clearInterval(interval2);
+            };
+        }
     });
+
+    function refreshView() {
+        /*         refreshing = true
+                console.log('refreshing', refreshing) */
+        invalidateAll()
+        show()
+        if (viewMode == 'view') {
+            secondsToRefresh = getRefreshInterval() / 1000
+        }
+    }
 
 
     const setLinkConfig = function (config) {
-        if (config!=null && config!=undefined &&  config.shared) {
+        if (config != null && config != undefined && config.shared) {
             dashboardLinkConfig.link = 'https://view.signomix.com/' + config.sharedToken
             dashboardLinkConfig.code = '<IFRAME \nsrc="https://view.signomix.com/'
-                    +config.sharedToken
-                    +'" \nwidth="600" \nheight="450">\n</IFRAME>'
-        }else{
+                + config.sharedToken
+                + '" \nwidth="600" \nheight="450">\n</IFRAME>'
+        } else {
             dashboardLinkConfig.link = ''
             dashboardLinkConfig.code = ''
         }
@@ -427,7 +469,7 @@
         numberOfCols = event.detail.cols
     }
 
-    
+
 
 
     let setFilter = function (event) {
@@ -438,10 +480,10 @@
         // do nothing
     }
 
-    function refreshView() {
+    /* function refreshView() {
         invalidateAll()
         show()
-    }
+    } */
 
     function filterFormCallback(cfg) {
         dashboardFilter.from = utils.getDateApiISOFormat(cfg.from)
@@ -458,15 +500,19 @@
         // do nothing
     }
 
-/*     const touchScrollAllow = async () => {
-    await tick()
-    for(let elm of document.querySelectorAll('.svlt-grid-item'))
-        elm.style.touchAction = 'auto'
-} */
+    function isViewMode(mode) {
+        return mode == 'view'
+    }
 
-/*     afterUpdate(()=>{
-        touchScrollAllow()
-    }) */
+    /*     const touchScrollAllow = async () => {
+        await tick()
+        for(let elm of document.querySelectorAll('.svlt-grid-item'))
+            elm.style.touchAction = 'auto'
+    } */
+
+    /*     afterUpdate(()=>{
+            touchScrollAllow()
+        }) */
 
     let labels = {
         'refresh': {
@@ -507,7 +553,7 @@
         },
     }
 
-    let switchMobile = function(){
+    let switchMobile = function () {
         isMobile = !isMobile
         refreshView()
     }

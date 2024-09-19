@@ -2,6 +2,7 @@
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { utils } from '$lib/utils.js';
     import Dialog from '$lib/components/Dialog.svelte'
+    import { viewMode } from '$lib/usersession.js';
     export let config
 
     $: title = config.title != undefined ? config.title : 'Command button';
@@ -17,6 +18,9 @@
 
     function closeInfo(decision) {
         status = 0
+    }
+    function isViewMode(mode) {
+        return mode == 'view'
     }
 
     async function sendCommand(decision) {
@@ -105,6 +109,11 @@
 <Dialog bind:dialog callback={sendCommand} title={utils.getLabel('sendQuestion',labels,$language)}
     labels={[utils.getLabel('save',labels,$language), utils.getLabel('cancel',labels,$language)]} color="body">
 </Dialog>
+{#if isViewMode($viewMode)}
+<div class="container p-0">
+    <span class="btn btn-secondary w-100">{title}</span>
+</div>
+{:else}
 {#if status==0}
 <div class="container p-0">
     <a href="#" on:click|preventDefault={decide} class="btn btn-danger w-100" role="button"
@@ -122,4 +131,5 @@
         aria-disabled="true">{utils.getLabel('ok',labels,$language)}</a>
     <p>{utils.getLabel('commandError',labels,$language)}</p>
 </div>
+{/if}
 {/if}

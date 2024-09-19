@@ -1,4 +1,4 @@
-<div class="p-1 w-100">
+<div class="p-1 w-100 overflow-auto">
     {#if config.title!=""}
     <div class="row text-center">
         <div class="col-12"><span>{config.title}</span></div>

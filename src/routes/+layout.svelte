@@ -1,3 +1,17 @@
+{#if env.PUBLIC_WEBAPP_MODE=='view'}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <slot></slot>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <a href="https://cloud.signomix.com" target="_blank" class="link-secondary"><small>Signomix</small></a>
+        </div>
+    </div>
+</div>
+{:else}
 <Toaster richColors closeButton position="top-center" />
 <header class="navbar navbar-dark bg-primary sticky-top flex-md-nowrap p-0 shadow">
     <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="/"><img src="/img/logo-light.svg"
@@ -359,6 +373,7 @@
         </main>
     </div>
 </div>
+{/if}
 <script>
     import { page } from '$app/stores';
     import { onMount } from 'svelte';
@@ -372,14 +387,46 @@
     import { getInfo, platformInfo, defaultOrganizationId, platformRelease, webappRelease } from '$lib/stores.js';
     import { Toaster, toast } from 'svelte-sonner'
     import PageHeader from '$lib/components/PageHeader.svelte'
+    import { env } from '$env/dynamic/public';
+
+    console.log('layout.svelte', env.PUBLIC_WEBAPP_MODE);
+    //console.log('$page.params.path', $page.params.path)
+    //let paramsPath = $page.params.path
+
+    /*     if (env.PUBLIC_WEBAPP_MODE == 'view') {
+            async() => {
+            var tokenObject;
+            let serviceUrl = utils.getBackendUrl(location)
+            console.log('paramsPath', paramsPath)
+            token.set(paramsPath)
+            fetch(serviceUrl + '/api/auth/token/' + paramsPath).then(function (response) {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    goto('/dashboard')
+                }
+            }).then(function (data) {
+                tokenObject = data;
+                goto('/dashboard/' + tokenObject.payload)
+            }).catch(function (error) {
+                console.warn('Something went wrong.', error);
+            });
+            }   
+        } */
 
     onMount(async () => {
-        //console.log('onMount', $page)
-        try {
-            getInfo($page.url)
-        } catch (e) {
-            console.log(e)
+        if (env.PUBLIC_WEBAPP_MODE == 'view') {
+            console.log('view mode')
+            //goto('/dashboard')
+        } else {
+            console.log('not view mode')
+            try {
+                getInfo($page.url)
+            } catch (e) {
+                console.log(e)
+            }
         }
+
     });
 
     function isCloud() {
