@@ -28,7 +28,7 @@
         <i class="bi bi-phone h5 me-2 link-dark" on:click="{switchMobile}"></i>
         {/if}
         {#if isViewMode($viewMode)}
-        <div class="badge rounded-pill text-bg-light h5 me-2">{secondsToRefresh}</div>
+        <div class="badge rounded-pill text-bg-light h5 me-2">{secondsLeft}</div>
         {:else}
         {#if dashboardConfig.shared}
         <a title="Dashboard access" data-bs-toggle="modal" data-bs-target="#linkModal"
@@ -66,7 +66,13 @@
                     {#if !isRoleOK(index)}
                     <div class="alert alert-light mx-auto my-auto">{utils.getLabel('hidden',labels,$language)}</div>
                     {:else}
-                    {#if 'chartjs'===getWidgetType(index)}
+
+
+                    {#if 'button'===getWidgetType(index)}
+                    <ButtonWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else if 'chart'===getWidgetType(index)}
+                    <ChartWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else if 'chartjs'===getWidgetType(index)}
                     <ChartjsWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
                     {:else if 'canvas'===getWidgetType(index)}
                     <CanvasWidgetExample index={index} bind:config={dashboardConfig.widgets[index]}
@@ -80,8 +86,6 @@
                     <SymbolWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
                     {:else if 'text'===getWidgetType(index)}
                     <TextWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
-                    {:else if 'button'===getWidgetType(index)}
-                    <ButtonWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
                     {:else if 'devinfo'===getWidgetType(index)}
                     <InfoWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
                     {:else if 'image'===getWidgetType(index)}
@@ -105,8 +109,6 @@
                     {:else if 'multitrack'===getWidgetType(index)}
                     <TracksWidget index={index} bind:config={dashboardConfig.widgets[index]}
                         bind:filter={dashboardFilter} />
-                    {:else if 'chart'===getWidgetType(index)}
-                    <ChartWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
                     {:else if 'groupchart'===getWidgetType(index)}
                     {#if 'doughnut'===getWidgetChartType(index)}
                     <DoughnutWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
@@ -120,6 +122,7 @@
                     <CanvasWidgetExample index={index} bind:config={dashboardConfig.widgets[index]}
                         bind:filter={dashboardFilter} />
                     {/if }
+
                     {/if}<!-- isRoleOK -->
                 </div>
             </Grid>
@@ -208,7 +211,7 @@
     let dashboardFilter = { from: '', to: '' }
     let editedFilter = { from: '', to: '' }
     let dashboardLinkConfig = { link: '', code: '' }
-    let applications = [
+    /* let applications = [
         {
             id: 0,
             organization: 0,
@@ -216,7 +219,8 @@
             name: "system",
             configuration: "{\"refreshInterval\":7}",
         }
-    ]
+    ] */
+    let applications = []
 
     let isMobile = false
     let numberOfGridCols
@@ -230,8 +234,9 @@
     // https://github.com/vaheqelyan/svelte-grid/issues/140
     let cols = {}
 
-    const defaultInterval = 60
-    let secondsToRefresh = defaultInterval
+    /*     const defaultInterval = 60
+        let secondsToRefresh = getRefreshInterval() / 1000
+        $: secondsLeft = secondsToRefresh */
 
     let getBorderClass = function (idx) {
         try {
@@ -303,14 +308,73 @@
         }
     } */
 
+    function getApplications() {
+        var result = []
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                result = JSON.parse(this.responseText);
+                console.log('getApplications', result)
+            }
+        };
+        xhttp.open("GET", utils.getBackendUrl(location) + "/api/core/application?offset=0&limit=1000", false);
+        xhttp.setRequestHeader('Authentication', $token);
+        xhttp.send();
+        return result
+    }
+
+    let getApplicationsOld = function () {
+        const headers = new Headers()
+        let method = 'GET'
+        let url = utils.getBackendUrl(location) + "/api/core/application?offset=0&limit=1000"
+        headers.set('Authentication', $token);
+        let apps = fetch(url, { headers: headers })
+            .then((response) => {
+                if (response.status == 200) {
+                    errorMessage = ''
+                    return response.json()
+                } else if (response.status == 401 || response.status == 403) {
+                    token.set(null)
+                    return []
+                } else {
+                    alert(
+                        utils.getMessage(utils.FETCH_STATUS)
+                            .replace('%1', response.status)
+                            .replace('%2', response.statusText)
+                    )
+                    return []
+                }
+            })
+            .then((data) => {
+                return data
+            })
+            .catch((error) => {
+                errorMessage = error.getMessage
+                if (errorMessage == 'Failed to fetch' && location.protocol.toLowerCase() == 'https') {
+                    errorMessage = errorMessage + utils.getLabel('fetcherror_message', labels, $language)
+                }
+                console.log(error)
+            });
+        return apps
+    }
+
     let getRefreshInterval = function () {
-        const defaultInterval = 300
-        let interval = dev ? 10 : defaultInterval
+        let interval = 300
+        if ($viewMode == 'view') {
+            return interval * 1000 // in ms
+        }
         try {
+            if (applications.length == 0) {
+                applications = getApplications()
+                //console.log('getApplications', applications)
+            }
             for (let i = 0; i < applications.length; i++) {
+                //console.log('app', applications[i].name)
                 if (applications[i].name === "system") {
+                    //console.log('application', applications[i])
                     let config = JSON.parse(applications[i].configuration)
-                    let tmpIntv = config.refreshInterval
+                    //console.log('config', config)
+                    let tmpIntv = config.configuration.refreshInterval
                     if (tmpIntv != null && tmpIntv != undefined && tmpIntv > 0) {
                         interval = tmpIntv
                     }
@@ -320,37 +384,15 @@
         } catch (e) {
             console.log(e)
         }
+        //console.log('getRefreshInterval result:', interval)
         return interval * 1000 // in ms
     }
 
-    let getApplications = function () {
-        const headers = new Headers()
-        let method = 'GET'
-        let url = utils.getBackendUrl(location) + "/api/core/application?offset=0&limit=1000"
-        headers.set('Authentication', $token);
-        let apps = fetch(url, { headers: headers }
-        ).then((response) => {
-            if (response.status == 200) {
-                errorMessage = ''
-                return response.json()
-            } else if (response.status == 401 || response.status == 403) {
-                token.set(null)
-            } else {
-                alert(
-                    utils.getMessage(utils.FETCH_STATUS)
-                        .replace('%1', response.status)
-                        .replace('%2', response.statusText)
-                )
-            }
-        }).catch((error) => {
-            errorMessage = error.getMessage
-            if (errorMessage == 'Failed to fetch' && location.protocol.toLowerCase() == 'https') {
-                errorMessage = errorMessage + utils.getLabel('fetcherror_message', labels, $language)
-            }
-            console.log(error)
-        });
-        return apps
-    }
+    //const defaultInterval = 60
+    let secondsToRefresh = getRefreshInterval() / 1000
+    $: secondsLeft = secondsToRefresh
+
+
 
     let show = function () {
         dashboardConfig = data
@@ -400,10 +442,10 @@
             console.log('redirect to login');
             goto('/login');
         }
-        if (!dev) {
+        /* if (!dev) {
             applications = getApplications()
-        }
-        if (viewMode != 'view') {
+        } */
+        if ($viewMode != 'view') {
             clearInterval(interval);
             interval = setInterval(() => {
                 invalidateAll()
@@ -417,7 +459,11 @@
     })
 
     onMount(() => {
-        if (viewMode == 'view') {
+/*         if (!dev) {
+            applications = getApplications()
+        } */
+        if ($viewMode == 'view') {
+            console.log('onMount viewMode', $viewMode)
             const interval2 = setInterval(() => {
                 secondsToRefresh = secondsToRefresh - 1
                 if (secondsToRefresh == 0) {
@@ -427,17 +473,22 @@
             return () => {
                 clearInterval(interval2);
             };
+        } else {
+            console.log('onMount viewMode', $viewMode)
         }
     });
 
     function refreshView() {
         /*         refreshing = true
                 console.log('refreshing', refreshing) */
+        if ($viewMode == 'view') {
+            secondsToRefresh = getRefreshInterval() / 1000
+            console.log('secondsToRefresh', secondsToRefresh)
+        } else {
+            console.log('refreshView viewMode', $viewMode)
+        }
         invalidateAll()
         show()
-        if (viewMode == 'view') {
-            secondsToRefresh = getRefreshInterval() / 1000
-        }
     }
 
 
@@ -500,8 +551,8 @@
         // do nothing
     }
 
-    function isViewMode(mode) {
-        return mode == 'view'
+    function isViewMode(actualMode) {
+        return actualMode == 'view'
     }
 
     /*     const touchScrollAllow = async () => {

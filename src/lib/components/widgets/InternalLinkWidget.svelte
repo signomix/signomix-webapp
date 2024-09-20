@@ -21,6 +21,6 @@
     {#if isViewMode($viewMode)}
     <span class="btn btn-secondary w-100">{title}</span>
     {:else}
-    <a href="/dashboards/{dashboardID}" class="btn btn-primary w-100" role="button" aria-disabled="true">{title+mode}</a>
+    <a href="/dashboards/{dashboardID}" class="btn btn-primary w-100" role="button" aria-disabled="true">{title}</a>
     {/if}
 </div>

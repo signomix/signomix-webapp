@@ -1,8 +1,9 @@
 <script>
-    import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
+    import { token, profile, language, isAuthenticated, viewMode } from '$lib/usersession.js';
     import { utils } from '$lib/utils.js';
+    import { onMount } from 'svelte';
     import Dialog from '$lib/components/Dialog.svelte'
-    import { viewMode } from '$lib/usersession.js';
+
     export let config
 
     $: title = config.title != undefined ? config.title : 'Command button';
@@ -12,6 +13,10 @@
     let status = 0
     let promise
 
+    onMount(() => {
+        console.log('ButtonWidget mounted')
+    });
+
     function decide() {
         dialog.showModal()
     }
@@ -20,7 +25,7 @@
         status = 0
     }
     function isViewMode(mode) {
-        return mode == 'view'
+        return 'view' == mode
     }
 
     async function sendCommand(decision) {
@@ -109,27 +114,24 @@
 <Dialog bind:dialog callback={sendCommand} title={utils.getLabel('sendQuestion',labels,$language)}
     labels={[utils.getLabel('save',labels,$language), utils.getLabel('cancel',labels,$language)]} color="body">
 </Dialog>
+<div class="container p-0">
 {#if isViewMode($viewMode)}
-<div class="container p-0">
     <span class="btn btn-secondary w-100">{title}</span>
-</div>
 {:else}
+<p>B</p>
 {#if status==0}
-<div class="container p-0">
     <a href="#" on:click|preventDefault={decide} class="btn btn-danger w-100" role="button"
         aria-disabled="true">{title}</a>
-</div>
-{:else if status==1}
-<div class="container p-0">
+{:else}
+{#if status==1}
     <a href="#" on:click|preventDefault={closeInfo} class="btn btn-success w-100" role="button"
         aria-disabled="true">{utils.getLabel('ok',labels,$language)}</a>
     <p>{utils.getLabel('commandSent',labels,$language)}</p>
-</div>
 {:else}
-<div class="container p-0">
     <a href="#" on:click|preventDefault={closeInfo} class="btn btn-danger w-100" role="button"
         aria-disabled="true">{utils.getLabel('ok',labels,$language)}</a>
     <p>{utils.getLabel('commandError',labels,$language)}</p>
+{/if}
+{/if}
+{/if}
 </div>
-{/if}
-{/if}

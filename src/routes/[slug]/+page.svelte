@@ -2,7 +2,7 @@
     import { goto } from '$app/navigation';
     import { page } from '$app/stores';
     import { utils } from '$lib/utils.js';
-    import {  profile, token, language, isAuthenticated } from '$lib/usersession.js';
+    import {  profile, token, language, isAuthenticated, viewMode } from '$lib/usersession.js';
     
     console.log('/[slug]', $page)
 
@@ -31,6 +31,7 @@
             console.warn('Something went wrong.', error);
         });
     } else { */
+        viewMode.set('full')
         goto('/')
     //}
 </script>

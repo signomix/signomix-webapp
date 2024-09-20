@@ -14,6 +14,7 @@
         console.log('page', $page);
         // Call the API - get the token object
         token.set('SLUG',$page.params.slug)
+        viewMode.set('view')
         fetch(serviceUrl + '/api/auth/token/' + $page.params.slug).then(function (response) {
             if (response.ok) {
                 return response.json();
@@ -27,7 +28,6 @@
             token.set(tokenObject.token);
             let user = {language:'en',organization:1,login:'public',uid:'public'}
             profile.set(user)
-            viewMode.set('view')
             goto('/dashboards/'+tokenObject.payload)
         }).catch(function (error) {
             console.warn('Something went wrong.', error);
