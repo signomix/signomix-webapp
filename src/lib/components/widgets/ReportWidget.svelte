@@ -145,6 +145,10 @@
                 }
             }
         }
+        if(jsonData.length==0){
+            reportResult.errorMessage = 'No data available'
+            return reportResult
+        }
         if (!isGroup) {
             reportResult.datasets.push({
                 'size': jsonData[0].length,
@@ -226,7 +230,7 @@
             {#if reportresult!=undefined && reportresult.status==200 }
             {#if isGroup()}
             {#if getReportType(reportresult)=='group'}
-            XYZ
+            //{getDate(reportresult)}
             {:else}
             {getDate(reportresult)} {config.group}
             {/if}
@@ -236,7 +240,7 @@
             {/if}
             {:else}
             <div style="height: {parentHeight-32}px; overflow-y: scroll;">
-                {#if reportresult!=undefined && reportresult.status==200 }
+                {#if reportresult!=undefined && reportresult.status==200 && (reportresult.errorMessage==undefined || reportresult.errorMessage==null || reportresult.errorMessage=='')}
                 {#if isGroup() || isGroupQuery(reportresult)}
                 {#if getReportType(reportresult)=='group'}
                 <table class="table table-sm table-responsive-sm">
@@ -323,7 +327,7 @@
                 </table>
                 {/if}
                 {:else}
-                <p><b>Error {reportresult.status}</b> {reportresult.errorMessage}</p>
+                <p><b>Status {reportresult.status}</b> {reportresult.errorMessage}</p>
                 {/if}
             </div>
             {/if}
