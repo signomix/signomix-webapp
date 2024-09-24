@@ -63,15 +63,37 @@
     }
 
     function isGroupQuery(reportResult) {
-        if (reportResult.queries != undefined
-            && reportResult.queries.default != undefined
-            && reportResult.queries.default.group != undefined
-            && reportResult.queries.default.group != null
-            && reportResult.queries.default.group != '') {
-            return true
-        } else {
-            return false
+        try {
+            console.log('isGroupQuery', reportResult.queries.default.source)
+            if (reportResult.queries.default.source.includes(' group ')) {
+                return true
+            }
+            if (reportResult.queries != undefined
+                && reportResult.queries.default != undefined
+                && reportResult.queries.default.group != undefined
+                && reportResult.queries.default.group != null
+                && reportResult.queries.default.group != '') {
+                return true
+            } else {
+                return false
+            }
+        } catch (e) {
+            console.log('isGroupQuery error', e)
         }
+    }
+
+    function getReportType(reportResult) {
+        let type = '';
+        try {
+            if (reportResult.queries.default.source.includes(' group ')) {
+                type = 'group'
+            } else if (reportResult.queries.default.source.includes(' eui ')) {
+                type = 'device'
+            }
+        } catch (e) {
+            console.log('error', e)
+        }
+        return type
     }
 
     function getDate(reportResult) {
@@ -91,11 +113,19 @@
     async function transformData(config, rawData) {
         let isGroup = (config.group != undefined && config.group != null && config.group != '')
         let jsonData = await rawData;
+        console.log('RAW DATA', jsonData)
+        //let isGroupQuery = isGroupQuery(jsonData)
+
+        // data from report server is already in the correct format
         if (jsonData.datasets !== undefined && jsonData.datasets !== null) {
             console.log('DATA FROM REPORT SERVER')
-            console.log('GROUP REPORT', isGroupQuery(jsonData))
+            //console.log('GROUP REPORT', isGroupQuery)
             return jsonData
+        } else {
+            console.log('DATA FROM SIGNOMIX-TA-PROVIDER')
         }
+
+        // data from signomix-ta-provider must be transformed
         console.log('STANDARD DATA')
         console.log('GROUP REPORT', isGroup)
         let reportResult = {
@@ -195,7 +225,11 @@
             {#if !front}
             {#if reportresult!=undefined && reportresult.status==200 }
             {#if isGroup()}
+            {#if getReportType(reportresult)=='group'}
+            XYZ
+            {:else}
             {getDate(reportresult)} {config.group}
+            {/if}
             {:else}
             {getDate(reportresult)} {config.dev_id}
             {/if}
@@ -203,7 +237,36 @@
             {:else}
             <div style="height: {parentHeight-32}px; overflow-y: scroll;">
                 {#if reportresult!=undefined && reportresult.status==200 }
-                {#if isGroup()}
+                {#if isGroup() || isGroupQuery(reportresult)}
+                {#if getReportType(reportresult)=='group'}
+                <table class="table table-sm table-responsive-sm">
+                    <thead class="text-bg-primary fs-6">
+                        <th scope="col">EUI</th>
+                        <th scope="col">{utils.getLabel('date', labels, $language)}</th>
+                        {#if channelNamesTranslated.length>0}
+                        {#each channelNamesTranslated as item}
+                        <th scope="col">{item}</th>
+                        {/each}
+                        {:else}
+                        {#each reportresult.headers[0].columns as column}
+                        <th scope="col">{column}</th>
+                        {/each}
+                        {/if}
+                    </thead>
+
+                    <tbody>
+                        {#each reportresult.datasets as dataset}
+                        <tr>
+                            <td>{dataset.eui}</td>
+                            <td>{new Date(dataset.data[0].timestamp).toLocaleString()}</td>
+                            {#each dataset.data[0].values as value}
+                            <td>{utils.recalculate(value, config.rounding)}</td>
+                            {/each}
+                        </tr>
+                        {/each}
+                    </tbody>
+                </table>
+                {:else}
                 <table class="table table-sm table-responsive-sm">
                     <thead class="text-bg-primary fs-6">
                         <th scope="col">EUI</th>
@@ -232,6 +295,7 @@
                         {/each}
                     </tbody>
                 </table>
+                {/if}
                 {:else}
                 <table class="table table-sm table-responsive-sm">
                     <thead class="text-bg-primary">
