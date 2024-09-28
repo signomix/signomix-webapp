@@ -18,10 +18,10 @@
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-3 border-bottom">
     <h5>{dashboardConfig.title}</h5>
     <span>
-        {#if !isViewMode($viewMode)}
-        <a title={utils.getLabel('refresh',labels,$language)} on:click={refreshView}><i
+<!--         {#if !isViewMode($viewMode)} -->
+        <a title={utils.getLabel('refresh',labels,$language)} on:click={forceRefresh}><i
                 class="bi bi-arrow-clockwise h5 me-2 link-dark"></i></a>
-        {/if}
+<!--         {/if} -->
         {#if isMobile}
         <i class="bi bi-phone-fill h5 me-2 link-dark" on:click="{switchMobile}"></i>
         {:else}
@@ -359,7 +359,7 @@
     }
 
     let getRefreshInterval = function () {
-        let interval = 300
+        let interval = 60  //300
         if ($viewMode == 'view') {
             return interval * 1000 // in ms
         }
@@ -459,9 +459,9 @@
     })
 
     onMount(() => {
-/*         if (!dev) {
-            applications = getApplications()
-        } */
+        /*         if (!dev) {
+                    applications = getApplications()
+                } */
         if ($viewMode == 'view') {
             console.log('onMount viewMode', $viewMode)
             const interval2 = setInterval(() => {
@@ -477,6 +477,14 @@
             console.log('onMount viewMode', $viewMode)
         }
     });
+
+    function forceRefresh() {
+        if ($viewMode == 'view') {
+            alert(utils.getLabel('refresh_unavailable', labels, $language))
+        } else {
+            refreshView()
+        }
+    }
 
     function refreshView() {
         /*         refreshing = true
@@ -602,6 +610,10 @@
             'pl': "ukryte (brak uprawnień)",
             'en': "hidden (no permissions)"
         },
+        'refresh_unavailable': {
+            'pl': "Odświeżanie nie jest dostępne anonimowego podglądu. Zaloguj się aby uzyskać dostęp do tej funkcji.",
+            'en': "Refresh is not available for anonymous view. Log in to access this feature."
+        }
     }
 
     let switchMobile = function () {

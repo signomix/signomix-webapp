@@ -239,10 +239,12 @@
             {/if}
             {/if}
             {:else}
+            
             <div style="height: {parentHeight-32}px; overflow-y: scroll;">
                 {#if reportresult!=undefined && reportresult.status==200 && (reportresult.errorMessage==undefined || reportresult.errorMessage==null || reportresult.errorMessage=='')}
                 {#if isGroup() || isGroupQuery(reportresult)}
                 {#if getReportType(reportresult)=='group'}
+                <!-- DqlReport GROUP -->
                 <table class="table table-sm table-responsive-sm">
                     <thead class="text-bg-primary fs-6">
                         <th scope="col">EUI</th>
@@ -271,6 +273,7 @@
                     </tbody>
                 </table>
                 {:else}
+                <!-- Report GROUP -->
                 <table class="table table-sm table-responsive-sm">
                     <thead class="text-bg-primary fs-6">
                         <th scope="col">EUI</th>
@@ -301,6 +304,7 @@
                 </table>
                 {/if}
                 {:else}
+                <!-- Report DEVICE -->
                 <table class="table table-sm table-responsive-sm">
                     <thead class="text-bg-primary">
                         <th scope="col">{utils.getLabel('date', labels, $language)}</th>
