@@ -130,7 +130,8 @@
                         bind:value={config[index].channel}>
                 </div>
                 {/if}
-                {#if widgets.isVisible(selectedType, 'channel_translated') && singleDeviceMode!=2}
+                <!-- {#if widgets.isVisible(selectedType, 'channel_translated') && singleDeviceMode!=2} -->
+                {#if widgets.isVisible(selectedType, 'channel_translated')}
                 <div class="mb-2">
                     <label for="channel_translated" class="form-channels">{utils.getLabel('names_on_widget',labels,$language)}</label>
                     <input type="text" class="form-control form-control-sm" id="channel_translated"

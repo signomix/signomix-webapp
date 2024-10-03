@@ -218,4 +218,94 @@ export const widgets = {
     }
 }
 
+export const transformData = async function(config, rawData) {
+    let isGroup = (config.group != undefined && config.group != null && config.group != '')
+    let jsonData = await rawData;
+    console.log('RAW DATA', jsonData)
+    
+    // data from report server is already in the correct format
+    if (jsonData.datasets !== undefined && jsonData.datasets !== null) {
+        return jsonData
+    } else {
+        //console.log('DATA FROM SIGNOMIX-TA-PROVIDER')
+    }
+
+    // data from signomix-ta-provider must be transformed
+    let reportResult = {
+        'status': 200,
+        'title': '',
+        'description': '',
+        'content': '',
+        'contentType': 'application/json',
+        'id': -1,
+        'created': '',
+        'datasets': [],
+        'headers': [],
+        'queries': {
+            'default': {
+                'group': '',
+                'className': ''
+            }
+        }
+    }
+    if(jsonData.length==0){
+        reportResult.errorMessage = 'No data available'
+        return reportResult
+    }
+    if (!isGroup) {
+        reportResult.datasets.push({
+            'size': jsonData[0].length,
+            'name': 'dataset0',
+            'eui': jsonData[0][0].deviceEUI,
+            'data': []
+        })
+        reportResult.headers.push({
+            'columns': [],
+            'name': 'dataset0'
+        })
+        try {
+            for (let i = 0; i < jsonData[0].length; i++) {
+                reportResult.headers[0].columns.push(jsonData[0][i].name)
+            }
+        } catch (e) {
+            console.log('error', e)
+        }
+        for (let i = 0; i < jsonData.length; i++) {
+            reportResult.datasets[0].data.push({
+                'timestamp': jsonData[i][0].timestamp,
+                'values': []
+            })
+            for (let j = 0; j < jsonData[i].length; j++) {
+                reportResult.datasets[0].data[i].values.push(jsonData[i][j].value)
+            }
+        }
+    } else {
+        for (let i = 0; i < jsonData.length; i++) {
+            reportResult.datasets.push({
+                'size': jsonData[i][0].length,
+                'name': 'dataset' + i,
+                'eui': jsonData[i][0][0].deviceEUI,
+                'data': []
+            })
+            reportResult.headers.push({
+                'columns': [],
+                'name': 'dataset' + i
+            })
+            for (let j = 0; j < jsonData[i][0].length; j++) {
+                reportResult.headers[i].columns.push(jsonData[i][0][j].name)
+            }
+            for (let j = 0; j < jsonData[i].length; j++) {
+                reportResult.datasets[i].data.push({
+                    'timestamp': jsonData[i][j][0].timestamp,
+                    'values': []
+                })
+                for (let k = 0; k < jsonData[i][j].length; k++) {
+                    reportResult.datasets[i].data[j].values.push(jsonData[i][j][k].value)
+                }
+            }
+        }
+    }
+    return reportResult
+}
+
 export default widgets;
