@@ -28,9 +28,15 @@
                 <tbody>
                     {#each data.list as alert, index}
                     <tr>
-                        <td class="col-2">{alert.deviceEui}</td>
-                        <td class="col-2"><a href="/sentinels/{alert.sentinelConfigId}">{alert.sentinelConfigId}</a></td>
-                        <td class="col-1">{alert.level}</td>
+                        <td class="col-2">
+                            <a href="/devices/{alert.deviceEui}">{alert.deviceEui}</a>
+                        </td>
+                        <td class="col-2">
+                            {#if alert.sentinelConfigId>=0}
+                            <a href="/sentinels/{alert.sentinelConfigId}">{alert.sentinelConfigId}</a>
+                            {/if}    
+                        </td>
+                        <td class="col-1">{getLevelName(alert.level)}</td>
                         <td class="col-2">{new Date(alert.createdAt).toLocaleString()}</td>
                         <td class="col-4">{alert.messagePl}</td>
                         <td class="col-1"><a href="#" on:click|preventDefault={remove(alert.id)}><i class="bi bi-trash3 link-dark"></i></a></td>
@@ -128,6 +134,23 @@
     }
 
     function handleDoNothing() {
+    }
+
+    function getLevelName(level){
+        switch(level){
+            case 1:
+                return 'info'
+            case 2:
+                return 'warning'
+            case 3:
+                return 'alert'
+            case 4:
+                return 'critical'
+            case 5:
+                return 'emergency'
+            default:
+                return 'info'
+        }
     }
 
     let labels = {

@@ -71,7 +71,7 @@
         event.preventDefault()
         errorMessage = ''
         if (!dev) {
-            const url = utils.getBackendUrl(location) + '/api/account/' + login + '/resetpassword?email=' + email
+            const url = utils.getBackendUrl(location) + '/api/account/user/' + login + '/resetpassword?email=' + email
             const result = fetch(
                 url,
                 {

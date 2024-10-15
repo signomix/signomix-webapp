@@ -50,11 +50,12 @@
     function saveSettings(config){
         console.log("saveSettings: ",config);
         const headers = new Headers()
-        let url = utils.getBackendUrl(location) + "/api/user/"+config.uid
+        let url = utils.getBackendUrl(location) + "/api/account/user/"+config.uid
         //if (!(data.id === 'new' || data.id == null || data.id == '' || data.id == undefined)) {
         //    url = url + data.id
         //    method = 'PUT'
         //}
+        config.password = null
         headers.set('Authentication', $token);
         headers.set('Content-Type', 'application/json');
         let response = fetch(

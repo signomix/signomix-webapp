@@ -118,7 +118,6 @@
 {#if isViewMode($viewMode)}
     <span class="btn btn-secondary w-100">{title}</span>
 {:else}
-<p>B</p>
 {#if status==0}
     <a href="#" on:click|preventDefault={decide} class="btn btn-danger w-100" role="button"
         aria-disabled="true">{title}</a>

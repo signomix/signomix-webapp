@@ -102,7 +102,7 @@
             password: password
         }
         const headers = new Headers()
-        let url = utils.getBackendUrl(location) + "/api/account/" + login + "/password/"
+        let url = utils.getBackendUrl(location) + "/api/account/user/" + login + "/password/"
         headers.set('Content-Type', 'application/json');
         headers.set('Authentication', token);
         let response = fetch(

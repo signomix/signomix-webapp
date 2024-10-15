@@ -22,7 +22,7 @@ export async function load({ params, url }) {
         if (params.slug == 'new' || (dev && browser)) {
             return newUser
         } else {
-            let apiUrl = serviceUrl + '/api/user/' + params.slug
+            let apiUrl = serviceUrl + '/api/account/user/' + params.slug
             return await sgxdata.getUserSettings(dev, apiUrl, userprofile, usertoken)
         }
     }

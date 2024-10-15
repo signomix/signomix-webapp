@@ -73,7 +73,7 @@
         }
         const headers = new Headers()
         let method = config.newConfig ? 'POST' : 'PUT'
-        let url = utils.getBackendUrl(location) + "/api/user/"
+        let url = utils.getBackendUrl(location) + "/api/account/user/"
         if (method == 'PUT') {
             url = url + config.uid
         }

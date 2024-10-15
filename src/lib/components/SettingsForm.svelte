@@ -479,14 +479,7 @@
             //console.log('password', password)
             delete config.password
         }
-        config.generalNotificationChannel = document.getElementById('input-generalNotificationChannel').value
-            + ':' + document.getElementById('input-generalNotificationChannelConfig').value
-        config.infoNotificationChannel = document.getElementById('input-infoNotificationChannel').value
-            + ':' + document.getElementById('input-infoNotificationChannelConfig').value
-        config.warningNotificationChannel = document.getElementById('input-warningNotificationChannel').value
-            + ':' + document.getElementById('input-warningNotificationChannelConfig').value
-        config.alertNotificationChannel = document.getElementById('input-alertNotificationChannel').value
-            + ':' + document.getElementById('input-alertNotificationChannelConfig').value
+
         config.path = (pathRoot + pathExt).replace(/\//g, '.')
         try {
             config.phone = config.phone.trim()

@@ -41,7 +41,7 @@
         {:else}
         <div class="col-md-6">
             <h6 class="card-text">{utils.getLabel('planDetails',labels, $language)}</h6>
-            {#if utils.isDefaultOrganizationUser($profile)}
+            {#if utils.isDefaultOrganizationUser($profile)  && (actualPlan == 4 || actualPlan == 5 || actualPlan == 0)}
             <ul>
                 <li>{getNumberOfDataSources(actualPlan)+' '+utils.getLabel('dataSources',labels, $language)} <InfoText></InfoText></li>
                 <li>{getDataRetentionDays(actualPlan)+' '+utils.getLabel('dataRetention',labels, $language)}</li>
@@ -110,10 +110,10 @@
                 case 5:
                     return 365;
                 default:
-                    return 'depend on the agreement';
+                    return 'organizationDataRetention';
             }
         } else {
-            return 'depend on the agreement';
+            return 'organizationDataRetention';
         }
     }
 
@@ -144,10 +144,10 @@
                 case 5:
                     return 50;
                 default:
-                    return 'depend on the agreement';
+                    return 'organizationDataSources';
             }
         } else {
-            return 'depend on the agreement';
+            return 'organizationDataSources';
         }
     }
 

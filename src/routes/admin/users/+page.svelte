@@ -159,7 +159,7 @@
         } else {
             let headers = new Headers();
 
-            let url = utils.getBackendUrl(location) + "/api/user"
+            let url = utils.getBackendUrl(location) + "/api/account"
             url = url + '?offset=' + actualOffset + '&limit=' + limit
 
             if (loginFilter.length > 0) {

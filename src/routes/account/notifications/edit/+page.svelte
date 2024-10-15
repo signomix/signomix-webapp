@@ -49,12 +49,14 @@
 
     function saveSettings(config){
         console.log("saveSettings: ",config);
+        let errorMessage = ''
         const headers = new Headers()
-        let url = utils.getBackendUrl(location) + "/api/user/"+config.uid
+        let url = utils.getBackendUrl(location) + "/api/account/user/"+config.uid
         //if (!(data.id === 'new' || data.id == null || data.id == '' || data.id == undefined)) {
         //    url = url + data.id
         //    method = 'PUT'
         //}
+        config.password = null
         headers.set('Authentication', $token);
         headers.set('Content-Type', 'application/json');
         let response = fetch(
@@ -74,10 +76,10 @@
                 )
             }
         }).catch((error) => {
-            errorMessage = error.message
+/*             errorMessage = error.message
             if (errorMessage == 'Failed to fetch' && location.protocol.toLowerCase() == 'https') {
                 errorMessage = errorMessage + ' ' + utils.getLabel('fetcherror_message', labels, $language)
-            }
+            } */
             console.log(error)
         });
     }
