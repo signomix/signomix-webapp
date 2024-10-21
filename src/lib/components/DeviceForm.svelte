@@ -211,6 +211,35 @@
                 readonly={readonly}>
         </div>
     </div>
+    {#if config.type=='TTN'}
+    <div class="row">
+        <div class="col-md-3 col-form-label">
+            <label for="input-devid" class="form-label">{utils.getLabel('devid',labels,$language)}</label>
+        </div>
+        <div class="col-md-9">
+            <input type="text" class="form-control" id="input-devid" bind:value={config.deviceID}
+                readonly={readonly}>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 col-form-label">
+            <label for="input-appid" class="form-label">{utils.getLabel('appid',labels,$language)}</label>
+        </div>
+        <div class="col-md-9">
+            <input type="text" class="form-control" id="input-appid" bind:value={config.applicationID}
+                readonly={readonly}>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 col-form-label">
+            <label for="input-download-key" class="form-label">{utils.getLabel('download-key',labels,$language)}</label>
+        </div>
+        <div class="col-md-9">
+            <input type="text" class="form-control" id="input-download-key" bind:value={config.download}
+                readonly={readonly}>
+        </div>
+    </div>
+    {/if}
     {#if isNotDefaultOrganization()}
     <div class="row">
         <div class="col-md-2 col-form-label">
@@ -682,6 +711,18 @@
         'description': {
             'pl': "Opis",
             'en': "Description"
+        },
+        'devid': {
+            'pl': "ID urządzenia w TTN",
+            'en': "TTN device ID"
+        },
+        'appid': {
+            'pl': "ID aplikacji w TTN",
+            'en': "TTN application ID"
+        },
+        'download-key': {
+            'pl': "Klucz API w TTN",
+            'en': "TTN API key"
         },
     }
     tagTableLabels = [utils.getLabel('name',labels,$language), utils.getLabel('value',labels,$language), utils.getLabel('action',labels,$language)]
