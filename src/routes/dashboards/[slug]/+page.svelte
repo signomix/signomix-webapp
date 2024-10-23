@@ -18,10 +18,10 @@
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-3 border-bottom">
     <h5>{dashboardConfig.title}</h5>
     <span>
-<!--         {#if !isViewMode($viewMode)} -->
+        <!--         {#if !isViewMode($viewMode)} -->
         <a title={utils.getLabel('refresh',labels,$language)} on:click={forceRefresh}><i
                 class="bi bi-arrow-clockwise h5 me-2 link-dark"></i></a>
-<!--         {/if} -->
+        <!--         {/if} -->
         {#if isMobile}
         <i class="bi bi-phone-fill h5 me-2 link-dark" on:click="{switchMobile}"></i>
         {:else}
@@ -83,7 +83,8 @@
                     {:else if 'chart_placeholder'===getWidgetType(index)}
                     <ChartjsWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
                     {:else if 'symbol'===getWidgetType(index)}
-                    <SymbolWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    <SymbolWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter}
+                        bind:application={dashboardApp} />
                     {:else if 'text'===getWidgetType(index)}
                     <TextWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
                     {:else if 'devinfo'===getWidgetType(index)}
@@ -211,16 +212,10 @@
     let dashboardFilter = { from: '', to: '' }
     let editedFilter = { from: '', to: '' }
     let dashboardLinkConfig = { link: '', code: '' }
-    /* let applications = [
-        {
-            id: 0,
-            organization: 0,
-            version: 0,
-            name: "system",
-            configuration: "{\"refreshInterval\":7}",
-        }
-    ] */
     let applications = []
+    let apps = {}
+    let dashboardAppName = ''
+    let dashboardApp = {}
 
     let isMobile = false
     let numberOfGridCols
@@ -299,15 +294,6 @@
         return false
     }
 
-    /* let getRightPadding = function(){
-        //console.log('getRightPadding numberOfCols', numberOfCols)
-        if(numberOfCols==1){
-            return 'me-3'
-        }else{
-            return ''
-        }
-    } */
-
     function getApplications() {
         var result = []
         var xhttp = new XMLHttpRequest();
@@ -320,65 +306,45 @@
         xhttp.open("GET", utils.getBackendUrl(location) + "/api/core/application?offset=0&limit=1000", false);
         xhttp.setRequestHeader('Authentication', $token);
         xhttp.send();
+        for (let i = 0; i < result.length; i++) {
+            apps[result[i].name] = result[i]
+        }
+        if(apps[dashboardAppName]!=undefined && apps[dashboardAppName]!=null){
+            dashboardApp = apps[dashboardAppName]
+            console.log('dashboardApp',dashboardApp)
+        }else{
+            console.log('unable to get application ',dashboardAppName)
+        }
         return result
     }
 
-    let getApplicationsOld = function () {
-        const headers = new Headers()
-        let method = 'GET'
-        let url = utils.getBackendUrl(location) + "/api/core/application?offset=0&limit=1000"
-        headers.set('Authentication', $token);
-        let apps = fetch(url, { headers: headers })
-            .then((response) => {
-                if (response.status == 200) {
-                    errorMessage = ''
-                    return response.json()
-                } else if (response.status == 401 || response.status == 403) {
-                    token.set(null)
-                    return []
-                } else {
-                    alert(
-                        utils.getMessage(utils.FETCH_STATUS)
-                            .replace('%1', response.status)
-                            .replace('%2', response.statusText)
-                    )
-                    return []
-                }
-            })
-            .then((data) => {
-                return data
-            })
-            .catch((error) => {
-                errorMessage = error.getMessage
-                if (errorMessage == 'Failed to fetch' && location.protocol.toLowerCase() == 'https') {
-                    errorMessage = errorMessage + utils.getLabel('fetcherror_message', labels, $language)
-                }
-                console.log(error)
-            });
-        return apps
-    }
-
     let getRefreshInterval = function () {
-        let interval = 60  //300
+        let interval = 60  //300 // default refresh interval in seconds
         if ($viewMode == 'view') {
             return interval * 1000 // in ms
         }
         try {
             if (applications.length == 0) {
                 applications = getApplications()
-                //console.log('getApplications', applications)
             }
-            for (let i = 0; i < applications.length; i++) {
-                //console.log('app', applications[i].name)
-                if (applications[i].name === "system") {
-                    //console.log('application', applications[i])
-                    let config = JSON.parse(applications[i].configuration)
-                    //console.log('config', config)
-                    let tmpIntv = config.configuration.refreshInterval
+            let refIntervalConfigured = false
+            // check if dashboard has refresh interval configured
+            if(dashboardApp.config!=undefined && dashboardApp.config!=null){
+                let tmpIntv = dashboardApp.config.refreshInterval
+                if (tmpIntv != null && tmpIntv != undefined && tmpIntv > 0) {
+                    interval = tmpIntv
+                    refIntervalConfigured = true
+                }
+            }
+            // check if system application has refresh interval configured
+            if (!refIntervalConfigured && apps['system'] != undefined) {
+                try {
+                    let tmpIntv = apps['system'].config.refreshInterval
                     if (tmpIntv != null && tmpIntv != undefined && tmpIntv > 0) {
                         interval = tmpIntv
                     }
-                    break
+                } catch (e) {
+                    console.log('Error while reading application "system" config',e)
                 }
             }
         } catch (e) {
@@ -398,7 +364,6 @@
         dashboardConfig = data
         setLinkConfig(dashboardConfig)
         blockChanges(dashboardConfig)
-        mergeConfigs()
         //console.log('dashboardConfig ', dashboardConfig)
         //console.log('SHOW dashboard ' + dashboardConfig.id)
         //console.log('dashboardConfig ', dashboardConfig)
@@ -409,7 +374,7 @@
         ];
     }
 
-    let findApplication = function (id) {
+/*     let findApplication = function (id) {
         //console.log('findApplication', applications)
         for (let i = 0; i < applications.length; i++) {
             if (applications[i].id == id) {
@@ -417,23 +382,7 @@
             }
         }
         return null
-    }
-
-    let mergeConfigs = function () {
-        // it doesn't work because of fetch in getApplications
-        /*         for(let i=0;i<dashboardConfig.widgets.length;i++){
-                    let widget=dashboardConfig.widgets[i]
-                    let app = findApplication(widget.app_id);
-                    if(app==null){
-                        continue
-                    }
-                    console.log('app', app)
-                    let appCfg = JSON.parse(app.configuration)
-                    let cfg=JSON.parse(widget.config)
-                    let combined = Object.assign({}, cfg, appCfg);
-                    dashboardConfig.widgets[i].config=JSON.stringify(...combined)
-                } */
-    }
+    } */
 
     let interval
     afterNavigate(({ from, to }) => {
@@ -442,9 +391,6 @@
             console.log('redirect to login');
             goto('/login');
         }
-        /* if (!dev) {
-            applications = getApplications()
-        } */
         if ($viewMode != 'view') {
             clearInterval(interval);
             interval = setInterval(() => {
@@ -459,9 +405,6 @@
     })
 
     onMount(() => {
-        /*         if (!dev) {
-                    applications = getApplications()
-                } */
         if ($viewMode == 'view') {
             console.log('onMount viewMode', $viewMode)
             const interval2 = setInterval(() => {
@@ -487,8 +430,6 @@
     }
 
     function refreshView() {
-        /*         refreshing = true
-                console.log('refreshing', refreshing) */
         if ($viewMode == 'view') {
             secondsToRefresh = getRefreshInterval() / 1000
             console.log('secondsToRefresh', secondsToRefresh)
@@ -538,11 +479,6 @@
     let showLink = function (event) {
         // do nothing
     }
-
-    /* function refreshView() {
-        invalidateAll()
-        show()
-    } */
 
     function filterFormCallback(cfg) {
         dashboardFilter.from = utils.getDateApiISOFormat(cfg.from)

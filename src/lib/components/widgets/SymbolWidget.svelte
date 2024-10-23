@@ -9,9 +9,18 @@
 
     export let config
     export let filter
+    export let application
 
     let errorMessage = '';
     const apiUrl = utils.getBackendUrl(location) + '/api/provider/v2/device/'
+
+    // check access to application config
+    if(application!=undefined && application!=null){
+        console.log("application config: ", application.config);
+    }else{
+        console.log("unable to get application config");
+    }
+    
 
     let promise = sgxdata.getData(dev, apiUrl, config, filter, $token);
     let front = true;
@@ -31,6 +40,7 @@
     }
 
     function getColor(data) {
+        
         let level = sgxhelper.getAlertLevel(config.range, recalculate(data.value), data.timestamp);
         if (config.config != undefined && config.config != null && config.config != '') {
             try {

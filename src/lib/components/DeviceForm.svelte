@@ -147,17 +147,17 @@
                 readonly={readonly} />
         </div>
     </div>
-    {#if config.organizationId!=utils.getDefaultOrganizationId()}
+    <!--{#if config.organizationId!=utils.getDefaultOrganizationId()}-->
     <div class="row">
         <div class="col-md-3 col-form-label">
             <label for="input-application" class="form-label">{utils.getLabel('application',labels,$language)}</label>
         </div>
         <div class="col-md-9">
-            <input type="number" class="form-control" id="input-application" bind:value={config.orgApplicationId}
+            <input type="text" class="form-control" id="input-application" bind:value={config.orgApplicationId}
                 readonly={readonly}>
         </div>
     </div>
-    {/if}
+    <!--{/if}-->
     {:else if activeTab=='infrastructure'}
     <div class="row">
         <div class="col-md-3 col-form-label">
@@ -232,10 +232,10 @@
     </div>
     <div class="row">
         <div class="col-md-3 col-form-label">
-            <label for="input-download-key" class="form-label">{utils.getLabel('download-key',labels,$language)}</label>
+            <label for="input-downlink-key" class="form-label">{utils.getLabel('downlink-key',labels,$language)}</label>
         </div>
         <div class="col-md-9">
-            <input type="text" class="form-control" id="input-download-key" bind:value={config.download}
+            <input type="text" class="form-control" id="input-downlink-key" bind:value={config.downlink}
                 readonly={readonly}>
         </div>
     </div>
@@ -463,6 +463,15 @@
             pathExt = '.' + pathExt
         }
         config.path = pathRoot + pathExt
+        // Signomix application ID
+        if(config.orgApplicationId!=null && config.orgApplicationId!=undefined){
+            config.orgApplicationId = config.orgApplicationId.trim()
+            if(config.orgApplicationId.length==0){
+                config.orgApplicationId = null
+            }
+        }else(
+            config.orgApplicationId = null
+        )
 
         let errMessage = validate()
         if (errMessage != '') {
@@ -720,7 +729,7 @@
             'pl': "ID aplikacji w TTN",
             'en': "TTN application ID"
         },
-        'download-key': {
+        'downlink-key': {
             'pl': "Klucz API w TTN",
             'en': "TTN API key"
         },
