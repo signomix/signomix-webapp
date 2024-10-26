@@ -136,6 +136,13 @@
                                     class="bi bi-hdd-stack me-2"></i><span>{utils.getLabel('groups',labels,$language)}</span>
                         </a>
                     </li>
+                    <li class="nav-item ms-3">
+                        <a class="nav-link" class:active={$page.url.pathname==='/applications' } href="/applications">
+                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                <i
+                                    class="bi bi-box me-2"></i><span>{utils.getLabel('applications',labels,$language)}</span>
+                        </a>
+                    </li>
                     {/if}
                     <!-- Analytics -->
                     <li class="nav-item">
@@ -195,6 +202,7 @@
                             </span>
                         </a>
                     </li>
+                    {#if $platformInfo.paidVersionAvailable==true}
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname.startsWith('/account/billing') }
                             href="/account/billing">
@@ -203,6 +211,7 @@
                             </span>
                         </a>
                     </li>
+                    {/if}
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname.startsWith('/account/development') }
                             href="/account/development">

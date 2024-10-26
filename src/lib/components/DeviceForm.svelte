@@ -152,11 +152,22 @@
         <div class="col-md-3 col-form-label">
             <label for="input-application" class="form-label">{utils.getLabel('application',labels,$language)}</label>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-2">
             <input type="text" class="form-control" id="input-application" bind:value={config.orgApplicationId}
-                readonly={readonly}>
+                on:change={getApplicationName(config.orgApplicationId)} readonly={readonly}>
+        </div>
+        <div class="col-md-7">
+            <input type="text" class="form-control" id="input-applicationName" bind:value={orgApplicationName} 
+             readonly>
         </div>
     </div>
+    {#if orgApplicationError!=''}
+    <div class="row">
+        <div class="col-md-12">
+            <span class="text-danger">{orgApplicationError}</span>
+        </div>
+    </div>
+    {/if}
     <!--{/if}-->
     {:else if activeTab=='infrastructure'}
     <div class="row">
@@ -217,8 +228,7 @@
             <label for="input-devid" class="form-label">{utils.getLabel('devid',labels,$language)}</label>
         </div>
         <div class="col-md-9">
-            <input type="text" class="form-control" id="input-devid" bind:value={config.deviceID}
-                readonly={readonly}>
+            <input type="text" class="form-control" id="input-devid" bind:value={config.deviceID} readonly={readonly}>
         </div>
     </div>
     <div class="row">
@@ -281,7 +291,7 @@
         </div>
     </div>
     <hr class="my-2">
-<!--     <div class="row">
+    <!--     <div class="row">
         <div class="col-md-2 col-form-label">
             <label for="input-tagname" class="form-label">{utils.getLabel('tagname',labels,$language)}</label>
         </div>
@@ -302,8 +312,8 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <Table header={tagTableLabels} columns={tagTableNames}
-                data={tagArray} createAllowed={!readonly} updateAllowed={!readonly} deleteAllowed={!readonly} />
+            <Table header={tagTableLabels} columns={tagTableNames} data={tagArray} createAllowed={!readonly}
+                updateAllowed={!readonly} deleteAllowed={!readonly} />
         </div>
     </div>
     {/if}
@@ -352,7 +362,7 @@
             tagArray.push({ name: oneTag[0], value: oneTag[1] })
         });
     }
-    let tagTableNames=['name','value']
+    let tagTableNames = ['name', 'value']
 
     if (tagArray.length > 0) {
         tagName = tagArray[0].name
@@ -363,6 +373,12 @@
             tagName = tag[0]
             tagValue = tag[1]
         } */
+
+    let orgApplicationName = ''
+    let orgApplicationError = ''
+
+    getApplicationName(config.orgApplicationId)
+
 
     let activeTab = 'basic'
 
@@ -452,9 +468,9 @@
         } else {
             config.configuration = ''
         }
-/*         if (tagName != '' && tagValue != '') {
-            config.tags = tagName + ':' + tagValue
-        } */
+        /*         if (tagName != '' && tagValue != '') {
+                    config.tags = tagName + ':' + tagValue
+                } */
         config.tags = ''
         tagArray.forEach(tag => {
             config.tags += tag.name + ':' + tag.value + ';'
@@ -464,12 +480,18 @@
         }
         config.path = pathRoot + pathExt
         // Signomix application ID
-        if(config.orgApplicationId!=null && config.orgApplicationId!=undefined){
-            config.orgApplicationId = config.orgApplicationId.trim()
-            if(config.orgApplicationId.length==0){
+        if (config.orgApplicationId != null && config.orgApplicationId != undefined) {
+            /* config.orgApplicationId = config.orgApplicationId.trim()
+            if (config.orgApplicationId.length == 0) {
                 config.orgApplicationId = null
-            }
-        }else(
+            } */
+           if(isNaN(config.orgApplicationId)){
+               config.orgApplicationId = config.orgApplicationId.trim()
+                if (config.orgApplicationId.length == 0) {
+                     config.orgApplicationId = null
+                }
+           }
+        } else (
             config.orgApplicationId = null
         )
 
@@ -536,6 +558,34 @@
                     duration: Number.POSITIVE_INFINITY
                 }
             )
+        }
+    }
+
+    function getApplicationName(id) {
+        console.log('getApplicationName', id)
+        if (config.orgApplicationId != null && config.orgApplicationId != undefined) {
+            orgApplicationError=''
+            try {
+                let endpoint = utils.getBackendUrl(location) + "/api/core/application/" + id
+                let headers = new Headers();
+                headers.set('Authentication', $token);
+                fetch(endpoint, { headers: headers }).then(response => {
+                    if (response.ok) {
+                        return response.json()
+                    }else{
+                        throw new Error('Something went wrong');
+                    }
+                }).then(data => {
+                    orgApplicationName = data.name
+                }).catch(error => {
+                    orgApplicationError = 'ERR:'+error.message
+                    console.log('orgApplicationError', orgApplicationError)
+                })
+            } catch (error) {
+                orgApplicationError = 'ERR:'+error.message
+                console.log('orgApplicationError', orgApplicationError)
+            }
+            
         }
     }
 
@@ -734,5 +784,5 @@
             'en': "TTN API key"
         },
     }
-    tagTableLabels = [utils.getLabel('name',labels,$language), utils.getLabel('value',labels,$language), utils.getLabel('action',labels,$language)]
+    tagTableLabels = [utils.getLabel('name', labels, $language), utils.getLabel('value', labels, $language), utils.getLabel('action', labels, $language)]
 </script>

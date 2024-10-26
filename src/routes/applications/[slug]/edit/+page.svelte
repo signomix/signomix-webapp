@@ -2,7 +2,7 @@
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-3 border-bottom">
     <h5>{data.name!=undefined?data.name:'new application'}</h5>
     <!--{#if (utils.isObjectAdmin($profile, data.userID, $defaultOrganizationId))}-->
-    <a href="/admin/applications/{data.id}" title={utils.getLabel('configure',labels,$language)}><i
+    <a href="/applications/{data.id}" title={utils.getLabel('configure',labels,$language)}><i
         class="bi bi-eye h5 me-2 link-dark"></i></a>
 </div>
 {#await data}
@@ -32,12 +32,16 @@
 
     function saveSettings(config){
         if(config==null){
-            goto('/admin/applications')
+            goto('/applications')
             return
         }
-        console.log("saveSettings: ",config);
+        /* errorMessage=validate(config)
+        if(errorMessage!=''){
+            dialog1.showModal()
+            return
+        } */
         const headers = new Headers()
-        let method = (config.id==undefined||config.id==null||isNaN(config.id) )? 'POST' : 'PUT'
+        let method = (config.id==undefined||config.id==null||isNaN(config.id))? 'POST' : 'PUT'
         let url = utils.getBackendUrl(location) + "/api/core/application/"
         if(method == 'PUT'){
             url = url + config.id
@@ -50,7 +54,7 @@
         ).then((response) => {
             if (response.status == 200) {
                 errorMessage = ''
-                goto('/admin/applications')
+                goto('/applications')
                 return
             } else if (response.status == 401 || response.status == 403) {
                 token.set(null)

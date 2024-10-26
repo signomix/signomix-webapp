@@ -298,6 +298,9 @@ export const utils = {
         return 'unknown'
     }
   },
+  isPayingUser: function (type) {
+    return (type == 0 || type == 1 || type == 5 || type == 7 || type == 8 || type == 9)
+  },
   /**
    * Returns account types allowed to be changed for the user of the given profile
    * @param {object} userProfile - user profile

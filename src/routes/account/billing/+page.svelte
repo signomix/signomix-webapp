@@ -59,6 +59,7 @@
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
     import { utils } from '$lib/utils.js';
+    import { platformInfo } from '$lib/stores.js';
     import BillingPlanDetails from '$lib/components/BillingPlanDetails.svelte';
 
     export let data;
@@ -69,49 +70,14 @@
             console.log('redirect to login');
             goto('/login');
         }
+        if (!$platformInfo.paidVersionAvailable){
+            goto('/');
+        }   
     });
 
-    let pricing = {
-        0: {
-            pl: {
-                monthly: '50 zł/m-c',
-                yearly: '550 zł/rok',
-            },
-            en: {
-                monthly: '50 zł/month',
-                yearly: '550 zł/year',
-            }
-        },
-        4: {
-            pl: {
-                monthly: '0 zł/m-c',
-                yearly: '0 zł/rok',
-            },
-            en: {
-                monthly: '0 zł/month',
-                yearly: '0 zł/year',
-            }
-        },
-        5: {
-            pl: {
-                monthly: '200 zł/m-c',
-                yearly: '2200 zł/rok',
-            },
-            en: {
-                monthly: '200 zł/month',
-                yearly: '2200 zł/year',
-            }
-        },
-        100: {
-            pl: {
-                monthly: '',
-                yearly: '',
-            },
-            en: {
-                monthly: '',
-                yearly: ''
-            }
-        }
+    let pricing={
+        yearlyPLN:$platformInfo.pricesYearlyPLN,
+        monthlyPLN:$platformInfo.pricesMonthlyPLN
     }
 
     let labels = {

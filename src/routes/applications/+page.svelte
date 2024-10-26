@@ -16,9 +16,9 @@
             <tbody>
                 {#each applications as app}
                 <tr>
-                    <td><a href="/admin/applications/{app.id}">{app.id}</a></td>
+                    <td><a href="/applications/{app.id}">{app.id}</a></td>
                     <td>{app.organization}</td>
-                    <td><a href="/admin/applications/{app.id}">{app.name}</a></td>
+                    <td><a href="/applications/{app.id}">{app.name}</a></td>
                     <td>{app.description}</td>
                 </tr>
                 {/each}
@@ -30,7 +30,7 @@
     <div class="col-2">
         {#if payingUser}
         <a class="btn btn-outline-primary" role="button"
-            href="/admin/applications/new/edit">{utils.getLabel('add',labels,$language)}</a>
+            href="/applications/new/edit">{utils.getLabel('add',labels,$language)}</a>
         {/if}
     </div>
     <div class="col-10">
@@ -93,7 +93,7 @@
         } else {
             let headers = new Headers();
             let url = utils.getBackendUrl(location) + "/api/core/application";
-            url = url + '?offset=' + actualOffset + '&limit=' + limit
+            url = url + '?offset=' + actualOffset + '&limit=' + limit+'&organization='+$profile.organization
 
             //if (loginFilter.length > 0) {
             //    url = url + '&search=id:' + loginFilter

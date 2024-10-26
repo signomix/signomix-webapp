@@ -6,12 +6,12 @@ export const load = async ({ params, url }) => {
 
   let usertoken
   token.subscribe((value) => usertoken = value)
-  let userprofile
-  profile.subscribe((value) => userprofile = value)
 
   const getSelectedConfig = async (serviceUrl) => {
-    let config = newApp
-    if (params.slug.toLowerCase() != 'new') {
+    let config = null
+    if (dev) {
+      config = newApp
+    } else {
       try {
         let endpoint = serviceUrl + "/api/core/application/" + params.slug 
         let headers = new Headers();
@@ -38,8 +38,6 @@ export const load = async ({ params, url }) => {
   }
 
   const newApp = {
-    organization: userprofile.organization,
-    config:{}
   }
 
   return await getSelectedConfig(utils.getBackendUrl(url))

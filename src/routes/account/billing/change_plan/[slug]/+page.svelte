@@ -181,6 +181,9 @@
             console.log('redirect to login');
             goto('/login');
         }
+        if (!$platformInfo.paidVersionAvailable){
+            goto('/');
+        }  
     });
 
     function onChange(event) {

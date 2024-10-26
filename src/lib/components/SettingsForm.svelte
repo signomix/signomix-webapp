@@ -5,15 +5,16 @@
         <div class="col-md-1 col-form-label">
             <label for="input-uid" class="form-label">{utils.getLabel('login',labels,$language)}</label>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-4">
             <input disabled={!isEditable('uid')} type="text" class="form-control" id="input-uid" bind:value={userLogin}
                 readonly={readonly||!isEditable('uid')}>
         </div>
         <div class="col-md-1 col-form-label">
             <label for="input-account" class="form-label">{utils.getLabel('account',labels,$language)}</label>
         </div>
-        <div class="col-md-5">
-            {#if isEditable('type')}
+        <div class="col-md-4">
+            <!-- {#if isEditable('type')} -->
+             {#if !readonly && isEditable('type')}
             <select class="form-select" id="input-account" value="{config.type}" readonly={readonly}>
                 {#each getTypesAllowed() as type}
                 <option value={type.type}>{utils.getLabel(type.name,labels,$language)}</option>
@@ -28,6 +29,10 @@
                 value={sgxhelper.getAccountTypeName(config.type,$language).toUpperCase()}
                 readonly={readonly}>
             -->
+        </div>
+        <div class="col-md-2">
+                <a href="/account/billing"
+                    class="btn btn-outline-primary form-control">{utils.getLabel('upgrade',labels,$language)}</a>
         </div>
     </div>
     <div class="row">
@@ -142,7 +147,7 @@
         </div>
     </div>
 
-<!--     <hr>
+    <!--     <hr>
 
     <div class="row">
         <div class="col">
@@ -247,8 +252,8 @@
         </div>
     </div>
 
- -->    
- <hr>
+ -->
+    <hr>
 
     <div class="row">
         {#if isEditable('password') && config.uid != $profile.uid}
@@ -261,6 +266,12 @@
             </div>
         </div>
         {:else if config.uid == $profile.uid}
+        <div class="col">
+            <div class="col-form-label  text-center">
+                <a href="/account/billing"
+                    class="btn btn-outline-primary mt-1">{utils.getLabel('upgrade',labels,$language)}</a>
+            </div>
+        </div>
         <div class="col">
             <div class="col-form-label  text-center">
                 <a href="{setPassLocation}"
@@ -297,6 +308,7 @@
     import { dev } from '$app/environment';
     import { goto } from '$app/navigation';
     import Dialog from "$lib/components/Dialog.svelte";
+    import { platformInfo } from '$lib/stores.js';
 
     export let config
     export let callback
@@ -742,7 +754,11 @@
         'subscriber': {
             'pl': 'Subskrybent',
             'en': 'Subscriber'
-        }
+        },
+        'upgrade': {
+            'pl': 'Zmień plan',
+            'en': 'Upgrade'
+        },
 
 
     }

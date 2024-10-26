@@ -12,11 +12,12 @@
     {#if !(targetPlan === undefined || targetPlan === null) && pricing !== undefined}
     <div class="row">
         <div class="col-md-12 text-center my-2">
-            {#if yearly}
+<!--             {#if yearly}
             <h4 class="card-text">{pricing[targetPlan][$language].yearly}</h4>
             {:else}
             <h4 class="card-text">{pricing[targetPlan][$language].monthly}</h4>
-            {/if}
+            {/if} -->
+            <h4 class="card-text">{getPrice(targetPlan,$language,yearly)}</h4>
         </div>
     </div>
     {/if}
@@ -77,6 +78,21 @@
     export let targetPlan;
     export let pricing;
     export let yearly
+    
+    function getPrice(type, language, yearly) {
+        let sType='t'+type;
+        // only PLN is supported for now
+        let result
+        if (yearly) {
+            result = pricing.yearlyPLN[sType];
+        } else {
+            result = pricing.monthlyPLN[sType];
+        }
+        if(result == undefined){
+            return ' ';
+        }
+        return result + ' zł/'+utils.getLabel('per_'+(yearly?'year':'month'),labels,language);
+    }
 
     /** Returns the name of the user type.
      * Similar to the function in src/lib/utils.js but with limited names available.
@@ -152,6 +168,14 @@
     }
 
     let labels = {
+        per_month:{
+            en: 'month',
+            pl: 'm-c'
+        },
+        per_year:{
+            en: 'year',
+            pl: 'rok'
+        },
         yourPlan: {
             en: "Your current plan",
             pl: "Twój aktualny plan"

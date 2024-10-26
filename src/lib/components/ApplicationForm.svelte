@@ -50,7 +50,7 @@
                 readonly={readonly} />
         </div>
     </div>
-    {#if !readonly}
+    {#if !readonly && utils.isPayingUser($profile.type)}
     <div class="row">
         <div class="col-form-label">
             <a href="/devices" class="btn btn-outline-secondary mt-1"
