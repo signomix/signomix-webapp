@@ -11,21 +11,31 @@
     export let filter
 
     let errorMessage = '';
-    const apiUrl = utils.getBackendUrl(location) + '/api/provider/v2/device/'
+    //const apiUrl = utils.getBackendUrl(location) + '/api/provider/v2/device/'
+    let apiUrl = utils.getBackendUrl(location) + '/api/reports/single'
+    let config2 = config
+    config2.query ='report DqlReport eui '+config2.dev_id+' channel '+config2.channel+' limit 1'
 
-    let promise = sgxdata.getData(dev, apiUrl, config, filter, $token);
+    //let promise = sgxdata.getData(dev, apiUrl, config, filter, $token);
+    let promise = sgxdata.getReportData(dev, apiUrl, config2, filter, $token, transformData);
     let front = true;
 
     afterUpdate(() => {
-        promise = sgxdata.getData(dev, apiUrl, config, filter, $token);
+        //promise = sgxdata.getData(dev, apiUrl, config, filter, $token);
+        promise = sgxdata.getReportData(dev, apiUrl, config2, filter, $token, transformData);
     });
+
+    async function transformData(config, rawData) {
+        let jsonData = await rawData;
+        return jsonData
+    }
 
     function switchView() {
         front = !front;
     }
 
-    function getColor(data) {
-        let level = sgxhelper.getAlertLevel(config.range, utils.recalculate(data.value,config.rounding), data.timestamp);
+    function getColor(value, timestamp) {
+        let level = sgxhelper.getAlertLevel(config.range, utils.recalculate(value, config.rounding), timestamp);
         if (config.config != undefined && config.config != null && config.config != '') {
             try {
                 let cfg = JSON.parse(config.config)
@@ -51,7 +61,7 @@
         }
     }
     function getIconName(data) {
-        let level = sgxhelper.getAlertLevel(config.range, utils.recalculate(data.value,config.rounding), data.timestamp);
+        let level = sgxhelper.getAlertLevel(config.range, utils.recalculate(data.datasets[0].data[0].values[0], config.rounding), data.datasets[0].data[0].timestamp);
         let icons = ['bi-emoji-smile-fill', 'bi-emoji-neutral-fill', 'bi-emoji-frown-fill', 'bi-emoji-expressionless-fill']
         if(config.icon!=undefined && config.icon!=null && config.icon!=''){
             let optIcons = config.icon.split(':')
@@ -90,9 +100,9 @@
             <div class="spinner-border spinner-border-sm" role="status"></div>
             {:then data}
             {#if front}
-            <i class="bi {getIconName(data[0][0])} h3 {getColor(data[0][0])}"></i>
+            <i class="bi {getIconName(data)} h3 {getColor(data.datasets[0].data[0].values[0], data.datasets[0].data[0].timestamp)}"></i>
             {:else}
-            {new Date(data[0][0].timestamp).toLocaleString()}<br />
+            {new Date(data.datasets[0].data[0].timestamp).toLocaleString()}<br />
             {config.dev_id}
             {/if}
             {:catch error}

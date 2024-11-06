@@ -11,8 +11,13 @@
     export let filter
     export let application
 
+    let apiUrl
+
     let errorMessage = '';
-    const apiUrl = utils.getBackendUrl(location) + '/api/provider/v2/device/'
+    //const apiUrl = utils.getBackendUrl(location) + '/api/provider/v2/device/'
+    apiUrl = utils.getBackendUrl(location) + '/api/reports/single'
+    let config2 = config
+    config2.query ='report DqlReport eui '+config2.dev_id+' channel '+config2.channel+' limit 1'
 
     // check access to application config
     if(application!=undefined && application!=null){
@@ -22,12 +27,19 @@
     }
     
 
-    let promise = sgxdata.getData(dev, apiUrl, config, filter, $token);
+    //let promise = sgxdata.getData(dev, apiUrl, config, filter, $token);
+    let promise = sgxdata.getReportData(dev, apiUrl, config2, filter, $token, transformData);
     let front = true;
 
     afterUpdate(() => {
-        promise = sgxdata.getData(dev, apiUrl, config, filter, $token);
+        //promise = sgxdata.getData(dev, apiUrl, config, filter, $token);
+        promise = sgxdata.getReportData(dev, apiUrl, config2, filter, $token, transformData);
     });
+
+    async function transformData(config, rawData) {
+        let jsonData = await rawData;
+        return jsonData
+    }
     function recalculate(value) {
         try{
             return Number.parseFloat(value).toFixed(config.rounding);
@@ -39,9 +51,9 @@
         front = !front;
     }
 
-    function getColor(data) {
+    function getColor(value, timestamp) {
         
-        let level = sgxhelper.getAlertLevel(config.range, recalculate(data.value), data.timestamp);
+        let level = sgxhelper.getAlertLevel(config.range, recalculate(value), timestamp);
         if (config.config != undefined && config.config != null && config.config != '') {
             try {
                 let cfg = JSON.parse(config.config)
@@ -111,11 +123,11 @@
             {:then data}
             {#if front}
             <span class="h4">
-                <i class="bi {getIconName()} me-2 {getColor(data[data.length-1][0])}"></i>
-                {recalculate(data[data.length-1][0].value)}{@html config.unitName!=undefined?config.unitName:''}
+                <i class="bi {getIconName()} me-2 {getColor(data.datasets[0].data[0].values[0], data.datasets[0].data[0].timestamp)}"></i>
+                {recalculate(data.datasets[0].data[0].values[0])}{@html config.unitName!=undefined?config.unitName:''}
             </span>
             {:else}
-            {new Date(data[data.length-1][0].timestamp).toLocaleString()}<br />
+            {new Date(data.datasets[0].data[0].timestamp).toLocaleString()}<br />
             {config.dev_id}
             {/if}
             {:catch error}

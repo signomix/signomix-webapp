@@ -56,6 +56,7 @@
                     <label for="data_source">{utils.getLabel('data_source',labels,$language)}</label>
                     <div id="data_source">
                     {#if singleDeviceMode==1}
+                    {#if widgets.isVisible(selectedType, 'dev_id')}
                     <input class="form-check-input" type="radio" name="gr" id="groupRadio1" value="1"
                         on:click={setSingleDevice} checked>
                     {:else}
@@ -65,6 +66,8 @@
                     <label class="form-check-label" for="groupRadio1">
                         {utils.getLabel('single_device',labels,$language)}
                     </label>
+                    {/if}
+                    {#if widgets.isVisible(selectedType, 'group')}
                     {#if singleDeviceMode==0}
                     <input class="form-check-input ms-2" type="radio" name="gr" id="groupRadio2" value="0"
                         on:click={setGroup} checked>
@@ -75,6 +78,8 @@
                     <label class="form-check-label" for="gropuRadio2">
                         {utils.getLabel('group_of_devices',labels,$language)}
                     </label>
+                    {/if}
+                    {#if widgets.isVisible(selectedType, 'reportSelector')}
                     {#if singleDeviceMode==2}
                     <input class="form-check-input ms-2" type="radio" name="gr" id="groupRadio3" value="2"
                         on:click={setReport} checked>
@@ -85,6 +90,7 @@
                     <label class="form-check-label" for="gropuRadio3">
                         {utils.getLabel('report',labels,$language)}
                     </label>
+                    {/if}
                     </div>
                 </div>
                 {/if}
@@ -355,9 +361,12 @@
     import { onMount } from 'svelte';
     import DeviceSelector from '$lib/components/DeviceSelector.svelte';
     import GroupSelector from '$lib/components/GroupSelector.svelte';
+
     export let index
     export let config
     export let callback
+
+    let lastIndex=-1
 
     let selectedTab = 'basic'
     // singleDeviceMode: 0 - group, 1 - single device, 2 - report
@@ -375,6 +384,35 @@
     }
 
     $: selectedType = config[index].type
+    $: if(lastIndex!=index){
+        resetSettings()
+        lastIndex=index
+    }
+
+    function resetSettings(){
+        selectedTab = 'basic'
+        console.log('resetSettings  index', index)
+        // reportType
+        try{
+            reportType=config[index].query.toLowerCase().includes('class') || config[index].query.toLowerCase().includes('report')
+        }catch(e){
+            reportType=false
+        }
+        // singleDeviceMode: 0 - group, 1 - single device, 2 - report
+        if(config[index].query!=undefined && config[index].query!=null && reportType){
+            singleDeviceMode = 2
+        }else if (config[index].dev_id != undefined && config[index].dev_id != null && config[index].dev_id != '') {
+            singleDeviceMode = 1
+        } else if (config[index].group != undefined && config[index].group != null && config[index].group != '') {
+            singleDeviceMode = 0
+        } else {
+            if (config[index].type == 'groupchart' || config[index].type == 'multimap' || config[index].type == 'plan' || config[index].type == 'report') {
+                singleDeviceMode = 0
+            } else {
+                singleDeviceMode = 1
+            }
+        }
+    }
 
 
     /* $: if (config[index].type == 'groupchart' || config[index].type == 'multimap' || config[index].type == 'plan' || config[index].type == 'report') {
@@ -458,6 +496,7 @@
 
 
     onMount(() => {
+        /*
         config[index].type = config[index].type || 'text'
         try{
             reportType=config[index].query.toLowerCase().includes('class') || config[index].query.toLowerCase().includes('report')
@@ -476,7 +515,7 @@
             } else {
                 singleDeviceMode = 1
             }
-        }
+        } */
         //console.log('singleDeviceMode', singleDeviceMode)
         //console.log('config', config[index])
     });
