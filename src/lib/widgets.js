@@ -54,7 +54,7 @@ export const widgets = {
         date: ['dev_id','channel'],
         devinfo: ['dev_id',],
         image: ['imageUrl'],
-        led: ['dev_id','channel', 'range', 'icon'],
+        led: ['dev_id','channel', 'range', 'icon', 'project'],
         link: ['dashboardID'],
         map: ['dev_id','channel', 'query','rounding', 'reportSelector'],
         multimap: ['group','channel', 'range', 'query','rounding', 'reportSelector'],
@@ -65,7 +65,7 @@ export const widgets = {
         text: [],
         stopwatch: ['dev_id','channel'],
         time: ['dev_id','channel'],
-        symbol: ['dev_id','channel','range','unit', 'rounding', 'icon'],
+        symbol: ['dev_id','channel','range','unit', 'rounding', 'icon', 'project'],
     },
     chartFields: {
         line: ['timeUnit','cubicInterpolation'],

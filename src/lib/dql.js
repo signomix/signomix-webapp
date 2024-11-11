@@ -37,7 +37,7 @@ export const dql = {
         var dql = this.sweepSpaces(text)
         if (dql == '' || dql == '1' || dql == 'last') return true
         var params = dql.split(' ')
-        for (i = 0; i < params.length;) {
+        for (let i = 0; i < params.length;) {
             switch (params[i]) {
                 case "last":
                 case "average":
@@ -69,5 +69,44 @@ export const dql = {
             }
         }
         return true
+    },
+    parse: function (query) {
+        //this is work in progress
+        let result = {}
+        try {
+            let q = this.sweepSpaces(query)
+            let params = q.split(' ')
+            for (let i = 0; i < params.length;) {
+                switch (params[i]) {
+                    case "last":
+                    case "average":
+                    case "minimum":
+                    case "maximum":
+                        result[params[i]] = parseInt(params[i + 1])
+                        i = i + 2;
+                        break;
+                    case "project":
+                    case "state":
+                    case "status":
+                    case "channel":
+                    case "group":
+                    case "new":
+                    case "from":
+                    case "to":
+                        result[params[i]] = params[i + 1]
+                        i = i + 2;
+                        break;
+                    case "timeseries":
+                    case "csv.timeseries":
+                    case "virtual":
+                        result[params[i]] = true
+                        i = i + 1;
+                        break;
+                }
+            }
+        } catch (e) {
+            console.log(e)
+        }
+        return result
     }
 }

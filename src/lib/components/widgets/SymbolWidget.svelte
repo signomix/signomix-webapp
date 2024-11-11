@@ -3,6 +3,7 @@
     import { utils } from '$lib/utils.js';
     import { sgxdata } from '$lib/sgxdata.js';
     import { sgxhelper } from '$lib/sgxhelper.js';
+    import { dql } from '$lib/dql.js';
     import { dev } from '$app/environment';
     import { onMount } from 'svelte';
     import { afterUpdate } from 'svelte';
@@ -16,9 +17,17 @@
     let errorMessage = '';
     //const apiUrl = utils.getBackendUrl(location) + '/api/provider/v2/device/'
     apiUrl = utils.getBackendUrl(location) + '/api/reports/single'
+    let q={}
+    try{
+        q=dql.parse(config.query)
+    }catch(e){
+        console.log("error parsing query: ", e)
+    }
     let config2 = config
-    config2.query ='report DqlReport eui '+config2.dev_id+' channel '+config2.channel+' limit 1'
-
+    config2.query ='report DqlReport eui '+config2.dev_id+' channel '+config2.channel+' last 1'
+    if(q!=undefined && q!=null && q.project!=undefined && q.project!=null && q.project!=''){
+        config2.query = config2.query + ' project '+ q.project
+    }
     // check access to application config
     if(application!=undefined && application!=null){
         console.log("application config: ", application.config);

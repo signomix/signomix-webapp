@@ -16,7 +16,8 @@
                         on:click={selectExtended}>{utils.getLabel('details',labels,$language)}</a>
                     {/if}
                     {#if activeTabs.chart}
-                    <a class="nav-link {selectedTab==='chart'?'active':''}" type="button" on:click={selectChart}>{utils.getLabel('chart_opt',labels,$language)}</a>
+                    <a class="nav-link {selectedTab==='chart'?'active':''}" type="button"
+                        on:click={selectChart}>{utils.getLabel('chart_opt',labels,$language)}</a>
                     {/if}
                     {#if activeTabs.config}
                     <a class="nav-link {selectedTab==='config'?'active':''}" type="button"
@@ -51,46 +52,47 @@
                     <!-- <label class="form-label">{utils.getLabel(getSelectedTypeDescCode(selectedType),labels,$language)}</label> -->
                 </div>
 
-                {#if widgets.isVisible(selectedType, 'dev_id') || widgets.isVisible(selectedType, 'group') || widgets.isVisible(selectedType, 'reportSelector')}
+                {#if widgets.isVisible(selectedType, 'dev_id') || widgets.isVisible(selectedType, 'group') ||
+                widgets.isVisible(selectedType, 'reportSelector')}
                 <div class="mb-2">
                     <label for="data_source">{utils.getLabel('data_source',labels,$language)}</label>
                     <div id="data_source">
-                    {#if singleDeviceMode==1}
-                    {#if widgets.isVisible(selectedType, 'dev_id')}
-                    <input class="form-check-input" type="radio" name="gr" id="groupRadio1" value="1"
-                        on:click={setSingleDevice} checked>
-                    {:else}
-                    <input class="form-check-input" type="radio" name="gr" id="groupRadio1" value="1"
-                        on:click={setSingleDevice}>
-                    {/if}
-                    <label class="form-check-label" for="groupRadio1">
-                        {utils.getLabel('single_device',labels,$language)}
-                    </label>
-                    {/if}
-                    {#if widgets.isVisible(selectedType, 'group')}
-                    {#if singleDeviceMode==0}
-                    <input class="form-check-input ms-2" type="radio" name="gr" id="groupRadio2" value="0"
-                        on:click={setGroup} checked>
-                    {:else}
-                    <input class="form-check-input ms-2" type="radio" name="gr" id="groupRadio2" value="0"
-                        on:click={setGroup}>
-                    {/if}
-                    <label class="form-check-label" for="gropuRadio2">
-                        {utils.getLabel('group_of_devices',labels,$language)}
-                    </label>
-                    {/if}
-                    {#if widgets.isVisible(selectedType, 'reportSelector')}
-                    {#if singleDeviceMode==2}
-                    <input class="form-check-input ms-2" type="radio" name="gr" id="groupRadio3" value="2"
-                        on:click={setReport} checked>
-                    {:else}
-                    <input class="form-check-input ms-2" type="radio" name="gr" id="groupRadio3" value="2"
-                        on:click={setReport}>
-                    {/if}
-                    <label class="form-check-label" for="gropuRadio3">
-                        {utils.getLabel('report',labels,$language)}
-                    </label>
-                    {/if}
+                        {#if singleDeviceMode==1}
+                        {#if widgets.isVisible(selectedType, 'dev_id')}
+                        <input class="form-check-input" type="radio" name="gr" id="groupRadio1" value="1"
+                            on:click={setSingleDevice} checked>
+                        {:else}
+                        <input class="form-check-input" type="radio" name="gr" id="groupRadio1" value="1"
+                            on:click={setSingleDevice}>
+                        {/if}
+                        <label class="form-check-label" for="groupRadio1">
+                            {utils.getLabel('single_device',labels,$language)}
+                        </label>
+                        {/if}
+                        {#if widgets.isVisible(selectedType, 'group')}
+                        {#if singleDeviceMode==0}
+                        <input class="form-check-input ms-2" type="radio" name="gr" id="groupRadio2" value="0"
+                            on:click={setGroup} checked>
+                        {:else}
+                        <input class="form-check-input ms-2" type="radio" name="gr" id="groupRadio2" value="0"
+                            on:click={setGroup}>
+                        {/if}
+                        <label class="form-check-label" for="gropuRadio2">
+                            {utils.getLabel('group_of_devices',labels,$language)}
+                        </label>
+                        {/if}
+                        {#if widgets.isVisible(selectedType, 'reportSelector')}
+                        {#if singleDeviceMode==2}
+                        <input class="form-check-input ms-2" type="radio" name="gr" id="groupRadio3" value="2"
+                            on:click={setReport} checked>
+                        {:else}
+                        <input class="form-check-input ms-2" type="radio" name="gr" id="groupRadio3" value="2"
+                            on:click={setReport}>
+                        {/if}
+                        <label class="form-check-label" for="gropuRadio3">
+                            {utils.getLabel('report',labels,$language)}
+                        </label>
+                        {/if}
                     </div>
                 </div>
                 {/if}
@@ -120,7 +122,8 @@
                 {/if}
                 {#if widgets.isVisible(selectedType, 'dashboardID')}
                 <div class="mb-2">
-                    <label for="dashboardID" class="form-channels">{utils.getLabel('dashboard_eui',labels,$language)}</label>
+                    <label for="dashboardID"
+                        class="form-channels">{utils.getLabel('dashboard_eui',labels,$language)}</label>
                     <input type="text" class="form-control form-control-sm" id="dashboardID"
                         bind:value={config[index].dashboardID}>
                 </div>
@@ -139,17 +142,24 @@
                 <!-- {#if widgets.isVisible(selectedType, 'channel_translated') && singleDeviceMode!=2} -->
                 {#if widgets.isVisible(selectedType, 'channel_translated')}
                 <div class="mb-2">
-                    <label for="channel_translated" class="form-channels">{utils.getLabel('names_on_widget',labels,$language)}</label>
+                    <label for="channel_translated"
+                        class="form-channels">{utils.getLabel('names_on_widget',labels,$language)}</label>
                     <input type="text" class="form-control form-control-sm" id="channel_translated"
                         bind:value={config[index].channel_translated}>
+                </div>
+                {/if}
+                {#if widgets.isVisible(selectedType, 'project')}
+                <div class="mb-2">
+                    <label for="project" class="form-channels">{utils.getLabel('project_name',labels,$language)}</label>
+                    <input type="text" class="form-control form-control-sm" id="project" bind:value={projectName}>
                 </div>
                 {/if}
                 {#if widgets.isVisible(selectedType, 'query')}
                 {#if singleDeviceMode==2}
                 <div class="mb-2">
                     <label for="query" class="form-label">{utils.getLabel('data_range',labels,$language)}</label>
-                    <textarea class="form-control form-control-sm" id="query" bind:value={config[index].query}
-                    rows="3" cols="50"></textarea>
+                    <textarea class="form-control form-control-sm" id="query" bind:value={config[index].query} rows="3"
+                        cols="50"></textarea>
                 </div>
                 {:else}
                 <div class="mb-2">
@@ -197,8 +207,10 @@
                 {/if}
                 {#if widgets.isVisible(selectedType, 'commandText') && config[index].commandType!='json'}
                 <div class="mb-2">
-                    <label for="commandText" class="form-channels">{utils.getLabel('commandText',labels,$language)}</label>
-                    <input type="text" class="form-control form-control-sm" id="commandText" bind:value={config[index].commandText}>
+                    <label for="commandText"
+                        class="form-channels">{utils.getLabel('commandText',labels,$language)}</label>
+                    <input type="text" class="form-control form-control-sm" id="commandText"
+                        bind:value={config[index].commandText}>
                     <small class="text-xs">Text to send as command</small>
                 </div>
                 {/if}
@@ -248,12 +260,14 @@
             -->
             <div class="p-1 mt-2">
                 <div class="form-check form-switch form-check-inline">
-                    <label class="form-check-label me-1" for="chart-markers">{utils.getLabel('markers',labels,$language)}</label>
+                    <label class="form-check-label me-1"
+                        for="chart-markers">{utils.getLabel('markers',labels,$language)}</label>
                     <input type="checkbox" class="form-check-input" id="chart-markers"
                         bind:checked={config[index].chartMarkers}>
                 </div>
                 <div class="form-check form-switch form-check-inline">
-                    <label class="form-check-label me-1" for="chart-area">{utils.getLabel('area',labels,$language)}</label>
+                    <label class="form-check-label me-1"
+                        for="chart-area">{utils.getLabel('area',labels,$language)}</label>
                     <input type="checkbox" class="form-check-input" id="chart-area"
                         bind:checked={config[index].chartArea}>
                 </div>
@@ -280,16 +294,22 @@
                 <select id="format" class="form-select form-select-sm" bind:value={config[index].timeUnit}>
                     <option value="" selected={config[index].timeUnit=='' || config[index].timeUnit==undefined}>
                         {utils.getLabel('auto_setting',labels,$language)}</option>
-                    <option value="quarter" selected={config[index].timeUnit=='quarter' }>{utils.getLabel('quarters',labels,$language)}</option>
-                    <option value="week" selected={config[index].timeUnit=='week' }>{utils.getLabel('weeks',labels,$language)}</option>
-                    <option value="day" selected={config[index].timeUnit=='day' }>{utils.getLabel('days',labels,$language)}</option>
-                    <option value="hour" selected={config[index].timeUnit=='hour' }>{utils.getLabel('hours',labels,$language)}</option>
-                    <option value="minute" selected={config[index].timeUnit=='minute' }>{utils.getLabel('minutes',labels,$language)}</option>
+                    <option value="quarter" selected={config[index].timeUnit=='quarter' }>
+                        {utils.getLabel('quarters',labels,$language)}</option>
+                    <option value="week" selected={config[index].timeUnit=='week' }>
+                        {utils.getLabel('weeks',labels,$language)}</option>
+                    <option value="day" selected={config[index].timeUnit=='day' }>
+                        {utils.getLabel('days',labels,$language)}</option>
+                    <option value="hour" selected={config[index].timeUnit=='hour' }>
+                        {utils.getLabel('hours',labels,$language)}</option>
+                    <option value="minute" selected={config[index].timeUnit=='minute' }>
+                        {utils.getLabel('minutes',labels,$language)}</option>
                 </select>
             </div>
             <div class="p-1 mt-2">
                 <div class="form-check form-switch form-check-inline">
-                    <label class="form-check-label me-1" for="chart-axis-options">{utils.getLabel('axis_options',labels,$language)}</label>
+                    <label class="form-check-label me-1"
+                        for="chart-axis-options">{utils.getLabel('axis_options',labels,$language)}</label>
                     <input type="checkbox" class="form-check-input" id="chart-axis-options"
                         bind:checked={config[index].axisOptions}>
                 </div>
@@ -297,7 +317,8 @@
             {#if config[index].axisOptions}
             <div class="p-1 mt-2">
                 <div class="form-check form-switch form-check-inline">
-                    <label class="form-check-label me-1" for="chart-y-axis-autoscale">{utils.getLabel('y_axis_autoscale',labels,$language)}</label>
+                    <label class="form-check-label me-1"
+                        for="chart-y-axis-autoscale">{utils.getLabel('y_axis_autoscale',labels,$language)}</label>
                     <input type="checkbox" class="form-check-input" id="chart-y-axis-autoscale"
                         bind:checked={config[index].yAxisAutoScale}>
                 </div>
@@ -331,7 +352,8 @@
             </div>
             {/if}
             <div class="mt-2">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{utils.getLabel('cancel',labels,$language)}</button>
+                <button type="button" class="btn btn-secondary"
+                    data-bs-dismiss="modal">{utils.getLabel('cancel',labels,$language)}</button>
                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal" on:click={handleClick}>
                     {utils.getLabel('save',labels,$language)}
                 </button>
@@ -342,7 +364,8 @@
             Brak konfiguracji
         </div>
         <div class="mt-2">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{utils.getLabel('cancel',labels,$language)}</button>
+            <button type="button" class="btn btn-secondary"
+                data-bs-dismiss="modal">{utils.getLabel('cancel',labels,$language)}</button>
         </div>
         {/if}
     </div>
@@ -355,6 +378,7 @@
 <script>
     import widgets from '$lib/widgets.js';
     import sgxdata from '$lib/sgxdata.js';
+    import { dql } from '$lib/dql.js';
     import { utils } from '$lib/utils.js';
     import { profile, token, language, isAuthenticated } from '$lib/usersession.js';
     import { defaultOrganizationId } from '$lib/stores.js';
@@ -366,7 +390,8 @@
     export let config
     export let callback
 
-    let lastIndex=-1
+    let lastIndex = -1
+    let projectName = ''
 
     let selectedTab = 'basic'
     // singleDeviceMode: 0 - group, 1 - single device, 2 - report
@@ -384,24 +409,35 @@
     }
 
     $: selectedType = config[index].type
-    $: if(lastIndex!=index){
+    $: if (lastIndex != index) {
         resetSettings()
-        lastIndex=index
+        lastIndex = index
     }
 
-    function resetSettings(){
+    function resetSettings() {
         selectedTab = 'basic'
         console.log('resetSettings  index', index)
+        projectName = ''
+        let q = {}
+        try {
+            q = dql.parse(config[index].query)
+            console.log('q', q)
+        } catch (e) {
+            console.log("error parsing query: ", e)
+        }
+        if (q.project != undefined && q.project != null && q.project != '') {
+            projectName = q.project
+        }
         // reportType
-        try{
-            reportType=config[index].query.toLowerCase().includes('class') || config[index].query.toLowerCase().includes('report')
-        }catch(e){
-            reportType=false
+        try {
+            reportType = config[index].query.toLowerCase().includes('class') || config[index].query.toLowerCase().includes('report')
+        } catch (e) {
+            reportType = false
         }
         // singleDeviceMode: 0 - group, 1 - single device, 2 - report
-        if(config[index].query!=undefined && config[index].query!=null && reportType){
+        if (config[index].query != undefined && config[index].query != null && reportType) {
             singleDeviceMode = 2
-        }else if (config[index].dev_id != undefined && config[index].dev_id != null && config[index].dev_id != '') {
+        } else if (config[index].dev_id != undefined && config[index].dev_id != null && config[index].dev_id != '') {
             singleDeviceMode = 1
         } else if (config[index].group != undefined && config[index].group != null && config[index].group != '') {
             singleDeviceMode = 0
@@ -532,6 +568,11 @@
 
     function handleClick(event) {
         //console.log('clicked widget index', index, 'config', config[index])
+        if (projectName.trim() != '') {
+            config[index].query = 'last 1 project ' + projectName
+        } else {
+            config[index].query = 'last 1'
+        }
         callback(index, config[index])
     }
     function selectBasic() {
@@ -565,7 +606,7 @@
 
     }
 
-    function getSelectedTypeDescCode(type){
+    function getSelectedTypeDescCode(type) {
         switch (type) {
             case 'button':
                 return 'button_desc'
@@ -776,6 +817,10 @@
         'y_axis_autoscale': {
             'pl': 'Automatyczne skalowanie osi Y',
             'en': 'Y axis autoscale',
+        },
+        'project_name': {
+            'pl': 'Nazwa projektu',
+            'en': 'Project name',
         },
     }
 </script>
