@@ -178,6 +178,14 @@
                             {/if}
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" class:active={$page.url.pathname==='/news' } href="/news"
+                            on:click={collapseOther}>
+                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                <i class="bi bi-envelope me-2"></i>{utils.getLabel('news',labels,$language)}
+                            </span>
+                        </a>
+                    </li>
                     <!-- ACCOUNT -->
                     <li class="nav-item">
                         <a class="nav-link" class:active={false} on:click={toggleAccount}>
@@ -631,6 +639,10 @@
         'notifications': {
             'pl': "Powiadomienia",
             'en': "Notifications"
+        },
+        'news': {
+            'pl': "Wiadomości",
+            'en': "News"
         },
         'settings': {
             'pl': "Ustawienia",
