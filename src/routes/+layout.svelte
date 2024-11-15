@@ -143,6 +143,27 @@
                                     class="bi bi-box me-2"></i><span>{utils.getLabel('applications',labels,$language)}</span>
                         </a>
                     </li>
+                    <li class="nav-item ms-3">
+                        <a class="nav-link" class:active={$page.url.pathname==='/notifications' } href="/notifications">
+                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                <i
+                                    class="bi bi-megaphone me-2"></i><span>{utils.getLabel('notifications',labels,$language)}</span>
+                                {#if alertCounter.value>0}
+                                <span class="badge rounded-pill text-bg-danger ms-2">{alertCounter.value}</span>
+                                {/if}
+                        </a>
+                    </li>
+                    <!--                     <li class="nav-item">
+                        <a class="nav-link" class:active={$page.url.pathname==='/notifications' } href="/notifications"
+                            on:click={collapseOther}>
+                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                <i class="bi bi-megaphone me-2"></i>{utils.getLabel('notifications',labels,$language)}
+                            </span>
+                            {#if alertCounter.value>0}
+                            <span class="badge rounded-pill text-bg-danger ms-2">{alertCounter.value}</span>
+                            {/if}
+                        </a>
+                    </li> -->
                     {/if}
                     <!-- Analytics -->
                     <li class="nav-item">
@@ -166,18 +187,6 @@
                         </a>
                     </li>
                     {/if}
-                    {#if isCloud() || !utils.isUserRole($profile, 'limited', false)}
-                    <li class="nav-item">
-                        <a class="nav-link" class:active={$page.url.pathname==='/notifications' } href="/notifications"
-                            on:click={collapseOther}>
-                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-megaphone me-2"></i>{utils.getLabel('notifications',labels,$language)}
-                            </span>
-                            {#if alertCounter.value>0}
-                            <span class="badge rounded-pill text-bg-danger ms-2">{alertCounter.value}</span>
-                            {/if}
-                        </a>
-                    </li>
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/news' } href="/news"
                             on:click={collapseOther}>
@@ -186,6 +195,7 @@
                             </span>
                         </a>
                     </li>
+                    {#if isCloud() || !utils.isUserRole($profile, 'limited', false)}
                     <!-- ACCOUNT -->
                     <li class="nav-item">
                         <a class="nav-link" class:active={false} on:click={toggleAccount}>
@@ -637,8 +647,8 @@
             'en': "Dashboards"
         },
         'notifications': {
-            'pl': "Powiadomienia",
-            'en': "Notifications"
+            'pl': "Komunikaty",
+            'en': "Messages"
         },
         'news': {
             'pl': "Wiadomości",

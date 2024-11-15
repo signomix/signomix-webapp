@@ -8,28 +8,24 @@
     <h5>{utils.getLabel('news',labels,$language)}</h5>
 </div>
 {#await promise}
-{:then alerts}
+{:then data}
 <div class="row">
     <div class="col-12">
         <div class="table-responsive">
             <table class="table">
                 <thead class="table-light">
                     <tr>
-                        <th scope="col" class="col-1">Typ</th>
-                        <th scope="col" class="col-2">Źródło</th>
-                        <th scope="col" class="col-2">Data</th>
-                        <th scope="col" class="col-6">Wiadomość</th>
-                        <th scope="col" class="col-1"></th>
+                        <th scope="col" class="col-9">Tytuł</th>
+                        <th scope="col" class="col-3">Data</th>
+                        <!-- <th scope="col" class="col-1"></th> -->
                     </tr>
                 </thead>
                 <tbody>
-                    {#each alerts as alert, index}
+                    {#each data.news as post, index}
                     <tr>
-                        <td class="col-1">{alert.type}</td>
-                        <td class="col-2">{alert.deviceEUI}</td>
-                        <td class="col-2">{new Date(alert.createdAt).toLocaleString()}</td>
-                        <td class="col-6">{alert.payload}</td>
-                        <td class="col-1"><a href="#" on:click|preventDefault={remove(alert.id)}><i class="bi bi-trash3 link-dark"></i></a></td>
+                        <td class="col-9"><a href="/news/{post.id}">{post.title}</a></td>
+                        <td class="col-3">{new Date(post.created).toLocaleString()}</td>
+                        <!-- <td class="col-1"><a href="#" on:click|preventDefault={remove(post.id)}><i class="bi bi-trash3 link-dark"></i></a></td> -->
                     </tr>
                     {/each}
                 </tbody>
@@ -48,11 +44,11 @@
                 </li>
                 <li class="page-item">
                     <a class="page-link disabled" on:click={handleDoNothing}>
-                        {offset+1}-{offset+alerts.length}
+                        {offset+1}-{offset+data.news.length}
                     </a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" class:disabled={alerts.length<limit} on:click={handleLoadNext}>
+                    <a class="page-link" class:disabled={data.news.length<limit} on:click={handleLoadNext}>
                         <span aria-hidden="true" class="px-2">&raquo;</span>
                     </a>
                 </li>
@@ -82,31 +78,24 @@
             return news
         }
         if (dev) {
-            for (var i = 0; i < limit; i++) {
-                news.push(
-                    {
-                        "userID": "greg",
-                        "deviceEUI": "00033728193A26DB",
-                        "id": 8402,
-                        "name": null,
-                        "category": "IOT",
-                        "type": "WARNING",
-                        "origin": "greg\t00033728193A26DB",
-                        "payload": "konieczny restart smogometru",
-                        "timePoint": "",
-                        "calculatedTimePoint": 0,
-                        "createdAt": 1688552050220,
-                        "serviceId": "",
-                        "serviceUuid": {
-                            "mostSigBits": 0,
-                            "leastSigBits": 0
-                        },
-                        "rootEventId": -1,
-                        "request": null,
-                        "cyclic": false,
-                        "iamtheroot": true
-                    }
-                )
+            news = {
+                "news": [
+                    { "id": 1, "title": "News 1", "created": "2021-01-01T12:00:00" },
+                    { "id": 2, "title": "News 2", "created": "2021-01-02T12:00:00" },
+                    { "id": 3, "title": "News 3", "created": "2021-01-03T12:00:00" },
+                    { "id": 4, "title": "News 4", "created": "2021-01-04T12:00:00" },
+                    { "id": 5, "title": "News 5", "created": "2021-01-05T12:00:00" },
+                    { "id": 6, "title": "News 6", "created": "2021-01-06T12:00:00" },
+                    { "id": 7, "title": "News 7", "created": "2021-01-07T12:00:00" },
+                    { "id": 8, "title": "News 8", "created": "2021-01-08T12:00:00" },
+                    { "id": 9, "title": "News 9", "created": "2021-01-09T12:00:00" },
+                    { "id": 10, "title": "News 10", "created": "2021-01-10T12:00:00" },
+                    { "id": 11, "title": "News 11", "created": "2021-01-11T12:00:00" },
+                    { "id": 12, "title": "News 12", "created": "2021-01-12T12:00:00" },
+                    { "id": 13, "title": "News 13", "created": "2021-01-13T12:00:00" },
+                    { "id": 14, "title": "News 14", "created": "2021-01-14T12:00:00" }
+            ],
+            size: 14
             }
         } else {
             let headers = new Headers();

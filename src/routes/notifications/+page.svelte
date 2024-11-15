@@ -15,20 +15,20 @@
             <table class="table">
                 <thead class="table-light">
                     <tr>
-                        <th scope="col" class="col-1">Typ</th>
+                        <!-- <th scope="col" class="col-1">Typ</th> -->
                         <th scope="col" class="col-2">Źródło</th>
                         <th scope="col" class="col-2">Data</th>
-                        <th scope="col" class="col-6">Wiadomość</th>
+                        <th scope="col" class="col-7">Wiadomość</th>
                         <th scope="col" class="col-1"></th>
                     </tr>
                 </thead>
                 <tbody>
                     {#each alerts as alert, index}
                     <tr>
-                        <td class="col-1">{alert.type}</td>
-                        <td class="col-2">{alert.deviceEUI}</td>
+                        <!-- <td class="col-1">{alert.type}</td> -->
+                        <td class="col-2"><a href="/devices/{alert.deviceEUI}">{alert.deviceEUI}</a></td>
                         <td class="col-2">{new Date(alert.createdAt).toLocaleString()}</td>
-                        <td class="col-6">{alert.payload}</td>
+                        <td class="col-7">{alert.payload}</td>
                         <td class="col-1"><a href="#" on:click|preventDefault={remove(alert.id)}><i class="bi bi-trash3 link-dark"></i></a></td>
                     </tr>
                     {/each}

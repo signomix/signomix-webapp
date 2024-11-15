@@ -22,7 +22,7 @@
     import ApplicationForm from '$lib/components/ApplicationForm.svelte';
 
     export let data
-    let errorMessage = ''
+    //let errorMessage = ''
 
     onMount(async () => {
         if(!$isAuthenticated){  
