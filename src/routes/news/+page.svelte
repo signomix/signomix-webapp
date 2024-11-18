@@ -23,7 +23,7 @@
                 <tbody>
                     {#each data.news as post, index}
                     <tr>
-                        <td class="col-9"><a href="/news/{post.id}">{post.title}</a></td>
+                        <td class="col-9"><a href="/news/{post.newsId}">{post.title}</a></td>
                         <td class="col-3">{new Date(post.created).toLocaleString()}</td>
                         <!-- <td class="col-1"><a href="#" on:click|preventDefault={remove(post.id)}><i class="bi bi-trash3 link-dark"></i></a></td> -->
                     </tr>
@@ -102,7 +102,13 @@
             let url = utils.getBackendUrl(location) + "/api/ms/news"
             url = url + '?language='+$language+'&offset=' + offset + '&limit=' + limit
             headers.set('Authentication', $token);
-            await fetch(url, { headers: headers })
+            headers.set('Access-Control-Allow-Origin', '*');
+            await fetch(url, { 
+                    mode: 'cors',
+                    method: 'GET',
+                    referrerPolicy: 'origin-when-cross-origin',
+                    headers: headers 
+                })
                 .then((response) => {
                     if (response.status == 200) {
                         news = response.json();
@@ -151,7 +157,7 @@
         }
         const headers = new Headers()
         let method = 'DELETE'
-        let url = utils.getBackendUrl(location) + "/api/ms/news" + id
+        let url = utils.getBackendUrl(location) + "/api/ms/news/" + id
         headers.set('Authentication', $token);
         let response = fetch(
             url,
