@@ -390,6 +390,8 @@
     export let config
     export let callback
 
+    
+
     let lastIndex = -1
     let projectName = ''
 
@@ -413,8 +415,9 @@
         resetSettings()
         lastIndex = index
     }
-
+    
     function resetSettings() {
+        try{
         selectedTab = 'basic'
         console.log('resetSettings  index', index)
         projectName = ''
@@ -430,8 +433,9 @@
         }
         // reportType
         try {
-            reportType = config[index].query.toLowerCase().includes('class') || config[index].query.toLowerCase().includes('report')
+            reportType = config[index].type=='report' || config[index].query.toLowerCase().includes('class') || config[index].query.toLowerCase().includes('report')
         } catch (e) {
+            console.log('error checking report type: ', e)
             reportType = false
         }
         // singleDeviceMode: 0 - group, 1 - single device, 2 - report
@@ -447,6 +451,9 @@
             } else {
                 singleDeviceMode = 1
             }
+        }
+        }catch(e){
+            console.log('error in resetSettings',e)
         }
     }
 
@@ -532,8 +539,8 @@
 
 
     onMount(() => {
-        /*
         config[index].type = config[index].type || 'text'
+        /*
         try{
             reportType=config[index].query.toLowerCase().includes('class') || config[index].query.toLowerCase().includes('report')
         }catch(e){
@@ -553,7 +560,7 @@
             }
         } */
         //console.log('singleDeviceMode', singleDeviceMode)
-        //console.log('config', config[index])
+        console.log('onMount config', config[index])
     });
 
     function setDevice(selectedDevice) {
@@ -568,10 +575,10 @@
 
     function handleClick(event) {
         //console.log('clicked widget index', index, 'config', config[index])
-        if (projectName.trim() != '') {
+        if (config[index].type!='report' && projectName!=undefined && projectName!=null && projectName.trim() != '') {
             config[index].query = 'last 1 project ' + projectName
-        } else {
-            config[index].query = 'last 1'
+        }else{
+            config[index].query = dql.removeKey(config[index].query,'project',true)
         }
         callback(index, config[index])
     }
@@ -821,6 +828,7 @@
         'project_name': {
             'pl': 'Nazwa projektu',
             'en': 'Project name',
-        },
+        }
     }
+
 </script>

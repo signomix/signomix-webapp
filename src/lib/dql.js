@@ -30,6 +30,28 @@ export const dql = {
         }
         return q2
     },
+    removeKey: function (query, key, withParam) {
+        var a = ''
+        var b = ''
+        var q2
+        var idx1 = query.indexOf(key)
+        if (idx1 < 0) {
+            return query
+        } else {
+            a = query.substring(0, idx1)
+            var idx2
+            if (withParam) {
+                idx2 = query.indexOf(' ', idx1 + (key + ' ').length)
+            }else{
+                idx2 = query.indexOf(' ', idx1)
+            }
+            if (idx2 > 0) {
+                b = query.substring(idx2)
+            }
+            q2 = a + b
+        }
+        return q2
+    },
     sweepSpaces: function (t) {
         return t.trim().replace(/ +(?= )/g, '')
     },
@@ -102,6 +124,9 @@ export const dql = {
                         result[params[i]] = true
                         i = i + 1;
                         break;
+                    default:
+                        console.log('Error parsing DQL. Unknown parameter: ' + params[i])
+                        i = i + 1
                 }
             }
         } catch (e) {
