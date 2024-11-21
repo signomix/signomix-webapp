@@ -340,8 +340,10 @@
             </div>
         </nav>
         <main class="col-md-9 col-lg-10 ms-sm-auto px-md-4">
-            {#if $isAuthenticated || $page.url.pathname=='/login' || $page.url.pathname=='/account/register' ||
-            $page.url.pathname=='/account/resetpassword' || $page.url.pathname=='/account/setpassword'}
+            {#if $isAuthenticated || $page.url.pathname=='/login' || $page.url.pathname=='/account/register'
+            || $page.url.pathname=='/account/resetpassword' || $page.url.pathname=='/account/setpassword'
+            || $page.url.pathname=='/confirmed'
+            }
             <!-- {#if $context!=null}
             <div class="row m-1">
                 <div class="col w-100">
