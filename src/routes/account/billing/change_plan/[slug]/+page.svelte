@@ -136,6 +136,7 @@
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
     import { utils } from '$lib/utils.js';
+    import { platformInfo } from '$lib/stores.js';
 
     export let data;
     let formSent = false;
