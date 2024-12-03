@@ -80,9 +80,9 @@
                 oninvalid="this.setCustomValidity('Podaj nazwę firmy')" oninput="this.setCustomValidity('')" required>
             </div>
             <div class="col-md-6">
-                <label for="vat" class="form-label">VAT</label>
-                <input type="text" class="form-control" id="vat" bind:value={order.vat} 
-                oninvalid="this.setCustomValidity('Podaj nr VAT')" oninput="this.setCustomValidity('')" required>
+                <label for="taxNumber" class="form-label">NIP</label>
+                <input type="text" class="form-control" id="taxNumber" bind:value={order.taxNumber} 
+                oninvalid="this.setCustomValidity('Podaj nr NIP')" oninput="this.setCustomValidity('')" required>
             </div>
         </div>
         {/if}
@@ -169,7 +169,7 @@
         surname: $profile.surname,
         email: $profile.email,
         companyName: '',
-        vat: '',
+        taxNumber: '',
         address: '',
         city: '',
         zip: '',
