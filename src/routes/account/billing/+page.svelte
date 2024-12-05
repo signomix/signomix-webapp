@@ -13,11 +13,11 @@
 <div class="row mb-3">
     <div class="col-md-12 mt-3 mb-1 w-100">
         <div class="d-flex justify-content-center w-100">
-            <label class="me-3 h6" for="customSwitch1">Płatność miesięczna</label>
+            <label class="me-3 h6" for="customSwitch1">{utils.getLabel('monthlyPayload',labels, $language)}</label>
             <div class="form-check form-switch h6">
                 <input class="form-check-input h6" type="checkbox" id="customSwitch1" bind:checked={yearlySelected} style="width: 3rem;">
             </div>
-            <label class="ms-3 h6" for="customSwitch1">Płatność roczna (miesiąc gratis)</label>
+            <label class="ms-3 h6" for="customSwitch1">{utils.getLabel('yearlyPayload',labels, $language)}</label>
         </div>
     </div>
 </div>
@@ -84,6 +84,14 @@
         'title': {
             'en': "Billing",
             'pl': "Płatności"
+        },
+        'monthlyPayload': {
+            'pl': "Płatność miesięczna",
+            'en': "Monthly payment"
+        },
+        'yearlyPayload': {
+            'pl': "Płatność roczna (miesiąc gratis)",
+            'en': "Yearly payment (1 month free)"
         },
         'free': {
             'en': "Free account",

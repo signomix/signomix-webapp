@@ -134,7 +134,7 @@
             surname: surname,
             password: password,
             accept: accepted,
-            preferredLanguage: preferredLanguage
+            preferredLanguage: preferredLanguage.toLocaleLowerCase()
         }
         const headers = new Headers()
         let url = utils.getBackendUrl(location) + "/api/account/register/"

@@ -31,42 +31,42 @@
     <form id="registrationForm">
         <div class="row mb-3">
             <div class="col-md-6">
-                <label for="userLogin" class="form-label">User</label>
+                <label for="userLogin" class="form-label">{utils.getLabel('user',labels, $language)}</label>
                 <input type="text" class="form-control" id="userLogin" bind:value={$profile.uid} readonly disabled>
             </div>
             <div class="col-md-6">
-                <label for="accountType" class="form-label">Zamawiasz jako</label>
+                <label for="accountType" class="form-label">{utils.getLabel('orderAs',labels, $language)}</label>
                 <select class="form-select" id="accountType" required bind:value={vatField}>
-                    <option value={false}>Osoba prywatna</option>
-                    <option value={true}>Firma</option>
+                    <option value={false}>{utils.getLabel('privatePerson',labels, $language)}</option>
+                    <option value={true}>{utils.getLabel('company',labels, $language)}</option>
                 </select>
             </div>
         </div>
         <div class="mb-3">
-            <label for="paymentPeriod" class="form-label">Okres płatności</label>
+            <label for="paymentPeriod" class="form-label">{utils.getLabel('paymentPeriod',labels, $language)}</label>
             <div>
                 <div class="form-check form-check-inline">
                     <input checked={selectedYearly===false} on:change={onChange} class="form-check-input" type="radio"
                         name="paymentPeriod" id="monthly" value=false 
                         oninvalid="this.setCustomValidity('Wybierz okres płatności')" oninput="this.setCustomValidity('')" required>
-                    <label class="form-check-label" for="monthly">Monthly</label>
+                    <label class="form-check-label" for="monthly">{utils.getLabel('monthly',labels, $language)}</label>
                 </div>
                 <div class="form-check form-check-inline">
                     <input checked={selectedYearly===true} on:change={onChange} class="form-check-input" type="radio"
                         name="paymentPeriod" id="yearly" value="true" required>
-                    <label class="form-check-label" for="yearly">Yearly</label>
+                    <label class="form-check-label" for="yearly">{utils.getLabel('yearly',labels, $language)}</label>
                 </div>
             </div>
         </div>
 
         <div class="row mb-3">
             <div class="col-md-6">
-                <label for="name" class="form-label">Name</label>
+                <label for="name" class="form-label">{utils.getLabel('name',labels, $language)}</label>
                 <input type="text" class="form-control" id="name" bind:value={order.name}
                 oninvalid="this.setCustomValidity('Podaj imię')" oninput="this.setCustomValidity('')" required>
             </div>
             <div class="col-md-6">
-                <label for="surname" class="form-label">Surname</label>
+                <label for="surname" class="form-label">{utils.getLabel('surname',labels, $language)}</label>
                 <input type="text" class="form-control" id="surname" bind:value={order.surname}
                 oninvalid="this.setCustomValidity('Podaj nazwisko')" oninput="this.setCustomValidity('')" required>
             </div>
@@ -75,12 +75,12 @@
         {#if vatField===true}
         <div class="row mb-3">
             <div class="col-md-6" id="companyNameField">
-                <label for="companyName" class="form-label">Company Name</label>
+                <label for="companyName" class="form-label">{utils.getLabel('companyName',labels, $language)}</label>
                 <input type="text" class="form-control" id="companyName" bind:value={order.companyName} 
                 oninvalid="this.setCustomValidity('Podaj nazwę firmy')" oninput="this.setCustomValidity('')" required>
             </div>
             <div class="col-md-6">
-                <label for="taxNumber" class="form-label">NIP</label>
+                <label for="taxNumber" class="form-label">{utils.getLabel('taxNumber',labels, $language)}</label>
                 <input type="text" class="form-control" id="taxNumber" bind:value={order.taxNumber} 
                 oninvalid="this.setCustomValidity('Podaj nr NIP')" oninput="this.setCustomValidity('')" required>
             </div>
@@ -89,12 +89,12 @@
 
         <div class="row mb-3">
             <div class="col-md-6">
-                <label for="address" class="form-label">Address</label>
+                <label for="address" class="form-label">{utils.getLabel('address',labels, $language)}</label>
                 <input type="text" class="form-control" id="address" bind:value={order.address} 
                 oninvalid="this.setCustomValidity('Podaj adres')" oninput="this.setCustomValidity('')" required>
             </div>
             <div class="col-md-6">
-                <label for="city" class="form-label">City</label>
+                <label for="city" class="form-label">{utils.getLabel('city',labels, $language)}</label>
                 <input type="text" class="form-control" id="city" bind:value={order.city} 
                 oninvalid="this.setCustomValidity('Podaj nazwę miasta')" oninput="this.setCustomValidity('')" required>
             </div>
@@ -102,12 +102,12 @@
 
         <div class="row mb-3">
             <div class="col-md-6">
-                <label for="zip" class="form-label">Zip Code</label>
+                <label for="zip" class="form-label">{utils.getLabel('zipCode',labels, $language)}</label>
                 <input type="text" class="form-control" id="zip" bind:value={order.zip} 
                 oninvalid="this.setCustomValidity('Podaj kod pocztowy')" oninput="this.setCustomValidity('')" required>
             </div>
             <div class="col-md-6">
-                <label for="country" class="form-label">Country</label>
+                <label for="country" class="form-label">{utils.getLabel('country',labels, $language)}</label>
                 <!--                 <input type="text" class="form-control" id="country" bind:value={order.country} required> -->
                 <select class="form-select" id="country" bind:value={order.country}
                     oninvalid="this.setCustomValidity('Wybierz kraj')" oninput="this.setCustomValidity('')"
@@ -120,7 +120,7 @@
         </div>
 
         <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
+            <label for="email" class="form-label">{utils.getLabel('email',labels, $language)}</label>
             <input type="email" class="form-control" id="email" bind:value={order.email}
                 oninvalid="this.setCustomValidity('Podaj adres e-mail')" oninput="this.setCustomValidity('')" required>
         </div>
@@ -237,6 +237,70 @@
         'message': {
             'pl': "Wybrany plan jest dostępny po wcześniejszym podpisaniu umowy utrzymaniowej z administratorem serwisu signomix.com. W celu uzyskania dodatkowych informacji prosimy o kontakt poprzez wysłanie wiadomości na adres contact@experiot.pl",
             'en': "The selected plan is available after signing a maintenance agreement with the signomix.com service administrator. For additional information, please contact us by sending a message to contact@experiot.pl"
+        },
+        'user': {
+            'pl': "Użytkownik",
+            'en': "User"
+        },
+        'orderAs': {
+            'pl': "Zamawiam jako",
+            'en': "Order as"
+        },
+        'privatePerson': {
+            'pl': "Osoba prywatna",
+            'en': "Private person"
+        },
+        'company': {
+            'pl': "Firma",
+            'en': "Company"
+        },
+        'companyName': {
+            'pl': "Nazwa firmy",
+            'en': "Company name"
+        },
+        'taxNumber': {
+            'pl': "NIP",
+            'en': "Tax number"
+        },
+        'name': {
+            'pl': "Imię",
+            'en': "Name"
+        },
+        'surname': {
+            'pl': "Nazwisko",
+            'en': "Surname"
+        },
+        'paymentPeriod': {
+            'pl': "Okres płatności",
+            'en': "Payment period"
+        },
+        'monthly': {
+            'pl': "Miesięcznie",
+            'en': "Monthly"
+        },
+        'yearly': {
+            'pl': "Rocznie",
+            'en': "Yearly"
+        },
+        'address': {
+            'pl': "Adres",
+            'en': "Address"
+        },
+        'city': {
+            'pl': "Miasto",
+            'en': "City"
+        },
+        'zipCode': {
+            'pl': "Kod pocztowy",
+            'en': "Zip code"
+        },
+        'country': {
+            'pl': "Kraj",
+            'en': "Country"
+        },
+        'email': {
+            'pl': "E-mail",
+            'en': "E-mail"
         }
     }
 </script>

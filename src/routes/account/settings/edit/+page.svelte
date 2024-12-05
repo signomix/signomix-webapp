@@ -56,6 +56,7 @@
         //    method = 'PUT'
         //}
         config.password = null
+        config.preferredLanguage = config.preferredLanguage.toLowerCase()
         headers.set('Authentication', $token);
         headers.set('Content-Type', 'application/json');
         let response = fetch(

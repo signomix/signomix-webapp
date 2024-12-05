@@ -284,6 +284,7 @@ const getSgxUserSettings = async function (devMode, apiUrl, userData, token) {
   const headers = new Headers()
   headers.set('Accept', 'application/json');
   headers.set('Authentication', token);
+  console.log('getSgxUserSettings url', apiUrl)
   const res = await fetch(apiUrl, { mode: 'cors', headers: headers });
   let data;
   data = await res.json();

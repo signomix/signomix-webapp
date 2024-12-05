@@ -16,5 +16,6 @@ export async function load({params, url}) {
         return {}
     }
     let apiUrl = utils.getBackendUrl(url) + '/api/account/user/'+params.slug
+    console.log('apiUrl', apiUrl)
     return await sgxdata.getUserSettings(dev, apiUrl, userprofile, usertoken)
 }
