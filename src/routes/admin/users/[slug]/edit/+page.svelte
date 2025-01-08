@@ -63,7 +63,40 @@ labels={[utils.getLabel('ok',labels, $language)]} color="danger">
     }
 
     function saveSettings(config){
-        
+        console.log("saveSettings: ",config);
+        const headers = new Headers()
+        let url = utils.getBackendUrl(location) + "/api/account/user/"+config.uid
+        //if (!(data.id === 'new' || data.id == null || data.id == '' || data.id == undefined)) {
+        //    url = url + data.id
+        //    method = 'PUT'
+        //}
+        config.password = null
+        config.preferredLanguage = config.preferredLanguage.toLowerCase()
+        headers.set('Authentication', $token);
+        headers.set('Content-Type', 'application/json');
+        let response = fetch(
+            url,
+            { method: 'PUT', mode: 'cors', headers: headers, body: JSON.stringify(config) }
+        ).then((response) => {
+            if (response.status == 200) {
+                errorMessage = ''
+                goto('/admin/users')
+            } else if (response.status == 401 || response.status == 403) {
+                token.set(null)
+            } else {
+                alert(
+                    utils.getMessage(utils.FETCH_STATUS)
+                        .replace('%1', response.status)
+                        .replace('%2', response.statusText)
+                )
+            }
+        }).catch((error) => {
+            errorMessage = error.message
+            if (errorMessage == 'Failed to fetch' && location.protocol.toLowerCase() == 'https') {
+                errorMessage = errorMessage + ' ' + utils.getLabel('fetcherror_message', labels, $language)
+            }
+            console.log(error)
+        });
     }
 
     function validate(cfg) {

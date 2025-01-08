@@ -503,6 +503,7 @@
             console.log("AFTER DIALOG");
             return;
         }*/
+       console.log('executing callback with config', config)
         callback(config)
     }
     function handleCancel(event) {

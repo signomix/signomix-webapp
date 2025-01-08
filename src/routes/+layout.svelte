@@ -273,6 +273,14 @@
                                 <i class="bi bi-people me-2"></i><span>{utils.getLabel('users',labels,$language)}</span>
                         </a>
                     </li>
+                    <li class="nav-item ms-3">
+                        <a class="nav-link" class:active={$page.url.pathname==='/admin/tasks' }
+                            href="/admin/tasks">
+                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                <i
+                                    class="bi bi-list-task me-2"></i><span>{utils.getLabel('tasks',labels,$language)}</span>
+                        </a>
+                    </li>
                     {/if}
                     <!-- end Administration -->
                     {/if}
@@ -639,6 +647,10 @@
         'apps': {
             'pl': "Aplikacje",
             'en': "Applications"
+        },
+        'tasks': {
+            'pl': "Zadania",
+            'en': "Tasks"
         },
         'structure': {
             'pl': "Infrastruktura",
