@@ -403,7 +403,11 @@ const getSgxDevices = async function (devMode, apiUrl, searchString, token) {
   }
   let endpoint = apiUrl;
   if (searchString != null && searchString != undefined && searchString != "") {
-    endpoint = endpoint + "?" + searchString;
+    if(endpoint.indexOf('?') > 0) {
+      endpoint = endpoint + "&" + searchString;
+    } else {
+      endpoint = endpoint + "?" + searchString;
+    }
   }
   const headers = new Headers()
   headers.set('Accept', 'application/json');
@@ -435,7 +439,11 @@ const getSgxGroups = async function (devMode, apiUrl, searchString, token) {
   }
   let endpoint = apiUrl;
   if (searchString != null && searchString != undefined && searchString != "") {
-    endpoint = endpoint + "?" + searchString;
+    if(endpoint.indexOf('?') > 0) {
+      endpoint = endpoint + "?" + searchString;
+    } else {
+      endpoint = endpoint + "&" + searchString;
+    }
   }
   const headers = new Headers()
   headers.set('Accept', 'application/json');
