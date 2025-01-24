@@ -1,25 +1,23 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-3 border-bottom">
     <h5>{utils.getLabel('title',labels,$language)}</h5>
 </div>
-{#await promise then applications}
+{#await promise then tasks}
 <div class="col-12">
     <div class="table-responsive">
         <table class="table table-striped table-sm">
             <thead>
                 <tr>
                     <th>id</th>
-                    <th>organization</th>
                     <th>name</th>
-                    <th>description</th>
+                    <th>enabled</th>
                 </tr>
             </thead>
             <tbody>
-                {#each applications as app}
+                {#each tasks as task}
                 <tr>
-                    <td><a href="/admin/applications/{app.id}">{app.id}</a></td>
-                    <td>{app.organization}</td>
-                    <td><a href="/admin/applications/{app.id}">{app.name}</a></td>
-                    <td>{app.description}</td>
+                    <td><a href="/admin/tasks/{task.id}">{task.id}</a></td>
+                    <td><a href="/admin/tasks/{task.id}">{task.jobName}</a></td>
+                    <td>{task.enabled}</td>
                 </tr>
                 {/each}
             </tbody>
@@ -30,7 +28,7 @@
     <div class="col-2">
         {#if payingUser}
         <a class="btn btn-outline-primary" role="button"
-            href="/admin/applications/new/edit">{utils.getLabel('add',labels,$language)}</a>
+            href="/admin/tasks/new/edit">{utils.getLabel('add',labels,$language)}</a>
         {/if}
     </div>
     <div class="col-10">
@@ -43,11 +41,11 @@
                 </li>
                 <li class="page-item">
                     <a class="page-link disabled" on:click={handleDoNothing}>
-                        {offset+1}-{offset+applications.length}
+                        {offset+1}-{offset+tasks.length}
                     </a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" class:disabled={applications.length<limit} on:click={handleLoadNext}>
+                    <a class="page-link" class:disabled={tasks.length<limit} on:click={handleLoadNext}>
                         <span aria-hidden="true"> &raquo; </span>
                     </a>
                 </li>
@@ -65,7 +63,7 @@
 
     let offset = 0;
     let limit = 10;
-    let promise = getApplications(offset)
+    let promise = getTasks(offset)
     let payingUser = utils.isPayingUser($profile.type)
 
     onMount(async () => {
@@ -74,7 +72,7 @@
         }
     });
 
-    async function getApplications(actualOffset) {
+    async function getTasks(actualOffset) {
         let apps = []
         if (!$isAuthenticated) {
             return apps
@@ -84,15 +82,22 @@
                 apps.push(
                     {
                         id: (i + actualOffset + 1),
-                        organization: 1,
-                        name: 'app' + (i + actualOffset + 1),
-                        description: 'GENERIC'
+                        type: 1,
+                        userId: '',
+                        enabled: true,
+                        triggerName: 'trigger'+(i + actualOffset + 1),
+                        triggerGroup: 'events',
+                        jobName: 'job'+(i + actualOffset + 1),
+                        jobGroup: 'jobs',
+                        nlScheduleDefinition: 'Every 5 minutes',
+                        scheduleDefinition: '0 0/5 * * * ?',
+                        jobDataMap: {}
                     }
                 )
             }
         } else {
             let headers = new Headers();
-            let url = utils.getBackendUrl(location) + "/api/core/application";
+            let url = utils.getBackendUrl(location) + "/api/scheduler/tasks";
             url = url + '?offset=' + actualOffset + '&limit=' + limit
 
             //if (loginFilter.length > 0) {
@@ -129,11 +134,11 @@
     function handleLoadPrevious(event) {
         offset = offset - limit
         if (offset < 0) offset = 0
-        promise = getApplications(offset)
+        promise = getTasks(offset)
     }
     function handleLoadNext(event) {
         offset = offset + limit;
-        promise = getApplications(offset);
+        promise = getTasks(offset);
     }
     function handleDoNothing(event) {
         console.log(event)

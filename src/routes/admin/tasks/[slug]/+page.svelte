@@ -8,7 +8,7 @@
 {#await data}
 {:then data}
 {#if data!==undefined}
-<ApplicationForm config={data} callback={saveSettings} readonly={true} />
+<TaskDefinitionForm config={data} callback={saveSettings} readonly={true} />
 {/if}
 {/await}
 <script>
@@ -18,7 +18,7 @@
     import { goto } from '$app/navigation';
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { defaultOrganizationId } from '$lib/stores.js';
-    import ApplicationForm from '$lib/components/ApplicationForm.svelte';
+    import TaskDefinitionForm from '$lib/components/TaskDefinitionForm.svelte';
 
     export let data
     let errorMessage = ''

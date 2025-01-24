@@ -13,7 +13,7 @@ export const load = async ({ params, url }) => {
       config = newApp
     } else {
       try {
-        let endpoint = serviceUrl + "/api/core/application/" + params.slug 
+        let endpoint = serviceUrl + "/api/scheduler/tasks/" + params.slug 
         let headers = new Headers();
         headers.set('Authentication', usertoken);
         await fetch(endpoint, { headers: headers }).then(response => {

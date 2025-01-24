@@ -100,6 +100,9 @@ isAuthenticated.subscribe((value)=>userAuthenticated=value)
     await getSelectedConfig(utils.getBackendUrl(url))
       .then((cfg) => {
         try {
+          for(let i=0; i<cfg.widgets.length; i++){
+            cfg.widgets[i].changed = false
+          }
           for (let i = 0; i < cfg.items.length; i++) {
             let item = cfg.items[i]
             if (item['1'] !== null) {

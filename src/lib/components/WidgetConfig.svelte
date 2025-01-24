@@ -21,7 +21,7 @@
         on:click={() => showAlert()} >
         <i class="bi bi-trash3"></i>
     </button>
-    {getTitle(config,index)}
+    {@html getTitle(config,index)}
     {/if}
 </div>
 <script>
@@ -44,9 +44,15 @@
     }
     function getTitle(config, index){
         try{
-            return config[index].title
+            let title = config[index].title
+            let changed = '' 
+            if(config[index].changed != undefined && config[index].changed != null && config[index].changed==true){
+                changed = '<span class="text-danger"><strong>*</strong></span> '
+            }
+            return changed + title
         }catch(e){
             return ''
         }
     }
+
 </script>

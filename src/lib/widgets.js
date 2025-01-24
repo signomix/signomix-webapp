@@ -60,7 +60,7 @@ export const widgets = {
         multimap: ['group','channel', 'range', 'query','rounding', 'reportSelector'],
         multitrack: ['group','channel','query','rounding'],
         plan: ['group','channel','range', 'query','channel_translated'],
-        raw: ['dev_id','group','channel', 'query'],
+        raw: [/*'dev_id','group','channel', */'query', 'reportSelector'],
         report: ['dev_id','group','channel','channel_translated','rounding','query', 'reportSelector'],
         text: [],
         stopwatch: ['dev_id','channel'],

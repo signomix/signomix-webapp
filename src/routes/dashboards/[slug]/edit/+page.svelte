@@ -299,6 +299,7 @@
 
     function widgetFormCallback(idx, cfg) {
         //console.log('testCallback ', idx, cfg);
+        data.widgets[idx].changed = true
         if(widgets.singleValueTypes.includes(cfg.type)) {
             //cfg.query = 'last 1'
         }
