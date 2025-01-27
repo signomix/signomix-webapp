@@ -434,6 +434,7 @@
         // reportType
         try {
             reportType = config[index].type=='report' || config[index].query.toLowerCase().includes('class') || config[index].query.toLowerCase().includes('report')
+            config[index].type = 'report'
         } catch (e) {
             console.log('error checking report type: ', e)
             reportType = false
@@ -577,9 +578,10 @@
         //console.log('clicked widget index', index, 'config', config[index])
         if (config[index].type!='report' && projectName!=undefined && projectName!=null && projectName.trim() != '') {
             config[index].query = 'last 1 project ' + projectName
-        }else{
-            config[index].query = dql.removeKey(config[index].query,'project',true)
         }
+/*         else if(config[index].type=='report' && projectName!=undefined && projectName!=null && projectName.trim() != ''){
+            config[index].query = dql.removeKey(config[index].query,'project',true)
+        } */
         callback(index, config[index])
     }
     function selectBasic() {
