@@ -301,6 +301,27 @@
         ) {
             return;
         }
+
+        let borderColors = [
+            'rgb(54, 162, 235)', //blue
+            'rgb(255, 99, 132)', //red
+            'rgb(75, 192, 192)', //green
+            'rgb(255, 159, 64)', //orange
+            'rgb(153, 102, 255)', //purple
+            'rgb(255, 205, 86)', //yellow
+            'rgb(201, 203, 207)'//grey
+        ]
+        let customConfig = null;
+        if (config.config !== null && config.config !== undefined) {
+            try {
+                customConfig = JSON.parse(config.config)
+                if (customConfig.colors !== null && customConfig.colors !== undefined) {
+                    borderColors = customConfig.colors
+                }
+            } catch (err) {
+                console.log('TracksWidget - error parsing customConfig', err)
+            }
+        }
         //let lastDataPosition = jsonData.datasets[0].data.length - 1
         idxLatLon = getLatLonIdx(jsonData.headers[0].columns);
         /* for (let i = jsonData.datasets[0].data.length - 1; i >= 0; i--) {
@@ -398,7 +419,7 @@
                 console.log("marker" + i);
             }
             polyline = L.polyline(latlngs, {
-                color: "#0095FF",
+                color: borderColors[(t % 7)],
             }).addTo(map);
             // zoom the map to the polyline
         }

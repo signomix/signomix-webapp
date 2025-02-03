@@ -157,6 +157,7 @@
 
     // resetSettings() will be called when index changes
     $: resetSettings(index);
+    $: resetSettings(config[index].type);
 
 
     function setDevice(selectedDevice) {
