@@ -20,6 +20,9 @@
     let ctx
     let first = false
     onMount(async () => {
+        // if(chartCanvas != undefined){
+        //     chartCanvas.remove()
+        // }
         ctx = chartCanvas.getContext('2d');
         show(ctx)
         first = true
@@ -39,20 +42,31 @@
                 promise = await sgxdata.getReportData(dev, apiUrl, config, filter, $token, transform)
                     .then(function (data) {
                         if (myChart) myChart.destroy()
-                        myChart = new Chart(ctx, data);
+                        try{
+                            //ctx = chartCanvas.getContext('2d');
+                            myChart = new Chart(ctx, data);
+                        }catch(err){
+                            console.log('ChartWidget error0', err)
+                        }
+                        //myChart.show()
                     })
             } else {
                 apiUrl = utils.getBackendUrl(location) + '/api/provider/v2/device/'
                 promise = await sgxdata.getData(dev, apiUrl, config, filter, $token, transform)
                     .then(function (data) {
-                        if (myChart) myChart.destroy()
+                        if (myChart!=undefined) myChart.destroy()
+                        try{
                         myChart = new Chart(ctx, data);
+                        }catch(err){
+                            console.log('ChartWidget error1', err)
+                        }
+                        //myChart.update()
                     })
             }
-
+            console.log('ChartWidget ctx', ctx)    
         } catch (error) {
             errorMessage = error.message;
-            console.log('error', errorMessage);
+            console.log('ChartWidget error', errorMessage);
         }
         return null
     }
@@ -412,5 +426,5 @@
     }
 </script>
 <div class="p-1 pt-2 w-100">
-    <canvas bind:this={chartCanvas} class="w-100" />
+    <canvas id="c0" bind:this={chartCanvas} class="w-100" />
 </div>

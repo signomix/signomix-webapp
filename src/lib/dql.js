@@ -62,6 +62,7 @@ export const dql = {
         for (let i = 0; i < params.length;) {
             switch (params[i]) {
                 case "last":
+                case "limit":
                 case "average":
                 case "minimum":
                 case "maximum":
@@ -75,6 +76,9 @@ export const dql = {
                 case "status":
                 case "channel":
                 case "group":
+                case "eui":
+                case "class":
+                case "report":
                 case "new":
                 case "from":
                 case "to":
@@ -101,6 +105,7 @@ export const dql = {
             for (let i = 0; i < params.length;) {
                 switch (params[i]) {
                     case "last":
+                    case "limit":
                     case "average":
                     case "minimum":
                     case "maximum":
@@ -108,9 +113,12 @@ export const dql = {
                         i = i + 2;
                         break;
                     case "project":
+                    case "class":
+                    case "report":
                     case "state":
                     case "status":
                     case "channel":
+                    case "eui":
                     case "group":
                     case "new":
                     case "from":
