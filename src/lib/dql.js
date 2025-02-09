@@ -53,6 +53,7 @@ export const dql = {
         return q2
     },
     sweepSpaces: function (t) {
+        if (t == null || t == undefined) return ''
         return t.trim().replace(/ +(?= )/g, '')
     },
     checkQuerySyntax: function (text) {

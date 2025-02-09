@@ -18,7 +18,6 @@
     export let config;
     export let callback;
 
-
     let projectName = "";
 
     let selectedTab = "basic";
@@ -37,6 +36,17 @@
     };
     let selectedType;
 
+    /* function changeType(event) {
+        console.log("changeType", event);
+        selectedType = event.target.value;
+        config[index].type = selectedType;
+        resetSettings();
+    } */
+
+    function changeType() {
+        config[index].type = selectedType;
+        resetSettings();
+    }
 
     function resetSettings() {
         console.log("resetSettings  index", index);
@@ -110,9 +120,14 @@
             // reportType
             try {
                 reportType =
-                    config[index].type == "report" ||
+                    config[index].type == "report" || (
+                        config[index].query != undefined &&
+                        config[index].query != null &&
+                        config[index].query != ""
+                     && (
                     config[index].query.toLowerCase().includes("class") ||
-                    config[index].query.toLowerCase().includes("report");
+                    config[index].query.toLowerCase().includes("report")
+                    ));
                 //config[index].type = "report";
             } catch (e) {
                 console.log("error checking report type: ", e);
@@ -157,8 +172,10 @@
 
     // resetSettings() will be called when index changes
     $: resetSettings(index);
-    $: resetSettings(config[index].type);
-
+    $: changeType(selectedType);
+    //$: resetSettings(
+    //    config[index].type == undefined ? config[index].type : "text",
+    //);
 
     function setDevice(selectedDevice) {
         //console.log('selectedDevice', selectedDevice)
@@ -536,7 +553,7 @@
                             <select
                                 id="type"
                                 class="form-select form-select-sm"
-                                bind:value={config[index].type}
+                                bind:value={selectedType}
                             >
                                 {#each widgets.types as widgetType}
                                     <option

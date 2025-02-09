@@ -117,6 +117,7 @@ export const widgets = {
         dashboardID: {en:'dashboard ID', pl:'ID pulpitu'}
     },
     isVisible: function (widgetTypeName, fieldName){
+        try{
         if(this.typeFields.default.indexOf(fieldName) >= 0){
             return true;
         }else if (this.typeFields[widgetTypeName] && this.typeFields[widgetTypeName].indexOf(fieldName) >= 0){
@@ -124,11 +125,20 @@ export const widgets = {
         } else {
             return false;
         }
+        } catch (e){
+            console.log('Error in isVisible', e)
+            return false;
+        }
     },
     getFieldName: function (fieldName, lang){
+        try{
         if(this.fieldNames[fieldName]){
             return this.fieldNames[fieldName][lang];
         } else {
+            return fieldName;
+        }
+        } catch (e){
+            console.log('Error in getFieldName', e)
             return fieldName;
         }
     },

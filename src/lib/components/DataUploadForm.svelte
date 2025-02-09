@@ -26,7 +26,7 @@
             <label for="input-{measurement.name}" class="form-label">{measurement.name}</label>
         </div>
         <div class="col-md-10">
-            <input type="number" step="0.01" class="form-control" id="input-{measurement.name}" bind:value={measurement.value}>
+            <input type="number" step="0.000001" class="form-control" id="input-{measurement.name}" bind:value={measurement.value}>
         </div>
     </div>
     {/each}
