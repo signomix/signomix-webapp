@@ -29,6 +29,9 @@
             promise = sgxdata.getData(dev, apiUrl, config, filter, $token, transformData);
         }
     }
+    if (config.channel_translated != undefined && config.channel_translated != null && config.channel_translated != '') {
+        channelNamesTranslated = config.channel_translated.split(',')
+    }
 
     afterUpdate(() => {
         if (config.query != undefined && config.query != null && (config.query.toLowerCase().includes('class') || config.query.toLowerCase().includes('report'))) {
@@ -41,9 +44,6 @@
             } else {
                 apiUrl = utils.getBackendUrl(location) + '/api/provider/v2/device/'
                 promise = sgxdata.getData(dev, apiUrl, config, filter, $token, transformData);
-            }
-            if (config.channel_translated != undefined && config.channel_translated != null && config.channel_translated != '') {
-                channelNamesTranslated = config.channel_translated.split(',')
             }
         }
     });
@@ -210,7 +210,11 @@
         'date': {
             'pl': "data",
             'en': "date"
-        }
+        },
+        'name': {
+            'pl': "nazwa",
+            'en': "name"
+        },
     }
 
 </script>
@@ -247,7 +251,7 @@
                 <!-- DqlReport GROUP -->
                 <table class="table table-sm table-responsive-sm">
                     <thead class="text-bg-primary fs-6">
-                        <th scope="col">EUI</th>
+                        <th scope="col">{utils.getLabel('name', labels, $language)}</th>
                         <th scope="col">{utils.getLabel('date', labels, $language)}</th>
                         {#if channelNamesTranslated.length>0}
                         {#each channelNamesTranslated as item}
@@ -263,7 +267,7 @@
                     <tbody>
                         {#each reportresult.datasets as dataset}
                         <tr>
-                            <td>{dataset.eui}</td>
+                            <td><a href='/dashboards/{dataset.eui}'>{dataset.eui}</a></td>
                             <td>{new Date(dataset.data[0].timestamp).toLocaleString()}</td>
                             {#each dataset.data[0].values as value}
                             <td>{utils.recalculate(value, config.rounding)}</td>
@@ -276,7 +280,7 @@
                 <!-- Report GROUP -->
                 <table class="table table-sm table-responsive-sm">
                     <thead class="text-bg-primary fs-6">
-                        <th scope="col">EUI</th>
+                        <th scope="col">{utils.getLabel('name', labels, $language)}</th>
                         <th scope="col">{utils.getLabel('date', labels, $language)}</th>
                         {#if channelNamesTranslated.length>0}
                         {#each channelNamesTranslated as item}
@@ -292,7 +296,7 @@
                         {#each reportresult.datasets as dataset}
                         {#each dataset.data as row}
                         <tr>
-                            <td>{dataset.eui}</td>
+                            <td><a href='/dashboards/{dataset.eui}'>{dataset.eui}</a></td>
                             <td>{new Date(row.timestamp).toLocaleString()}</td>
                             {#each row.values as value}
                             <td>{utils.recalculate(value, config.rounding)}</td>

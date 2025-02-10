@@ -7,7 +7,7 @@
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
 
     export let config
-    export let callback
+    //export let callback
 
     let labels = {
         'goback': {
