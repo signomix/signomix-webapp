@@ -110,6 +110,18 @@
         return date
     }
 
+    function getDeviceName(reportResult, eui){
+        let name = eui
+        try {
+            if (reportResult.configs != undefined && reportResult.configs[eui] != undefined && reportResult.configs[eui].name != undefined && reportResult.configs[eui].name != null && reportResult.configs[eui].name != '') {
+                name = reportResult.configs[eui].name
+            }
+        } catch (e) {
+            console.log('error', e)
+        }
+        return name
+    }
+
     async function transformData(config, rawData) {
         let isGroup = (config.group != undefined && config.group != null && config.group != '')
         let jsonData = await rawData;
@@ -143,7 +155,8 @@
                     'group': '',
                     'className': ''
                 }
-            }
+            },
+            configs: {}
         }
         if(jsonData.length==0){
             reportResult.errorMessage = 'No data available'
@@ -267,7 +280,7 @@
                     <tbody>
                         {#each reportresult.datasets as dataset}
                         <tr>
-                            <td><a href='/dashboards/{dataset.eui}'>{dataset.eui}</a></td>
+                            <td><a href='/dashboards/{dataset.eui}'>{getDeviceName(reportresult,dataset.eui)}</a></td>
                             <td>{new Date(dataset.data[0].timestamp).toLocaleString()}</td>
                             {#each dataset.data[0].values as value}
                             <td>{utils.recalculate(value, config.rounding)}</td>
@@ -296,7 +309,7 @@
                         {#each reportresult.datasets as dataset}
                         {#each dataset.data as row}
                         <tr>
-                            <td><a href='/dashboards/{dataset.eui}'>{dataset.eui}</a></td>
+                            <td><a href='/dashboards/{dataset.eui}'>{getDeviceName(reportresult,dataset.eui)}</a></td>
                             <td>{new Date(row.timestamp).toLocaleString()}</td>
                             {#each row.values as value}
                             <td>{utils.recalculate(value, config.rounding)}</td>

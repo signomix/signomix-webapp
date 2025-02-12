@@ -24,7 +24,20 @@
         console.log("error parsing query: ", e)
     }
     let config2 = config
-    config2.query ='report DqlReport eui '+config2.dev_id+' channel '+config2.channel+' last 1'
+    let showNulls = false
+    let notNulls = 'notnull'
+    let widgetConfig = {}
+    try{
+        widgetConfig = JSON.parse(config2.config)
+        console.log("widget config: ", widgetConfig)
+        if(widgetConfig.nulls!=undefined && widgetConfig.nulls!=null){
+            notNulls = widgetConfig.nulls?'' : 'notnull'
+        }
+    }catch(e){
+        console.log("error parsing widget config: ", e)
+    }
+
+    config2.query ='report DqlReport eui '+config2.dev_id+' channel '+config2.channel+' last 1 '+notNulls
     if(q!=undefined && q!=null && q.project!=undefined && q.project!=null && q.project!=''){
         config2.query = config2.query + ' project '+ q.project
     }
