@@ -6,6 +6,7 @@
         isAuthenticated,
     } from "$lib/usersession.js";
     import { utils } from "$lib/utils.js";
+    import { widgets } from "$lib/widgets.js";
     import { sgxdata } from "$lib/sgxdata.js";
     import { sgxhelper } from "$lib/sgxhelper.js";
     import { dev } from "$app/environment";
@@ -273,15 +274,11 @@
      * Get the latitude and longitude indexes from the data
      */
     function getLatLonIdx(columns) {
-        //let latitude = 0
-        //let longitude = 0
         let latIdx = 0;
         let lonIdx = 1;
         try {
             latIdx = columns.indexOf(_latitude);
             lonIdx = columns.indexOf(_longitude);
-            //latitude = parseFloat(values[latIdx])
-            //longitude = parseFloat(values[lonIdx])
         } catch (e) {
             console.log("getLatLonIdx() error", e);
         }
@@ -322,16 +319,7 @@
                 console.log('TracksWidget - error parsing customConfig', err)
             }
         }
-        //let lastDataPosition = jsonData.datasets[0].data.length - 1
         idxLatLon = getLatLonIdx(jsonData.headers[0].columns);
-        /* for (let i = jsonData.datasets[0].data.length - 1; i >= 0; i--) {
-            if (jsonData.datasets[0].data[i].values[idxLatLon.lat] != null && jsonData.datasets[0].data[i].values[idxLatLon.lon] != null) {
-                lat = parseFloat(jsonData.datasets[0].data[i].values[idxLatLon.lat])
-                lon = parseFloat(jsonData.datasets[0].data[i].values[idxLatLon.lon])
-                lastDataPosition = i
-                break
-            }
-        } */
 
         if (map != undefined && map != null) {
             map.remove();
@@ -349,6 +337,7 @@
             maxWidth: 200,
             maxHeight: 200,
         };
+        let widgetConfig = widgets.getConfiguration(config);
         let markerOptions = {};
         let markerArray = []
 
@@ -368,8 +357,25 @@
                     //skip if lat or lon is not a number
                     continue;
                 }
-                if (i > 0) {
-                    try {
+                try{
+                    if (i == 0) {
+                        // marker on the last reported position
+                        marker = L.marker([tmpLat, tmpLon]);
+                        markerArray.push(marker)
+                        marker
+                            .bindPopup(
+                                getDataTable(
+                                    jsonData.datasets[t].eui,
+                                    jsonData.datasets[t].data[i].values,
+                                    jsonData.headers[t].columns,
+                                    false,
+                                ),
+                                popupOptions,
+                            )
+                            .openPopup();
+                        marker.addTo(map);
+                    }else if ((i == jsonData.datasets[t].data.length - 1) || widgetConfig.showAllMarkers) {
+                        // marker on the first reported position or on all positions if showAllMarkers is true
                         marker = new L.CircleMarker(L.latLng(tmpLat, tmpLon), {
                             radius: 5,
                             stroke: true,
@@ -393,28 +399,10 @@
                             )
                             .openPopup();
                         marker.addTo(map);
-                    } catch (err) {
-                        console.log(err);
                     }
-                } else {
-                    try {
-                        marker = L.marker([tmpLat, tmpLon]);
-                        markerArray.push(marker)
-                        marker
-                            .bindPopup(
-                                getDataTable(
-                                    jsonData.datasets[t].eui,
-                                    jsonData.datasets[t].data[i].values,
-                                    jsonData.headers[t].columns,
-                                    false,
-                                ),
-                                popupOptions,
-                            )
-                            .openPopup();
-                        marker.addTo(map);
-                    } catch (err) {
-                        console.log(err);
-                    }
+
+                }catch(err){
+                    console.log(err)
                 }
                 console.log("marker" + i);
             }
@@ -423,7 +411,6 @@
             }).addTo(map);
             // zoom the map to the polyline
         }
-        //map.fitBounds(allPolylines.getBounds());
         let group = L.featureGroup(markerArray).addTo(map);
         map.fitBounds(group.getBounds());
     }

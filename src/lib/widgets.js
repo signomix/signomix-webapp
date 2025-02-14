@@ -225,6 +225,17 @@ export const widgets = {
                 pl: 'Miejsce na wykres'
             }
         }
+    },
+    getConfiguration: function (widgetDefinition){
+        let config = {}
+        if(widgetDefinition.config){
+            try{
+                config = JSON.parse(widgetDefinition.config);
+            } catch (e){
+                console.log('Error in getConfiguration', e)
+            }
+        }
+        return config;
     }
 }
 
