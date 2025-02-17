@@ -198,10 +198,9 @@
                 {#if front}
                     <span class="h4">
                         <i
-                            class="bi {getIconName()} me-2 {getColor(
-                                data.datasets[0].data[0].values[0],
-                                data.datasets[0].data[0].timestamp,
-                            )}"
+                            class="bi 
+                            {widgets.getIconName(config,data.datasets[0].data[0].values[0],data.datasets[0].data[0].timestamp)} me-2 
+                            {getColor(data.datasets[0].data[0].values[0], data.datasets[0].data[0].timestamp)}"
                         ></i>
                         {recalculate(
                             data.datasets[0].data[0].values[0],
