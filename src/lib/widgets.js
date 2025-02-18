@@ -1,6 +1,7 @@
 export const widgets = {
     types: [
         'button',
+        'buttonplus',
         'chart',
         'groupchart',
         'date',
@@ -49,6 +50,7 @@ export const widgets = {
     typeFields: {
         default: ['title', 'type', 'role', 'config', 'app_id'],
         button: ['dev_id', 'commandType', 'commandText', 'commandJSON'],
+        buttonplus: ['dev_id', 'commandType', 'commandText', 'commandJSON'],
         chart: ['dev_id', 'channel', 'query', 'format', 'chartType', 'channel_translated', 'reportSelector'],
         groupchart: ['group', 'channel', 'channel_translated', 'query', 'format', 'chartType', 'reportSelector'],
         date: ['dev_id', 'channel'],
@@ -147,6 +149,10 @@ export const widgets = {
             'button': {
                 en: 'Button',
                 pl: 'Przycisk'
+            },
+            'buttonplus': {
+                en: 'Button Plus',
+                pl: 'Przycisk Plus'
             },
             'chart': {
                 en: 'Chart',

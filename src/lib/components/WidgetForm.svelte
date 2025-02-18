@@ -231,6 +231,7 @@
     function getSelectedTypeDescCode(type) {
         switch (type) {
             case "button":
+            case "buttonplus":
                 return "button_desc";
             case "chart":
                 return "chart_desc";

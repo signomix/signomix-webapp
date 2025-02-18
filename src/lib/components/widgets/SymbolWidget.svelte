@@ -21,7 +21,6 @@
     let apiUrl;
 
     let errorMessage = "";
-    //const apiUrl = utils.getBackendUrl(location) + '/api/provider/v2/device/'
     apiUrl = utils.getBackendUrl(location) + "/api/reports/single";
     let q = {};
     try {
@@ -35,15 +34,6 @@
     if (widgetConfig.nulls != undefined && widgetConfig.nulls != null) {
         notNulls = widgetConfig.nulls ? "" : "notnull";
     }
-    /* try{
-        widgetConfig = JSON.parse(config2.config)
-        console.log("widget config: ", widgetConfig)
-        if(widgetConfig.nulls!=undefined && widgetConfig.nulls!=null){
-            notNulls = widgetConfig.nulls?'' : 'notnull'
-        }
-    }catch(e){
-        console.log("error parsing widget config: ", e)
-    } */
 
     config2.query =
         "report DqlReport eui " +

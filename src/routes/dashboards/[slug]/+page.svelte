@@ -70,6 +70,8 @@
 
                     {#if 'button'===getWidgetType(index)}
                     <ButtonWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else if 'buttonplus'===getWidgetType(index)}
+                    <ButtonWidgetPlus bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
                     {:else if 'chart'===getWidgetType(index)}
                     <ChartWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
                     {:else if 'chartjs'===getWidgetType(index)}
@@ -195,6 +197,7 @@
     import GroupMapWidget from '$lib/components/widgets/GroupMapWidget.svelte';
     import TracksWidget from '$lib/components/widgets/TracksWidget.svelte';
     import ButtonWidget from '$lib/components/widgets/ButtonWidget.svelte';
+    import ButtonWidgetPlus from '$lib/components/widgets/ButtonWidgetPlus.svelte';
 
     export let data
 
@@ -235,7 +238,9 @@
 
     let getBorderClass = function (idx) {
         try {
-            if (dashboardConfig.widgets[idx].type == 'link' || dashboardConfig.widgets[idx].type == 'button') {
+            if (dashboardConfig.widgets[idx].type == 'link' 
+            || dashboardConfig.widgets[idx].type == 'button'
+            || dashboardConfig.widgets[idx].type == 'buttonplus') {
                 return 'dashboard-widget content bg-white display'
             } else {
                 return 'dashboard-widget content bg-white display h-100 border border-primary rounded-1'

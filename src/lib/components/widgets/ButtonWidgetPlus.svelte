@@ -18,6 +18,7 @@
     $: title = config.title != undefined ? config.title : "Command button";
 
     let dialog;
+    //let dialogValue;
 
     let status = 0;
     let promise;
@@ -28,6 +29,7 @@
     });
 
     function decide() {
+        //dialogValue.showModal();
         dialog.showModal();
     }
 
@@ -40,6 +42,7 @@
 
     async function sendCommand(decision, value) {
         dialog.close();
+        //dialogValue.close();
         if (!decision || status != 0) {
             status = 0;
             return;
@@ -107,8 +110,8 @@
 
     let labels = {
         sendQuestion: {
-            pl: "Czy na pewno chcesz wysłać polecenie?",
-            en: "Are you sure you want to send the command?",
+            pl: "Wybór parametrów polecenia",
+            en: "Command parameters selection",
         },
         ok: {
             pl: "OK",
@@ -133,7 +136,7 @@
     };
 </script>
 
-<Dialog
+<!-- <Dialog
     bind:dialog
     callback={sendCommand}
     title={utils.getLabel("sendQuestion", labels, $language)}
@@ -142,8 +145,8 @@
         utils.getLabel("cancel", labels, $language),
     ]}
     color="body"
-></Dialog>
-<!-- <DialogValue
+></Dialog> -->
+<DialogValue
     bind:dialog
     callback={sendCommand}
     title={utils.getLabel("sendQuestion", labels, $language)}
@@ -151,11 +154,9 @@
         utils.getLabel("save", labels, $language),
         utils.getLabel("cancel", labels, $language),
     ]}
-    color="body"
-    minimum=0
-    maximum=10
-    step=1
-></DialogValue> -->
+    color="danger"
+    configuration={widgets.getConfiguration(config)}
+>{config.description}</DialogValue>
 <div class="container p-0">
     {#if isViewMode($viewMode)}
         <span class="btn btn-secondary w-100">{title}</span>
