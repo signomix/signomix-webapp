@@ -21,6 +21,7 @@
 		color != undefined && color != null && color != "" ? color : "primary";
 	let selectedValue;
 	let errorMessage = "";
+	let ready = false;
 
 	function getValueLabel() {
 		if (configuration.label == undefined || configuration.label == null) {
@@ -31,8 +32,10 @@
 
 	function isConfigured() {
 		errorMessage = utils.getLabel("config_not_valid", texts, $language);
+		let configured = true;
 		if (configuration == undefined || configuration == null) {
 			console.log("configuration is null");
+			ready = false;
 			return false;
 		}
 		if (configuration.type == "number") {
@@ -40,43 +43,50 @@
 				configuration.number == undefined ||
 				configuration.number == null
 			) {
-				return false;
+				configured = false && configured;
 			}
 			if (
 				configuration.number.minimum == undefined ||
 				configuration.number.minimum == null ||
 				isNaN(configuration.number.minimum)
 			) {
-				return false;
+				configured = false && configured;
 			}
 			if (
 				configuration.number.maximum == undefined ||
 				configuration.number.maximum == null ||
 				isNaN(configuration.number.maximum)
 			) {
-				return false;
+				configured = false && configured;
 			}
 			if (
 				configuration.number.step == undefined ||
 				configuration.number.step == null ||
 				isNaN(configuration.number.step)
 			) {
+				configured = false && configured;
+			}
+			if (configured) {
+				errorMessage = "";
+				ready = true;
+				return true;
+			}else{
+				ready	= false;
 				return false;
 			}
-			errorMessage = "";
-			return true;
 		} else if (configuration.type == "option") {
 			if (
 				configuration.option == undefined ||
 				configuration.option == null
 			) {
+				ready = false;
 				return false;
 			}
 			if (
 				!Array.isArray(configuration.option) ||
 				configuration.option.length < 1
 			) {
-				return false;
+				configured = false && configured;
 			}
 			for (let i = 0; i < configuration.option.length; i++) {
 				if (
@@ -84,22 +94,87 @@
 					configuration.option[i].value == null ||
 					isNaN(configuration.option[i].value)
 				) {
-					return false;
+					configured = false && configured;
 				}
 				if (
 					configuration.option[i].name == undefined ||
 					configuration.option[i].name == null ||
 					configuration.option[i].name.length < 1
 				) {
-					return false;
+					configured = false && configured;
 				}
 			}
-			errorMessage = "";
-			return true;
+			if (configured) {
+				errorMessage = "";
+				ready = true;
+				return true;
+			}else{
+				ready	= false;
+				return false;
+			}
 		}
 	}
 
 	function isValid() {
+		if (configuration.type == "number") {
+			if (
+				selectedValue == undefined ||
+				selectedValue == null ||
+				isNaN(selectedValue)
+			) {
+				errorMessage = utils.getLabel(
+					"value_not_set",
+					texts,
+					$language,
+				);
+				ready = false;
+				return false;
+			}
+			if (
+				selectedValue < configuration.number.minimum ||
+				selectedValue > configuration.number.maximum
+			) {
+				errorMessage = utils.getLabel(
+					"value_not_valid",
+					texts,
+					$language,
+				);
+				ready = false;
+				return false;
+			}
+		}
+		if (configuration.type == "option") {
+			if (
+				selectedValue == undefined ||
+				selectedValue == null ||
+				isNaN(selectedValue)
+			) {
+				errorMessage = utils.getLabel(
+					"value_not_set",
+					texts,
+					$language,
+				);
+				ready = false;
+				return false;
+			}
+			let found = false;
+			for (let i = 0; i < configuration.option.length; i++) {
+				if (configuration.option[i].value == selectedValue) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				errorMessage = utils.getLabel(
+					"value_not_valid",
+					texts,
+					$language,
+				);
+				ready = false;
+				return false;
+			}
+		}
+		ready = true;
 		return true;
 	}
 
@@ -143,6 +218,26 @@
 		}
 	}
 
+	function sendValue(value) {
+		if (!isValid()) {
+			return;
+		}
+		callback(true, value);
+	}
+
+	function handleKeyDown(event) {
+		errorMessage = "";
+		ready = true;
+	}
+
+	function getButtonColor(){
+		if(configuration.btncolor != undefined && configuration.btncolor != null){
+			return configuration.btncolor;
+		}else{
+			return "primary";
+		}
+	}
+
 	let texts = {
 		hint1: {
 			pl: "Naciśnij ",
@@ -180,6 +275,14 @@
 			pl: "Podaj nową wartość",
 			en: "Provide new value",
 		},
+		value_not_set: {
+			pl: "Wartość nie została ustawiona",
+			en: "Value is not set",
+		},
+		value_not_valid: {
+			pl: "Wartość nie jest zgodna z konfiguracją",
+			en: "Value is not valid according to configuration",
+		},
 	};
 </script>
 
@@ -211,6 +314,7 @@
 								min={configuration.number.minimum}
 								max={configuration.number.maximum}
 								step={configuration.number.step}
+								on:keydown={handleKeyDown}
 							/>
 							<div id="valueHelp" class="form-text">
 								{getValueHelp()}
@@ -218,8 +322,11 @@
 						</div>
 					</form>
 				{/if}
-			{:else}
-				<p class="text-danger"><b>{errorMessage}</b></p>
+			{/if}
+			{#if errorMessage != ""}
+				<div class="alert alert-danger" role="alert">
+					{errorMessage}
+				</div>
 			{/if}
 		</div>
 
@@ -227,14 +334,14 @@
 			<p><em>{getHint()}</em></p>
 			{#if labels != undefined && labels != null && labels.length > 1}
 				<button
-					class="btn btn-outline-primary"
+					class="btn btn-outline-{getButtonColor()}"
 					on:click={callback(false)}>{cancelLabel}</button
 				>
 			{/if}
-			{#if isConfigured()}
+			{#if ready==true}
 				<button
-					class="btn btn-outline-primary"
-					on:click={callback(true, selectedValue)}>{okLabel}</button
+					class="btn btn-outline-{getButtonColor()}"
+					on:click={sendValue(selectedValue)}>{okLabel}</button
 				>
 			{/if}
 		</div>

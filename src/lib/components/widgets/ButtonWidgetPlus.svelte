@@ -47,7 +47,7 @@
             status = 0;
             return;
         }
-        let commandPort = configuration.port;
+
         let apiUrl =
             utils.getBackendUrl(location) +
             "/api/core/actuator/" +
@@ -74,13 +74,22 @@
                 console.log("Unknown command type: ", config.commandType);
                 return;
         }
-
+        // inside command replace all occurences of $value with the actual value
+        if (command.includes("${value}")) {
+            command = command.replace("${value}", value);
+        }
         if (
-            commandPort != undefined &&
-            commandPort != null &&
-            isNaN(commandPort) == false
+            configuration.port != undefined &&
+            configuration.port != null &&
+            isNaN(configuration.port) == false
         ) {
-            command = command + "@@@" + commandPort;
+            command = command + "@@@" + configuration.port;
+        }
+        // prepend command with append/replace flag
+        if (configuration.replace != undefined && configuration.replace != null && configuration.replace == true) {
+            command = "#" + command;
+        } else {
+            command = "&" + command;
         }
 
         promise = await fetch(apiUrl, {
@@ -107,6 +116,14 @@
                 return "ERROR";
             });
     }
+
+    function getBgColor(configuration){
+		if(configuration.bgcolor != undefined && configuration.bgcolor != null){
+			return configuration.bgcolor;
+		}else{
+			return "body";
+		}
+	}
 
     let labels = {
         sendQuestion: {
@@ -154,7 +171,7 @@
         utils.getLabel("save", labels, $language),
         utils.getLabel("cancel", labels, $language),
     ]}
-    color="danger"
+    color={getBgColor(widgets.getConfiguration(config))}
     configuration={widgets.getConfiguration(config)}
 >{config.description}</DialogValue>
 <div class="container p-0">
