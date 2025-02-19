@@ -22,6 +22,7 @@
 	let selectedValue;
 	let errorMessage = "";
 	let ready = false;
+	let selected = null;
 
 	function getValueLabel() {
 		if (configuration.label == undefined || configuration.label == null) {
@@ -70,8 +71,8 @@
 				errorMessage = "";
 				ready = true;
 				return true;
-			}else{
-				ready	= false;
+			} else {
+				ready = false;
 				return false;
 			}
 		} else if (configuration.type == "option") {
@@ -108,8 +109,8 @@
 				errorMessage = "";
 				ready = true;
 				return true;
-			}else{
-				ready	= false;
+			} else {
+				ready = false;
 				return false;
 			}
 		}
@@ -230,10 +231,18 @@
 		ready = true;
 	}
 
-	function getButtonColor(){
-		if(configuration.btncolor != undefined && configuration.btncolor != null){
+	function handleSelected(event) {
+		errorMessage = "";
+		ready = true;
+	}
+
+	function getButtonColor() {
+		if (
+			configuration.btncolor != undefined &&
+			configuration.btncolor != null
+		) {
 			return configuration.btncolor;
-		}else{
+		} else {
 			return "primary";
 		}
 	}
@@ -299,12 +308,12 @@
 		{/if}
 		<div class="mb-1">
 			{#if isConfigured()}
-				{#if configuration.type == "number"}
-					<form>
-						<div class="mb-3 w-100">
-							<label for="valueInput" class="form-label"
-								>{getValueLabel()}</label
-							>
+				<form>
+					<div class="mb-3 w-100">
+						<label for="valueInput" class="form-label"
+							>{getValueLabel()}</label
+						>
+						{#if configuration.type == "number"}
 							<input
 								type="number"
 								class="form-control"
@@ -316,12 +325,28 @@
 								step={configuration.number.step}
 								on:keydown={handleKeyDown}
 							/>
-							<div id="valueHelp" class="form-text">
-								{getValueHelp()}
+						{:else if configuration.type == "option"}
+							<div class="form-check">
+							{#each configuration.option as option}
+								<label>
+									<input
+										class="form-check-input me-1 ms-1"
+										bind:group={selectedValue}
+										type="radio"
+										name="amount"
+										value={option.value}
+										on:change={handleSelected}
+									/>
+									{option.name}
+								</label>
+							{/each}
 							</div>
+						{/if}
+						<div id="valueHelp" class="form-text">
+							{getValueHelp()}
 						</div>
-					</form>
-				{/if}
+					</div>
+				</form>
 			{/if}
 			{#if errorMessage != ""}
 				<div class="alert alert-danger" role="alert">
@@ -338,7 +363,7 @@
 					on:click={callback(false)}>{cancelLabel}</button
 				>
 			{/if}
-			{#if ready==true}
+			{#if ready == true}
 				<button
 					class="btn btn-outline-{getButtonColor()}"
 					on:click={sendValue(selectedValue)}>{okLabel}</button
