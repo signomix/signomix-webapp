@@ -387,6 +387,101 @@ export const widgets = {
             }
         }
     },
+    getAlertRule: function (definition) {
+        let rule = {
+            varName: null,
+            comparator1: 0,
+            value1: NaN,
+            comparator2: 0,
+            value2: NaN
+        }
+        if (definition.length == 0) {
+            return rule;
+        }
+        let chr;
+        let element = "";
+        let elementNumber = 0;
+        for (let i = 0; i < definition.length; i++) {
+            chr = definition.charAt(i);
+            if (chr == ">" || chr == "<") {
+                if (element != "" && rule.varName == null) {
+                    rule.varName = element;
+                    element = "";
+                } else if (element == "" && rule.varName == null) {
+                    rule.varName = "x";
+                } else if (element != "" && Number.isNaN(rule.value1)) {
+                    rule.value1 = Number(element);
+                    element = "";
+                } else if (element != "" && Number.isNaN(rule.value2)) {
+                    rule.value2 = Number(element);
+                    element = "";
+                }
+                if (rule.comparator1 == 0) {
+                    rule.comparator1 = chr == "<" ? 1 : 2;
+                } else {
+                    rule.comparator2 = chr == "<" ? 1 : 2;
+                }
+            } else {
+                element = element + chr;
+            }
+        }
+        if (element.length > 0) {
+            if (Number.isNaN(rule.value1)) {
+                rule.value1 = Number(element);
+            } else if (Number.isNaN(rule.value2)) {
+                rule.value2 = Number(element);
+            }
+        }
+        return rule;
+    },
+    isNotResponding: function (rule, tstamp) {
+        let currentTime = Date.now()
+        return (Date.now() - tstamp) > rule.value1
+    },
+    isRuleMet: function (rule, value) {
+        if (!isNaN(rule.value1)) {
+            if (rule.comparator1 == 1 && value < rule.value1) {
+                return true;
+            }
+            if (rule.comparator1 == 2 && value > rule.value1) {
+                return true;
+            }
+        }
+        // OR
+        if (!isNaN(rule.value2)) {
+            if (rule.comparator2 == 1 && value < rule.value2) {
+                return true;
+            }
+            if (rule.comparator2 == 2 && value > rule.value2) {
+                return true;
+            }
+        }
+        return false;
+    },
+    getNotRespondingRule: function (definition) {
+        let rule = {
+            varName: null,
+            comparator1: 0,
+            value1: NaN,
+            comparator2: 0,
+            value2: NaN
+        }
+        let defStr = definition.trim()
+        let timeUnit = defStr.charAt(definition.length - 1)
+        let multiplier = 1
+        if (timeUnit === 'm') {
+            multiplier = 60
+        } else if (timeUnit === 's') {
+            multiplier = 1
+        } else {
+            return rule
+        }
+        try {
+            // value1 holds delay in milliseconds
+            rule.value1 = 1000 * multiplier * defStr.substring(0, defStr.length - 2)
+        } catch (err) { }
+        return rule
+    },
     getAlertLevel: function (definition, value, tstamp) {
         // Calculates alert level
         // 
