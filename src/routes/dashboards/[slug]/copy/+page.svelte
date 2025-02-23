@@ -81,7 +81,7 @@
 </div>
 <div class="demo-container size">
     {#if $isAuthenticated}
-    <Grid gap={[4,4]} bind:items={data.items} rowHeight={100} let:item {cols} let:index on:change={onChange}>
+    <Grid gap={[1,1]} bind:items={data.items} rowHeight={100} let:item {cols} let:index on:change={onChange}>
         <div class="demo-widget content bg-white border border-primary">
             <WidgetConfig index={index} bind:config={data.widgets} removeCallback={removeItem} copyCallback={copyItem} setCurrentIndex={(idx)=>
                 setCurrentConfigureIndex(idx)}/>

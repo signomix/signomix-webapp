@@ -3,6 +3,7 @@
     import { utils } from '$lib/utils.js';
     import { sgxdata } from '$lib/sgxdata.js';
     import { sgxhelper } from '$lib/sgxhelper.js';
+    import { widgets } from '$lib/widgets.js';
     import { dql } from '$lib/dql.js';
     import { dev } from '$app/environment';
     import { onMount } from 'svelte';
@@ -24,6 +25,9 @@
     config2.query ='report DqlReport eui '+config2.dev_id+' channel '+config2.channel+' last 1'
     if(q!=undefined && q!=null && q.project!=undefined && q.project!=null && q.project!=''){
         config2.query = config2.query + ' project '+q.project
+    }
+    if(!widgets.getConfiguration(config2).nulls){
+        config2.query = config2.query + ' notnull'
     }
 
     //let promise = sgxdata.getData(dev, apiUrl, config, filter, $token);

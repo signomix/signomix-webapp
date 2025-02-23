@@ -60,14 +60,12 @@
     {:else}
     <div class="row h-100">
         <div class="{numberOfGridCols} d-block">
-            <Grid gap={[2,2]} bind:items={items} rowHeight={100} let:item {cols} let:index on:resize={handleResize}
+            <Grid gap={[1,1]} bind:items={items} rowHeight={100} let:item {cols} let:index on:resize={handleResize}
                 on:mount={handleMount}>
                 <div class={getBorderClass(index)}>
                     {#if !isRoleOK(index)}
                     <div class="alert alert-light mx-auto my-auto">{utils.getLabel('hidden',labels,$language)}</div>
                     {:else}
-
-
                     {#if 'button'===getWidgetType(index)}
                     <ButtonWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
                     {:else if 'buttonplus'===getWidgetType(index)}
@@ -87,7 +85,9 @@
                     {:else if 'symbol'===getWidgetType(index)}
                     <SymbolWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter}
                         bind:application={dashboardApp} />
-                    {:else if 'text'===getWidgetType(index)}
+                    {:else if 'textvalue'===getWidgetType(index)}
+                    <TextValueWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter}
+                            bind:application={dashboardApp} />{:else if 'text'===getWidgetType(index)}
                     <TextWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
                     {:else if 'devinfo'===getWidgetType(index)}
                     <InfoWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
@@ -198,6 +198,7 @@
     import TracksWidget from '$lib/components/widgets/TracksWidget.svelte';
     import ButtonWidget from '$lib/components/widgets/ButtonWidget.svelte';
     import ButtonWidgetPlus from '$lib/components/widgets/ButtonWidgetPlus.svelte';
+    import TextValueWidget from '$lib/components/widgets/TextValueWidget.svelte';
 
     export let data
 

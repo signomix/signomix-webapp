@@ -16,6 +16,7 @@ export const widgets = {
         'raw',
         'report',
         'symbol',
+        'textvalue',
         'stopwatch',
         'time',
         'text',
@@ -33,6 +34,7 @@ export const widgets = {
     ],
     singleValueTypes: [
         'symbol',
+        'textvalue',
         'date',
         'time',
         'stopwatch',
@@ -68,6 +70,7 @@ export const widgets = {
         stopwatch: ['dev_id', 'channel', 'project'],
         time: ['dev_id', 'channel', 'project'],
         symbol: ['dev_id', 'channel', 'range', 'unit', 'rounding', 'icon', 'project'],
+        textvalue: ['dev_id', 'channel', 'project'],
     },
     chartFields: {
         line: ['timeUnit', 'cubicInterpolation'],
@@ -209,6 +212,10 @@ export const widgets = {
             'symbol': {
                 pl: 'Karta wartości',
                 en: 'Value card'
+            },
+            'textvalue': {
+                en: 'Text value',
+                pl: 'Wartość tekstowa'
             },
             'stopwatch': {
                 en: 'Stopwatch',
