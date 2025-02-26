@@ -939,7 +939,7 @@
                                 />
                                 <small class="text-xs"
                                     >User defined icons (optional) - separate
-                                    with a colon</small
+                                    with a semicolon</small
                                 >
                             </div>
                         {/if}

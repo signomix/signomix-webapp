@@ -72,6 +72,8 @@
                             <td class="col-5">{config.name} {config.surname}</td>
                             <td class="col-2">{sgxhelper.getAccountTypeName(config.type,$language)}</td>
                             <td class="col-2 text-end">
+                                <a href="" on:click|preventDefault={handleLoginAs(config.uid)}><i
+                                class="bi bi-universal-access-circle ms-2 link-dark"></i></a>
                             </td>
                         </tr>
                         {/each}
@@ -281,6 +283,71 @@
                 });
         }
     }
+
+    async function handleLoginAs(lg) {
+        let errorMessage = ''
+        let submitted = false
+        if (!dev) {
+            submitted=true
+            const url = utils.getBackendUrl(location) + '/api/auth/take/'+lg
+            const headers = new Headers()
+            headers.set('Authentication', $token);
+            const result = fetch(
+                url,
+                {
+                    method: 'POST',
+                    mode: 'cors',
+                    credentials: 'include',
+                    referrerPolicy: 'origin-when-cross-origin',
+                    headers: headers
+                })
+                .then(response => response.text())
+                .then(text => {
+                    if(text=='' || text==null) {
+                        errorMessage = utils.getLabel('failure', labels, $language)
+                        submitted=false
+                        return
+                    }
+                    token.set(text)
+                    const headers2 = new Headers()
+                    headers2.set('Authentication', text);
+                    headers2.set('X-signomix-takeover', 'true');
+                    return fetch(
+                        //utils.getBackendUrl(location) + '/api/core/user/' + lg,
+                        utils.getBackendUrl(location) + '/api/account/user/' + lg,
+                        {
+                            method: 'GET',
+                            mode: 'cors',
+                            credentials: 'include',
+                            referrerPolicy: 'origin-when-cross-origin',
+                            headers: headers2
+                        })
+                })
+                .then(response => response.json())
+                .catch(error => {
+                    errorMessage = utils.getLabel('failure', labels, $language)
+                    submitted=false
+                    //alert("HTTP-Error: " + error);
+                    token.set(null)
+                })
+
+                result.then(user => {
+                    if(errorMessage!='') return
+                    //console.log('user after login', user)
+                    profile.set(user)
+                    goto('/')
+                })
+
+        } else {
+            errorMessage = ''
+            let user = {language:'en',organization:0,login:lg,uid:'user'}
+            profile.set(user)
+            token.set('dev')
+            goto('/')
+        }
+
+    }
+
 
 
     let labels = {

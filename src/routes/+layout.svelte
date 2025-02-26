@@ -36,7 +36,11 @@
                 <ul class="nav flex-column">
                     <li class="nav-item mt-2">
                         <div class="nav-link">
+                            {#if isTakeover($profile)}
+                              <i class="h2 bi bi-universal-access-circle me-2"></i>
+                            {:else}
                             <i class="h2 bi bi-person-circle me-2"></i>
+                            {/if}
                             {#if $isAuthenticated}
                             <span class="lead">{$profile.uid}</span>
                             {:else}
@@ -465,6 +469,17 @@
         }
 
     });
+
+    function isTakeover(profile){
+        if(profile==undefined||profile==null){
+            return false
+        }
+        if(profile.role==undefined || profile.role==null){
+            return false
+        }
+        let roles = profile.role.split(',')
+        return roles.includes('takeover')
+    }
 
     function isCloud() {
         return utils.isCloudSubdomain($page.url)

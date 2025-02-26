@@ -87,6 +87,13 @@
         front = !front;
     }
 
+    function getValue(data) {
+        if(data.datasets[0].data[0]==undefined || data.datasets[0].data[0].values[0] == undefined) {
+            return "N/A";
+        }
+        return data.datasets[0].data[0].values[0];
+    }
+
 </script>
 
 <div class="p-1 w-100" on:click={switchView}>
@@ -104,8 +111,8 @@
                 ></div>
             {:then data}
                 {#if front}
-                    <span class="h4">
-                        {data.datasets[0].data[0].values[0]}
+                    <span class="h5">
+                        {getValue(data)}
                     </span>
                 {:else}
                     {new Date(
