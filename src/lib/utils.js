@@ -215,10 +215,10 @@ export const utils = {
     if (data.isDefault) {
       result = userProfile.type == 1 || userProfile.uid == objectOwner || data.isObjectAdmin
     } else {
-      // Service admin or organization admin can manage objects of his organization
+      // Service admin or organization/tenant admin can manage objects of his organization
       // Object owners which are not service admin or organization admin 
       // are not allowed to manage objects of his organization
-      result = userProfile.type == 9 || userProfile.type == 1
+      result = userProfile.type == 8 || userProfile.type == 9 || userProfile.type == 1
     }
     data.hasAdminRights = result
     //console.log('isObjectAdmin', data)

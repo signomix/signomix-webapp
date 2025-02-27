@@ -80,14 +80,14 @@
                                     class="bi bi-building-gear me-2"></i><span>{utils.getLabel('orgsettings',labels,$language)}</span>
                         </a>
                     </li>
-                    <li class="nav-item ms-3">
+                    <!-- <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/organization/applications' }
                             href="/organization/applications">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i class="bi bi-box me-2"></i>{utils.getLabel('applications',labels,$language)}
                             </span>
                         </a>
-                    </li>
+                    </li> -->
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/organization/users' }
                             href="/organization/users">

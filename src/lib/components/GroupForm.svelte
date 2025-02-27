@@ -4,7 +4,11 @@
             <label for="input-uid" class="form-label">{utils.getLabel('eui',labels,$language)}</label>
         </div>
         <div class="col-md-10">
+            {#if config.new === true}
+            <input type="text" class="form-control" id="input-uid" bind:value={config.eui} >
+            {:else}
             <input type="text" class="form-control" id="input-uid" bind:value={config.eui} disabled>
+            {/if}
         </div>
     </div>
     <div class="row">

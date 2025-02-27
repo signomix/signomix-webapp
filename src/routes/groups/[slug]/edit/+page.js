@@ -49,7 +49,8 @@ profile.subscribe((value) => userProfile = value)
   "administrators":"",
   "channels":{},
   "description":"",
-  "open":true
+  "open":true,
+  "new":true
   }
 
   return await getSelectedConfig(utils.getBackendUrl(url))

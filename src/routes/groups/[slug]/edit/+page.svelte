@@ -54,7 +54,9 @@
             const headers = new Headers()
             let method = 'POST'
             let url = utils.getBackendUrl(location) + "/api/core/group/"
-            if (!(data.eui === 'new' || data.eui == null || data.eui == '' || data.eui == undefined)) {
+            if (!(data.eui === 'new' || data.eui == null || data.eui == '' || data.eui == undefined
+                || data.new === true
+            )) {
                 url = url + data.eui
                 method = 'PUT'
             }
