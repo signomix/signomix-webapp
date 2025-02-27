@@ -10,7 +10,7 @@
     </div>
 </div>
 {#if utils.isDefaultOrganizationUser($profile)}
-<div class="row mb-3">
+<div class="row mb-1">
     <div class="col-md-12 mt-3 mb-1 w-100">
         <div class="d-flex justify-content-center w-100">
             <label class="me-3 h6" for="customSwitch1">{utils.getLabel('monthlyPayload',labels, $language)}</label>
@@ -18,6 +18,13 @@
                 <input class="form-check-input h6" type="checkbox" id="customSwitch1" bind:checked={yearlySelected} style="width: 3rem;">
             </div>
             <label class="ms-3 h6" for="customSwitch1">{utils.getLabel('yearlyPayload',labels, $language)}</label>
+        </div>
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="col-md-12 mt-0 mb-1 w-100">
+        <div class="d-flex justify-content-center w-100">
+            <span><i>{utils.getLabel('netto',labels, $language)}</i></span>
         </div>
     </div>
 </div>
@@ -120,6 +127,10 @@
         'organizationComment': {
             'en': "You are using an organization account. To change the plan, please contact the administrator.",
             'pl': "Korzystasz z konta organizacyjnego. Aby zmienić plan, skontaktuj się z administratorem."
+        },
+        'netto': {
+            'pl': "Wszystkie podane ceny są cenami netto. Na fakturze zostanie doliczony podatek VAT.",
+            'en': "All prices are net prices. VAT will be added to the invoice."
         }
     }
 
