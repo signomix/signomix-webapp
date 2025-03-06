@@ -1,14 +1,14 @@
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-3 border-bottom">
-    <h5>{data.name!=undefined?data.name:'new application'}</h5>
+    <h5>{data.id!=undefined?data.id:'new task'}</h5>
     <!--{#if (utils.isObjectAdmin($profile, data.userID, $defaultOrganizationId))}-->
-    <a href="/admin/applications/{data.id}" title={utils.getLabel('configure',labels,$language)}><i
+    <a href="/admin/tasks/{data.id}" title={utils.getLabel('configure',labels,$language)}><i
         class="bi bi-eye h5 me-2 link-dark"></i></a>
 </div>
 {#await data}
 {:then data}
 {#if data!==undefined}
-<ApplicationForm config={data} callback={saveSettings} readonly={false} />
+<TaskDefinitionForm config={data} callback={saveSettings} readonly={false} />
 {/if}
 {/await}
 <script>
@@ -18,7 +18,7 @@
     import { goto } from '$app/navigation';
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { defaultOrganizationId } from '$lib/stores.js';
-    import ApplicationForm from '$lib/components/ApplicationForm.svelte';
+    import TaskDefinitionForm from '$lib/components/TaskDefinitionForm.svelte';
 
     export let data
     let errorMessage = ''
@@ -32,13 +32,13 @@
 
     function saveSettings(config){
         if(config==null){
-            goto('/admin/applications')
+            goto('/admin/tasks')
             return
         }
         console.log("saveSettings: ",config);
         const headers = new Headers()
         let method = (config.id==undefined||config.id==null||isNaN(config.id) )? 'POST' : 'PUT'
-        let url = utils.getBackendUrl(location) + "/api/core/application/"
+        let url = utils.getBackendUrl(location) + "/api/scheduler/task/"
         if(method == 'PUT'){
             url = url + config.id
         }
@@ -50,7 +50,7 @@
         ).then((response) => {
             if (response.status == 200) {
                 errorMessage = ''
-                goto('/admin/applications')
+                goto('/admin/tasks')
                 return
             } else if (response.status == 401 || response.status == 403) {
                 token.set(null)

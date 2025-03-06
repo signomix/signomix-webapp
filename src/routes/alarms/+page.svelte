@@ -5,7 +5,7 @@
 {:else}
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-3 border-bottom">
-    <h5>{utils.getLabel('title',labels,$language)}</h5>
+    <h5>{utils.getLabel('title',labels,$language)}</h5><a href="#" on:click|preventDefault={removeAll}><i class="bi bi-trash3 h5 link-dark"></i></a>
 </div>
 {/if}
 
@@ -120,6 +120,48 @@
                 })
             //}
         }
+    }
+
+    function removeAll(){
+        if (confirm("Czy na pewno chcesz usunąć wszystkie alarmy?")) {
+            console.log("remove all alerts")
+            sendRemove("-1")
+            offset = 0
+            data=loadData()
+        }
+    }
+
+    function sendRemove(id) {
+        if(dev){
+            return
+        }
+        const headers = new Headers()
+        let method = 'DELETE'
+        let url = utils.getBackendUrl(location) + "/api/signal/" + id
+        headers.set('Authentication', $token);
+        let response = fetch(
+            url,
+            { method: method, mode: 'cors', headers: headers }
+        ).then((response) => {
+            if (response.status == 200) {
+                errorMessage = ''
+                //goto('/notifications')
+            } else if (response.status == 401 || response.status == 403) {
+                token.set(null)
+            } else {
+                alert(
+                    utils.getMessage(utils.FETCH_STATUS)
+                        .replace('%1', response.status)
+                        .replace('%2', response.statusText)
+                )
+            }
+        }).catch((error) => {
+            errorMessage = error.message
+            if (errorMessage == 'Failed to fetch' && location.protocol.toLowerCase() == 'https') {
+                errorMessage = errorMessage + ' Możliwa przyczyna: self signed nie są obsługiwane.'
+            }
+            console.log(error)
+        });
     }
 
     function handleLoadPrevious() {

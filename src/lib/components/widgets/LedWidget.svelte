@@ -2,7 +2,7 @@
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { utils } from '$lib/utils.js';
     import { sgxdata } from '$lib/sgxdata.js';
-    import { sgxhelper } from '$lib/sgxhelper.js';
+    //import { sgxhelper } from '$lib/sgxhelper.js';
     import { widgets } from '$lib/widgets.js';
     import { dql } from '$lib/dql.js';
     import { dev } from '$app/environment';
@@ -49,7 +49,7 @@
     }
 
     function getColor(value, timestamp) {
-        let level = sgxhelper.getAlertLevel(config.range, utils.recalculate(value, config.rounding), timestamp);
+        let level = widgets.getAlertLevel(config.range, utils.recalculate(value, config.rounding), timestamp);
         if (config.config != undefined && config.config != null && config.config != '') {
             try {
                 let cfg = JSON.parse(config.config)
@@ -75,7 +75,7 @@
         }
     }
     function getIconName(data) {
-        let level = sgxhelper.getAlertLevel(config.range, utils.recalculate(data.datasets[0].data[0].values[0], config.rounding), data.datasets[0].data[0].timestamp);
+        let level = widgets.getAlertLevel(config.range, utils.recalculate(data.datasets[0].data[0].values[0], config.rounding), data.datasets[0].data[0].timestamp);
         let icons = ['bi-emoji-smile-fill', 'bi-emoji-neutral-fill', 'bi-emoji-frown-fill', 'bi-emoji-expressionless-fill']
         if(config.icon!=undefined && config.icon!=null && config.icon!=''){
             let optIcons = config.icon.split(':')

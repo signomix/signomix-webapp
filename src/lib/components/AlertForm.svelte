@@ -47,7 +47,16 @@
   }, {
     id: -1,
     name: "mniejsze niż"
-  }]
+  },
+  {
+    id: 0,
+    name: "równe"
+  },
+  {
+    id: 2,
+    name: "różne od"
+  }
+]
 
   let logicalOperators = [{
     id: 1,

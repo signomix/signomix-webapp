@@ -5,7 +5,7 @@
 {:else}
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-3 border-bottom">
-    <h5>Powiadomienia</h5><a href="#" on:click|preventDefault={removeAll}><i class="bi bi-trash3 h5 link-dark"></i></a>
+    <h5>{utils.getLabel('title',labels,$language)}</h5><a href="#" on:click|preventDefault={removeAll}><i class="bi bi-trash3 h5 link-dark"></i></a>
 </div>
 {#await promise}
 {:then alerts}
@@ -66,7 +66,6 @@
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { utils } from '$lib/utils.js';
     import { dev } from '$app/environment';
-    import { invalidateAll } from '$app/navigation';
 
 
     export let data
@@ -187,6 +186,13 @@
             }
             console.log(error)
         });
+    }
+
+    let labels = {
+        'title': {
+            'pl': "Komunikaty",
+            'en': "Notifications",
+        }
     }
 
 

@@ -9,7 +9,9 @@
                 <tr>
                     <th>id</th>
                     <th>name</th>
+                    <th>type</th>
                     <th>enabled</th>
+                    <th>schedule</th>
                 </tr>
             </thead>
             <tbody>
@@ -17,7 +19,9 @@
                 <tr>
                     <td><a href="/admin/tasks/{task.id}">{task.id}</a></td>
                     <td><a href="/admin/tasks/{task.id}">{task.jobName}</a></td>
+                    <td>{task.type}</td>
                     <td>{task.enabled}</td>
+                    <td>{task.scheduleDefinition}</td>
                 </tr>
                 {/each}
             </tbody>

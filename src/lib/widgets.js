@@ -410,7 +410,7 @@ export const widgets = {
         let elementNumber = 0;
         for (let i = 0; i < definition.length; i++) {
             chr = definition.charAt(i);
-            if (chr == ">" || chr == "<") {
+            if (chr == ">" || chr == "<" || chr == "=") {
                 if (element != "" && rule.varName == null) {
                     rule.varName = element;
                     element = "";
@@ -424,9 +424,35 @@ export const widgets = {
                     element = "";
                 }
                 if (rule.comparator1 == 0) {
-                    rule.comparator1 = chr == "<" ? 1 : 2;
+                    switch (chr) {
+                        case ">":
+                            rule.comparator1 = 1;
+                            break;
+                        case "<":
+                            rule.comparator1 = 2;
+                            break;
+                        case "=":
+                            rule.comparator1 = 3;
+                            break;
+                        default:
+                            rule.comparator1 = 4; // error
+                            break;
+                    }
                 } else {
-                    rule.comparator2 = chr == "<" ? 1 : 2;
+                    switch (chr) {
+                        case ">":
+                            rule.comparator2 = 1;
+                            break;
+                        case "<":
+                            rule.comparator2 = 2;
+                            break;
+                        case "=":
+                            rule.comparator2 = 3;
+                            break;
+                        default:
+                            rule.comparator2 = 4; // error
+                            break;
+                    }
                 }
             } else {
                 element = element + chr;
@@ -453,6 +479,9 @@ export const widgets = {
             if (rule.comparator1 == 2 && value > rule.value1) {
                 return true;
             }
+            if (rule.comparator1 == 3 && value == rule.value1) {
+                return true;
+            }
         }
         // OR
         if (!isNaN(rule.value2)) {
@@ -460,6 +489,9 @@ export const widgets = {
                 return true;
             }
             if (rule.comparator2 == 2 && value > rule.value2) {
+                return true;
+            }
+            if(rule.comparator2 == 3 && value == rule.value2) {
                 return true;
             }
         }
@@ -499,13 +531,16 @@ export const widgets = {
         //
         // definition "{alertCondition}[:{warningConditon}][@variableName][#maxDelay]
         // condition: [variableName]{comparator}{value}[[variableName]{comparator}{value}]
-        // comparator is one of: > <
+        // variableName is optional, one character, default is 'x'
+        // comparator is one of: '>','<','='
         // 
         // example 1: "x<-10>40:x<0>30"
         // example 2: "<-10>40:<0>30"
-        // example 3: "<-10>40:<0>30@measureName"
-        // example 3: "<-10>40:<0>30@measureName#maxDelay"
-        // example 4: "x<-10>40:x<0>30:2m"
+        // example 3: "<-10>40:<0>30@temperature"
+        // example 3: "<-10>40:<0>30@humidity#30s"
+        // example 4: "x<-10>40:x<0>30:#120m"
+        // example 5: "x=2:x=1"
+        //console.log('getAlertLevel, definition', definition)
         if (definition == '' || definition == undefined) {
             return -1
         }

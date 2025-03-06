@@ -8,7 +8,7 @@
     import { utils } from "$lib/utils.js";
     import { widgets } from "$lib/widgets.js";
     import { sgxdata } from "$lib/sgxdata.js";
-    import { sgxhelper } from "$lib/sgxhelper.js";
+    //import { sgxhelper } from "$lib/sgxhelper.js";
     import { dql } from "$lib/dql.js";
     import { dev } from "$app/environment";
     import { onMount } from "svelte";
@@ -97,11 +97,12 @@
     }
 
     function getColor(value, timestamp) {
-        let level = sgxhelper.getAlertLevel(
+        let level = widgets.getAlertLevel(
             config.range,
             recalculate(value),
             timestamp,
         );
+        console.log("LED level: ", level);
         if (
             config.config != undefined &&
             config.config != null &&

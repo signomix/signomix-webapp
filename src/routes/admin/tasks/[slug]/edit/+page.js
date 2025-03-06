@@ -13,7 +13,7 @@ export const load = async ({ params, url }) => {
     let config = newApp
     if (params.slug.toLowerCase() != 'new') {
       try {
-        let endpoint = serviceUrl + "/api/core/application/" + params.slug 
+        let endpoint = serviceUrl + "/api/scheduler/task/" + params.slug 
         let headers = new Headers();
         headers.set('Authentication', usertoken);
         await fetch(endpoint, { headers: headers }).then(response => {
@@ -38,8 +38,6 @@ export const load = async ({ params, url }) => {
   }
 
   const newApp = {
-    organization: userprofile.organization,
-    config:{}
   }
 
   return await getSelectedConfig(utils.getBackendUrl(url))
