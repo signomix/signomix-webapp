@@ -80,14 +80,6 @@
                                     class="bi bi-building-gear me-2"></i><span>{utils.getLabel('orgsettings',labels,$language)}</span>
                         </a>
                     </li>
-                    <!-- <li class="nav-item ms-3">
-                        <a class="nav-link" class:active={$page.url.pathname==='/organization/applications' }
-                            href="/organization/applications">
-                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-box me-2"></i>{utils.getLabel('applications',labels,$language)}
-                            </span>
-                        </a>
-                    </li> -->
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/organization/users' }
                             href="/organization/users">
@@ -157,17 +149,6 @@
                                 {/if}
                         </a>
                     </li>
-                    <!--                     <li class="nav-item">
-                        <a class="nav-link" class:active={$page.url.pathname==='/notifications' } href="/notifications"
-                            on:click={collapseOther}>
-                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-megaphone me-2"></i>{utils.getLabel('notifications',labels,$language)}
-                            </span>
-                            {#if alertCounter.value>0}
-                            <span class="badge rounded-pill text-bg-danger ms-2">{alertCounter.value}</span>
-                            {/if}
-                        </a>
-                    </li> -->
                     {/if}
                     <!-- Analytics -->
                     <li class="nav-item">
@@ -290,33 +271,41 @@
                     {/if}
                     <!-- end logged in -->
                     {/if}
+                    <!-- platform documentation -->
                     {#if isCloud() || !utils.isUserRole($profile, 'limited', true)}
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/documentation' }
                             href="https://documentation.signomix.com" target="_blank">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i
-                                    class="bi bi-question-circle me-2"></i>{utils.getLabel('documentation',labels,$language)}
+                                    class="bi bi-book me-2"></i>{utils.getLabel('documentation',labels,$language)}
                             </span>
                         </a>
                     </li>
-                    <!--                     <li class="nav-item">
-                        <a class="nav-link" class:active={$page.url.pathname==='/documentation' }
-                            href="https://signomix.com/app#!doc,toc" target="_blank">
-                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i
-                                    class="bi bi-question-circle me-2"></i>{utils.getLabel('documentation_old',labels,$language)}
-                            </span>
-                        </a>
-                    </li> 
--->
                     {/if}
+                    <!-- end platform documentation -->
+                    <!-- documentation/help content for organization users -->
+                    {#if $isAuthenticated && ($profile.organization != utils.getDefaultOrganizationId())}
+                        <li class="nav-item">
+                            <a class="nav-link" class:active={$page.url.pathname==='/documentation' }
+                                href="https://documentation.signomix.com?sid={$token}" target="_blank">
+                                <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                    <i
+                                        class="bi bi-question-circle me-2"></i>{utils.getLabel('help',labels,$language)}
+                                </span>
+                            </a>
+                        </li>
+                    {/if}
+                    <!-- end documentation/help content for organization users -->
+                    <!-- logout-->
                     {#if $isAuthenticated}
                     <li class="nav-item"><a class="nav-link" href="/" on:click={logout}>
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show"><i
                                     class="bi bi-x-circle me-2"></i>{utils.getLabel('signout',labels,$language)}</span></a>
                     </li>
                     {/if}
+                    <!-- end logout -->
+                    <!-- register -->
                     {#if (isCloud() || dev==true) && !$isAuthenticated}
                     <li class="nav-item">
                         <a class="nav-link" class:active={$page.url.pathname==='/account/register' }
@@ -327,6 +316,7 @@
                         </a>
                     </li>
                     {/if}
+                    <!-- end register -->
                     <li class="nav-item d-inline d-sm-none">
                         <div class="nav-link">
                             <a href="/" on:click|preventDefault={setLanguagePl}>
@@ -342,9 +332,6 @@
                             </a>
                         </div>
                     </li>
-                    <!--<li class="nav-item">
-                        <div class="nav-link" style="color: darkgray;">version: {platformInfo.version}</div>
-                    </li>-->
                     <li class="nav-item">
                         <div class="nav-link" style="color: darkgray;">{$webappRelease}/{$platformRelease}</div>
                     </li>
@@ -356,26 +343,6 @@
             || $page.url.pathname=='/account/resetpassword' || $page.url.pathname=='/account/setpassword'
             || $page.url.pathname=='/confirmed'
             }
-            <!-- {#if $context!=null}
-            <div class="row m-1">
-                <div class="col w-100">
-                    <div class="alert alert-danger" role="alert">
-                        {utils.getLabel('context',labels,$language)}
-                        <a href="" on:click|preventDefault={setContext(null,'')}
-                            title={utils.getLabel('setcontext',labels,$language)}><i
-                                class="bi bi-box-arrow-left ms-1 me-2 h5"></i></a>
-                        <span class="fw-bold">{$context}</span> {$contextRoot}/
-                    </div>
-                </div>
-            </div>
-            {/if}
-            {#if $profile!=null && $profile.tenant!=null && $profile.tenant!=0}
-            <div class="row mt-1">
-                <div class="col w-100">
-                    {$profile.path}
-                </div>
-            </div>
-            {/if} -->
             <PageHeader />
             <slot></slot>
             {:else if $page.url.pathname!='/' && $page.url.pathname!='/login'}
@@ -398,9 +365,6 @@
                     </div>
                     <div class="row mt-4">
                         <div class="col-12">
-                            <!-- <button type="button" class="btn btn-lg btn-outline-primary w-100" on:click={()=>
-                                toast(utils.getLabel('notavailable',labels,$language),{duration:
-                                7000,})}>{utils.getLabel('register',labels,$language)}</button> -->
                             <a href="/account/register"
                                 class="btn btn-lg btn-outline-primary w-100">{utils.getLabel('register',labels,$language)}</a>
                         </div>
@@ -431,29 +395,6 @@
     import { env } from '$env/dynamic/public';
 
     console.log('layout.svelte', env.PUBLIC_WEBAPP_MODE);
-    //console.log('$page.params.path', $page.params.path)
-    //let paramsPath = $page.params.path
-
-    /*     if (env.PUBLIC_WEBAPP_MODE == 'view') {
-            async() => {
-            var tokenObject;
-            let serviceUrl = utils.getBackendUrl(location)
-            console.log('paramsPath', paramsPath)
-            token.set(paramsPath)
-            fetch(serviceUrl + '/api/auth/token/' + paramsPath).then(function (response) {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    goto('/dashboard')
-                }
-            }).then(function (data) {
-                tokenObject = data;
-                goto('/dashboard/' + tokenObject.payload)
-            }).catch(function (error) {
-                console.warn('Something went wrong.', error);
-            });
-            }   
-        } */
 
     onMount(async () => {
         if (env.PUBLIC_WEBAPP_MODE == 'view') {
@@ -501,15 +442,6 @@
         goto('/login')
         return false
     }
-
-    /* function setContext(tenant, root) {
-        return function (event) {
-            event.preventDefault();
-            context.set(tenant)
-            contextRoot.set(root)
-            goto('/organization/tenants')
-        }
-    } */
 
     let structureExpanded = false;
     function toggleStructure(event) {
@@ -589,15 +521,7 @@
         language.set('en')
         return true
     }
-    /* function isVisible(endpoint) {
-        let restricted = ['/', '/login', '/about', '/documentation']
-        console.log('profile', $profile)
-        console.log('isvisible', endpoint, restricted.includes(endpoint), utils.isUserRole($profile, 'limited'))
-        if (restricted.includes(endpoint) && utils.isUserRole($profile, 'limited')) {
-            return false
-        }
-        return true
-    } */
+
     let alertCounter = { value: 0 }
     poll(async function fetchData() {
         if ($isAuthenticated) {
@@ -706,6 +630,10 @@
         'documentation_old': {
             'pl': "Dokumentacja (ver. 1)",
             'en': "Documentation (ver. 1)"
+        },
+        'help': {
+            'pl': "Pomoc",
+            'en': "Help"
         },
         'about': {
             'pl': "O aplikacji",
