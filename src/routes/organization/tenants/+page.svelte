@@ -124,7 +124,7 @@
 
             let url = utils.getBackendUrl(location) + "/api/tenant"
             url = url + '?offset=' + actualOffset + '&limit=' + limit + '&organization=' + $profile.organization
-            if ($profile.tenant != null) {
+            if ($profile.tenant != null && $profile.tenant > 0) {
                 url = url + '&tenant=' + $profile.tenant
             }
 

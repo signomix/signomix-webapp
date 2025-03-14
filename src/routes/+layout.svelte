@@ -287,8 +287,8 @@
                     <!-- documentation/help content for organization users -->
                     {#if $isAuthenticated && ($profile.organization != utils.getDefaultOrganizationId())}
                         <li class="nav-item">
-                            <a class="nav-link" class:active={$page.url.pathname==='/documentation' }
-                                href="https://documentation.signomix.com?sid={$token}" target="_blank">
+                            <a class="nav-link" class:active={$page.url.pathname==='/help' }
+                                href="https://help.signomix.com?sid={$token}" target="_blank">
                                 <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                     <i
                                         class="bi bi-question-circle me-2"></i>{utils.getLabel('help',labels,$language)}

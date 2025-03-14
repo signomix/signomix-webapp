@@ -35,6 +35,17 @@
             let cfg = config
             cfg.channels = "{}"
             cfg.applicationConfig = "{}"
+/*             // remove spaces from team
+            cfg.team = cfg.team.replace(/\s/g, '')
+            // remove spaces from administrators
+            cfg.administrators = cfg.administrators.replace(/\s/g, '')
+            // remove spaces from channelsAsString
+            cfg.channelsAsString = cfg.channelsAsString.replace(/\s/g, '')
+            // remove spaces from groups
+            cfg.groups = cfg.groups.replace(/\s/g, '')
+            // remove spaces from project
+            cfg.project = cfg.project.replace(/\s/g, '') 
+            */
             let validationError = validate(cfg)
             if (validationError != '') {
                 callback(validationError)

@@ -15,6 +15,6 @@ export async function load({params, url}) {
     if(!userAuthenticated){
         return {}
     }
-    let apiUrl = utils.getBackendUrl(url) + '/api/tenant/'+params.slug
+    let apiUrl = utils.getBackendUrl(url) + '/api/tenant/search/'+params.slug
     return await sgxdata.getTenant(dev, apiUrl, userprofile, usertoken)
 }
