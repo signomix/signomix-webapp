@@ -7,7 +7,7 @@
 {/await}
 <script>
     import OrganizationForm from '$lib/components/OrganizationForm.svelte';
-    import { profile,token, language, isAuthenticated } from '$lib/usersession.js';
+    import { profile,token, language, isAuthenticated, organizationConfig } from '$lib/usersession.js';
     import { utils } from '$lib/utils.js';
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
@@ -19,7 +19,8 @@
             console.log('redirect to login');
             goto('/login');
         }else{
-            console.log('organization');
+            //console.log('organization');
+            //console.log('organizationConfig: ',$organizationConfig);
         }
     });
     function saveSettings(config){

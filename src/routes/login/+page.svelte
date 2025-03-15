@@ -35,7 +35,7 @@
 </form>
 
 <script>
-    import { profile, token, language, isAuthenticated } from '$lib/usersession.js';
+    import { profile, token, language, organizationConfig } from '$lib/usersession.js';
     import { goto } from '$app/navigation';
     import { dev } from '$app/environment';
     import { utils } from '$lib/utils.js';
@@ -103,6 +103,31 @@
                     if(errorMessage!='') return
                     //console.log('user after login', user)
                     profile.set(user)
+                    if(user.organization!=utils.getDefaultOrganizationId()) {
+                        let headers = new Headers();
+                        headers.set('Authentication', $token);
+                        if(user.tensnt!=0){
+                        fetch(utils.getBackendUrl(location) + '/api/organization/' + user.organization,
+                            {
+                                method: 'GET',
+                                mode: 'cors',
+                                credentials: 'include',
+                                referrerPolicy: 'origin-when-cross-origin',
+                                headers: headers
+                            })
+                            .then(response => response.json())
+                            .then(org => {
+                                try{
+                                    console.log('organizationConfig1',JSON.parse(org.configuration))
+                                    organizationConfig.set(JSON.parse(org.configuration))
+                                } catch(e) {
+                                    console.log('error parsing organization.configuration',e)
+                                }
+                                console.log('organizationConfig2',$organizationConfig)
+                                
+                            })
+                        }
+                    }
                     goto('/')
                 })
 

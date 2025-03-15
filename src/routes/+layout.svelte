@@ -14,12 +14,17 @@
 {:else}
 <Toaster richColors closeButton position="top-center" />
 <header class="navbar navbar-dark bg-primary sticky-top flex-md-nowrap p-0 shadow">
-    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="/"><img src="/img/logo-light.svg"
-            height="30px" /><span class="h5 m-2">Signomix</span></a>
+    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="/"><img src="{getLogoUrl($organizationConfig)}"
+            height="30px" />
+            {#if getOrganizationName($organizationConfig)=='' }
+            <span class="h5 m-2">Signomix</span>
+            {/if}
+        </a>
     <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse"
         data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
+    <span class="d-none d-sm-inline h5 text-white">{getOrganizationName($organizationConfig)}</span>
     <span class="d-none d-sm-inline">
         <a class="me-2" href="/" on:click|preventDefault={setLanguagePl}>
             <img src="/img/flags/4x3/pl.svg" height="16px" title="język polski" />
@@ -88,7 +93,7 @@
                             </span>
                         </a>
                     </li>
-                    {#if $profile.type==8 && ($context==null || $context=='')}
+                    {#if $profile.type==8 && $organizationConfig.menu_tenants==true && ($context==null || $context=='')}
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/organization/tenants' }
                             href="/organization/tenants">
@@ -285,7 +290,7 @@
                     {/if}
                     <!-- end platform documentation -->
                     <!-- documentation/help content for organization users -->
-                    {#if $isAuthenticated && ($profile.organization != utils.getDefaultOrganizationId())}
+                    {#if isHelpVIsible($isAuthenticated, $profile, $organizationConfig)}
                         <li class="nav-item">
                             <a class="nav-link" class:active={$page.url.pathname==='/help' }
                                 href="https://help.signomix.com?sid={$token}" target="_blank">
@@ -388,7 +393,7 @@
     import { poll } from '$lib/poll.js';
     import { dev } from '$app/environment';
     import { sgxdata } from '$lib/sgxdata.js';
-    import { token, profile, language, isAuthenticated, context, contextRoot } from '$lib/usersession.js';
+    import { token, profile, language, isAuthenticated, context, contextRoot, organizationConfig } from '$lib/usersession.js';
     import { getInfo, platformInfo, defaultOrganizationId, platformRelease, webappRelease } from '$lib/stores.js';
     import { Toaster, toast } from 'svelte-sonner'
     import PageHeader from '$lib/components/PageHeader.svelte'
@@ -410,6 +415,37 @@
         }
 
     });
+
+    function isDocumentationVIsible(userAuthenticated, userProfile, userOrganizationConfig) {
+        if(!userAuthenticated) return true;
+        if(userProfile.organization == utils.getDefaultOrganizationId()) return true;
+        if(userOrganizationConfig==undefined) return true;
+        if(userOrganizationConfig.menu_documentation == undefined) return true;
+        if(userOrganizationConfig.menu_documentation == false) return false;
+        return true;
+    }
+
+    function isHelpVIsible(userAuthenticated, userProfile, userOrganizationConfig) {
+        if(!userAuthenticated) return false;
+        //if(userProfile.organization == utils.getDefaultOrganizationId()) return true;
+        if(userOrganizationConfig==undefined) return false;
+        if(userOrganizationConfig.menu_help == undefined) return false;
+        if(userOrganizationConfig.menu_help == true) return true;
+        return false;
+    }
+
+    function getOrganizationName(userOrganizationConfig) {
+        if(userOrganizationConfig==undefined) return '';
+        if(userOrganizationConfig.name==null) return '';
+        return userOrganizationConfig.name;
+    }
+
+    function getLogoUrl(userOrganizationConfig) {
+        let url = '/img/logo-light.svg';
+        if(userOrganizationConfig==undefined) return url;
+        if(userOrganizationConfig.logo_url==null) return url;
+        return userOrganizationConfig.logo_url;
+    }
 
     function isTakeover(profile){
         if(profile==undefined||profile==null){
