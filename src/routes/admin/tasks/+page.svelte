@@ -8,7 +8,7 @@
             <thead>
                 <tr>
                     <th>id</th>
-                    <th>name</th>
+                    <th>description</th>
                     <th>type</th>
                     <th>enabled</th>
                     <th>schedule</th>
@@ -18,7 +18,7 @@
                 {#each tasks as task}
                 <tr>
                     <td><a href="/admin/tasks/{task.id}">{task.id}</a></td>
-                    <td><a href="/admin/tasks/{task.id}">{task.jobName}</a></td>
+                    <td>{task.description}</td>
                     <td>{task.type}</td>
                     <td>{task.enabled}</td>
                     <td>{task.scheduleDefinition}</td>
@@ -89,10 +89,7 @@
                         type: 1,
                         userId: '',
                         enabled: true,
-                        triggerName: 'trigger'+(i + actualOffset + 1),
-                        triggerGroup: 'events',
-                        jobName: 'job'+(i + actualOffset + 1),
-                        jobGroup: 'jobs',
+                        description: 'Description of task ' + (i + actualOffset + 1),
                         nlScheduleDefinition: 'Every 5 minutes',
                         scheduleDefinition: '0 0/5 * * * ?',
                         jobDataMap: {}

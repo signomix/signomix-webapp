@@ -77,9 +77,9 @@
             } catch (error) {
                 return 'error.configuration'
             }
-            if(config.id!=taskId){
+            /* if(config.id!=taskId){
                 return 'error.id'
-            }
+            } */
         }
         return ''
     }
