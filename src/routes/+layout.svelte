@@ -469,6 +469,7 @@
         context.set(null)
         contextRoot.set('')
         language.set('pl')
+        organizationConfig.set(null)
         goto('/')
         return true
     }
