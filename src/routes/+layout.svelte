@@ -93,7 +93,7 @@
                             </span>
                         </a>
                     </li>
-                    {#if $profile.type==8 && $organizationConfig.menu_tenants==true && ($context==null || $context=='')}
+                    {#if isTenantsVisible($isAuthenticated, $profile, $organizationConfig) && ($context==null || $context=='')}
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/organization/tenants' }
                             href="/organization/tenants">
@@ -290,7 +290,7 @@
                     {/if}
                     <!-- end platform documentation -->
                     <!-- documentation/help content for organization users -->
-                    {#if isHelpVIsible($isAuthenticated, $profile, $organizationConfig)}
+                    {#if isHelpVisible($isAuthenticated, $profile, $organizationConfig)}
                         <li class="nav-item">
                             <a class="nav-link" class:active={$page.url.pathname==='/help' }
                                 href="https://help.signomix.com?sid={$token}" target="_blank">
@@ -425,12 +425,22 @@
         return true;
     }
 
-    function isHelpVIsible(userAuthenticated, userProfile, userOrganizationConfig) {
+    function isHelpVisible(userAuthenticated, userProfile, userOrganizationConfig) {
         if(!userAuthenticated) return false;
         //if(userProfile.organization == utils.getDefaultOrganizationId()) return true;
         if(userOrganizationConfig==undefined) return false;
         if(userOrganizationConfig.menu_help == undefined) return false;
         if(userOrganizationConfig.menu_help == true) return true;
+        return false;
+    }
+
+    function isTenantsVisible(userAuthenticated, userProfile, userOrganizationConfig) {
+        if(!userAuthenticated) return false;
+        //if(userProfile.organization == utils.getDefaultOrganizationId()) return true;
+        if(userProfile.type != 8) return false;
+        if(userOrganizationConfig==undefined) return false;
+        if(userOrganizationConfig.menu_tenants == undefined) return false;
+        if(userOrganizationConfig.menu_tenants == true) return true;
         return false;
     }
 

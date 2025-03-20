@@ -101,7 +101,7 @@
 
                 result.then(user => {
                     if(errorMessage!='') return
-                    //console.log('user after login', user)
+                    console.log('user after login', user)
                     profile.set(user)
                     if(user.organization!=utils.getDefaultOrganizationId()) {
                         let headers = new Headers();

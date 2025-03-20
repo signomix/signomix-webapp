@@ -113,7 +113,7 @@
 {/await}
 {/if}
 <script>
-    import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
+    import { token, profile, language, isAuthenticated,organizationConfig } from '$lib/usersession.js';
     import { utils } from '$lib/utils.js';
     import { sgxhelper } from '$lib/sgxhelper.js';
     import { dev } from '$app/environment';
@@ -335,6 +335,30 @@
                     if(errorMessage!='') return
                     //console.log('user after login', user)
                     profile.set(user)
+                    if(user.organization!=utils.getDefaultOrganizationId()) {
+                        let headers = new Headers();
+                        headers.set('Authentication', $token);
+                        if(user.tensnt!=0){
+                        fetch(utils.getBackendUrl(location) + '/api/organization/' + user.organization,
+                            {
+                                method: 'GET',
+                                mode: 'cors',
+                                credentials: 'include',
+                                referrerPolicy: 'origin-when-cross-origin',
+                                headers: headers
+                            })
+                            .then(response => response.json())
+                            .then(org => {
+                                try{
+                                    organizationConfig.set(JSON.parse(org.configuration))
+                                } catch(e) {
+                                    console.log('error parsing organization.configuration',e)
+                                }
+                                
+                            })
+                        }
+                    }
+
                     goto('/')
                 })
 
