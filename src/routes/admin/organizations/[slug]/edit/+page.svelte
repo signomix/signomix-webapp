@@ -8,7 +8,7 @@
 {#await data}
 {:then data}
 {#if data!==undefined}
-<ApplicationForm config={data} callback={saveSettings} readonly={false} />
+<OrganizationForm config={data} callback={saveSettings} readonly={false} />
 {/if}
 {/await}
 <script>
@@ -17,8 +17,7 @@
     import { utils } from '$lib/utils.js';
     import { goto } from '$app/navigation';
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
-    import { defaultOrganizationId } from '$lib/stores.js';
-    import ApplicationForm from '$lib/components/ApplicationForm.svelte';
+    import OrganizationForm from '$lib/components/OrganizationForm.svelte';
 
     export let data
     let errorMessage = ''
@@ -32,13 +31,13 @@
 
     function saveSettings(config){
         if(config==null){
-            goto('/admin/applications')
+            goto('/admin/organizations')
             return
         }
         console.log("saveSettings: ",config);
         const headers = new Headers()
         let method = (config.id==undefined||config.id==null||isNaN(config.id) )? 'POST' : 'PUT'
-        let url = utils.getBackendUrl(location) + "/api/core/application/"
+        let url = utils.getBackendUrl(location) + "/api/organization/"
         if(method == 'PUT'){
             url = url + config.id
         }
@@ -50,12 +49,12 @@
         ).then((response) => {
             if (response.status == 200) {
                 errorMessage = ''
-                goto('/admin/applications')
+                goto('/admin/organizations')
                 return
             } else if (response.status == 401 || response.status == 403) {
                 token.set(null)
             } else if (response.status == 409) {
-                errorMessage= utils.getLabel('application_exists',labels,$language)
+                errorMessage= utils.getLabel('organization_exists',labels,$language)
                 //dialog1.showModal()
             } else {
                 errorMessage = utils.getMessage(utils.FETCH_STATUS)

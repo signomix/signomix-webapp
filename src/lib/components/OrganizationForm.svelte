@@ -23,6 +23,15 @@
         </div>
     </div>
     <div class="row">
+        <div class="col-md-1 col-form-label">
+            <label for="input-config" class="form-label">{utils.getLabel('configuration',labels,$language)}</label>
+        </div>
+        <div class="col-md-11">
+            <textarea class="form-control mb-1" id="input-config" rows="3" bind:value="{config.configuration}"
+                readonly={readonly} />
+        </div>
+    </div>
+    <div class="row">
         <div class="col-md-12">
             <textarea rows="4" class="form-control" id="input-description" bind:value={config.description} readonly={readonly}></textarea>
         </div>
@@ -58,8 +67,8 @@
         callback(null)
     }
 
-    const apiUrl = utils.getBackendUrl(location) + '/api/organization/'+$profile.organization
-    let promise = sgxdata.getOrganization(dev,apiUrl,$token);
+    // const apiUrl = utils.getBackendUrl(location) + '/api/organization/'+$profile.organization
+    // let promise = sgxdata.getOrganization(dev,apiUrl,$token);
 
     let labels = {
         'id': {
@@ -77,6 +86,10 @@
         'description': {
             'en': 'Description',
             'pl': 'Opis'
+        },
+        'configuration': {
+            'en': 'Configuration',
+            'pl': 'Konfiguracja'
         }
     }
 

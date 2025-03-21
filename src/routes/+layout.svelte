@@ -12,9 +12,13 @@
     </div>
 </div>
 {:else}
+<Theme />
 <Toaster richColors closeButton position="top-center" />
-<header class="navbar navbar-dark bg-primary sticky-top flex-md-nowrap p-0 shadow">
-    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="/"><img src="{getLogoUrl($organizationConfig)}"
+<header class="navbar navbar-dark sticky-top flex-md-nowrap p-0 shadow"
+style="background-color: {getOrganizationBackgroundColor($organizationConfig)}; color: {getOrganizationTextColor($organizationConfig)};">
+    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="/"  
+    style="background-color: {getOrganizationBackgroundColor($organizationConfig)}; color: {getOrganizationTextColor($organizationConfig)};">
+    <img src="{getLogoUrl($organizationConfig)}"
             height="30px" />
             {#if getOrganizationName($organizationConfig)=='' }
             <span class="h5 m-2">Signomix</span>
@@ -24,7 +28,7 @@
         data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-    <span class="d-none d-sm-inline h5 text-white">{getOrganizationName($organizationConfig)}</span>
+    <span class="d-none d-sm-inline h5" style="color: {getOrganizationTextColor($organizationConfig)};">{getOrganizationName($organizationConfig)}</span>
     <span class="d-none d-sm-inline">
         <a class="me-2" href="/" on:click|preventDefault={setLanguagePl}>
             <img src="/img/flags/4x3/pl.svg" height="16px" title="język polski" />
@@ -398,6 +402,7 @@
     import { Toaster, toast } from 'svelte-sonner'
     import PageHeader from '$lib/components/PageHeader.svelte'
     import { env } from '$env/dynamic/public';
+    import Theme from '$lib/components/Theme.svelte';
 
     console.log('layout.svelte', env.PUBLIC_WEBAPP_MODE);
 
@@ -448,6 +453,18 @@
         if(userOrganizationConfig==undefined) return '';
         if(userOrganizationConfig.name==null) return '';
         return userOrganizationConfig.name;
+    }
+
+    function getOrganizationBackgroundColor(userOrganizationConfig) {
+        if(userOrganizationConfig==undefined) return '#001999';
+        if(userOrganizationConfig.background_color==null) return '#001999';
+        return userOrganizationConfig.background_color;
+    }
+
+    function getOrganizationTextColor(userOrganizationConfig) {
+        if(userOrganizationConfig==undefined) return '#f8f9fa';
+        if(userOrganizationConfig.text_color==null) return '#f8f9fa';
+        return userOrganizationConfig.text_color;
     }
 
     function getLogoUrl(userOrganizationConfig) {
