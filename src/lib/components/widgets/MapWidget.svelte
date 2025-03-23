@@ -13,6 +13,8 @@
     import { onMount, onDestroy } from "svelte";
     import { browser } from "$app/environment";
     import { afterUpdate } from "svelte";
+    import { tileLayerGrayscale } from "$lib/leaflet/TileLayerGrayscale.js";
+    import { controlSelect } from "$lib/leaflet/ControlSelect.js";
 
     export let index;
     export let config;
@@ -30,6 +32,9 @@
 
     var calcAlert = false;
     let rangeName = "";
+
+    let colorMode = 0; // 1: grayscale, 0: color, 0: default (color)
+    let jsonDataLoaded = null
 
     onMount(() => {
         show();
@@ -68,6 +73,7 @@
                     )
                     .then((jsonData) => {
                         if (jsonData != null) {
+                            jsonDataLoaded = jsonData
                             //console.log('groupmap jsonData', jsonData)
                             showMap(jsonData);
                         }
@@ -86,6 +92,7 @@
                     )
                     .then((jsonData) => {
                         if (jsonData != null) {
+                            jsonDataLoaded = jsonData
                             //console.log('groupmap jsonData', jsonData)
                             showMap(jsonData);
                         }
@@ -303,13 +310,25 @@
         if (map != undefined && map != null) {
             map.remove();
         }
-        map = L.map(getMapElementId());
+        map = L.map(getMapElementId(), {
+            className: "monochrome-map",
+        });
         //map.setView([lat, lon], zoom)
 
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-            attribution:
-                '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        }).addTo(map);
+        if(colorMode == 1) {
+            tileLayerGrayscale(L, "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                attribution:
+                    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            })
+            .addTo(map);
+        } else {
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                attribution:
+                    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            })
+            .addTo(map); 
+        }
+
         let polyline = null;
         let marker = null;
         let popupOptions = {
@@ -351,7 +370,10 @@
                         )
                         .openPopup();
                     marker.addTo(map);
-                } else if ((i == jsonData.datasets[0].data.length - 1) || widgetConfig.showAllMarkers) {
+                } else if (
+                    i == jsonData.datasets[0].data.length - 1 ||
+                    widgetConfig.showAllMarkers
+                ) {
                     // marker on the first reported position or on all positions if showAllMarkers is true
                     marker = new L.CircleMarker(L.latLng(tmpLat, tmpLon), {
                         radius: 5,
@@ -375,17 +397,47 @@
                         )
                         .openPopup();
                     marker.addTo(map);
-                } 
+                }
             } catch (err) {
                 console.log(err);
             }
-
         }
         polyline = L.polyline(latlngs, {
             color: "#0095FF",
         }).addTo(map);
+
+        // add control to switch between color and grayscale map
+        var items = [
+            { label: utils.getLabel("standardMap", labels, $language), value: "color" },
+            { label: utils.getLabel("grayscaleMap", labels, $language), value: "grayscale" },
+        ];
+        controlSelect(L, {
+            position: "topleft",
+            selectedDefault: items[colorMode].value,
+            items: items,
+            onSelect: function (newItemValue) {
+              controlCallback(newItemValue);
+            },
+          })
+          .addTo(map);
+
         // zoom the map to the polyline
         map.fitBounds(polyline.getBounds());
+    }
+
+    function controlCallback(valueSelected) {
+        console.log("control selected", valueSelected);
+        switch (valueSelected) {
+          case "grayscale":
+            colorMode = 1;
+            break;
+          case "color":
+            colorMode = 0;
+            break;
+          default:
+            colorMode = 0;
+        }
+        showMap(jsonDataLoaded);
     }
 
     function getMarkerColor(
@@ -427,12 +479,23 @@
             pl: "Wartość",
             en: "Value",
         },
+        grayscaleMap: {
+            pl: "Mapa monochromatyczna",
+            en: "Grayscale map",
+        },
+        standardMap: {
+            pl: "Mapa standardowa",
+            en: "Standard map",
+        }
     };
+
 </script>
 
 <div class="p-1 pt-2 w-100" id={getMapElementId()}></div>
 
 <style>
+    @import "../../leaflet/ControlSelect.css";
+
     .txt {
         font-size: 0.6rem;
     }
@@ -440,4 +503,6 @@
     .value {
         font-size: 0.6rem;
     }
+
+
 </style>
