@@ -48,39 +48,29 @@
     });
 
     afterUpdate(() => {
-        show();
+        show()
     });
+
 
     function show() {
         try {
-            let promise;
-            if (
-                config.query != undefined &&
-                config.query != null &&
-                (config.query.toLowerCase().includes("class") ||
-                    config.query.toLowerCase().includes("report"))
-            ) {
+            let promise
+            if (config.query != undefined && config.query != null && (config.query.toLowerCase().includes('class') || config.query.toLowerCase().includes('report'))) {
                 //console.log('GROUP MAP 1')
-                apiUrl = utils.getBackendUrl(location) + "/api/reports/single/";
-                promise = sgxdata
-                    .getReportData(
-                        dev,
-                        apiUrl,
-                        config,
-                        filter,
-                        $token,
-                        transformData,
-                    )
-                    .then((jsonData) => {
+                apiUrl = utils.getBackendUrl(location) + '/api/reports/single/'
+                promise = sgxdata.getReportData(dev, apiUrl, config, filter, $token, transformData)
+                    .then(
+                        (jsonData) => {
                         if (jsonData != null) {
                             jsonDataLoaded = jsonData
                             //console.log('groupmap jsonData', jsonData)
-                            showMap(jsonData);
+                            showMap(jsonData)
                         }
-                    });
+                    }
+                )
             } else {
                 //console.log('GROUP MAP 2')
-                apiUrl = utils.getBackendUrl(location) + "/api/provider/group/";
+                apiUrl = utils.getBackendUrl(location) + '/api/provider/group/'
                 promise = sgxdata
                     .getGroupData(
                         dev,
