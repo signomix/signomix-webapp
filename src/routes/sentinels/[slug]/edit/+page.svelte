@@ -56,6 +56,8 @@
             cfg.conditionOkMessage = config.conditionOkMessage
             cfg.timeShift = config.timeShift
             cfg.hysteresis = config.hysteresis
+            cfg.useScript = config.useScript
+            cfg.script = config.script
             let validationError = validate(cfg)
             if (validationError != '') {
                 //callback(validationError)

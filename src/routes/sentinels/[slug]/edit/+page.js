@@ -46,5 +46,7 @@ const newConfig = {
         "alertType": 1,
         "message": "",
         "everytime": true,
-    }
+    },
+    useScript: false,
+    script: ""
 }
