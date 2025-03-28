@@ -586,6 +586,7 @@
           <input
             type="number"
             min="1"
+            step="0.1"
             id="timeshift"
             class="form-control ms-2"
             bind:value={timeShift}
@@ -600,6 +601,7 @@
           <input
             type="number"
             min="0"
+            step="0.1"
             id="hysteresis"
             class="form-control ms-2"
             bind:value={hysteresis}

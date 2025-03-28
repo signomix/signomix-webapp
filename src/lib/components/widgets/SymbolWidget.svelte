@@ -96,6 +96,25 @@
         front = !front;
     }
 
+    function getWidgetBackgroundColor() {
+        if (
+            config.config != undefined &&
+            config.config != null &&
+            config.config != ""
+        ) {
+            try {
+                let cfg = JSON.parse(config.config);
+                if (cfg.backgroundColor != undefined) {
+                    return cfg.backgroundColor;
+                }
+            } catch (e) {
+                console.log("error parsing config: ", e);
+                return "initial";
+            }
+        }
+        return "initial";
+    }
+
     function getColor(value, timestamp) {
         let level = widgets.getAlertLevel(
             config.range,
@@ -172,7 +191,19 @@
     }
 </script>
 
-<div class="p-1 w-100" on:click={switchView}>
+<div class="p-1 w-100" on:click={switchView} style="background-color: {getWidgetBackgroundColor()};">
+    {#if config.icon != null && config.icon != ""}
+        <div class="row text-center">
+            <div class="col-12">
+                <i
+                    class="bi {getIconName()} me-2 {getColor(
+                        data.datasets[0].data[0].values[0],
+                        data.datasets[0].data[0].timestamp,
+                    )}"
+                ></i>
+            </div>
+        </div>
+    {/if}
     {#if config.title != ""}
         <div class="row text-center">
             <div class="col-12"><span>{config.title}</span></div>
