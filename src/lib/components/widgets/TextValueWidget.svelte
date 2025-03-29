@@ -88,12 +88,36 @@
     }
 
     function getValue(data) {
-        if(data.datasets[0].data[0]==undefined || data.datasets[0].data[0].values[0] == undefined) {
+        if(dataNotAvailable(data)) {
             return "N/A";
         }
         return data.datasets[0].data[0].values[0];
     }
 
+    function dataNotAvailable(data) {
+        if (data == undefined || data == null) {
+            return true;
+        }
+        if (data.datasets == undefined || data.datasets == null) {
+            return true;
+        }
+        if (data.datasets[0] == undefined || data.datasets[0] == null) {
+            return true;
+        }
+        if (data.datasets[0].data == undefined || data.datasets[0].data == null) {
+            return true;
+        }
+        if (data.datasets[0].data[0] == undefined || data.datasets[0].data[0] == null) {
+            return true;
+        }
+        if (data.datasets[0].data[0].values == undefined || data.datasets[0].data[0].values == null) {
+            return true;
+        }
+        if (data.datasets[0].data[0].values[0] == undefined || data.datasets[0].data[0].values[0] == null) {
+            return true;
+        }
+        return false;
+    }
 </script>
 
 <div class="p-1 w-100" on:click={switchView}>

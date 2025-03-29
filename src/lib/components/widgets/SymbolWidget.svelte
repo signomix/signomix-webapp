@@ -85,7 +85,11 @@
         let jsonData = await rawData;
         return jsonData;
     }
-    function recalculate(value) {
+    function recalculate(data) {
+        if (dataNotAvailable(data,"recalculate")) {
+            return "N/A";
+        }
+        let value = data.datasets[0].data[0].values[0]
         try {
             return Number.parseFloat(value).toFixed(config.rounding);
         } catch (e) {
@@ -115,13 +119,47 @@
         return "initial";
     }
 
-    function getColor(value, timestamp) {
+    function dataNotAvailable(data, name) {
+        if (data == undefined || data == null) {
+            console.log("not available 1")
+            return true;
+        }
+        if (data.datasets == undefined || data.datasets == null) {
+            console.log("not available 2 in "+name)
+            return true;
+        }
+        if (data.datasets[0] == undefined || data.datasets[0] == null) {
+            console.log("not available 3")
+            return true;
+        }
+        if (data.datasets[0].data == undefined || data.datasets[0].data == null) {
+            console.log("not available 4")
+            return true;
+        }
+        if (data.datasets[0].data[0] == undefined || data.datasets[0].data[0] == null) {
+            console.log("not available 5")
+            return true;
+        }
+        if (data.datasets[0].data[0].values == undefined || data.datasets[0].data[0].values == null) {
+            console.log("not available 6")
+            return true;
+        }
+        if (data.datasets[0].data[0].values[0] == undefined || data.datasets[0].data[0].values[0] == null) {
+            console.log("not available 7")
+            return true;
+        }
+        return false;
+    }
+    function getColor(data) {
+        if(dataNotAvailable(data,"getColor")) {
+            return "text-muted";
+        }
+        let timestamp=data.datasets[0].data[0].timestamp
         let level = widgets.getAlertLevel(
             config.range,
-            recalculate(value),
+            recalculate(data),
             timestamp,
         );
-        console.log("LED level: ", level);
         if (
             config.config != undefined &&
             config.config != null &&
@@ -138,7 +176,7 @@
                 }
             } catch (e) {
                 console.log("error parsing config: ", e);
-                return "text-muted";
+                return "text-success";
             }
         }
         switch (level) {
@@ -151,10 +189,27 @@
             case 3:
                 return "text-muted";
             default:
-                return "text-muted";
+                return "text-body";
         }
     }
-    function getIconName() {
+
+    function getIconName2(data) {
+        if (dataNotAvailable(data,"getIconName2")) {
+            return "bi-clipboard2-pulse";
+        }
+        return widgets.getIconName(config,data.datasets[0].data[0].values[0],data.datasets[0].data[0].timestamp)
+    }
+
+    function getDate(data) {
+        if (dataNotAvailable(data,"getDate")) {
+            return "N/A";
+        }
+        let date = new Date(
+                        data.datasets[0].data[0].timestamp,
+                    ).toLocaleString()
+        return date;
+    }
+    /* function getIconName() {
         if (
             config.icon == null ||
             config.icon == "" ||
@@ -188,22 +243,19 @@
         } else {
             return config.icon;
         }
-    }
+    } */
 </script>
 
 <div class="p-1 w-100" on:click={switchView} style="background-color: {getWidgetBackgroundColor()};">
-    {#if config.icon != null && config.icon != ""}
+    <!-- {#if config.icon != null && config.icon != ""}
         <div class="row text-center">
             <div class="col-12">
                 <i
-                    class="bi {getIconName()} me-2 {getColor(
-                        data.datasets[0].data[0].values[0],
-                        data.datasets[0].data[0].timestamp,
-                    )}"
+                    class="bi {getIconName2(data)} me-2 {getColor(data)}"
                 ></i>
             </div>
         </div>
-    {/if}
+    {/if} -->
     {#if config.title != ""}
         <div class="row text-center">
             <div class="col-12"><span>{config.title}</span></div>
@@ -221,19 +273,15 @@
                     <span class="h4">
                         <i
                             class="bi 
-                            {widgets.getIconName(config,data.datasets[0].data[0].values[0],data.datasets[0].data[0].timestamp)} me-2 
-                            {getColor(data.datasets[0].data[0].values[0], data.datasets[0].data[0].timestamp)}"
+                            {getIconName2(data)} me-2 
+                            {getColor(data)}"
                         ></i>
-                        {recalculate(
-                            data.datasets[0].data[0].values[0],
-                        )}{@html config.unitName != undefined
+                        {recalculate(data)}{@html config.unitName != undefined
                             ? config.unitName
                             : ""}
                     </span>
                 {:else}
-                    {new Date(
-                        data.datasets[0].data[0].timestamp,
-                    ).toLocaleString()}<br />
+                    {getDate(data)}<br />
                     {config.dev_id}
                 {/if}
             {:catch error}

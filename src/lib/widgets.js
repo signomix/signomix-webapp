@@ -468,6 +468,9 @@ export const widgets = {
         return rule;
     },
     isNotResponding: function (rule, tstamp) {
+        if(tstamp == undefined || tstamp == null || tstamp == 0) {
+            return true;
+        }
         let currentTime = Date.now()
         return (Date.now() - tstamp) > rule.value1
     },
