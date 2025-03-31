@@ -192,14 +192,6 @@
                 return "text-body";
         }
     }
-
-    function getIconName2(data) {
-        if (dataNotAvailable(data,"getIconName2")) {
-            return "bi-clipboard2-pulse";
-        }
-        return widgets.getIconName(config,data.datasets[0].data[0].values[0],data.datasets[0].data[0].timestamp)
-    }
-
     function getDate(data) {
         if (dataNotAvailable(data,"getDate")) {
             return "N/A";
@@ -208,6 +200,12 @@
                         data.datasets[0].data[0].timestamp,
                     ).toLocaleString()
         return date;
+    }
+    function getIconName2(data) {
+        if (dataNotAvailable(data,"getIconName2")) {
+            return "bi-clipboard2-pulse";
+        }
+        return widgets.getIconName(config,data.datasets[0].data[0].values[0],data.datasets[0].data[0].timestamp)
     }
     /* function getIconName() {
         if (

@@ -48,7 +48,7 @@
         front = !front;
     }
 
-    function getColor(value, timestamp) {
+/*     function getColor(value, timestamp) {
         let level = widgets.getAlertLevel(config.range, utils.recalculate(value, config.rounding), timestamp);
         if (config.config != undefined && config.config != null && config.config != '') {
             try {
@@ -73,9 +73,16 @@
             default:
                 return 'text-muted'
         }
-    }
+    } */
     function getIconName(data) {
-        let level = widgets.getAlertLevel(config.range, utils.recalculate(data.datasets[0].data[0].values[0], config.rounding), data.datasets[0].data[0].timestamp);
+        if (dataNotAvailable(data,"getIconName")) {
+            return "bi-emoji-expressionless";
+        }
+        let level = widgets.getAlertLevel(
+            config.range, 
+            utils.recalculate(data.datasets[0].data[0].values[0], config.rounding), 
+            data.datasets[0].data[0].timestamp
+        );
         let icons = ['bi-emoji-smile-fill', 'bi-emoji-neutral-fill', 'bi-emoji-frown-fill', 'bi-emoji-expressionless-fill']
         if(config.icon!=undefined && config.icon!=null && config.icon!=''){
             let optIcons = config.icon.split(':')
@@ -101,6 +108,100 @@
                 return 'bi-emoji-expressionless'
         } */
     }
+
+    function dataNotAvailable(data, name) {
+        if (data == undefined || data == null) {
+            console.log("not available 1")
+            return true;
+        }
+        if (data.datasets == undefined || data.datasets == null) {
+            console.log("not available 2 in "+name)
+            return true;
+        }
+        if (data.datasets[0] == undefined || data.datasets[0] == null) {
+            console.log("not available 3")
+            return true;
+        }
+        if (data.datasets[0].data == undefined || data.datasets[0].data == null) {
+            console.log("not available 4")
+            return true;
+        }
+        if (data.datasets[0].data[0] == undefined || data.datasets[0].data[0] == null) {
+            console.log("not available 5")
+            return true;
+        }
+        if (data.datasets[0].data[0].values == undefined || data.datasets[0].data[0].values == null) {
+            console.log("not available 6")
+            return true;
+        }
+        if (data.datasets[0].data[0].values[0] == undefined || data.datasets[0].data[0].values[0] == null) {
+            console.log("not available 7")
+            return true;
+        }
+        return false;
+    }
+    function recalculate(data) {
+        if (dataNotAvailable(data,"recalculate")) {
+            return "N/A";
+        }
+        let value = data.datasets[0].data[0].values[0]
+        try {
+            return Number.parseFloat(value).toFixed(config.rounding);
+        } catch (e) {
+            return value;
+        }
+    }
+    function getColor(data) {
+        if(dataNotAvailable(data,"getColor")) {
+            return "text-muted";
+        }
+        let timestamp=data.datasets[0].data[0].timestamp
+        let level = widgets.getAlertLevel(
+            config.range,
+            recalculate(data),
+            timestamp,
+        );
+        if (
+            config.config != undefined &&
+            config.config != null &&
+            config.config != ""
+        ) {
+            try {
+                let cfg = JSON.parse(config.config);
+                if (
+                    cfg.colors != undefined &&
+                    cfg.colors != null &&
+                    cfg.colors.length == 5
+                ) {
+                    return cfg.colors[level];
+                }
+            } catch (e) {
+                console.log("error parsing config: ", e);
+                return "text-success";
+            }
+        }
+        switch (level) {
+            case 0:
+                return "text-success";
+            case 1:
+                return "text-warning";
+            case 2:
+                return "text-danger";
+            case 3:
+                return "text-muted";
+            default:
+                return "text-body";
+        }
+    }
+    function getDate(data) {
+        if (dataNotAvailable(data,"getDate")) {
+            return "N/A";
+        }
+        let date = new Date(
+                        data.datasets[0].data[0].timestamp,
+                    ).toLocaleString()
+        return date;
+    }
 </script>
 <div class="p-1 w-100" on:click={switchView}>
     {#if config.title!=""}
@@ -114,9 +215,9 @@
             <div class="spinner-border spinner-border-sm" role="status"></div>
             {:then data}
             {#if front}
-            <i class="bi {getIconName(data)} h3 {getColor(data.datasets[0].data[0].values[0], data.datasets[0].data[0].timestamp)}"></i>
+            <i class="bi {getIconName(data)} h3 {getColor(data)}"></i>
             {:else}
-            {new Date(data.datasets[0].data[0].timestamp).toLocaleString()}<br />
+            {getDate(data)}<br />
             {config.dev_id}
             {/if}
             {:catch error}
