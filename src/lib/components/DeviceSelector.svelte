@@ -3,7 +3,7 @@
 	import { token } from '$lib/usersession.js';
 	import { dev } from '$app/environment';
 	import { utils } from '$lib/utils.js';
-  	import { language } from "$lib/usersession.js";
+  	import { language, profile } from "$lib/usersession.js";
 	export let showDeviceSelectorModal; // boolean
 	export let callback //function
 
@@ -22,6 +22,9 @@
 		dialog.showModal();
 		let url = utils.getBackendUrl(location) + "/api/core/device"
 		url = url + '?offset=' + offset + '&limit=' + limit
+		if($profile.organization != null) {
+			url = url + '&organization=' + $profile.organization
+		}
 		promise = sgxdata.getDevices(dev, url, '', $token, limit, offset)
 	}
 

@@ -85,6 +85,9 @@
                     {:else if 'symbol'===getWidgetType(index)}
                     <SymbolWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter}
                         bind:application={dashboardApp} />
+                    {:else if 'date'===getWidgetType(index)}
+                    <DateWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter}
+                        bind:application={dashboardApp} />
                     {:else if 'textvalue'===getWidgetType(index)}
                     <TextValueWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter}
                             bind:application={dashboardApp} />{:else if 'text'===getWidgetType(index)}
@@ -199,6 +202,7 @@
     import ButtonWidget from '$lib/components/widgets/ButtonWidget.svelte';
     import ButtonWidgetPlus from '$lib/components/widgets/ButtonWidgetPlus.svelte';
     import TextValueWidget from '$lib/components/widgets/TextValueWidget.svelte';
+    import DateWidget from '$lib/components/widgets/DateWidget.svelte';
 
     export let data
 
