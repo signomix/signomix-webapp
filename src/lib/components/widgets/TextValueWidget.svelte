@@ -93,6 +93,15 @@
         }
         return data.datasets[0].data[0].values[0];
     }
+    function getDate(data) {
+        if (dataNotAvailable(data,"getDate")) {
+            return "N/A";
+        }
+        let date = new Date(
+                        data.datasets[0].data[0].timestamp,
+                    ).toLocaleString()
+        return date;
+    }
 
     function dataNotAvailable(data) {
         if (data == undefined || data == null) {
@@ -139,9 +148,7 @@
                         {getValue(data)}
                     </span>
                 {:else}
-                    {new Date(
-                        data.datasets[0].data[0].timestamp,
-                    ).toLocaleString()}<br />
+                    {getDate(data)}<br />
                     {config.dev_id}
                 {/if}
             {:catch error}
