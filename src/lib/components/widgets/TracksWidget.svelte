@@ -27,8 +27,8 @@
     let map;
     let zoom = 13;
     let idxLatLon = { lat: 0, lon: 1 };
-    const _latitude = "latitude";
-    const _longitude = "longitude";
+    let _latitude = "latitude";
+    let _longitude = "longitude";
 
     var calcAlert = false;
     let rangeName = "";
@@ -51,7 +51,20 @@
         show();
     });
 
+    function getLatLonNames() {
+        let cfg=widgets.getConfiguration(config)
+        let lat = cfg.latitudeName;
+        let lon = cfg.longitudeName;
+        if (lat != undefined && lat != null && lat != "") {
+            _latitude = lat;
+        }
+        if (lon != undefined && lon != null && lon != "") {
+            _longitude = lon;
+        }
+    }
+
     function show() {
+        getLatLonNames();
         try {
             let promise;
             if (

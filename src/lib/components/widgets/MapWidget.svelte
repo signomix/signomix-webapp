@@ -15,6 +15,7 @@
     import { afterUpdate } from "svelte";
     import { tileLayerGrayscale } from "$lib/leaflet/TileLayerGrayscale.js";
     import { controlSelect } from "$lib/leaflet/ControlSelect.js";
+    import { get } from "svelte/store";
 
     export let index;
     export let config;
@@ -27,8 +28,8 @@
     let map;
     let zoom = 13;
     let idxLatLon = { lat: 0, lon: 1 };
-    const _latitude = "latitude";
-    const _longitude = "longitude";
+    let _latitude = "latitude";
+    let _longitude = "longitude";
 
     var calcAlert = false;
     let rangeName = "";
@@ -51,9 +52,21 @@
         show()
     });
 
+    function getLatLonNames() {
+        let cfg=widgets.getConfiguration(config)
+        let lat = cfg.latitudeName;
+        let lon = cfg.longitudeName;
+        if (lat != undefined && lat != null && lat != "") {
+            _latitude = lat;
+        }
+        if (lon != undefined && lon != null && lon != "") {
+            _longitude = lon;
+        }
+    }
 
     function show() {
         try {
+            getLatLonNames()
             let promise
             if (config.query != undefined && config.query != null && (config.query.toLowerCase().includes('class') || config.query.toLowerCase().includes('report'))) {
                 //console.log('GROUP MAP 1')
@@ -279,6 +292,7 @@
         } catch (e) {
             console.log("getLatLonIdx() error", e);
         }
+        //console.log("latIdx", { lat: latIdx, lon: lonIdx });
         return { lat: latIdx, lon: lonIdx };
     }
 
