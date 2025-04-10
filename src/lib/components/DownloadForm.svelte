@@ -153,9 +153,11 @@
         const headers = new Headers()
         let toDateEncoded = encodeURIComponent(utils.getDateApiISOFormat(toDate))
         let fromDateEncoded = encodeURIComponent(utils.getDateApiISOFormat(fromDate))
-        let url = utils.getBackendUrl(location) + "/api/provider/v2/device/" + eui + "/*"
-            + "?query=from " + fromDateEncoded + " to " + toDateEncoded
-            + "&zone=" + zoneId
+        //let url = utils.getBackendUrl(location) + "/api/provider/v2/device/" + eui + "/*"
+        //    + "?query=from " + fromDateEncoded + " to " + toDateEncoded
+        //    + "&zone=" + zoneId
+        let query="report DqlReport eui " + eui + " channel * from " + fromDateEncoded + " to " + toDateEncoded+ " ascending format csv";
+        let url = utils.getBackendUrl(location) + "/api/reports/single?query="+query
         headers.set('Authentication', $token);
         headers.set('Accept', 'text/csv');
         let response = fetch(
@@ -189,9 +191,12 @@
         const headers = new Headers()
         let toDateEncoded = encodeURIComponent(utils.getDateApiISOFormat(toDate))
         let fromDateEncoded = encodeURIComponent(utils.getDateApiISOFormat(fromDate))
-        let url = utils.getBackendUrl(location) + "/api/provider/group/" + eui + "/*"
-            + "?query=from " + fromDateEncoded + " to " + toDateEncoded
-            + "&zone=" + zoneId
+        //let url = utils.getBackendUrl(location) + "/api/provider/group/" + eui + "/*"
+        //    + "?query=from " + fromDateEncoded + " to " + toDateEncoded
+        //    + "&zone=" + zoneId
+        
+        let query="report DqlReport group " + eui + " channel * from " + fromDateEncoded + " to " + toDateEncoded+ " format csv";
+        let url = utils.getBackendUrl(location) + "/api/reports/single?query="+query
         headers.set('Authentication', $token);
         headers.set('Accept', 'text/csv');
         let response = fetch(
