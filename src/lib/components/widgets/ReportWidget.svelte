@@ -6,6 +6,7 @@
     import { dev } from '$app/environment';
     //import { onMount } from 'svelte';
     import { afterUpdate } from 'svelte';
+    import { widgets } from '$lib/widgets.js';
 
     export let config
     export let filter
@@ -51,7 +52,7 @@
     let front = true;
 
     function switchView() {
-        front = !front;
+        //front = !front;
     }
 
     function isGroup() {
@@ -215,8 +216,26 @@
                 }
             }
         }
-        console.log('REPORT RESULT', reportResult)
+        //console.log('REPORT RESULT', reportResult)
         return reportResult
+    }
+
+    function isDateVisible() {
+        let cfg=widgets.getConfiguration(config)
+        if (cfg.showDate != undefined && cfg.showDate != null && cfg.showDate == false) {
+            return false
+        } else {
+            return true
+        }
+    }
+
+    function isColumnsVisible() {
+        let cfg=widgets.getConfiguration(config)
+        if (cfg.showColumns != undefined && cfg.showColumns != null && cfg.showColumns == false) {
+            return false
+        } else {
+            return true
+        }
     }
 
     let labels = {
@@ -265,7 +284,10 @@
                 <table class="table table-sm table-responsive-sm">
                     <thead class="text-bg-primary fs-6">
                         <th scope="col">{utils.getLabel('name', labels, $language)}</th>
+                        {#if isDateVisible()}
                         <th scope="col">{utils.getLabel('date', labels, $language)}</th>
+                        {/if}
+                        {#if isColumnsVisible()}
                         {#if channelNamesTranslated.length>0}
                         {#each channelNamesTranslated as item}
                         <th scope="col">{item}</th>
@@ -275,16 +297,21 @@
                         <th scope="col">{column}</th>
                         {/each}
                         {/if}
+                        {/if}
                     </thead>
 
                     <tbody>
                         {#each reportresult.datasets as dataset}
                         <tr>
                             <td><a href='/dashboards/{dataset.eui}'>{getDeviceName(reportresult,dataset.eui)}</a></td>
+                            {#if isDateVisible()}
                             <td>{new Date(dataset.data[0].timestamp).toLocaleString()}</td>
+                            {/if}
+                            {#if isColumnsVisible()}
                             {#each dataset.data[0].values as value}
                             <td>{utils.recalculate(value, config.rounding)}</td>
                             {/each}
+                            {/if}
                         </tr>
                         {/each}
                     </tbody>
