@@ -268,6 +268,12 @@ style="background-color: {getOrganizationBackgroundColor($organizationConfig)}; 
                         </a>
                     </li>
                     <li class="nav-item ms-3">
+                        <a class="nav-link" class:active={$page.url.pathname==='/admin/login' } href="/admin/login">
+                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                <i class="bi bi-universal-access-circle me-2"></i><span>{utils.getLabel('login_as',labels,$language)}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/admin/tasks' }
                             href="/admin/tasks">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
@@ -755,6 +761,14 @@ style="background-color: {getOrganizationBackgroundColor($organizationConfig)}; 
         'development': {
             'en': 'Development',
             'pl': 'Development'
-        }
+        },
+        'failure': {
+            'en': 'Login failed',
+            'pl': 'Logowanie nie powiodło się'
+        },
+        'login_as': {
+            'en': 'Login as',
+            'pl': 'Zaloguj jako'
+        },
     }
 </script>
