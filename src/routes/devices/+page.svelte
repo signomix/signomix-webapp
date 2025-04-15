@@ -208,7 +208,7 @@
                     //context is not supperted yet but it is prepared for future use
                     url = url + '&context=' + $context+'&path='+$contextRoot+'.*'
                 }
-                offset = 0
+                //offset = 0
             }
             headers.set('Authentication', $token);
             headers.set('Access-Control-Allow-Origin', '*');
