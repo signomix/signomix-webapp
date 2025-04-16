@@ -97,6 +97,14 @@ style="background-color: {getOrganizationBackgroundColor($organizationConfig)}; 
                             </span>
                         </a>
                     </li>
+                    <li class="nav-item ms-3">
+                        <a class="nav-link" class:active={$page.url.pathname==='/organization/tasks' }
+                            href="/organization/tasks">
+                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                <i
+                                    class="bi bi-list-task me-2"></i><span>{utils.getLabel('tasks',labels,$language)}</span>
+                        </a>
+                    </li>
                     {#if isTenantsVisible($isAuthenticated, $profile, $organizationConfig) && ($context==null || $context=='')}
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/organization/tenants' }

@@ -89,6 +89,8 @@ export const dql = {
                 case "timeseries":
                 case "csv.timeseries":
                 case "virtual":
+                case "notnull":
+                case "skipnull":
                     i = i + 1;
                     break;
                 default:
@@ -130,6 +132,8 @@ export const dql = {
                     case "timeseries":
                     case "csv.timeseries":
                     case "virtual":
+                    case "notnull":
+                    case "skipnull":
                         result[params[i]] = true
                         i = i + 1;
                         break;
