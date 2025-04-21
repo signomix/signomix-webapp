@@ -3,14 +3,20 @@
         <div class="col-md-1 col-form-label">
             <label for="input-id" class="form-label">{utils.getLabel('id',labels,$language)}</label>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-4">
             <input disabled type="text" class="form-control" id="input-id" bind:value={config.id}>
         </div>
         <div class="col-md-1 col-form-label">
             <label for="input-code" class="form-label">{utils.getLabel('code',labels,$language)}</label>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-4">
             <input type="text" class="form-control" id="input-code" bind:value={config.code} readonly={readonly}>
+        </div>
+        <div class="col-md-1 col-form-label">
+            <label for="input-locked" class="form-label">{utils.getLabel('locked',labels,$language)}</label>
+        </div>
+        <div class="col-md-1">
+            <input class="form-check-input" type="checkbox" id="input-locked" bind:checked={config.locked} readonly={readonly}>
         </div>
     </div>
     
@@ -90,7 +96,11 @@
         'configuration': {
             'en': 'Configuration',
             'pl': 'Konfiguracja'
-        }
+        },
+        'locked': {
+            'en': 'Locked',
+            'pl': 'Zablokowana'
+        },
     }
 
 
