@@ -113,7 +113,16 @@
 				ready = false;
 				return false;
 			}
+		}else{
+			errorMessage = utils.getLabel(
+				"config_type_not_valid",
+				texts,
+				$language,
+			);
+			ready = false;
+			return false;
 		}
+		return false;
 	}
 
 	function isValid() {
@@ -271,6 +280,10 @@
 		config_not_valid: {
 			pl: "Konfiguracja przycisku nie jest poprawna",
 			en: "Button configuration is not valid",
+		},
+		config_type_not_valid: {
+			pl: "Typ konfiguracji nie jest poprawny",
+			en: "Configuration type is not valid",
 		},
 		value_label: {
 			pl: "Ustaw wartość",

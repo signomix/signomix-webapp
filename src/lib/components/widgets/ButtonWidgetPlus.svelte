@@ -25,7 +25,7 @@
     let configuration = widgets.getConfiguration(config);
 
     onMount(() => {
-        console.log("ButtonWidget mounted");
+        console.log("ButtonWidgetPlus mounted");
     });
 
     function decide() {
