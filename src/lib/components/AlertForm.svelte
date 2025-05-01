@@ -30,15 +30,26 @@
   let targets = [
     {
       id: 1,
-      name: "Urządzenie",
+      name: "Urządzenia",
     },
     {
       id: 2,
-      name: "Grupa",
+      name: "Grupy",
     },
     {
       id: 3,
-      name: "Tag",
+      name: "Znacznika (tag)",
+    },
+  ];
+  let selectedType = config.eventType;
+  let types = [
+    {
+      id: 0,
+      name: "Danych",
+    },
+    {
+      id: 1,
+      name: "Komend",
     },
   ];
 
@@ -111,6 +122,90 @@
   ];
 
   let labels = {
+    name: {
+      pl: "Nazwa",
+      en: "Name",
+    },
+    for: {
+      pl: "Dla",
+      en: "For",
+    },
+    refersTo: {
+      pl: "Dotyczy",
+      en: "Refers to",
+    },
+    active: {
+      pl: "Aktywna",
+      en: "Active",
+    },
+    device: {
+      pl: "Urządzenie",
+      en: "Device",
+    },
+    group: {
+      pl: "Grupa",
+      en: "Group",
+    },
+    tag: {
+      pl: "Znacznik (tag)",
+      en: "Tag",
+    },
+    tagValue: {
+      pl: "Wartość",
+      en: "Value",
+    },
+    notOlderThan: {
+      pl: "Uwzględniaj dane nie starsze niż (min.)",
+      en: "Data not older than (min.)",
+    },
+    hysteresis: {
+      pl: "Histereza",
+      en: "Hysteresis",
+    },
+    useScript: {
+      pl: "Użyj skryptu",
+      en: "Use script",
+    },
+    ifScriptCondition: {
+      pl: "JEŻELI WARUNKI SKRYPTU SPEŁNIONE",
+      en: "IF SCRIPT CONDITIONS MET",
+    },
+    if: {
+      pl: "JEŻELI",
+      en: "IF",
+    },
+    then: {
+      pl: "WTEDY",
+      en: "THEN",
+    },
+    alarm: {
+      pl: "Alarm",
+      en: "Alarm",
+    },
+    sendMessageTo: {
+      pl: "Wyślij alarm do",
+      en: "Send alarm to",
+    },
+    message: {
+      pl: "Treść komunikatu",
+      en: "Message",
+    },
+    sendInfo: {
+      pl: "Wysyłaj informacje przy każdym wystąpieniu warunków",
+      en: "Send information at every occurrence of conditions",
+    },
+    sendInfoBackToNormal: {
+      pl: "Wysyłaj informacje o powrocie parametrów do normy",
+      en: "Send information about return to normal parameters",
+    },
+    messageBackToNormal: {
+      pl: "Treść komunikatu o powrocie parametrów do normy",
+      en: "Message about return to normal parameters",
+    },
+    addCondition: {
+      pl: "Dodaj warunek",
+      en: "Add condition",
+    },
     none: {
       pl: "bez dodatkowego warunku",
       en: "without additional condition",
@@ -200,6 +295,10 @@
       config.target.group = null;
       //console.log("cleared eui group");
     }
+  }
+
+  function typeChange(event) {
+    config.useScript = true;
   }
 
   /*   function handleInputChange(event) {
@@ -304,6 +403,7 @@
     if (!config.useScript) {
       config.script = "";
     }
+    config.eventType = selectedType;
     callback(config);
   }
   function handleCancel(event) {
@@ -459,7 +559,7 @@
         <label
           for="rule_name"
           class="flex-shrink-0 text-center text-center"
-          style="position: relative; top: 8px;">Nazwa reguły:</label
+          style="position: relative; top: 8px;">{utils.getLabel('name', labels, $language)}:</label
         >
         <input
           type="text"
@@ -474,10 +574,30 @@
 
   <div class="container mt-3">
     <div class="row">
-      <div class="col-sm-8">
+      <div class="col-sm-5">
+        <div class="form-group d-flex align-items-center">
+          <label for="type_def" class="me-2" style="white-space: nowrap;"
+            >{utils.getLabel('for', labels, $language)}:</label
+          >
+          <select
+            class="form-select"
+            id="type_def"
+            bind:value={selectedType}
+            on:change={typeChange}
+          >
+            <option disabled value="0" selected={selectedType == undefined || selectedType == null}
+              >wybierz typ</option
+            >
+            {#each types as type}
+              <option value={type.id} selected={selectedType==type.id} >{type.name}</option>
+            {/each}
+          </select>
+        </div>
+      </div>
+      <div class="col-sm-5">
         <div class="form-group d-flex align-items-center">
           <label for="alert_def" class="me-2" style="white-space: nowrap;"
-            >Alert definiowany dla:</label
+            >{utils.getLabel('refersTo', labels, $language)}:</label
           >
           <select
             class="form-select"
@@ -495,9 +615,9 @@
         </div>
       </div>
 
-      <div class="col-sm-4 d-flex align-items-center">
+      <div class="col-sm-2 d-flex align-items-center">
         <div class="form-check">
-          <label class="form-check-label" for="exampleCheckbox">Aktywny</label>
+          <label class="form-check-label" for="exampleCheckbox">{utils.getLabel('active', labels, $language)}</label>
           <input
             type="checkbox"
             class="form-check-input"
@@ -514,7 +634,7 @@
       {#if selectedTarget == 1}
         <div class="col-sm-6">
           <div class="form-group">
-            <label for="euiSelector">EUI: </label>
+            <label for="euiSelector">{utils.getLabel('device', labels, $language)}: </label>
             <DeviceSelector
               bind:showDeviceSelectorModal={showEuiModal}
               callback={(device) => {
@@ -534,7 +654,7 @@
       {:else if selectedTarget == 2}
         <div class="col-sm-6">
           <div class="form-group">
-            <label for="groupSelector">ID Grupy: </label>
+            <label for="groupSelector">{utils.getLabel('group', labels, $language)}: </label>
             <GroupSelector
               bind:showGroupSelectorModal={showGroupModal}
               callback={(group) => {
@@ -554,7 +674,7 @@
       {:else if selectedTarget == 3}
         <div class="col-sm-6">
           <div class="form-group d-flex align-items-center">
-            <label for="tag" class="me-2">Tag:</label>
+            <label for="tag_name" class="me-2">{utils.getLabel('tag', labels, $language)}:</label>
             <div class="d-flex">
               <input
                 type="text"
@@ -563,6 +683,7 @@
                 placeholder=""
                 bind:value={config.target.tag.name}
               />
+              <label for="tag_value" class="me-2">{utils.getLabel('tagValue', labels, $language)}:</label>
               <input
                 type="text"
                 id="tag_value"
@@ -576,12 +697,15 @@
       {:else}{/if}
     </div>
   </div>
+
+
   <div class="container mt-3">
+    {#if selectedType == 0}
     <div class="row">
       <div class="col-sm-6">
         <div class="form-group d-flex align-items-center">
           <label for="timeshift" class="me-2" style="white-space: nowrap;"
-            >Uwzględniaj dane nie starsze niż (min.):</label
+            >{utils.getLabel('notOlderThan', labels, $language)}:</label
           >
           <input
             type="number"
@@ -596,7 +720,7 @@
       <div class="col-sm-6">
         <div class="form-group d-flex align-items-center">
           <label for="hysteresis" class="me-2" style="white-space: nowrap;"
-            >Histereza:</label
+            >{utils.getLabel('hysteresis', labels, $language)}:</label
           >
           <input
             type="number"
@@ -609,31 +733,32 @@
         </div>
       </div>
     </div>
+    {/if}
     <div class="row">
       <div class="col-sm-6">
         <div class="form-group d-flex align-items-center">
           <label for="useScript" class="me-2" style="white-space: nowrap;"
-            >Użyj skryptu:</label
+            >{utils.getLabel('useScript', labels, $language)}:</label
           >
           <input
             type="checkbox"
             id="useScript"
             bind:checked={config.useScript}
+            disabled={selectedType==1}
           />
         </div>
       </div>
     </div>
     {#if config.useScript}
+    {#if selectedType == 0}
     <div class="d-flex align-items-center mb-1">
-      <p class="mb-0 display-7">JEŚLI WARUNKI SKRYPTU SPEŁNIONE</p>
+      <p class="mb-0 display-7">{utils.getLabel('ifScriptCondition', labels, $language)}</p>
       <hr class="flex-grow-1 ms-3" />
     </div>
+    {/if}
       <div class="row">
         <div class="col-sm-12">
           <div class="form-group d-flex align-items-center">
-            <label for="script" class="me-2" style="white-space: nowrap;"
-              >Skrypt:</label
-            >
             <textarea
               id="script"
               class="form-control ms-2"
@@ -649,7 +774,7 @@
     <div>
       <!-- Kontener z napisem "Jeżeli" i linią -->
       <div class="d-flex align-items-center mb-1">
-        <p class="mb-0 display-7">JEŚLI</p>
+        <p class="mb-0 display-7">{utils.getLabel('if', labels, $language)}</p>
         <hr class="flex-grow-1 ms-3" />
       </div>
 
@@ -863,17 +988,21 @@
         {/each}
       </div>
       {/if}
+
+
+{#if selectedType == 0}
+
       <div class="mt-3">
         <!-- Linia z tekstem "wtedy" -->
         <div class="d-flex align-items-center">
-          <p class="m-0 me-2">WTEDY</p>
+          <p class="m-0 me-2">{utils.getLabel('then', labels, $language)}</p>
           <hr class="flex-grow-1" />
         </div>
 
         <!-- Nowa linia z paragrafem, dropdownem i inputem -->
         <div class="d-flex align-items-center mt-2">
           <!-- Paragraf z krótkim napisem -->
-          <p class="m-0 me-2" style="white-space: nowrap;">Wywołaj alarm</p>
+          <p class="m-0 me-2" style="white-space: nowrap;">{utils.getLabel('alarm', labels, $language)}:</p>
           <!-- Dropdown z 5 opcjami -->
           <select class="form-select me-2" bind:value={config.result.alertType}>
             {#each alarmLevels as alarmLevel}
@@ -883,7 +1012,7 @@
           <!-- Input -->
           <!--<input bind:value={config.alertMessage} type="text" class="form-control" placeholder="treść komunikatu" />-->
           <label class="form-check-label me-2" for="input-message"
-            >Treść komunikatu</label
+            >{utils.getLabel('message', labels, $language)}:</label
           >
           <textarea
             class="form-control"
@@ -896,7 +1025,7 @@
       <div class="d-flex align-items-center mt-2">
         <!-- Input -->
         <label class="form-check-label me-2" for="team_input"
-          >Alarm wyślij do
+          >{utils.getLabel('sendMessageTo', labels, $language)}
         </label>
         <input
           id="team_input"
@@ -908,23 +1037,6 @@
         />
       </div>
 
-      <!-- Kolejna linia z dwoma radiobuttonami i napisem "cześć" -->
-      <!--
-    <div class=" mt-4">
-      <div class="d-flex justify-content-evenly">
-        <div class="form-check me-2">
-          <input bind:group={selectedOption} on:change={handleInputChange} class="form-check-input" type="radio"
-            name="radiogroup" id="radio1" value="1" />
-          <label class="form-check-label" for="radio1">Przy każdym wystąpieniu warunków</label>
-        </div>
-        <div class="form-check">
-          <input bind:group={selectedOption} on:change={handleInputChange} class="form-check-input" type="radio"
-            name="radiogroup" id="radio2" value="2" />
-          <label class="form-check-label" for="radio2">Przy pierwszym wystąpieniu warunków</label>
-        </div>
-      </div>
-    </div>
-  -->
       <div class="mt-2">
         <input
           bind:checked={everyTime}
@@ -968,6 +1080,10 @@
           </div>
         </div>
       {/if}
+      
+{/if}
+<!--  -->
+
 
       <!-- Nowa linia z buttonami "Save" i "Cancel" -->
       <div class="row mt-2 justify-content-end">

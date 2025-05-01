@@ -58,6 +58,7 @@
             cfg.hysteresis = config.hysteresis
             cfg.useScript = config.useScript
             cfg.script = config.script
+            cfg.eventType = config.eventType
             let validationError = validate(cfg)
             if (validationError != '') {
                 //callback(validationError)
