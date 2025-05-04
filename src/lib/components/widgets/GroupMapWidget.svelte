@@ -10,6 +10,7 @@
     import { tileLayerGrayscale } from "$lib/leaflet/TileLayerGrayscale.js";
     import { controlSelect } from "$lib/leaflet/ControlSelect.js";
     import { get } from 'svelte/store';
+    import { widgets } from '$lib/widgets.js';
 
     export let index
     export let config
