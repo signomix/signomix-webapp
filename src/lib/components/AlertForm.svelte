@@ -150,10 +150,6 @@
       pl: "Znacznik (tag)",
       en: "Tag",
     },
-    tagValue: {
-      pl: "Wartość",
-      en: "Value",
-    },
     notOlderThan: {
       pl: "Uwzględniaj dane nie starsze niż (min.)",
       en: "Data not older than (min.)",
@@ -182,7 +178,7 @@
       pl: "Alarm",
       en: "Alarm",
     },
-    sendMessageTo: {
+    sendAlarmTo: {
       pl: "Wyślij alarm do",
       en: "Send alarm to",
     },
@@ -191,6 +187,14 @@
       en: "Message",
     },
     sendInfo: {
+      pl: "Wysyłaj informacje przy każdym wystąpieniu warunków",
+      en: "Send information at every occurrence of conditions",
+    },
+    sendInfoTo: {
+      pl: "Wyślij informacje do",
+      en: "Send information to",
+    },
+    sendInfoEveryTime: {
       pl: "Wysyłaj informacje przy każdym wystąpieniu warunków",
       en: "Send information at every occurrence of conditions",
     },
@@ -674,7 +678,7 @@
       {:else if selectedTarget == 3}
         <div class="col-sm-6">
           <div class="form-group d-flex align-items-center">
-            <label for="tag_name" class="me-2">{utils.getLabel('tag', labels, $language)}:</label>
+            <label for="tag" class="me-2">{utils.getLabel('tag', labels, $language)}:</label>
             <div class="d-flex">
               <input
                 type="text"
@@ -683,7 +687,6 @@
                 placeholder=""
                 bind:value={config.target.tag.name}
               />
-              <label for="tag_value" class="me-2">{utils.getLabel('tagValue', labels, $language)}:</label>
               <input
                 type="text"
                 id="tag_value"
@@ -1002,7 +1005,7 @@
         <!-- Nowa linia z paragrafem, dropdownem i inputem -->
         <div class="d-flex align-items-center mt-2">
           <!-- Paragraf z krótkim napisem -->
-          <p class="m-0 me-2" style="white-space: nowrap;">{utils.getLabel('alarm', labels, $language)}:</p>
+          <p class="m-0 me-2" style="white-space: nowrap;">Wywołaj alarm</p>
           <!-- Dropdown z 5 opcjami -->
           <select class="form-select me-2" bind:value={config.result.alertType}>
             {#each alarmLevels as alarmLevel}
@@ -1012,7 +1015,7 @@
           <!-- Input -->
           <!--<input bind:value={config.alertMessage} type="text" class="form-control" placeholder="treść komunikatu" />-->
           <label class="form-check-label me-2" for="input-message"
-            >{utils.getLabel('message', labels, $language)}:</label
+            >{utils.getLabel('message', labels, $language)}</label
           >
           <textarea
             class="form-control"
@@ -1024,9 +1027,7 @@
       </div>
       <div class="d-flex align-items-center mt-2">
         <!-- Input -->
-        <label class="form-check-label me-2" for="team_input"
-          >{utils.getLabel('sendMessageTo', labels, $language)}
-        </label>
+        <label class="form-check-label me-2" for="team_input">{utils.getLabel('sendInfoTo', labels, $language)}:</label>
         <input
           id="team_input"
           required
@@ -1045,7 +1046,7 @@
           id="checkEverytime"
         />
         <label class="form-check-label mb-2" for="checkEverytime">
-          Wysyłaj informacje przy każdym wystąpieniu warunków
+          {utils.getLabel('sendInfoEveryTime', labels, $language)}
         </label>
       </div>
 
@@ -1059,7 +1060,7 @@
             id="defaultCheck1"
           />
           <label class="form-check-label mb-2" for="defaultCheck1">
-            Wysyłaj informacje o powrocie parametrów do normy
+            {utils.getLabel('sendInfoBackToNormal', labels, $language)}
           </label>
         </div>
       </div>
@@ -1069,7 +1070,7 @@
             <!--<input bind:value={config.conditionOkMessage} type="text" class="form-control"
             placeholder="treść komunikatu" />-->
             <label class="form-check-label mb-2" for="input-okmessage"
-              >Treść komunikatu o powrocie parametrów do normy</label
+              >{utils.getLabel('messageBackToNormal', labels, $language)}</label
             >
             <textarea
               class="form-control"

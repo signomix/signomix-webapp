@@ -282,8 +282,8 @@
 			en: "Button configuration is not valid",
 		},
 		config_type_not_valid: {
-			pl: "Typ konfiguracji nie jest poprawny",
-			en: "Configuration type is not valid",
+			pl: "Nieporpoprawna konfiguracja (typ)",
+			en: "Invalid configuration (type)"
 		},
 		value_label: {
 			pl: "Ustaw wartość",
