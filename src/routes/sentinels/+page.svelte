@@ -30,7 +30,7 @@
                         <td class="col-1">{sentinel.id}</td>
                         <td class="col-3"><a href="/sentinels/{sentinel.id}/edit">{sentinel.name}</a></td>
                         <td class="col-1">{sentinel.alertLevel}</td>
-                        <td class="col-6">{sentinel.alertMessage}</td>
+                        <td class="col-6">{getAlertMessage(sentinel.alertMessage)}</td>
                         <td class="col-1"><a href="/sentinels" on:click|preventDefault={remove(sentinel.id)}><i class="bi bi-trash3 link-dark"></i></a></td>
                     </tr>
                     {/each}
@@ -91,6 +91,24 @@
 
     async function loadData(){
         return sgxsentinel.getSentinels(dev, utils.getBackendUrl(location)+'/api/sentinel', limit, offset, $token);
+    }
+
+    function getAlertMessage(alertMessage) {
+        if (alertMessage == null) {
+            return ""
+        }
+        let message = alertMessage.trim()
+        if(message.length > 20) {
+            message = message.substring(0, 20) + "..."
+        }
+        return message
+    }
+    function getAlertLevel(alertLevel) {
+        if (alertLevel == null) {
+            return ""
+        }
+        let level = alertLevel.replace(/\\n/g, "<br>")
+        return level
     }
 
     function remove(id) {
