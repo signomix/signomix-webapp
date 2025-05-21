@@ -199,6 +199,22 @@ export const utils = {
         return false
     }
   },
+  isManagingAccountType: function (actualUserProfile, managedUserConfig) {
+    if (actualUserProfile == null || actualUserProfile == undefined) return false
+    if (managedUserConfig == null || managedUserConfig == undefined) return false
+    if (actualUserProfile.uid == managedUserConfig.uid) return true
+    if (actualUserProfile.type == managedUserConfig.type) return true
+    switch (actualUserProfile.type) {
+      case 9: // admin
+        return managedUserConfig.type == 0 || managedUserConfig.type == 4
+      case 8: // managing admin
+        return managedUserConfig.type == 0 || managedUserConfig.type == 4 || managedUserConfig.type == 9
+      case 1: // system admin (owner)
+        return true;
+      default:
+        return false
+    }
+  },
   isObjectAdmin: function (userProfile, objectOwner, defaultOrganizationId, objectAdmins, objectTeam) {
     //user types
     //1 - service admin
