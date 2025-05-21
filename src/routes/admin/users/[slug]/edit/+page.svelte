@@ -10,7 +10,8 @@ labels={[utils.getLabel('ok',labels, $language)]} color="danger">
 </Dialog>
 {#await data}
 {:then data}
-<SettingsForm config={data} callback={saveSettings} readonly={false} backLocation="/admin/users"  setPassLocation="/admin/users/{data.uid}/password"/>
+<SettingsForm config={data} callback={saveSettings} readonly={false} backLocation="/admin/users"  
+setPassLocation="/admin/users/{data.uid}/password"/>
 {/await}
 <script>
     import SettingsForm from '$lib/components/SettingsForm.svelte';
@@ -65,24 +66,25 @@ labels={[utils.getLabel('ok',labels, $language)]} color="danger">
     function saveSettings(config){
         console.log("saveSettings: ",config);
         const headers = new Headers()
-        let url = utils.getBackendUrl(location) + "/api/account/user/"+config.uid
-        //if (!(data.id === 'new' || data.id == null || data.id == '' || data.id == undefined)) {
-        //    url = url + data.id
-        //    method = 'PUT'
-        //}
-        config.password = null
-        config.preferredLanguage = config.preferredLanguage.toLowerCase()
+        let method = config.newConfig ? 'POST' : 'PUT'
+        let url = utils.getBackendUrl(location) + "/api/account/user/"
+        if (method == 'PUT') {
+            url = url + config.uid
+        }
         headers.set('Authentication', $token);
         headers.set('Content-Type', 'application/json');
         let response = fetch(
             url,
-            { method: 'PUT', mode: 'cors', headers: headers, body: JSON.stringify(config) }
+            { method: method, mode: 'cors', headers: headers, body: JSON.stringify(config) }
         ).then((response) => {
             if (response.status == 200) {
                 errorMessage = ''
                 goto('/admin/users')
             } else if (response.status == 401 || response.status == 403) {
                 token.set(null)
+            } else if (response.status == 409) {
+                errorMessage = utils.getLabel('user_exists', labels, $language)
+                dialog.showModal()
             } else {
                 alert(
                     utils.getMessage(utils.FETCH_STATUS)
@@ -129,12 +131,12 @@ labels={[utils.getLabel('ok',labels, $language)]} color="danger">
             'pl': "Podany login użytkownika już jest zajęty",
             'en': "The user login is already taken"
         },
-        'invalid_phone': {
+        'invalid.phone': {
             'pl': "Nieprawidłowy numer telefonu",
             'en': "Invalid phone number"
         },
-        'invalid_phonePrefix': {
-            'pl': "Nieprawidłowy prefix numeru telefonu",
+        'invalid.phonePrefix': {
+            'pl': "Nieprawidłowy prefiks telefonu",
             'en': "Invalid phone prefix"
         },
         'ok': {

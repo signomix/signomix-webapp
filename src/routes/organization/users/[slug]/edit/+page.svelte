@@ -12,7 +12,7 @@
 {#await data}
 {:then data}
 <SettingsForm config={data} callback={saveSettings} readonly={false} backLocation="/organization/users"
-    setPassLocation="/organization/users/{data.uid}/password" />
+    setPassLocation="/organization/users/{data.uid}/password"/>
 {/await}
 <script>
     import SettingsForm from '$lib/components/SettingsForm.svelte';
@@ -65,6 +65,7 @@
     }
 
     function saveSettings(config) {
+        config.pathRoot = "";
         console.log("saveSettings: ", config);
         errorMessage = validate(config)
         if (errorMessage != '') {

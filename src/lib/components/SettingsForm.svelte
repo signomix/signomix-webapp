@@ -5,11 +5,11 @@
         <div class="col-md-1 col-form-label">
             <label for="input-uid" class="form-label">{utils.getLabel('login',labels,$language)}</label>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-5">
             <input disabled={!isEditable('uid')} type="text" class="form-control" id="input-uid" bind:value={userLogin}
                 readonly={readonly||!isEditable('uid')}>
         </div>
-        <div class="col-md-1 col-form-label">
+        <div class="col-md-2 col-form-label">
             <label for="input-account" class="form-label">{utils.getLabel('account',labels,$language)}</label>
         </div>
         <div class="col-md-4">
@@ -29,10 +29,6 @@
                 value={sgxhelper.getAccountTypeName(config.type,$language).toUpperCase()}
                 readonly={readonly}>
             -->
-        </div>
-        <div class="col-md-2">
-                <a href="/account/billing"
-                    class="btn btn-outline-primary form-control">{utils.getLabel('upgrade',labels,$language)}</a>
         </div>
     </div>
     <div class="row">
@@ -262,7 +258,32 @@
                 <label for="input-password" class="form-label">{utils.getLabel('password',labels,$language)}</label>
             </div>
             <div class="col-md-10">
-                <input type="text" class="form-control" id="input-password" bind:value={password} readonly={readonly}>
+                <input
+                    type="password"
+                    class="form-control"
+                    id="input-password"
+                    bind:value={password}
+                    readonly={readonly}
+                    on:input={(e) => {
+                        // Validate password
+                        let error = '';
+                        if (password.length < 8) {
+                            error = 'Password must be at least 8 characters.';
+                        } else if (!/[A-Za-z]/.test(password)) {
+                            error = 'Password must contain at least one letter.';
+                        } else if (!/[0-9]/.test(password)) {
+                            error = 'Password must contain at least one number.';
+                        } else if (/[^ -~]/.test(password)) {
+                            error = 'Password cannot contain non-printable characters.';
+                        } else if (!/[^A-Za-z0-9]/.test(password)) {
+                            error = 'Password must contain at least one special character.';
+                        }
+                        errorMessage = error;
+                    }}
+                >
+                {#if errorMessage}
+                    <div class="text-danger mt-1" style="font-size:0.9em">{errorMessage}</div>
+                {/if}
             </div>
         </div>
         {:else if config.uid == $profile.uid}
@@ -553,14 +574,14 @@
         //console.log('$context while adding user', $context)
         if ($profile.type == 8) { // managing admin
             types.push({ type: 0, name: 'standard' }) // standard
-            types.push({ type: 4, name: 'free' }) // free
+            //types.push({ type: 4, name: 'free' }) // free
             types.push({ type: 9, name: 'admin' }) // tenant admin
             if ($context == null) {
                 types.push({ type: 8, name: 'mgn.admin' }) // managing admin
             }
         } else if ($profile.type == 9) { // tenant admin
             types.push({ type: 0, name: 'standard' }) // standard
-            types.push({ type: 4, name: 'free' }) // free
+            //types.push({ type: 4, name: 'free' }) // free
             types.push({ type: 9, name: 'admin' }) // tenant admin
         } else if ($profile.type == 1) { // system admin
             types.push({ type: 0, name: 'standard' }) // standard
