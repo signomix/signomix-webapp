@@ -105,6 +105,14 @@ style="background-color: {getOrganizationBackgroundColor($organizationConfig)}; 
                                     class="bi bi-list-task me-2"></i><span>{utils.getLabel('tasks',labels,$language)}</span>
                         </a>
                     </li>
+                    <li class="nav-item ms-3">
+                        <a class="nav-link" class:active={$page.url.pathname==='/organization/templates' }
+                            href="/organization/templates">
+                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                <i
+                                    class="bi bi-list-task me-2"></i><span>{utils.getLabel('templates',labels,$language)}</span>
+                        </a>
+                    </li>
                     {#if isTenantsVisible($isAuthenticated, $profile, $organizationConfig) && ($context==null || $context=='')}
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/organization/tenants' }
@@ -668,6 +676,10 @@ style="background-color: {getOrganizationBackgroundColor($organizationConfig)}; 
         'tasks': {
             'pl': "Zadania",
             'en': "Tasks"
+        },
+        'templates': {
+            'pl': "Szablony pulpitów",
+            'en': "Dashboard Templates"
         },
         'structure': {
             'pl': "Infrastruktura",
