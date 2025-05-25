@@ -63,15 +63,12 @@
                         {#if !utils.isUserRole($profile, 'limited', true)}
                         <tr>
                             <th scope="row" class="col-1">{offset+1+index}</th>
-                            <td class="col-4"><a href="/organization/templates/{config.id}">{config.id}</a></td>
-                            <td class="col-5"><a href="/organization/templates/{config.id}">{config.title}</a></td>
+                            <td class="col-4"><a href="/organization/templates/{config.id}/edit">{config.id}</a></td>
+                            <td class="col-5"><a href="/organization/templates/{config.id}/edit">{config.title}</a></td>
                             <td class="col-2">
                                  {#if (utils.isObjectAdmin($profile, config.userID, $defaultOrganizationId, config.administrators, config.team)  && !utils.isUserRole($profile, 'limited', false))}
                                 <a href="/organization/templates/{config.id}/edit"><i
                                         class="bi bi-pencil-square ms-2 link-dark"></i></a>
-                                <a href="" on:click|preventDefault={deleteSelected(config.id)}
-                                    title={utils.getLabel('delete',labels,$language)}><i
-                                        class="bi bi-trash link-dark"></i></a>
                                 {/if}
                             </td>
                         </tr>
@@ -206,8 +203,8 @@
 
     let labels = {
         'pagetitle': {
-            'pl': "Pulpity",
-            'en': "Dashboards"
+            'pl': "Szablony pulpitów",
+            'en': "Dashboard Templates"
         },
         'denied': {
             'pl': "Brak dostępu",

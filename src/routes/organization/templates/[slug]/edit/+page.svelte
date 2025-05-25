@@ -4,42 +4,36 @@
 -->
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-2 border-bottom">
-    <h5>{utils.getLabel('title',labels,$language)}</h5><a href="/dashboards/{data.id}"
+<!--     <h5>{utils.getLabel('title',labels,$language)}</h5><a href="/dashboards/{data.id}"
         title="{utils.getLabel('view',labels,$language)}"><i class="bi bi-eye h5 me-2 link-dark"></i></a>
-</div>
+ --></div>
 <div class="container border-bottom pb-2">
     <form>
         <div class="row">
-            <div class="col-md-1 col-form-label">
+            <div class="col-md-2 col-form-label">
                 <label for="input-id" class="form-label">{utils.getLabel('id',labels,$language)}</label>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-10">
                 <input disabled type="text" class="form-control" id="input-id" bind:value={data.id}>
-            </div>
-            <div class="col-md-1 col-form-label">
-                <label for="input-userid" class="form-label">{utils.getLabel('owner',labels,$language)}</label>
-            </div>
-            <div class="col-md-3">
-                <input disabled type="text" class="form-control" id="input-userid" bind:value={data.userID}>
             </div>
         </div>
         {#if data.organizationId!=0}
         <div class="row">
-            <div class="col-md-1 col-form-label">
+            <div class="col-md-2 col-form-label">
                 <label for="input-organization"
                     class="form-label">{utils.getLabel('organization',labels,$language)}</label>
             </div>
-            <div class="col-md-11">
+            <div class="col-md-10">
                 <input type="text" disabled class="form-control" id="input-organization"
                     value={data.organizationName} on:input={onChange}>
             </div>
         </div>
         {/if}
         <div class="row">
-            <div class="col-md-1 col-form-label">
+            <div class="col-md-2 col-form-label">
                 <label for="input-title" class="form-label">{utils.getLabel('dashboard_title',labels,$language)}</label>
             </div>
-            <div class="col-md-11">
+            <div class="col-md-10">
                 <input type="text" class="form-control" id="input-name" bind:value={data.title} on:input={onChange}>
             </div>
         </div>
@@ -50,9 +44,9 @@
                 <button class="btn btn-outline-primary me-4 mt-1" on:click={saveDashboard} disabled={modified==false}><i
                         class="bi bi-save me-2"></i> {utils.getLabel('save',labels,$language)}
                 </button>
-                <button class="btn btn-outline-primary me-4 mt-1" on:click|preventDefault={removeDashboard}>
+<!--                 <button class="btn btn-outline-primary me-4 mt-1" on:click|preventDefault={removeDashboard}>
                     <i class="bi bi-trash me-2"></i> {utils.getLabel('remove',labels,$language)}
-                </button>
+                </button> -->
                 <button class="btn btn-outline-primary mt-1 me-4" on:click={addWidget}><i
                         class="bi bi-plus-lg"></i></button>
             </div>
@@ -118,8 +112,7 @@
         previousPage = from?.url.pathname || previousPage
     })
     function goBack(event) {
-        //console.log('goBack: ', event);
-        goto("/dashboards");
+        goto("/organization/templates");
     }
 
     let currentConfigureIndex = -1;
@@ -155,11 +148,6 @@
                 return;
             }
         }
-        if(data.shared){
-            if (!confirm('Zapisanie pulpitu jako publicznie dostępny spowoduje,\n że publicznie dostępne staną się dane wszystkich urządzeń oraz grup\n wykorzystywanych na tym pulpicie.\nZapisać?')) {
-                return;
-            }
-        }
         if (dev) {
             if (browser) {
                 if (data.id == 'new') {
@@ -174,7 +162,7 @@
         modified = false;
     }
 
-    function removeDashboard() {
+/*     function removeDashboard() {
         if (!confirm('Usunąć?')) {
             return;
         }
@@ -184,7 +172,7 @@
         } else {
             remove();
         }
-    }
+    } */
 
     function remove() {
         const headers = new Headers()
@@ -197,7 +185,7 @@
         ).then((response) => {
             if (response.status == 200) {
                 errorMessage = ''
-                goto('/dashboards')
+                goto('/organization/templates')
             } else if (response.status == 401 || response.status == 403) {
                 token.set(null)
             } else {
@@ -233,7 +221,7 @@
         ).then((response) => {
             if (response.status == 200) {
                 errorMessage = ''
-                goto('/dashboards')
+                goto('/organization/templates')
             } else if (response.status == 401 || response.status == 403) {
                 token.set(null)
             } else {
@@ -401,12 +389,8 @@
 
     let labels = {
         'title': {
-            'pl': "Konfiguracja pulpitu",
-            'en': "Dashboard configuration"
-        },
-        'view': {
-            'pl': "Pokaż pulpit",
-            'en': "Show dashboard"
+            'pl': "Konfiguracja szablonu pulpitu",
+            'en': "Dashboard template configuration"
         },
         'id': {
             'pl': "Identyfikator",
@@ -415,10 +399,6 @@
         'owner': {
             'pl': "Właściciel",
             'en': "Owner"
-        },
-        'shared': {
-            'pl': "Udostępniony",
-            'en': "Shared"
         },
         'dashboard_title': {
             'pl': "Tytuł",
@@ -431,14 +411,6 @@
         'widget_title': {
             'pl': "Tytuł kontrolki",
             'en': "Widget title"
-        },
-        'widget_team': {
-            'pl': "Zespół",
-            'en': "Team"
-        },
-        'widget_admins': {
-            'pl': "Administratorzy",
-            'en': "Administrators"
         },
         'cancel': {
             'pl': "Anuluj",

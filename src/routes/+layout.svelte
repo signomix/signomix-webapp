@@ -678,8 +678,8 @@ style="background-color: {getOrganizationBackgroundColor($organizationConfig)}; 
             'en': "Tasks"
         },
         'templates': {
-            'pl': "Szablony pulpitów",
-            'en': "Dashboard Templates"
+            'pl': "Szablony",
+            'en': "Templates"
         },
         'structure': {
             'pl': "Infrastruktura",
