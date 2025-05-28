@@ -10,44 +10,62 @@
 <div class="container border-bottom pb-2">
     <form>
         <div class="row">
-            <div class="col-md-1 col-form-label">
+            <div class="col-md-2 col-form-label">
                 <label for="input-id" class="form-label">{utils.getLabel('id',labels,$language)}</label>
             </div>
             <div class="col-md-3">
                 <input disabled type="text" class="form-control" id="input-id" bind:value={data.id}>
             </div>
-            <div class="col-md-1 col-form-label">
+            <div class="col-md-2 col-form-label">
                 <label for="input-userid" class="form-label">{utils.getLabel('owner',labels,$language)}</label>
             </div>
             <div class="col-md-3">
                 <input disabled type="text" class="form-control" id="input-userid" bind:value={data.userID}>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-2">
                 <input type="checkbox" class="form-check-input me-2" id="input-shared" bind:checked={data.shared}
                     on:change={onChange}>
                 <label class="form-check-label" for="input-shared">{utils.getLabel('shared',labels,$language)}</label>
             </div>
         </div>
-        {#if data.organizationId!=0}
+        {#if data.organizationId>1}
         <div class="row">
-            <div class="col-md-1 col-form-label">
+            <div class="col-md-2 col-form-label">
                 <label for="input-organization"
                     class="form-label">{utils.getLabel('organization',labels,$language)}</label>
             </div>
-            <div class="col-md-11">
+            <div class="col-md-10">
                 <input type="text" disabled class="form-control" id="input-organization"
                     value={data.organizationName} on:input={onChange}>
             </div>
         </div>
         {/if}
         <div class="row">
-            <div class="col-md-1 col-form-label">
+            <div class="col-md-2 col-form-label">
                 <label for="input-title" class="form-label">{utils.getLabel('dashboard_title',labels,$language)}</label>
             </div>
-            <div class="col-md-11">
+            <div class="col-md-10">
                 <input type="text" class="form-control" id="input-name" bind:value={data.title} on:input={onChange}>
             </div>
         </div>
+        {#if data.organizationId>1}
+         <div class="row">
+            <div class="col-md-2 col-form-label">
+                <label for="input-template" class="form-label">{utils.getLabel('template',labels,$language)}</label>
+            </div>
+            <div class="col-md-4">
+                <input type="text" class="form-control" id="input-template" bind:value={data.templateId} on:input={onChange}>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2 col-form-label">
+                <label for="input-variables" class="form-label">{utils.getLabel('variables',labels,$language)}</label>
+            </div>
+            <div class="col-md-8">
+                <textarea class="form-control" id="input-variables" bind:value={data.variables} on:input={onChange}/>
+            </div>
+        </div>
+        {:else}
         <div class="row">
             <div class="col-md-1 col-form-label">
                 <label for="input-team" class="form-label">{utils.getLabel('widget_team',labels,$language)}</label>
@@ -62,6 +80,7 @@
                 <input type="text" class="form-control" id="input-admins" bind:value={data.administrators} on:input={onChange}>
             </div>
         </div>
+        {/if}
         <div class="row">
             <div class="col-form-label">
                 <button class="btn btn-outline-secondary mt-1"
@@ -72,13 +91,16 @@
                 <button class="btn btn-outline-primary me-4 mt-1" on:click|preventDefault={removeDashboard}>
                     <i class="bi bi-trash me-2"></i> {utils.getLabel('remove',labels,$language)}
                 </button>
+                {#if !isTemplateSet(data)}
                 <button class="btn btn-outline-primary mt-1 me-4" on:click={addWidget}><i
                         class="bi bi-plus-lg"></i></button>
+                {/if}
             </div>
         </div>
 
     </form>
 </div>
+{#if !isTemplateSet(data)}
 <div class="demo-container size">
     {#if $isAuthenticated}
     <Grid gap={[1,1]} bind:items={data.items} rowHeight={100} let:item {cols} let:index on:change={onChange}>
@@ -89,6 +111,7 @@
     </Grid>
     {/if}
 </div>
+{/if}
 <!-- Modal -->
 <div class="modal fade" id="configModal" tabindex="0" role="dialog" aria-labelledby="configModalLabel"
     aria-hidden="true">
@@ -166,7 +189,24 @@
         //console.log(data)
     }
 
+    function onTemplateChange({ detail }) {
+        //console.log('onTemplateChange: ', detail);
+        modified = true
+        //console.log(data)
+    }
+
+    function isTemplateSet(data) {
+        //console.log('isTemplateSet: ', data);
+        if (data.templateId && data.templateId.trim().length > 0) {
+            return true;
+        }
+        return false;
+    }
+
     function saveDashboard() {
+        if (!(data.id === 'new' || data.id == null || data.id == '' || data.id == undefined)) {
+            data.version = 2; // new dashboards are always in version 2
+        }
         data.items = gridHelp.normalize(data.items, COLS);
         //console.log(data)
         if (data.version == 1) {

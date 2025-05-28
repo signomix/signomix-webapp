@@ -66,19 +66,22 @@
                             <td class="col-4"><a href="/dashboards/{config.id}">{config.id}</a></td>
                             <td class="col-5"><a href="/dashboards/{config.id}">{config.title}</a></td>
                             <td class="col-2">
-                                <a href="/dashboards/{config.id}/copy"><i class="bi bi-copy link-dark"></i></a>
+                                <a href="/dashboards/{config.id}/copy" title={utils.getLabel('copy',labels,$language)}><i class="bi bi-copy link-dark"></i></a>
+                                {#if !utils.isDefaultOrganizationUser($profile)}
+                                <a href="/dashboards/{config.id}/template" title={utils.getLabel('template',labels,$language)}><i class="bi bi-x-diamond link-dark ms-2"></i></a>
+                                {/if}
                                 {#if (utils.isObjectAdmin($profile, config.userID, $defaultOrganizationId, config.administrators, config.team)  && !utils.isUserRole($profile, 'limited', false))}
-                                <a href="/dashboards/{config.id}/edit"><i
+                                <a href="/dashboards/{config.id}/edit" title={utils.getLabel('edit',labels,$language)}><i
                                         class="bi bi-pencil-square ms-2 link-dark"></i></a>
                                 <a href="" on:click|preventDefault={deleteSelected(config.id)}
                                     title={utils.getLabel('delete',labels,$language)}><i
-                                        class="bi bi-trash link-dark"></i></a>
+                                        class="bi bi-trash link-dark ms-2"></i></a>
                                 {/if}
                                 {#if config.favourite}
-                                <a href="" on:click|preventDefault={toggleFav(config.id,false)}><i
+                                <a href="" on:click|preventDefault={toggleFav(config.id,false)} title={utils.getLabel('fav_add',labels,$language)}><i
                                         class="bi bi-star-fill ms-2 text-warning"></i></a>
                                 {:else}
-                                <a href="" on:click|preventDefault={toggleFav(config.id,true)}><i
+                                <a href="" on:click|preventDefault={toggleFav(config.id,true)} title={utils.getLabel('fav_remove',labels,$language)}><i
                                         class="bi bi-star ms-2 link-dark"></i></a>
                                 {/if}
                             </td>
@@ -286,6 +289,26 @@
         'delete': {
             'pl': "Usuń",
             'en': "Delete"
+        },
+        'copy': {
+            'pl': "Kopiuj",
+            'en': "Copy"
+        },
+        'template': {
+            'pl': "Utwórz szablon",
+            'en': "Create template"
+        },
+        'edit': {
+            'pl': "Edytuj",
+            'en': "Edit"
+        },
+        'fav_add': {
+            'pl': "Dodaj do ulubionych",
+            'en': "Add to favourites"
+        },
+        'fav_remove': {
+            'pl': "Usuń z ulubionych",
+            'en': "Remove from favourites"
         },
         'question_delete': {
             'pl': "Czy na pewno usunąć?",

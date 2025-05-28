@@ -371,7 +371,7 @@ export const widgets = {
                 for (let i = 0; i < optIcons.length; i++) {
                     icons[i] = optIcons[i]
                 }
-                for( let i = optIcons.length; i < icons.length; i++) {
+                for (let i = optIcons.length; i < icons.length; i++) {
                     icons[i] = icons[0]
                 }
             }
@@ -381,7 +381,7 @@ export const widgets = {
                 for (let i = 0; i < optIcons.length; i++) {
                     icons[i] = optIcons[i]
                 }
-                for( let i = optIcons.length; i < icons.length; i++) {
+                for (let i = optIcons.length; i < icons.length; i++) {
                     icons[i] = icons[0]
                 }
             }
@@ -468,7 +468,7 @@ export const widgets = {
         return rule;
     },
     isNotResponding: function (rule, tstamp) {
-        if(tstamp == undefined || tstamp == null || tstamp == 0) {
+        if (tstamp == undefined || tstamp == null || tstamp == 0) {
             return true;
         }
         let currentTime = Date.now()
@@ -494,7 +494,7 @@ export const widgets = {
             if (rule.comparator2 == 2 && value > rule.value2) {
                 return true;
             }
-            if(rule.comparator2 == 3 && value == rule.value2) {
+            if (rule.comparator2 == 3 && value == rule.value2) {
                 return true;
             }
         }
@@ -529,7 +529,7 @@ export const widgets = {
         // 
         // @param {String} definition 
         // @param {Number} v is value to check against definition
-        // @param {Number} maximum time interval from the last measurement 
+        // @param {Number} timestamp of the value update 
         // @returns {Number} 3==notResponding, 2==alert, 1==warning, otherwise 0 or -1 when definition not provided
         //
         // definition "{alertCondition}[:{warningConditon}][@variableName][#maxDelay]
@@ -549,6 +549,7 @@ export const widgets = {
         }
         //remove whitespaces and measure name
         let delay = 0;
+        // Usuń wszystkie spacje i znaki niedrukowalne
         let def = definition.replace(/\s+/g, '');
         if (def.indexOf("#") > 0) {
             delay = parseInt(def.substring(definition.indexOf("#") + 1))
@@ -575,110 +576,142 @@ export const widgets = {
         if (defs.length > 2) {
             notRespondingDef = defs[2];
         }
-        let alertRule = this.getAlertRule(alertDef);
-        let warningRule = this.getAlertRule(warningDef);
+        //let alertRule = this.getAlertRule(alertDef);
+        //let warningRule = this.getAlertRule(warningDef);
         let notRespondingRule = this.getNotRespondingRule(notRespondingDef);
         if (this.isNotResponding(notRespondingRule, tstamp)) {
             return 3;
         }
-        if (this.isRuleMet(alertRule, value)) {
+        //if (this.isRuleMet(alertRule, value)) {
+        //    return 2;
+        //}
+        //if (this.isRuleMet(warningRule, value)) {
+        //    return 1;
+        //}
+        if (this.checkRule(value, alertDef) == -1 && this.checkRule(value, warningDef) == -1) {
+            return 3;
+        }
+        if (this.checkRule(value, alertDef) == 1) {
             return 2;
         }
-        if (this.isRuleMet(warningRule, value)) {
+        if (this.checkRule(value, warningDef) == 1) {
             return 1;
         }
         return 0;
+    },
+    checkRule: function (value, rule) {
+        // Usuń pierwszą literę, jeśli reguła zaczyna się od litery
+        if (/^[a-zA-Z]/.test(rule)) {
+            rule = rule.substring(1);
+        }
+        
+        const match = rule.match(/^([<>=!]=?|==)\s*(-?\d+(\.\d+)?)$/);
+        if (!match) return -1;
+        const operator = match[1];
+        const number = parseFloat(match[2]);
+        let result = false;
+        switch (operator) {
+            case '<': result = value < number; break;
+            case '<=': result = value <= number; break;
+            case '>': result = value > number; break;
+            case '>=': result = value >= number; break;
+            case '=':
+            case '==': result = value === number; break;
+            case '!=': result = value !== number; break;
+            default: return -1;
+        }
+        return result ? 1 : 0;
     }
 }
 
 export const transformData = async function (config, rawData) {
-        let isGroup = (config.group != undefined && config.group != null && config.group != '')
-        let jsonData = await rawData;
-        console.log('RAW DATA', jsonData)
+    let isGroup = (config.group != undefined && config.group != null && config.group != '')
+    let jsonData = await rawData;
+    console.log('RAW DATA', jsonData)
 
-        // data from report server is already in the correct format
-        if (jsonData.datasets !== undefined && jsonData.datasets !== null) {
-            return jsonData
-        } else {
-            //console.log('DATA FROM SIGNOMIX-TA-PROVIDER')
-        }
+    // data from report server is already in the correct format
+    if (jsonData.datasets !== undefined && jsonData.datasets !== null) {
+        return jsonData
+    } else {
+        //console.log('DATA FROM SIGNOMIX-TA-PROVIDER')
+    }
 
-        // data from signomix-ta-provider must be transformed
-        let reportResult = {
-            'status': 200,
-            'title': '',
-            'description': '',
-            'content': '',
-            'contentType': 'application/json',
-            'id': -1,
-            'created': '',
-            'datasets': [],
-            'headers': [],
-            'queries': {
-                'default': {
-                    'group': '',
-                    'className': ''
-                }
+    // data from signomix-ta-provider must be transformed
+    let reportResult = {
+        'status': 200,
+        'title': '',
+        'description': '',
+        'content': '',
+        'contentType': 'application/json',
+        'id': -1,
+        'created': '',
+        'datasets': [],
+        'headers': [],
+        'queries': {
+            'default': {
+                'group': '',
+                'className': ''
             }
         }
-        if (jsonData.length == 0) {
-            reportResult.errorMessage = 'No data available'
-            return reportResult
+    }
+    if (jsonData.length == 0) {
+        reportResult.errorMessage = 'No data available'
+        return reportResult
+    }
+    if (!isGroup) {
+        reportResult.datasets.push({
+            'size': jsonData[0].length,
+            'name': 'dataset0',
+            'eui': jsonData[0][0].deviceEUI,
+            'data': []
+        })
+        reportResult.headers.push({
+            'columns': [],
+            'name': 'dataset0'
+        })
+        try {
+            for (let i = 0; i < jsonData[0].length; i++) {
+                reportResult.headers[0].columns.push(jsonData[0][i].name)
+            }
+        } catch (e) {
+            console.log('error', e)
         }
-        if (!isGroup) {
+        for (let i = 0; i < jsonData.length; i++) {
+            reportResult.datasets[0].data.push({
+                'timestamp': jsonData[i][0].timestamp,
+                'values': []
+            })
+            for (let j = 0; j < jsonData[i].length; j++) {
+                reportResult.datasets[0].data[i].values.push(jsonData[i][j].value)
+            }
+        }
+    } else {
+        for (let i = 0; i < jsonData.length; i++) {
             reportResult.datasets.push({
-                'size': jsonData[0].length,
-                'name': 'dataset0',
-                'eui': jsonData[0][0].deviceEUI,
+                'size': jsonData[i][0].length,
+                'name': 'dataset' + i,
+                'eui': jsonData[i][0][0].deviceEUI,
                 'data': []
             })
             reportResult.headers.push({
                 'columns': [],
-                'name': 'dataset0'
+                'name': 'dataset' + i
             })
-            try {
-                for (let i = 0; i < jsonData[0].length; i++) {
-                    reportResult.headers[0].columns.push(jsonData[0][i].name)
-                }
-            } catch (e) {
-                console.log('error', e)
+            for (let j = 0; j < jsonData[i][0].length; j++) {
+                reportResult.headers[i].columns.push(jsonData[i][0][j].name)
             }
-            for (let i = 0; i < jsonData.length; i++) {
-                reportResult.datasets[0].data.push({
-                    'timestamp': jsonData[i][0].timestamp,
+            for (let j = 0; j < jsonData[i].length; j++) {
+                reportResult.datasets[i].data.push({
+                    'timestamp': jsonData[i][j][0].timestamp,
                     'values': []
                 })
-                for (let j = 0; j < jsonData[i].length; j++) {
-                    reportResult.datasets[0].data[i].values.push(jsonData[i][j].value)
-                }
-            }
-        } else {
-            for (let i = 0; i < jsonData.length; i++) {
-                reportResult.datasets.push({
-                    'size': jsonData[i][0].length,
-                    'name': 'dataset' + i,
-                    'eui': jsonData[i][0][0].deviceEUI,
-                    'data': []
-                })
-                reportResult.headers.push({
-                    'columns': [],
-                    'name': 'dataset' + i
-                })
-                for (let j = 0; j < jsonData[i][0].length; j++) {
-                    reportResult.headers[i].columns.push(jsonData[i][0][j].name)
-                }
-                for (let j = 0; j < jsonData[i].length; j++) {
-                    reportResult.datasets[i].data.push({
-                        'timestamp': jsonData[i][j][0].timestamp,
-                        'values': []
-                    })
-                    for (let k = 0; k < jsonData[i][j].length; k++) {
-                        reportResult.datasets[i].data[j].values.push(jsonData[i][j][k].value)
-                    }
+                for (let k = 0; k < jsonData[i][j].length; k++) {
+                    reportResult.datasets[i].data[j].values.push(jsonData[i][j][k].value)
                 }
             }
         }
-        return reportResult
     }
+    return reportResult
+}
 
 export default widgets;

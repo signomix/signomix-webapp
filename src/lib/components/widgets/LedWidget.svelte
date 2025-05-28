@@ -75,12 +75,13 @@
         }
     } */
     function getIconName(data) {
+        let rounding = config.rounding != undefined && config.rounding != null ? config.rounding : 2;
         if (dataNotAvailable(data,"getIconName")) {
             return "bi-emoji-expressionless";
         }
         let level = widgets.getAlertLevel(
             config.range, 
-            utils.recalculate(data.datasets[0].data[0].values[0], config.rounding), 
+            utils.recalculate(data.datasets[0].data[0].values[0], rounding), 
             data.datasets[0].data[0].timestamp
         );
         let icons = ['bi-emoji-smile-fill', 'bi-emoji-neutral-fill', 'bi-emoji-frown-fill', 'bi-emoji-expressionless-fill']
@@ -140,25 +141,27 @@
         }
         return false;
     }
-    function recalculate(data) {
-        if (dataNotAvailable(data,"recalculate")) {
-            return "N/A";
-        }
-        let value = data.datasets[0].data[0].values[0]
-        try {
-            return Number.parseFloat(value).toFixed(config.rounding);
-        } catch (e) {
-            return value;
-        }
-    }
+    // function recalculate(data) {
+    //     if (dataNotAvailable(data,"recalculate")) {
+    //         return "N/A";
+    //     }
+    //     let value = data.datasets[0].data[0].values[0]
+    //     try {
+    //         return Number.parseFloat(value).toFixed(config.rounding);
+    //     } catch (e) {
+    //         return value;
+    //     }
+    // }
     function getColor(data) {
         if(dataNotAvailable(data,"getColor")) {
             return "text-muted";
         }
         let timestamp=data.datasets[0].data[0].timestamp
+        let rounding = config.rounding != undefined && config.rounding != null ? config.rounding : 2;
+
         let level = widgets.getAlertLevel(
             config.range,
-            recalculate(data),
+            utils.recalculate(data.datasets[0].data[0].values[0], rounding),
             timestamp,
         );
         if (

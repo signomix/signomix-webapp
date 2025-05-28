@@ -110,7 +110,7 @@ style="background-color: {getOrganizationBackgroundColor($organizationConfig)}; 
                             href="/organization/templates">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i
-                                    class="bi bi-list-task me-2"></i><span>{utils.getLabel('templates',labels,$language)}</span>
+                                    class="bi bi-x-diamond me-2"></i><span>{utils.getLabel('templates',labels,$language)}</span>
                         </a>
                     </li>
                     {#if isTenantsVisible($isAuthenticated, $profile, $organizationConfig) && ($context==null || $context=='')}

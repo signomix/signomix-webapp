@@ -4,20 +4,26 @@
 -->
 <div
     class="component d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-2 border-bottom">
-<!--     <h5>{utils.getLabel('title',labels,$language)}</h5><a href="/dashboards/{data.id}"
+    <h5>{utils.getLabel('title',labels,$language)}</h5><a href="/dashboards/{data.id}"
         title="{utils.getLabel('view',labels,$language)}"><i class="bi bi-eye h5 me-2 link-dark"></i></a>
- --></div>
+</div>
 <div class="container border-bottom pb-2">
     <form>
         <div class="row">
             <div class="col-md-2 col-form-label">
                 <label for="input-id" class="form-label">{utils.getLabel('id',labels,$language)}</label>
             </div>
-            <div class="col-md-10">
+            <div class="col-md-4">
                 <input disabled type="text" class="form-control" id="input-id" bind:value={data.id}>
             </div>
+            <div class="col-md-2 col-form-label">
+                <label for="input-userid" class="form-label">{utils.getLabel('owner',labels,$language)}</label>
+            </div>
+            <div class="col-md-4">
+                <input disabled type="text" class="form-control" id="input-userid" bind:value={data.userID}>
+            </div>
         </div>
-        {#if data.organizationId!=0}
+        {#if data.organizationId>1}
         <div class="row">
             <div class="col-md-2 col-form-label">
                 <label for="input-organization"
@@ -38,17 +44,29 @@
             </div>
         </div>
         <div class="row">
+            <div class="col-md-1 col-form-label">
+                <label for="input-team" class="form-label">{utils.getLabel('widget_team',labels,$language)}</label>
+            </div>
+            <div class="col-md-4">
+                <input type="text" class="form-control" id="input-team" bind:value={data.team} on:input={onChange}>
+            </div>
+            <div class="col-md-2 col-form-label">
+                <label for="input-admins" class="form-label">{utils.getLabel('widget_admins',labels,$language)}</label>
+            </div>
+            <div class="col-md-5">
+                <input type="text" class="form-control" id="input-admins" bind:value={data.administrators} on:input={onChange}>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-form-label">
                 <button class="btn btn-outline-secondary mt-1"
                     on:click|preventDefault={goBack}>{utils.getLabel('cancel',labels,$language)}</button>
-                <button class="btn btn-outline-primary me-4 mt-1" on:click={saveTemplate} disabled={modified==false}><i
+                <button class="btn btn-outline-primary me-4 mt-1" on:click={saveDashboard} disabled={modified==false}><i
                         class="bi bi-save me-2"></i> {utils.getLabel('save',labels,$language)}
                 </button>
-                 <button class="btn btn-outline-primary me-4 mt-1" on:click|preventDefault={removeTemplate}>
+                <button class="btn btn-outline-primary me-4 mt-1" on:click|preventDefault={removeDashboard}>
                     <i class="bi bi-trash me-2"></i> {utils.getLabel('remove',labels,$language)}
                 </button>
-                <button class="btn btn-outline-primary mt-1 me-4" on:click={addWidget}><i
-                        class="bi bi-plus-lg"></i></button>
             </div>
         </div>
 
@@ -103,6 +121,10 @@
             console.log('redirect to login');
             goto('/login');
         } else {
+            data.id='new'
+            data.title=utils.getLabel('copy',labels,$language)+data.title
+            data.shared=false
+            data.sharedToken=null
             //console.log('settings', data);
         }
     });
@@ -112,7 +134,8 @@
         previousPage = from?.url.pathname || previousPage
     })
     function goBack(event) {
-        goto("/organization/templates");
+        //console.log('goBack: ', event);
+        goto("/dashboards");
     }
 
     let currentConfigureIndex = -1;
@@ -140,7 +163,7 @@
         //console.log(data)
     }
 
-    function saveTemplate() {
+    function saveDashboard() {
         data.items = gridHelp.normalize(data.items, COLS);
         //console.log(data)
         if (data.version == 1) {
@@ -162,8 +185,8 @@
         modified = false;
     }
 
-    function removeTemplate() {
-        if (!confirm(utils.getLabel('confirm_remove',labels,$language))) {
+    function removeDashboard() {
+        if (!confirm('Usunąć?')) {
             return;
         }
         if (dev) {
@@ -177,7 +200,7 @@
     function remove() {
         const headers = new Headers()
         let method = 'DELETE'
-        let url = utils.getBackendUrl(location) + "/api/core/templates/" + data.id
+        let url = utils.getBackendUrl(location) + "/api/core/v2/dashboards/" + data.id
         headers.set('Authentication', $token);
         let response = fetch(
             url,
@@ -185,7 +208,7 @@
         ).then((response) => {
             if (response.status == 200) {
                 errorMessage = ''
-                goto('/organization/templates')
+                goto('/dashboards')
             } else if (response.status == 401 || response.status == 403) {
                 token.set(null)
             } else {
@@ -221,7 +244,7 @@
         ).then((response) => {
             if (response.status == 200) {
                 errorMessage = ''
-                goto('/organization/templates')
+                goto('/dashboards')
             } else if (response.status == 401 || response.status == 403) {
                 token.set(null)
             } else {
@@ -268,7 +291,6 @@
 
     function widgetFormCallback(idx, cfg) {
         //console.log('testCallback ', idx, cfg);
-        data.widgets[idx].changed = true
         if(widgets.singleValueTypes.includes(cfg.type)) {
             //cfg.query = 'last 1'
         }
@@ -279,6 +301,7 @@
     }
 
     function addWidget() {
+        //console.log('addWidget');
         modified = true
 
         data.widgets.push({
@@ -412,6 +435,14 @@
             'pl': "Tytuł kontrolki",
             'en': "Widget title"
         },
+        'widget_team': {
+            'pl': "Zespół",
+            'en': "Team"
+        },
+        'widget_admins': {
+            'pl': "Administratorzy",
+            'en': "Administrators"
+        },
         'cancel': {
             'pl': "Anuluj",
             'en': "Cancel"
@@ -420,13 +451,13 @@
             'pl': "Zapisz",
             'en': "Save"
         },
-        'confirm_remove': {
-            'pl': "Usunięcie szablonu niemożliwi działanie pulpitów opartych na tym szablonie. Czy na pewno usunąć?",
-            'en': "Removing the template will prevent the operation of dashboards based on this template. Are you sure you want to remove it?"
+        'remove': {
+            'pl': "Usuń",
+            'en': "Remove"
         },
-        'view': {
-            'pl': "Podgląd",
-            'en': "View"
+        'copy':{
+            'pl': "Kopia - ",
+            'en': "Copy - "
         },
         'remove': {
             'pl': "Usuń",
