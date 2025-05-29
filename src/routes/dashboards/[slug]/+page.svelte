@@ -90,7 +90,8 @@
                         bind:application={dashboardApp} />
                     {:else if 'textvalue'===getWidgetType(index)}
                     <TextValueWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter}
-                            bind:application={dashboardApp} />{:else if 'text'===getWidgetType(index)}
+                            bind:application={dashboardApp} />
+                    {:else if 'text'===getWidgetType(index)}
                     <TextWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
                     {:else if 'devinfo'===getWidgetType(index)}
                     <InfoWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
