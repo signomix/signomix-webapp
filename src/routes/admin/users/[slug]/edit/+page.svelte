@@ -2,16 +2,17 @@
     {#await data}
     <h5>{utils.getLabel('title',labels, $language)}</h5><i class="bi bi-eye h5 me-2 link-dark"></i>
     {:then data}
-    <h5>{utils.getLabel('title',labels, $language)}</h5><a href="/admin/users/{data.uid}" title="View"><i class="bi bi-eye h5 me-2 link-dark"></i></a>
+    <h5>{utils.getLabel('title',labels, $language)}</h5><a href="/admin/users/{data.uid}" title="View"><i
+            class="bi bi-eye h5 me-2 link-dark"></i></a>
     {/await}
 </div>
-<Dialog title="Uwaga!" message={errorMessage} bind:dialog1 callback={closeDialog} 
-labels={[utils.getLabel('ok',labels, $language)]} color="danger">
+<Dialog title="Uwaga!" message={errorMessage} bind:dialog1 callback={closeDialog} labels={[utils.getLabel('ok',labels,
+    $language)]} color="danger">
 </Dialog>
 {#await data}
 {:then data}
-<SettingsForm config={data} callback={saveSettings} readonly={false} backLocation="/admin/users"  
-setPassLocation="/admin/users/{data.uid}/password"/>
+<SettingsForm config={data} callback={saveSettings} readonly={false} backLocation="/admin/users"
+    setPassLocation="/admin/users/{data.uid}/password" />
 {/await}
 <script>
     import SettingsForm from '$lib/components/SettingsForm.svelte';
@@ -19,7 +20,7 @@ setPassLocation="/admin/users/{data.uid}/password"/>
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
     import { utils } from '$lib/utils.js';
-    import  Dialog  from '$lib/components/Dialog.svelte';
+    import Dialog from '$lib/components/Dialog.svelte';
 
     let errorMessage = '';
     export let data;
@@ -27,11 +28,11 @@ setPassLocation="/admin/users/{data.uid}/password"/>
     let dialog1
 
     onMount(async () => {
-        if(!$isAuthenticated){
+        if (!$isAuthenticated) {
             console.log('redirect to login');
             goto('/login');
-        }else{
-            console.log('settings',data);
+        } else {
+            console.log('settings', data);
         }
     });
 
@@ -40,31 +41,31 @@ setPassLocation="/admin/users/{data.uid}/password"/>
         dialog1.close()
     }
 
-    function getChannelType(config){
-        if(config.startsWith("SIGNOMIX")){
+    function getChannelType(config) {
+        if (config.startsWith("SIGNOMIX")) {
             return "Application";
-        }else if(config.startsWith("SMTP")){
+        } else if (config.startsWith("SMTP")) {
             return "Email";
-        }else if(config.startsWith("SMS")){
+        } else if (config.startsWith("SMS")) {
             return "SMS";
-        }else if(config.startsWith("WEBHOOK")){
+        } else if (config.startsWith("WEBHOOK")) {
             return "Webhook";
-        }else{
+        } else {
             return "Unknown";
         }
     }
 
-    function getChannelConfig(config){
-        console.log("config: ",config);
-        if(config.indexOf(":")>0){
-            return config.substring(config.indexOf(":")+1);
-        }else{
+    function getChannelConfig(config) {
+        console.log("config: ", config);
+        if (config.indexOf(":") > 0) {
+            return config.substring(config.indexOf(":") + 1);
+        } else {
             return "";
         }
     }
 
-    function saveSettings(config){
-        console.log("saveSettings: ",config);
+    function saveSettings(config) {
+        console.log("saveSettings: ", config);
         const headers = new Headers()
         let method = config.newConfig ? 'POST' : 'PUT'
         let url = utils.getBackendUrl(location) + "/api/account/user/"
@@ -102,20 +103,22 @@ setPassLocation="/admin/users/{data.uid}/password"/>
     }
 
     function validate(cfg) {
-        if (isNaN(cfg.phone)) {
-            if (cfg.phone.startsWith("+") || cfg.phone.startsWith("0") || cfg.phone.length > 9 || cfg.phone.length == 0) {
-                return utils.getLabel('invalid_phone', labels, $language)
-            }
-        } else {
-            if (cfg.phone > 999999999) {
-                return utils.getLabel('invalid_phone', labels, $language)
+        if (cfg.phone != null && cfg.phone != undefined) {
+            if (isNaN(cfg.phone)) {
+                if (cfg.phone.startsWith("+") || cfg.phone.startsWith("0") || cfg.phone.length > 9 || cfg.phone.length == 0) {
+                    return utils.getLabel('invalid_phone', labels, $language)
+                }
+            } else {
+                if (cfg.phone > 999999999) {
+                    return utils.getLabel('invalid_phone', labels, $language)
+                }
             }
         }
-        if(cfg.phonePrefix!=null&&cfg.phonePrefix.length>0){
-            if(cfg.phonePrefix.charCodeAt(0)!=43){
+        if (cfg.phonePrefix != null && cfg.phonePrefix.length > 0) {
+            if (cfg.phonePrefix.charCodeAt(0) != 43) {
                 cfg.phonePrefix = "+" + cfg.phonePrefix;
             }
-            if(isNaN(cfg.phonePrefix)&&cfg.phonePrefix.length>0){
+            if (isNaN(cfg.phonePrefix) && cfg.phonePrefix.length > 0) {
                 return utils.getLabel('invalid_phonePrefix', labels, $language)
             }
         }

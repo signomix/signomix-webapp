@@ -70,7 +70,7 @@
                             <th scope="row" class="col-1">{offset+1+index}</th>
                             <td class="col-2"><a href="/admin/users/{config.uid}">{config.uid}</a></td>
                             <td class="col-5">{config.name} {config.surname}</td>
-                            <td class="col-2">{sgxhelper.getAccountTypeName(config.type,$language)}</td>
+                            <td class="col-2">{utils.getLabel(sgxhelper.getAccountTypeName(config.type,'en'), labels, $language)}</td>
                             <td class="col-2 text-end">
                                 <a href="" on:click|preventDefault={handleLoginAs(config.uid)}><i
                                 class="bi bi-universal-access-circle ms-2 link-dark"></i></a>
@@ -422,6 +422,54 @@
         'question_delete': {
             'pl': "Czy na pewno chcesz usunąć urządzenie? Również dane związane z tym urządzeniem zostaną usunięte. Potwierdzasz?",
             'en': "Are you sure you want to delete this device? All data related to this device will be deleted as well. Confirm?"
+        },
+        'standard': {
+            'pl': 'Standardowe',
+            'en': 'Standard'
+        },
+        'free': {
+            'pl': 'Darmowe',
+            'en': 'Free'
+        },
+        'mng.admin': {
+            'pl': 'Adm. zarządzający',
+            'en': 'Managing admin'
+        },
+        'admin': {
+            'pl': 'Administrator',
+            'en': 'Admin'
+        },
+        'sys.admin': {
+            'pl': 'Admin. systemowy',
+            'en': 'System admin'
+        },
+        'primary': {
+            'pl': 'Premium',
+            'en': 'Premium'
+        },
+        'application': {
+            'pl': 'Aplikacja',
+            'en': 'Application'
+        },
+        'demo': {
+            'pl': 'Demo',
+            'en': 'Demo'
+        },
+        'readonly': {
+            'pl': 'Tylko do odczytu',
+            'en': 'Readonly'
+        },
+        'extended': {
+            'pl': 'Rozszerzone',
+            'en': 'Extended'
+        },
+        'anonymous': {
+            'pl': 'Anonimowe',
+            'en': 'Anonymous'
+        },
+        'subscriber': {
+            'pl': 'Subskrybent',
+            'en': 'Subscriber'
         }
 
     }

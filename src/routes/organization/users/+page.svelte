@@ -73,7 +73,7 @@
                             <td class="col-2">{config.uid}</td>
                             {/if}
                             <td class="col-6">{config.name} {config.surname}</td>
-                            <td class="col-1">{sgxhelper.getAccountTypeName(config.type,$language)}</td>
+                            <td class="col-1">{utils.getLabel(sgxhelper.getAccountTypeName(config.type,'en'), labels, $language)}</td>
                         </tr>
                         {/each}
                     </tbody>
@@ -349,6 +349,54 @@
         'question_delete': {
             'pl': "Czy na pewno chcesz usunąć urządzenie? Również dane związane z tym urządzeniem zostaną usunięte. Potwierdzasz?",
             'en': "Are you sure you want to delete this device? All data related to this device will be deleted as well. Confirm?"
+        },
+        'standard': {
+            'pl': 'Standardowe',
+            'en': 'Standard'
+        },
+        'free': {
+            'pl': 'Darmowe',
+            'en': 'Free'
+        },
+        'mng.admin': {
+            'pl': 'Adm. zarządzający',
+            'en': 'Managing admin'
+        },
+        'admin': {
+            'pl': 'Administrator',
+            'en': 'Admin'
+        },
+        'sys.admin': {
+            'pl': 'Admin. systemowy',
+            'en': 'System admin'
+        },
+        'primary': {
+            'pl': 'Premium',
+            'en': 'Premium'
+        },
+        'application': {
+            'pl': 'Aplikacja',
+            'en': 'Application'
+        },
+        'demo': {
+            'pl': 'Demo',
+            'en': 'Demo'
+        },
+        'readonly': {
+            'pl': 'Tylko do odczytu',
+            'en': 'Readonly'
+        },
+        'extended': {
+            'pl': 'Rozszerzone',
+            'en': 'Extended'
+        },
+        'anonymous': {
+            'pl': 'Anonimowe',
+            'en': 'Anonymous'
+        },
+        'subscriber': {
+            'pl': 'Subskrybent',
+            'en': 'Subscriber'
         }
 
     }

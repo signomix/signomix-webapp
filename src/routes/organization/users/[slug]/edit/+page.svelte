@@ -12,7 +12,7 @@
 {#await data}
 {:then data}
 <SettingsForm config={data} callback={saveSettings} readonly={false} backLocation="/organization/users"
-    setPassLocation="/organization/users/{data.uid}/password"/>
+    setPassLocation="/organization/users/{data.uid}/password" />
 {/await}
 <script>
     import SettingsForm from '$lib/components/SettingsForm.svelte';
@@ -113,20 +113,22 @@
     }
 
     function validate(cfg) {
-        if (isNaN(cfg.phone)) {
-            if (cfg.phone.startsWith("+") || cfg.phone.startsWith("0") || cfg.phone.length > 9 || cfg.phone.length == 0) {
-                return utils.getLabel('invalid_phone', labels, $language)
-            }
-        } else {
-            if (cfg.phone > 999999999) {
-                return utils.getLabel('invalid_phone', labels, $language)
+        if (cfg.phone != null && cfg.phone != undefined) {
+            if (isNaN(cfg.phone)) {
+                if (cfg.phone.startsWith("+") || cfg.phone.startsWith("0") || cfg.phone.length > 9 || cfg.phone.length == 0) {
+                    return utils.getLabel('invalid_phone', labels, $language)
+                }
+            } else {
+                if (cfg.phone > 999999999) {
+                    return utils.getLabel('invalid_phone', labels, $language)
+                }
             }
         }
-        if(cfg.phonePrefix!=null&&cfg.phonePrefix.length>0){
-            if(cfg.phonePrefix.charCodeAt(0)!=43){
+        if (cfg.phonePrefix != null && cfg.phonePrefix.length > 0) {
+            if (cfg.phonePrefix.charCodeAt(0) != 43) {
                 cfg.phonePrefix = "+" + cfg.phonePrefix;
             }
-            if(isNaN(cfg.phonePrefix)&&cfg.phonePrefix.length>0){
+            if (isNaN(cfg.phonePrefix) && cfg.phonePrefix.length > 0) {
                 return utils.getLabel('invalid_phonePrefix', labels, $language)
             }
         }

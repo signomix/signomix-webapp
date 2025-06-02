@@ -91,3 +91,25 @@ body {
     border-color: transparent;
     box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
   }
+
+  .language-shell {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #f8f9fa;
+    background-color: #343a40;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    overflow-x: auto;
+  }
+
+  .code-snippet {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #f8f9fa;
+    background-color: #343a40;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    overflow-x: auto;
+  }

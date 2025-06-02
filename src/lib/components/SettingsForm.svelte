@@ -15,14 +15,15 @@
         <div class="col-md-4">
             <!-- {#if isEditable('type')} -->
              {#if !readonly && isEditable('type')}
-            <select class="form-select" id="input-account" value="{config.type}" readonly={readonly}>
+            <select class="form-select" id="input-account" 
+            bind:value="{config.type}" readonly={readonly}>
                 {#each getTypesAllowed() as type}
-                <option value={type.type}>{utils.getLabel(type.name,labels,$language)}</option>
+                <option value={type.type} selected={type.type === config.type}>{utils.getLabel(type.name,labels,$language)}</option>
                 {/each}
             </select>
             {:else}
             <input disabled={!isEditable('type')} type="text" class="form-control" id="input-account"
-                value={sgxhelper.getAccountTypeName(config.type,$language)} readonly={readonly}>
+                value={utils.getLabel(sgxhelper.getAccountTypeName(config.type,'en'), labels, $language)} readonly={readonly}>
             {/if}
             <!--
             <input disabled={!isManager} type="text" class="form-control" id="input-account"
@@ -56,10 +57,14 @@
             <label for="input-phone" class="form-label">{utils.getLabel('mobile',labels,$language)}</label>
         </div>
         <div class="col-md-4">
-            <!--             <input type="tel" class="form-control" name="input-phone" id="input-phone" bind:value={config.phone} pattern="[0-9]"
-                readonly={readonly}> -->
-            <input type="text" class="form-control" name="input-phone" id="input-phone" bind:value={config.phone}
-                readonly={readonly}>
+            <input
+                type="text"
+                class="form-control"
+                name="input-phone"
+                id="input-phone"
+                bind:value={config.phone}
+                readonly={readonly}
+            >
         </div>
     </div>
 
@@ -343,6 +348,7 @@
     let userLogin = ''
     let password = isNew() ? '' : null
     let errorMessage = ''
+    let validationMessage = ''
     let dialog
 
     /*     function closeDialog(result) {
@@ -577,7 +583,7 @@
             //types.push({ type: 4, name: 'free' }) // free
             types.push({ type: 9, name: 'admin' }) // tenant admin
             if ($context == null) {
-                types.push({ type: 8, name: 'mgn.admin' }) // managing admin
+                types.push({ type: 8, name: 'mng.admin' }) // managing admin
             }
         } else if ($profile.type == 9) { // tenant admin
             types.push({ type: 0, name: 'standard' }) // standard
@@ -592,7 +598,7 @@
             types.push({ type: 5, name: 'primary' }) // primary
             types.push({ type: 6, name: 'readonly' }) // readonly
             types.push({ type: 7, name: 'extended' }) // extended
-            types.push({ type: 8, name: 'mgn.admin' }) // managing admin
+            types.push({ type: 8, name: 'mng.admin' }) // managing admin
             types.push({ type: 9, name: 'admin' }) // tenant admin
             types.push({ type: 10, name: 'anonymous' }) // anonymous
             types.push({ type: 100, name: 'subscriber' }) // subscriber
@@ -737,7 +743,7 @@
             'pl': 'Darmowe',
             'en': 'Free'
         },
-        'mgn.admin': {
+        'mng.admin': {
             'pl': 'Adm. zarządzający',
             'en': 'Managing admin'
         },

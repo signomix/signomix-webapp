@@ -331,7 +331,7 @@ export const sgxhelper = {
                     case 0:
                         return 'standard'
                     case 1:
-                        return 'system admin'
+                        return 'sys.admin'
                     case 2:
                         return 'application' //not used
                     case 3:
@@ -345,7 +345,7 @@ export const sgxhelper = {
                     case 7:
                         return 'extended'
                     case 8:
-                        return 'manag. admin' //administrator managing tenants
+                        return 'mng.admin' //administrator managing tenants
                     case 9:
                         return 'administrator' //tenant admin
                     case 10:
