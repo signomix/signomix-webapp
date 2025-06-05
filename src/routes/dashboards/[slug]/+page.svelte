@@ -223,7 +223,7 @@
     let dashboardLinkConfig = { link: '', code: '' }
     let applications = []
     let apps = {}
-    let dashboardAppName = ''
+    let dashboardAppName = 'system' // default application for dashboard
     let dashboardApp = {}
 
     let isMobile = false
@@ -319,13 +319,17 @@
         xhttp.send();
         for (let i = 0; i < result.length; i++) {
             apps[result[i].name] = result[i]
+            if (result[i].name == 'system' && result[i].organization == $profile.organization) {
+                dashboardAppName = result[i].name // set default application for dashboard
+                dashboardApp = result[i]
+            }
         }
-        if(apps[dashboardAppName]!=undefined && apps[dashboardAppName]!=null){
+/*         if(apps[dashboardAppName]!=undefined && apps[dashboardAppName]!=null){
             dashboardApp = apps[dashboardAppName]
             console.log('dashboardApp',dashboardApp)
         }else{
             console.log('unable to get application ',dashboardAppName)
-        }
+        } */
         return result
     }
 
