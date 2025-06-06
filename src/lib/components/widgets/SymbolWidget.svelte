@@ -22,6 +22,7 @@
 
     let errorMessage = "";
     apiUrl = utils.getBackendUrl(location) + "/api/reports/single";
+    //console.log("config before parsing: ", config);
     let q = {};
     try {
         q = dql.parse(config.query);
@@ -34,14 +35,21 @@
     if (widgetConfig.nulls != undefined && widgetConfig.nulls != null) {
         notNulls = widgetConfig.nulls ? "" : "notnull";
     }
-
-    config2.query =
-        "report DqlReport eui " +
-        config2.dev_id +
-        " channel " +
-        config2.channel +
-        " last 1 " +
-        notNulls;
+    //console.log("q.query: ", q.query);
+    if (q.report != undefined &&
+        q.report != null
+        || q.class != undefined && q.class != null) {
+        config2.query = config.query;
+        config.channel = q.channel;
+    } else {
+        config2.query =
+            "report DqlReport eui " +
+            config2.dev_id +
+            " channel " +
+            config2.channel +
+            " last 1 " +
+            notNulls;
+    }
     if (
         q != undefined &&
         q != null &&
@@ -51,12 +59,13 @@
     ) {
         config2.query = config2.query + " project " + q.project;
     }
+    //console.log("config2.query: ", config2.query);
     // check access to application config
-    if (application != undefined && application != null) {
-        console.log("application config: ", application.config);
-    } else {
-        console.log("unable to get application config");
-    }
+    //if (application != undefined && application != null) {
+    //    console.log("application config: ", application.config);
+    //} else {
+    //    console.log("unable to get application config");
+    //}
 
     //let promise = sgxdata.getData(dev, apiUrl, config, filter, $token);
     let promise = sgxdata.getReportData(
@@ -85,8 +94,57 @@
         let jsonData = await rawData;
         return jsonData;
     }
+    function getValueText(data, unitName) {
+        if (dataNotAvailable(data, "recalculate")) {
+            return "N/A";
+        }
+        let valueText = "";
+        let value = data.datasets[0].data[0].values[0]
+        let roundedValue
+        try {
+            roundedValue = Number.parseFloat(value).toFixed(config.rounding);
+        } catch (e) {
+            roundedValue = null;
+        }
+        if (roundedValue == null) {
+            return "N/A";
+        }
+        let alertLevel = widgets.getAlertLevel(
+            config.range,
+            roundedValue,
+            data.datasets[0].data[0].timestamp,
+        );
+        let alertName = null;
+        if (
+            config.config != undefined &&
+            config.config != null &&
+            config.config != ""
+        ) {
+            try {
+                let cfg = JSON.parse(config.config);
+                if (
+                    cfg.alertNames != undefined &&
+                    cfg.alertNames != null &&
+                    cfg.alertNames.length >= alertLevel
+                ) {
+                    alertName = cfg.alertNames[alertLevel];
+                }
+            } catch (e) {
+                console.log("error parsing config: ", e);
+            }
+        }
+        if (alertName != null) {
+            valueText = alertName;
+        } else {
+            valueText = roundedValue;
+            if (unitName != undefined && unitName != null && unitName != "") {
+                valueText += " " + unitName;
+            }
+        }
+        return valueText;
+    }
     function recalculate(data) {
-        if (dataNotAvailable(data,"recalculate")) {
+        if (dataNotAvailable(data, "recalculate")) {
             return "N/A";
         }
         let value = data.datasets[0].data[0].values[0]
@@ -125,7 +183,7 @@
             return true;
         }
         if (data.datasets == undefined || data.datasets == null) {
-            console.log("not available 2 in "+name)
+            console.log("not available 2 in " + name)
             return true;
         }
         if (data.datasets[0] == undefined || data.datasets[0] == null) {
@@ -150,15 +208,25 @@
         }
         return false;
     }
+    function getValue(data) {
+        if (dataNotAvailable(data, "getValue")) {
+            return "N/A";
+        }
+        let value = data.datasets[0].data[0].values[0];
+        try {
+            return Number.parseFloat(value).toFixed(config.rounding);
+        } catch (e) {
+            return value;
+        }
+    }
     function getColor(data) {
-        if(dataNotAvailable(data,"getColor")) {
+        if (dataNotAvailable(data, "getColor")) {
             return "text-muted";
         }
-        let timestamp=data.datasets[0].data[0].timestamp
-        let level = widgets.getAlertLevel(
+        let alertLevel = widgets.getAlertLevel(
             config.range,
             recalculate(data),
-            timestamp,
+            data.datasets[0].data[0].timestamp,
         );
         if (
             config.config != undefined &&
@@ -172,14 +240,14 @@
                     cfg.colors != null &&
                     cfg.colors.length == 5
                 ) {
-                    return cfg.colors[level];
+                    return cfg.colors[alertLevel];
                 }
             } catch (e) {
                 console.log("error parsing config: ", e);
                 return "text-success";
             }
         }
-        switch (level) {
+        switch (alertLevel) {
             case 0:
                 return "text-success";
             case 1:
@@ -193,55 +261,21 @@
         }
     }
     function getDate(data) {
-        if (dataNotAvailable(data,"getDate")) {
+        if (dataNotAvailable(data, "getDate")) {
             return "N/A";
         }
         let date = new Date(
-                        data.datasets[0].data[0].timestamp,
-                    ).toLocaleString()
+            data.datasets[0].data[0].timestamp,
+        ).toLocaleString()
         return date;
     }
     function getIconName2(data) {
-        if (dataNotAvailable(data,"getIconName2")) {
+        if (dataNotAvailable(data, "getIconName2")) {
             return "bi-clipboard2-pulse";
         }
-        return widgets.getIconName(config,data.datasets[0].data[0].values[0],data.datasets[0].data[0].timestamp)
+        return widgets.getIconName(config, data.datasets[0].data[0].values[0], data.datasets[0].data[0].timestamp, q)
     }
-    /* function getIconName() {
-        if (
-            config.icon == null ||
-            config.icon == "" ||
-            config.icon == undefined
-        ) {
-            let cname = config.channel.toLowerCase();
-            switch (cname) {
-                case "temperature":
-                    return "bi-thermometer-half";
-                case "humidity":
-                case "moisture":
-                    return "bi-droplet-half";
-                case "pressure":
-                    return "bi-speedometer";
-                case "wind":
-                    return "bi-wind";
-                case "rain":
-                    return "bi-cloud-hail";
-                case "pollution":
-                case "pm10":
-                case "pm25":
-                    return "bi-cloud-haze2";
-                case "luminance":
-                case "light":
-                case "lux":
-                case "brightness":
-                    return "bi-sun";
-                default:
-                    return "bi-clipboard2-pulse";
-            }
-        } else {
-            return config.icon;
-        }
-    } */
+
 </script>
 
 <div class="p-1 w-100" on:click={switchView} style="background-color: {getWidgetBackgroundColor()};">
@@ -255,37 +289,30 @@
         </div>
     {/if} -->
     {#if config.title != ""}
-        <div class="row text-center">
-            <div class="col-12"><span>{config.title}</span></div>
-        </div>
+    <div class="row text-center">
+        <div class="col-12"><span>{config.title}</span></div>
+    </div>
     {/if}
     <div class="row text-center">
         <div class="col-12 mt-1">
             {#await promise}
-                <div
-                    class="spinner-border spinner-border-sm"
-                    role="status"
-                ></div>
+            <div class="spinner-border spinner-border-sm" role="status"></div>
             {:then data}
-                {#if front}
-                    <span class="h4">
-                        <i
-                            class="bi 
+            {#if front}
+            <span class="h4">
+                <i class="bi 
                             {getIconName2(data)} me-2 
-                            {getColor(data)}"
-                        ></i>
-                        {recalculate(data)}{@html config.unitName != undefined
-                            ? config.unitName
-                            : ""}
-                    </span>
-                {:else}
-                    {getDate(data)}<br />
-                    {config.dev_id}
-                {/if}
+                            {getColor(data)}"></i>
+                {@html getValueText(data, config.unitName)}
+            </span>
+            {:else}
+            {getDate(data)}<br />
+            {config.dev_id}
+            {/if}
             {:catch error}
-                {#if !front}
-                    <p style="color: red">{error.message}</p>
-                {/if}
+            {#if !front}
+            <p style="color: red">{error.message}</p>
+            {/if}
             {/await}
         </div>
     </div>

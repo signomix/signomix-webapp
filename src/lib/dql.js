@@ -104,6 +104,7 @@ export const dql = {
         let result = {}
         try {
             let q = this.sweepSpaces(query)
+            if (q == '' || q==' ') return result
             let params = q.split(' ')
             for (let i = 0; i < params.length;) {
                 switch (params[i]) {
@@ -138,7 +139,7 @@ export const dql = {
                         i = i + 1;
                         break;
                     default:
-                        console.log('Error parsing DQL. Unknown parameter: ' + params[i])
+                        console.log('Error parsing DQL ('+q+'). Unknown parameter: ' + params[i])
                         i = i + 1
                 }
             }

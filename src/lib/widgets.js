@@ -69,7 +69,7 @@ export const widgets = {
         text: [],
         stopwatch: ['dev_id', 'channel', 'project'],
         time: ['dev_id', 'channel', 'project'],
-        symbol: ['dev_id', 'channel', 'range', 'unit', 'rounding', 'icon', 'project'],
+        symbol: ['dev_id', 'reportSelector','query','channel', 'range', 'unit', 'rounding', 'icon', 'project'],
         textvalue: ['dev_id', 'channel', 'project'],
     },
     chartFields: {
@@ -253,12 +253,22 @@ export const widgets = {
     isConfigDefined: function (widgetDefinition) {
         return widgetDefinition.config != undefined && widgetDefinition.config != null && widgetDefinition.config != '';
     },
-    getDefaultIconName: function (definition) {
+    getDefaultIconName: function (definition, query) {
+        //console.log('getDefaultIconName', definition)
         let iconName = 'bi-clipboard2-pulse';
-        if (definition.channel == undefined == definition.channel == null || definition.channel == '') {
+        let channel = '';
+        if (definition==undefined || definition == null) {
             return iconName;
         }
-        let cname = definition.channel.toLowerCase();
+        if (definition.channel != undefined && definition.channel != null && definition.channel != '') {
+            channel = definition.channel.toLowerCase();
+        }else{
+            if (query != undefined && query != null && query != '' && query.channel != undefined && query.channel != null && query.channel != '') {
+                channel = query.channel.toLowerCase();
+            } else {
+                return iconName;
+            }
+        }
         let nameMap = {
             'temperature': 'bi-thermometer-half',
             'humidity': 'bi-droplet-half',
@@ -283,79 +293,32 @@ export const widgets = {
             'amperage': 'bi-lightning-charge',
             'energy': 'bi-lightning',
             'speed': 'bi-speedometer-2',
-            'velocity': 'bi-speedometer-2'
+            'velocity': 'bi-speedometer-2',
+            'status': 'bi-heart-pulse'
         };
         for (let key in nameMap) {
-            if (cname.indexOf(key) >= 0) {
+            if (channel.indexOf(key) >= 0) {
                 iconName = nameMap[key];
                 break;
             }
         }
-        /* switch (cname) {
-            case "temperature":
-                iconName = "bi-thermometer-half";
-                break;
-            case "humidity":
-            case "moisture":
-                iconName = "bi-droplet-half";
-                break;
-            case "pressure":
-                iconName = "bi-speedometer";
-                break;
-            case "wind":
-                iconName = "bi-wind";
-                break;
-            case "rain":
-                iconName = "bi-cloud-hail";
-                break;
-            case "pollution":
-            case "pm10":
-            case "pm25":
-                iconName = "bi-cloud-haze2";
-                break;
-            case "luminance":
-            case "light":
-            case "lux":
-            case "brightness":
-                iconName = "bi-sun";
-                break;
-            case "latitude":
-            case "longitude":
-                iconName = "bi-geo-fill";
-                break;
-            case "altitude":
-                iconName = "bi-geo-alt-fill";
-                break;
-            case "battery":
-            case "voltage":
-            case "power":
-                iconName = "bi-battery-half";
-                break;
-            case "current":
-            case "amperage":
-                iconName = "bi-lightning-charge";
-                break;
-            case "energy":
-                iconName = "bi-lightning";
-                break;
-            case "speed":
-            case "velocity":
-                iconName = "bi-speedometer-2";
-                break;
-            default:
-                iconName = "bi-clipboard2-pulse";
-                break;
-        } */
         return iconName;
     },
-    getIconName: function (definition, value, timestamp) {
+    getIconName: function (definition, value, timestamp, query) {
         {
             let level = this.getAlertLevel(definition.range, value, timestamp);
             //let icons = ['bi-emoji-smile-fill', 'bi-emoji-neutral-fill', 'bi-emoji-frown-fill', 'bi-emoji-expressionless-fill']
             let icons = ['', '', '', '', '']
-            // default icon is selected bysed on the channel name
-            let defaultIcon = this.getDefaultIconName(definition)
-            let tmpIcons = defaultIcon.split(':')
+            // default icon is selected based on the channel name
+            let defaultIcon = this.getDefaultIconName(definition,query)
+            let tmpIcons = defaultIcon.split(',')
+            let tmpIconsOldDef= defaultIcon.split(',')
+            if(tmpIconsOldDef.length > 1){
+                tmpIcons = []
+                for (let i = 0; i < tmpIconsOldDef.length; i++) {
+                    tmpIcons.push(tmpIconsOldDef[i].trim())
+                }
+            }
             for (let i = 0; i < icons.length; i++) {
                 if (i < tmpIcons.length) {
                     icons[i] = tmpIcons[i]
@@ -576,18 +539,10 @@ export const widgets = {
         if (defs.length > 2) {
             notRespondingDef = defs[2];
         }
-        //let alertRule = this.getAlertRule(alertDef);
-        //let warningRule = this.getAlertRule(warningDef);
         let notRespondingRule = this.getNotRespondingRule(notRespondingDef);
         if (this.isNotResponding(notRespondingRule, tstamp)) {
             return 3;
         }
-        //if (this.isRuleMet(alertRule, value)) {
-        //    return 2;
-        //}
-        //if (this.isRuleMet(warningRule, value)) {
-        //    return 1;
-        //}
         if (this.checkRule(value, alertDef) == -1 && this.checkRule(value, warningDef) == -1) {
             return 3;
         }
@@ -616,8 +571,8 @@ export const widgets = {
             case '>': result = value > number; break;
             case '>=': result = value >= number; break;
             case '=':
-            case '==': result = value === number; break;
-            case '!=': result = value !== number; break;
+            case '==': result = value == number; break;
+            case '!=': result = value != number; break;
             default: return -1;
         }
         return result ? 1 : 0;
@@ -627,7 +582,7 @@ export const widgets = {
 export const transformData = async function (config, rawData) {
     let isGroup = (config.group != undefined && config.group != null && config.group != '')
     let jsonData = await rawData;
-    console.log('RAW DATA', jsonData)
+    //console.log('RAW DATA', jsonData)
 
     // data from report server is already in the correct format
     if (jsonData.datasets !== undefined && jsonData.datasets !== null) {
