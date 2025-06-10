@@ -156,7 +156,10 @@
         //let url = utils.getBackendUrl(location) + "/api/provider/v2/device/" + eui + "/*"
         //    + "?query=from " + fromDateEncoded + " to " + toDateEncoded
         //    + "&zone=" + zoneId
-        let query="report DqlReport eui " + eui + " channel * from " + fromDateEncoded + " to " + toDateEncoded+ " ascending format csv";
+
+        //replace all '/' with '_' in zoneId to avoid issues with URL encoding
+        let zone=zoneId; //.replace(/\//g, '_');
+        let query="report DqlReport eui " + eui + " channel * from " + fromDateEncoded + " to " + toDateEncoded+ " ascending format csv zone "+ zone;
         let url = utils.getBackendUrl(location) + "/api/reports/single?query="+query
         headers.set('Authentication', $token);
         headers.set('Accept', 'text/csv');
