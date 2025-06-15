@@ -20,7 +20,7 @@
     <div class="col-12">
         <h5>{utils.getLabel('favourite',labels,$language)}</h5>
         <ul>
-            {#if dashboards.length == 0}
+            {#if dashboards==undefined || dashboards==null || dashboards.length == 0}
             <li class="list-group-item">{utils.getLabel('nofav',labels,$language)}</li>
             {:else}
             {#each dashboards as dashboard}
@@ -33,14 +33,23 @@
 {/await}
 {/if}
 <script>
-    import { profile,token, language, isAuthenticated } from '$lib/usersession.js';
+    import { profile,token, language, isAuthenticated, organizationConfig } from '$lib/usersession.js';
     import { utils } from '$lib/utils.js';
     import { browser, dev } from '$app/environment'
     import { redirects } from '$lib/redirects.js';
+    import { goto } from '$app/navigation';
 
     let promise
-    try{
-        promise = getConfigs()
+
+    try{    
+        console.log('MAIN organizationConfig:', $organizationConfig)
+        if($organizationConfig && $organizationConfig.mainDashboard){
+            // If mainDashboard is set, redirect to it
+            console.log('Redirecting to main dashboard:', $organizationConfig.mainDashboard)
+            goto('/dashboards/'+$organizationConfig.mainDashboard)
+        } else {
+            promise = getConfigs()
+        }
     }catch(e){
         //console.log(e)
     }

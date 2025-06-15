@@ -118,17 +118,26 @@
                             .then(response => response.json())
                             .then(org => {
                                 try{
-                                    console.log('organizationConfig1',JSON.parse(org.configuration))
-                                    organizationConfig.set(JSON.parse(org.configuration))
+                                    //console.log('organizationConfig1',JSON.parse(org.configuration))
+                                    $organizationConfig=JSON.parse(org.configuration)
                                 } catch(e) {
                                     console.log('error parsing organization.configuration',e)
                                 }
                                 console.log('organizationConfig2',$organizationConfig)
                                 
                             })
+                            .then(() => {
+                                goto('/')
+                            })
+                            .catch(error => {
+                                console.log('error fetching organization', error)
+                                goto('/')
+                            })
                         }
                     }
-                    goto('/')
+                    else {
+                        goto('/')
+                    }
                 })
 
         } else {

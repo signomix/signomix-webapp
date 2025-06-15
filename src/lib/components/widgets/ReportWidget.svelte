@@ -220,6 +220,14 @@
         return reportResult
     }
 
+    function isEuiVisible() {
+        let cfg=widgets.getConfiguration(config)
+        if (cfg.showEui != undefined && cfg.showEui != null && cfg.showEui == false) {
+            return false
+        } else {
+            return true
+        }
+    }
     function isDateVisible() {
         let cfg=widgets.getConfiguration(config)
         if (cfg.showDate != undefined && cfg.showDate != null && cfg.showDate == false) {
@@ -243,9 +251,9 @@
             'pl': "data",
             'en': "date"
         },
-        'name': {
-            'pl': "nazwa",
-            'en': "name"
+        'eui': {
+            'pl': "ID",
+            'en': "ID"
         },
     }
 
@@ -283,7 +291,9 @@
                 <!-- DqlReport GROUP -->
                 <table class="table table-sm table-responsive-sm">
                     <thead class="text-bg-primary fs-6">
-                        <th scope="col">{utils.getLabel('name', labels, $language)}</th>
+                        {#if isEuiVisible()}
+                        <th scope="col">{utils.getLabel('eui', labels, $language)}</th>
+                        {/if}
                         {#if isDateVisible()}
                         <th scope="col">{utils.getLabel('date', labels, $language)}</th>
                         {/if}
@@ -303,13 +313,19 @@
                     <tbody>
                         {#each reportresult.datasets as dataset}
                         <tr>
+                            {#if isEuiVisible()}
                             <td><a href='/dashboards/{dataset.eui}'>{getDeviceName(reportresult,dataset.eui)}</a></td>
+                            {/if}
                             {#if isDateVisible()}
                             <td>{new Date(dataset.data[0].timestamp).toLocaleString()}</td>
                             {/if}
                             {#if isColumnsVisible()}
-                            {#each dataset.data[0].values as value}
+                            {#each dataset.data[0].values as value,i}
+                            {#if reportresult.headers[0].columns[i]=='name'}
+                            <td><a href='/dashboards/{dataset.eui}'>{value}</a></td>
+                            {:else}
                             <td>{utils.recalculate(value, config.rounding)}</td>
+                            {/if}
                             {/each}
                             {/if}
                         </tr>

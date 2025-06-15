@@ -15,20 +15,20 @@
 <Theme />
 <Toaster richColors closeButton position="top-center" />
 <header class="navbar navbar-dark sticky-top flex-md-nowrap p-0 shadow"
-style="background-color: {getOrganizationBackgroundColor($organizationConfig)}; color: {getOrganizationTextColor($organizationConfig)};">
-    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="/"  
     style="background-color: {getOrganizationBackgroundColor($organizationConfig)}; color: {getOrganizationTextColor($organizationConfig)};">
-    <img src="{getLogoUrl($organizationConfig)}"
-            height="30px" />
-            {#if getOrganizationName($organizationConfig)=='' }
-            <span class="h5 m-2">Signomix</span>
-            {/if}
-        </a>
+    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="/"
+        style="background-color: {getOrganizationBackgroundColor($organizationConfig)}; color: {getOrganizationTextColor($organizationConfig)};">
+        <img src="{getLogoUrl($organizationConfig)}" height="30px" />
+        {#if getOrganizationName($organizationConfig)=='' }
+        <span class="h5 m-2">Signomix</span>
+        {/if}
+    </a>
     <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse"
         data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-    <span class="d-none d-sm-inline h5" style="color: {getOrganizationTextColor($organizationConfig)};">{getOrganizationName($organizationConfig)}</span>
+    <span class="d-none d-sm-inline h5"
+        style="color: {getOrganizationTextColor($organizationConfig)};">{getOrganizationName($organizationConfig)}</span>
     <span class="d-none d-sm-inline">
         <a class="me-2" href="/" on:click|preventDefault={setLanguagePl}>
             <img src="/img/flags/4x3/pl.svg" height="16px" title="język polski" />
@@ -46,7 +46,7 @@ style="background-color: {getOrganizationBackgroundColor($organizationConfig)}; 
                     <li class="nav-item mt-2">
                         <div class="nav-link">
                             {#if isTakeover($profile)}
-                              <i class="h2 bi bi-universal-access-circle me-2"></i>
+                            <i class="h2 bi bi-universal-access-circle me-2"></i>
                             {:else}
                             <i class="h2 bi bi-person-circle me-2"></i>
                             {/if}
@@ -113,7 +113,8 @@ style="background-color: {getOrganizationBackgroundColor($organizationConfig)}; 
                                     class="bi bi-x-diamond me-2"></i><span>{utils.getLabel('templates',labels,$language)}</span>
                         </a>
                     </li>
-                    {#if isTenantsVisible($isAuthenticated, $profile, $organizationConfig) && ($context==null || $context=='')}
+                    {#if isTenantsVisible($isAuthenticated, $profile, $organizationConfig) && ($context==null ||
+                    $context=='')}
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/organization/tenants' }
                             href="/organization/tenants">
@@ -286,12 +287,12 @@ style="background-color: {getOrganizationBackgroundColor($organizationConfig)}; 
                     <li class="nav-item ms-3">
                         <a class="nav-link" class:active={$page.url.pathname==='/admin/login' } href="/admin/login">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i class="bi bi-universal-access-circle me-2"></i><span>{utils.getLabel('login_as',labels,$language)}</span>
+                                <i
+                                    class="bi bi-universal-access-circle me-2"></i><span>{utils.getLabel('login_as',labels,$language)}</span>
                         </a>
                     </li>
                     <li class="nav-item ms-3">
-                        <a class="nav-link" class:active={$page.url.pathname==='/admin/tasks' }
-                            href="/admin/tasks">
+                        <a class="nav-link" class:active={$page.url.pathname==='/admin/tasks' } href="/admin/tasks">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i
                                     class="bi bi-list-task me-2"></i><span>{utils.getLabel('tasks',labels,$language)}</span>
@@ -308,8 +309,7 @@ style="background-color: {getOrganizationBackgroundColor($organizationConfig)}; 
                         <a class="nav-link" class:active={$page.url.pathname==='/documentation' }
                             href="https://documentation.signomix.com" target="_blank">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                <i
-                                    class="bi bi-book me-2"></i>{utils.getLabel('documentation',labels,$language)}
+                                <i class="bi bi-book me-2"></i>{utils.getLabel('documentation',labels,$language)}
                             </span>
                         </a>
                     </li>
@@ -317,15 +317,14 @@ style="background-color: {getOrganizationBackgroundColor($organizationConfig)}; 
                     <!-- end platform documentation -->
                     <!-- documentation/help content for organization users -->
                     {#if isHelpVisible($isAuthenticated, $profile, $organizationConfig)}
-                        <li class="nav-item">
-                            <a class="nav-link" class:active={$page.url.pathname==='/help' }
-                                href="https://help.signomix.com?sid={$token}" target="_blank">
-                                <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
-                                    <i
-                                        class="bi bi-question-circle me-2"></i>{utils.getLabel('help',labels,$language)}
-                                </span>
-                            </a>
-                        </li>
+                    <li class="nav-item">
+                        <a class="nav-link" class:active={$page.url.pathname==='/help' }
+                            href="https://help.signomix.com?sid={$token}" target="_blank">
+                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                <i class="bi bi-question-circle me-2"></i>{utils.getLabel('help',labels,$language)}
+                            </span>
+                        </a>
+                    </li>
                     {/if}
                     <!-- end documentation/help content for organization users -->
                     <!-- logout-->
@@ -419,7 +418,7 @@ style="background-color: {getOrganizationBackgroundColor($organizationConfig)}; 
     import { poll } from '$lib/poll.js';
     import { dev } from '$app/environment';
     import { sgxdata } from '$lib/sgxdata.js';
-    import { token, profile, language, isAuthenticated, context, contextRoot, organizationConfig } from '$lib/usersession.js';
+    import { token, profile, language, isAuthenticated, context, contextRoot, organizationConfig, mobileClient } from '$lib/usersession.js';
     import { getInfo, platformInfo, defaultOrganizationId, platformRelease, webappRelease } from '$lib/stores.js';
     import { Toaster, toast } from 'svelte-sonner'
     import PageHeader from '$lib/components/PageHeader.svelte'
@@ -429,11 +428,12 @@ style="background-color: {getOrganizationBackgroundColor($organizationConfig)}; 
     console.log('layout.svelte', env.PUBLIC_WEBAPP_MODE);
 
     onMount(async () => {
+        mobileClient.set( isProbablyMobile() );
         if (env.PUBLIC_WEBAPP_MODE == 'view') {
-            console.log('view mode')
+            console.log('view mode ', $mobileClient ? 'mobile' : 'desktop');
             //goto('/dashboard')
         } else {
-            console.log('not view mode')
+            console.log('not view mode ', $mobileClient ? 'mobile' : 'desktop')
             try {
                 getInfo($page.url)
             } catch (e) {
@@ -443,64 +443,70 @@ style="background-color: {getOrganizationBackgroundColor($organizationConfig)}; 
 
     });
 
+    function isProbablyMobile() {
+        const isUserAgentMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isSmallScreen = window.matchMedia("(max-width: 767px)").matches;
+        return isUserAgentMobile || isSmallScreen;
+    }
+
     function isDocumentationVIsible(userAuthenticated, userProfile, userOrganizationConfig) {
-        if(!userAuthenticated) return true;
-        if(userProfile.organization == utils.getDefaultOrganizationId()) return true;
-        if(userOrganizationConfig==undefined) return true;
-        if(userOrganizationConfig.menu_documentation == undefined) return true;
-        if(userOrganizationConfig.menu_documentation == false) return false;
+        if (!userAuthenticated) return true;
+        if (userProfile.organization == utils.getDefaultOrganizationId()) return true;
+        if (userOrganizationConfig == undefined) return true;
+        if (userOrganizationConfig.menu_documentation == undefined) return true;
+        if (userOrganizationConfig.menu_documentation == false) return false;
         return true;
     }
 
     function isHelpVisible(userAuthenticated, userProfile, userOrganizationConfig) {
-        if(!userAuthenticated) return false;
+        if (!userAuthenticated) return false;
         //if(userProfile.organization == utils.getDefaultOrganizationId()) return true;
-        if(userOrganizationConfig==undefined) return false;
-        if(userOrganizationConfig.menu_help == undefined) return false;
-        if(userOrganizationConfig.menu_help == true) return true;
+        if (userOrganizationConfig == undefined) return false;
+        if (userOrganizationConfig.menu_help == undefined) return false;
+        if (userOrganizationConfig.menu_help == true) return true;
         return false;
     }
 
     function isTenantsVisible(userAuthenticated, userProfile, userOrganizationConfig) {
-        if(!userAuthenticated) return false;
+        if (!userAuthenticated) return false;
         //if(userProfile.organization == utils.getDefaultOrganizationId()) return true;
-        if(userProfile.type != 8) return false;
-        if(userOrganizationConfig==undefined) return false;
-        if(userOrganizationConfig.menu_tenants == undefined) return false;
-        if(userOrganizationConfig.menu_tenants == true) return true;
+        if (userProfile.type != 8) return false;
+        if (userOrganizationConfig == undefined) return false;
+        if (userOrganizationConfig.menu_tenants == undefined) return false;
+        if (userOrganizationConfig.menu_tenants == true) return true;
         return false;
     }
 
     function getOrganizationName(userOrganizationConfig) {
-        if(userOrganizationConfig==undefined) return '';
-        if(userOrganizationConfig.name==null) return '';
+        if (userOrganizationConfig == undefined) return '';
+        if (userOrganizationConfig.name == null) return '';
         return userOrganizationConfig.name;
     }
 
     function getOrganizationBackgroundColor(userOrganizationConfig) {
-        if(userOrganizationConfig==undefined) return '#001999';
-        if(userOrganizationConfig.background_color==null) return '#001999';
+        if (userOrganizationConfig == undefined) return '#001999';
+        if (userOrganizationConfig.background_color == null) return '#001999';
         return userOrganizationConfig.background_color;
     }
 
     function getOrganizationTextColor(userOrganizationConfig) {
-        if(userOrganizationConfig==undefined) return '#f8f9fa';
-        if(userOrganizationConfig.text_color==null) return '#f8f9fa';
+        if (userOrganizationConfig == undefined) return '#f8f9fa';
+        if (userOrganizationConfig.text_color == null) return '#f8f9fa';
         return userOrganizationConfig.text_color;
     }
 
     function getLogoUrl(userOrganizationConfig) {
         let url = '/img/logo-light.svg';
-        if(userOrganizationConfig==undefined) return url;
-        if(userOrganizationConfig.logo_url==null) return url;
+        if (userOrganizationConfig == undefined) return url;
+        if (userOrganizationConfig.logo_url == null) return url;
         return userOrganizationConfig.logo_url;
     }
 
-    function isTakeover(profile){
-        if(profile==undefined||profile==null){
+    function isTakeover(profile) {
+        if (profile == undefined || profile == null) {
             return false
         }
-        if(profile.role==undefined || profile.role==null){
+        if (profile.role == undefined || profile.role == null) {
             return false
         }
         let roles = profile.role.split(',')
