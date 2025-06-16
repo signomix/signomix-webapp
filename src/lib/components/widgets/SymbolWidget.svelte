@@ -109,12 +109,12 @@
         if (roundedValue == null) {
             return "N/A";
         }
+        let valueName = null;
         let alertLevel = widgets.getAlertLevel(
             config.range,
             roundedValue,
             data.datasets[0].data[0].timestamp,
         );
-        let alertName = null;
         if (
             config.config != undefined &&
             config.config != null &&
@@ -122,19 +122,35 @@
         ) {
             try {
                 let cfg = JSON.parse(config.config);
-                if (
+                if(cfg.ranges != undefined &&
+                    cfg.ranges != null &&
+                    cfg.ranges.length > 0
+                    && cfg.rangeNames != undefined &&
+                    cfg.rangeNames != null &&
+                    cfg.rangeNames.length > 0
+                    && cfg.ranges.length == cfg.rangeNames.length) {
+
+                    valueName = cfg.rangeNames[cfg.rangeNames.length - 1];
+                    for (let i = 0; i < cfg.ranges.length-1; i++) {
+                        if (roundedValue >= cfg.ranges[i] && roundedValue < cfg.ranges[i+1]) {
+                            valueName = cfg.rangeNames[i];
+                            break;
+                        }
+                    }
+                } else if (
+                    // Check if alertNames is defined and has enough elements
                     cfg.alertNames != undefined &&
                     cfg.alertNames != null &&
                     cfg.alertNames.length >= alertLevel
                 ) {
-                    alertName = cfg.alertNames[alertLevel];
+                    valueName = cfg.alertNames[alertLevel];
                 }
             } catch (e) {
                 console.log("error parsing config: ", e);
             }
         }
-        if (alertName != null) {
-            valueText = alertName;
+        if (valueName != null) {
+            valueText = valueName;
         } else {
             valueText = roundedValue;
             if (unitName != undefined && unitName != null && unitName != "") {
