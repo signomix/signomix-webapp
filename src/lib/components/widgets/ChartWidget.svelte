@@ -63,7 +63,7 @@
                         //myChart.update()
                     })
             }
-            console.log('ChartWidget ctx', ctx)    
+            //console.log('ChartWidget ctx', ctx)    
         } catch (error) {
             errorMessage = error.message;
             console.log('ChartWidget error', errorMessage);
@@ -81,10 +81,17 @@
     }
 
     function transformData(widgetConfig, jsonData) {
-        console.log('chart data', JSON.stringify(jsonData))
+        //console.log('chart data', JSON.stringify(jsonData))
         let namesTranslated = []
+        let translatedChannel=null;
         if (config.channel_translated !== null && config.channel_translated !== undefined) {
-            namesTranslated = config.channel_translated.split(',')
+            translatedChannel = config.channel_translated
+        }
+        if(config.channetTranslated !=null && config.channetTranslated !== undefined){
+            translatedChannel = config.channetTranslated
+        }
+        if (translatedChannel !== null && translatedChannel !== undefined) {
+            namesTranslated = translatedChannel.split(',')
         }
         let multiLine = jsonData[0].length > 1// && jsonData[0][1]['name'] != jsonData[0][0]['name']
         let chartData = {
@@ -256,12 +263,23 @@
     }
 
     function transformReportData(widgetConfig, jsonData) {
-        console.log('chart report data', JSON.stringify(jsonData))
+        //console.log('chart report data', JSON.stringify(jsonData))
+        //console.log('config.channel_translated', config.channel_translated)
+        //console.log('widgetConfig.channel_translated', widgetConfig.channel_translated)
         let namesTranslated = []
+        let translatedChannel = null;
         if (config.channel_translated !== null && config.channel_translated !== undefined) {
-            namesTranslated = config.channel_translated.split(',')
+            translatedChannel = config.channel_translated
         }
- 
+        if (config.channelTranslated !== null && config.channelTranslated !== undefined) {
+            translatedChannel = config.channelTranslated
+        }
+        if (translatedChannel !== null && translatedChannel !== undefined) {
+            namesTranslated = translatedChannel.split(',')
+        }
+        //console.log('namesTranslated', namesTranslated)
+        //console.log('config', config)
+        //console.log('widgetConfig', widgetConfig)
         let chartData = {
             labels: [],
             datasets: []
@@ -322,7 +340,7 @@
                 }
                 chartData.datasets.push(
                     {
-                        label: jsonData.headers[0].columns[j],
+                        label: getChannelNameTranslated(namesTranslated,j,jsonData.headers[0].columns[j]),
                         borderWidth: 1,
                         data: measures,
                         backgroundColor: areaColors[(j % 7)],

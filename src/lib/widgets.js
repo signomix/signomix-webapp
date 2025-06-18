@@ -69,7 +69,7 @@ export const widgets = {
         text: [],
         stopwatch: ['dev_id', 'channel', 'project'],
         time: ['dev_id', 'channel', 'project'],
-        symbol: ['dev_id', 'reportSelector','query','channel', 'range', 'unit', 'rounding', 'icon', 'project'],
+        symbol: ['dev_id', 'reportSelector', 'query', 'channel', 'range', 'unit', 'rounding', 'icon', 'project'],
         textvalue: ['dev_id', 'channel', 'project'],
     },
     chartFields: {
@@ -257,12 +257,12 @@ export const widgets = {
         //console.log('getDefaultIconName', definition)
         let iconName = 'bi-clipboard2-pulse';
         let channel = '';
-        if (definition==undefined || definition == null) {
+        if (definition == undefined || definition == null) {
             return iconName;
         }
         if (definition.channel != undefined && definition.channel != null && definition.channel != '') {
             channel = definition.channel.toLowerCase();
-        }else{
+        } else {
             if (query != undefined && query != null && query != '' && query.channel != undefined && query.channel != null && query.channel != '') {
                 channel = query.channel.toLowerCase();
             } else {
@@ -305,32 +305,45 @@ export const widgets = {
         return iconName;
     },
     getIconName: function (definition, value, timestamp, query) {
+        // Returns icon name based on the definition and value
+        //
+        // @param {Object} definition - widget definition
+        // @param {Number} value - value to check against the definition
+        // @param {Number} timestamp - timestamp of the value update
+        // @param {Object} query - query object containing channel information
+        // @returns {String} icon name
+        //
+        // The icon set used to select the icon is taken from the following sources:
+        // 1. widget definition icon field
+        // 2. widget configuration icon field
+        // 3. default icon based on the channel name
         {
+            let emptyConfig = true;
             let level = this.getAlertLevel(definition.range, value, timestamp);
             //let icons = ['bi-emoji-smile-fill', 'bi-emoji-neutral-fill', 'bi-emoji-frown-fill', 'bi-emoji-expressionless-fill']
             let icons = ['', '', '', '', '']
-            // default icon is selected based on the channel name
-            let defaultIcon = this.getDefaultIconName(definition,query)
-            let tmpIcons = defaultIcon.split(',')
-            let tmpIconsOldDef= defaultIcon.split(',')
-            if(tmpIconsOldDef.length > 1){
-                tmpIcons = []
-                for (let i = 0; i < tmpIconsOldDef.length; i++) {
-                    tmpIcons.push(tmpIconsOldDef[i].trim())
-                }
-            }
+
+            // Ad 3. default icon is selected based on the channel name
+            let defaultIcon = this.getDefaultIconName(definition, query)
             for (let i = 0; i < icons.length; i++) {
-                if (i < tmpIcons.length) {
-                    icons[i] = tmpIcons[i]
-                } else {
-                    icons[i] = tmpIcons[0]
-                }
+                icons[i] = defaultIcon
             }
-            //icons can be defined in the widget definition config
+            // Ad 2. icons can be defined in the widget definition configuration
             let config = this.getConfiguration(definition)
             //console.log('CONFIG', config)
-            if (config.icon != undefined && config.icon != null && config.icon != '') {
-                let optIcons = config.icon.split(';')
+            if (config.icon != undefined && config.icon != null && Array.isArray(config.icon)) {
+                for (let i = 0; i < config.icon.length; i++) {
+                    icons[i] = config.icon[i]
+                }
+                // fill the rest of the icons with the first icon
+                for (let i = config.icon.length; i < icons.length; i++) {
+                    icons[i] = icons[0]
+                }
+                emptyConfig = false;
+            }
+            // Ad. 1 in the widget definition icon field
+            if (emptyConfig && definition.icon != undefined && definition.icon != null && definition.icon != '') {
+                let optIcons = definition.icon.split(this.getSeparatorChar(definition.icon))
                 for (let i = 0; i < optIcons.length; i++) {
                     icons[i] = optIcons[i]
                 }
@@ -338,19 +351,7 @@ export const widgets = {
                     icons[i] = icons[0]
                 }
             }
-            // or in the widget definition icon field
-            if (definition.icon != undefined && definition.icon != null && definition.icon != '') {
-                let optIcons = definition.icon.split(';')
-                for (let i = 0; i < optIcons.length; i++) {
-                    icons[i] = optIcons[i]
-                }
-                for (let i = optIcons.length; i < icons.length; i++) {
-                    icons[i] = icons[0]
-                }
-            }
-            if (level == 0) {
-                return icons[0]
-            } else if (level >= 0 && level < icons.length) {
+            if (level >= 0 && level < icons.length) {
                 return icons[level]
             } else {
                 return icons[4]
@@ -559,7 +560,7 @@ export const widgets = {
         if (/^[a-zA-Z]/.test(rule)) {
             rule = rule.substring(1);
         }
-        
+
         const match = rule.match(/^([<>=!]=?|==)\s*(-?\d+(\.\d+)?)$/);
         if (!match) return -1;
         const operator = match[1];
@@ -576,6 +577,18 @@ export const widgets = {
             default: return -1;
         }
         return result ? 1 : 0;
+    },
+    getSeparatorChar: function (definition) {
+        // Returns separator character used in the definition
+        // If no separator is found, returns ','
+        if (definition == undefined || definition == null || definition == '') {
+            return ',';
+        }
+        if (definition.indexOf(';') >= 0) {
+            return ';';
+        } else {
+            return ',';
+        }
     }
 }
 
