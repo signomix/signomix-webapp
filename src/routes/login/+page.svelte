@@ -44,6 +44,8 @@
     let errorMessage = ''
     let submitted=false
 
+    console.log('current page', $page.url.pathname)
+
     function isCloud() {
         return utils.isCloudSubdomain($page.url)
     }

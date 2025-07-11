@@ -498,5 +498,61 @@ export const sgxhelper = {
             }
         }
         return false;
+    },
+    getAccessType: function (profile, route, defaultOrganizationId){
+        // Returns access type for the given profile and route
+        // @param {Object} profile - user profile
+        // @param {String} route - route
+        // @returns {String} - access type string build from characters:
+        // 'r' - can read, 'u' - can update, 'c' - can create, 'd' - can delete
+        // if (profile === null || profile === undefined || route === null || route === undefined) {
+        //     return null;
+        // }
+        if (profile === null || profile === undefined || route === null || route === undefined) {
+            return '';
+        }
+
+        switch(route) {
+            case 'dashboard':
+                if (profile.type === 1) {
+                    return 'rucd';
+                }
+                if (profile.type === 8 || profile.type === 9) {
+                    return 'rucd';
+                }
+                if (profile.type === 0 || profile.type === 4 || profile.type === 5 || profile.type === 6 || profile.type === 7) {
+                    return 'r';
+                }
+                if (profile.organization === defaultOrganizationId) {
+                    return 'r';
+                }
+                return '';
+            case 'device':
+            case 'devicegroup':
+            case 'sentinelconfig':
+                if (profile.type === 1) {
+                    return 'rucd';
+                }
+                if (profile.type === 8 || profile.type === 9) {
+                    return 'rucd';
+                }
+                if (profile.type === 0 || profile.type === 4 || profile.type === 5 || profile.type === 6 || profile.type === 7) {
+                    return 'r';
+                }
+                if (profile.organization === defaultOrganizationId) {
+                    return 'r';
+                }
+                if (profile.tenant < 1) {
+                    // tenant admin or sys admin
+                    if (profile.organization === defaultOrganizationId) {
+                        return 'r';
+                    }
+                }
+            default:
+                return 'r';
+            }
+
+        //
+        return '';
     }
 }

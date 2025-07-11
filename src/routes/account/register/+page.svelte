@@ -100,6 +100,7 @@
     import { token, profile, language, isAuthenticated } from '$lib/usersession.js';
     import { goto } from '$app/navigation';
     import { PUBLIC_TERMS_URL } from '$env/static/public'; 
+    import { page } from '$app/stores';
  
     let login = ''
     let email = ''
@@ -115,6 +116,8 @@
 
     let registered = false
     let errorMessage = ''
+
+    console.log('current page', $page.url.pathname)
 
     onMount(async () => {
         login = ''

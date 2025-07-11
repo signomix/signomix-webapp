@@ -252,6 +252,16 @@
                     {/if}
                     <!-- end ACCOUNT -->
                     {/if}
+                    {#if $platformInfo.paidVersionAvailable==true}
+                    <li class="nav-item">
+                        <a class="nav-link" class:active={$page.url.pathname.startsWith('/support') }
+                            href="/support">
+                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                <i class="bi bi-ticket-detailed me-2"></i>{utils.getLabel('support',labels,$language)}
+                            </span>
+                        </a>
+                    </li>
+                    {/if}
                     {#if $profile.type==1}
                     <!-- Administration -->
                     <li class="nav-item">
@@ -345,6 +355,14 @@
                             </span>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" class:active={$page.url.pathname==='/contact' }
+                            href="/contact">
+                            <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+                                <i class="bi bi-mailbox me-2"></i>{utils.getLabel('contact',labels,$language)}
+                            </span>
+                        </a>
+                    </li>
                     {/if}
                     <!-- end register -->
                     <li class="nav-item d-inline d-sm-none">
@@ -371,39 +389,28 @@
         <main class="col-md-9 col-lg-10 ms-sm-auto px-md-4">
             {#if $isAuthenticated || $page.url.pathname=='/login' || $page.url.pathname=='/account/register'
             || $page.url.pathname=='/account/resetpassword' || $page.url.pathname=='/account/setpassword'
-            || $page.url.pathname=='/confirmed'
+            || $page.url.pathname=='/confirmed' || $page.url.pathname=='/contact'
             }
             <PageHeader />
             <slot></slot>
-            {:else if $page.url.pathname!='/' && $page.url.pathname!='/login'}
-            {goto('/')}
-            {:else if utils.getSubdomain(location).toLowerCase() == 'cloud'}
+            {:else if !$isAuthenticated}
+            {#await data}
+            loading ...
+            {:then data}
+            {#if $language=='pl'}
+            {@html data.pl.content}
+            {:else if $language=='en'}
+            english content
+            {@html data.en.content}
+            {:else}
+            {@html data.pl.content}
+            {/if}
+            {/await}
             <div class="row mt-4">
-                <div class="col-md-6 col-sm-12">
-                    <div class="row">
-                        <div class="col-12">
-                            <span
-                                class="fs-1 fw-bold text-body text-opacity-75">{utils.getLabel('info',labels,$language)}</span>
-                        </div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col-12">
-                            <span
-                                class="fs-5 fw-normal text-body text-opacity-75">{utils.getLabel('info2',labels,$language)}<sup>*</sup>
-                                {utils.getLabel('info3',labels,$language)}</span>
-                        </div>
-                    </div>
-                    <div class="row mt-4">
-                        <div class="col-12">
-                            <a href="/account/register"
-                                class="btn btn-lg btn-outline-primary w-100">{utils.getLabel('register',labels,$language)}</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col col-md-6 d-none d-md-block">
-                    <img class="img-fluid" src="/img/media1.jpeg" alt="iot" />
-                </div>
+            <div class="col-12 text-start">
+                <a href="/contact" class="btn btn-lg btn-outline-primary">{utils.getLabel('do_contact',labels,$language)}</a>
             </div>
+        </div>
             {/if}
         </main>
     </div>
@@ -424,8 +431,15 @@
     import PageHeader from '$lib/components/PageHeader.svelte'
     import { env } from '$env/dynamic/public';
     import Theme from '$lib/components/Theme.svelte';
+    import { hcms } from '$lib/hcms.js';
 
     console.log('layout.svelte', env.PUBLIC_WEBAPP_MODE);
+    console.log('page', $page);
+    export let data
+
+    function print(data) {
+        console.log('print data', data);
+    }   
 
     onMount(async () => {
         mobileClient.set( isProbablyMobile() );
@@ -614,6 +628,12 @@
         return true
     }
 
+    function handleImageClick() {
+        console.log('Image clicked');
+    }
+
+
+
     let alertCounter = { value: 0 }
     poll(async function fetchData() {
         if ($isAuthenticated) {
@@ -796,5 +816,17 @@
             'en': 'Login as',
             'pl': 'Zaloguj jako'
         },
+        'contact': {
+            'en': 'Contact',
+            'pl': 'Kontakt'
+        },
+        'support': {
+            'en': 'Support',
+            'pl': 'Wsparcie'
+        },
+        'do_contact': {
+            'pl': 'Masz pytania? Skontaktuj się ...',
+            'en': 'Have questions? Contact us ...'
+        }
     }
 </script>

@@ -5,6 +5,11 @@
     
 </div>
 <script>
+    //log the current route
+    import { onMount } from 'svelte';
+    import { page } from '$app/stores';
+
+    console.log('Current route:', $page.url.pathname);
     let labels = {
         'about': {
             'pl': "O aplikacji",
