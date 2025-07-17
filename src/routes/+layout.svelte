@@ -397,12 +397,12 @@
             {#await data}
             loading ...
             {:then data}
-            {#if $language=='pl'}
+            {#if $language=='pl' && data.pl}
             {@html data.pl.content}
-            {:else if $language=='en'}
+            {:else if $language=='en' && data.en}
             english content
             {@html data.en.content}
-            {:else}
+            {:else if data.pl}
             {@html data.pl.content}
             {/if}
             {/await}
@@ -416,6 +416,7 @@
     </div>
 </div>
 {/if}
+
 <script>
     import { page } from '$app/stores';
     import { onMount } from 'svelte';
@@ -432,6 +433,7 @@
     import { env } from '$env/dynamic/public';
     import Theme from '$lib/components/Theme.svelte';
     import { hcms } from '$lib/hcms.js';
+    import ScreenDetector from '$lib/components/ScreenDetector.svelte';
 
     console.log('layout.svelte', env.PUBLIC_WEBAPP_MODE);
     console.log('page', $page);

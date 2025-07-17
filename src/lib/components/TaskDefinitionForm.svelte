@@ -18,7 +18,19 @@
     let taskId = config.id;
 
     let configuration = "";
+    try{
+        // this is workaround for the issue when config is merged with layout data
+        if(config.pl){
+            delete config.pl;
+        }
+        if(config.en){
+            delete config.en;
+        }
+    }catch (error) {
+        console.log("error: ", error);
+    }
     try {
+        
         configuration = JSON.stringify(config, null, 2);
     } catch (error) {
         console.log("error: ", error);

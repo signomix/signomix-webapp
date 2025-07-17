@@ -171,7 +171,7 @@
 
 {/if}
 <script>
-    import { onMount } from 'svelte';
+    import { onMount, onDestroy } from 'svelte';
     import Grid from "svelte-grid";
     import gridHelp from "svelte-grid/build/helper/index.mjs";
     import { dev } from '$app/environment';
@@ -418,6 +418,15 @@
     beforeNavigate(({ from, to }) => {
         clearInterval(interval);
     })
+// Zmienna przechowująca aktualną szerokość okna przeglądarki.
+    // Inicjalizujemy ją jako null, ponieważ `window` nie jest dostępne podczas renderowania po stronie serwera (SSR).
+    let screenWidth = null;
+
+    // Funkcja, która będzie wywoływana przy każdej zmianie rozmiaru okna.
+    function handleScreenResize() {
+        screenWidth = window.innerWidth;
+        console.log('handleScreenResize screenWidth', screenWidth)
+    }
 
     onMount(() => {
         if ($viewMode == 'view') {
@@ -434,7 +443,23 @@
         } else {
             console.log('onMount viewMode', $viewMode)
         }
+        // Ustawiamy początkową szerokość okna.
+        handleScreenResize();
+
+        // Dodajemy "nasłuchiwacz" (event listener), który będzie wywoływał `handleScreenResize`
+        // za każdym razem, gdy rozmiar okna się zmieni.
+        window.addEventListener('resize', handleScreenResize);
+
+        // `onDestroy` (lub funkcja zwrotna w onMount) uruchamia się, gdy komponent jest niszczony.
+        // Jest to kluczowe, aby usunąć listener i uniknąć wycieków pamięci.
+        return () => {
+            window.removeEventListener('resize', handleScreenResize);
+        };
     });
+    // Reaktywna deklaracja (`$:`). Ten blok kodu uruchomi się ponownie za każdym razem,
+    // gdy wartość `screenWidth` ulegnie zmianie.
+    // Używamy progu 768px (breakpoint `md` w Bootstrap) do rozróżnienia smartfona od desktopa.
+    $: deviceType = screenWidth < 768 ? 'smartfon' : 'desktop';
 
     function forceRefresh() {
         if ($viewMode == 'view') {
