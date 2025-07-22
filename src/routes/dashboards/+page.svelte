@@ -78,10 +78,10 @@
                                         class="bi bi-trash link-dark ms-2"></i></a>
                                 {/if}
                                 {#if config.favourite}
-                                <a href="" on:click|preventDefault={toggleFav(config.id,false)} title={utils.getLabel('fav_add',labels,$language)}><i
+                                <a href="" on:click|preventDefault={toggleFav(config.id,false)} title={utils.getLabel('fav_remove',labels,$language)}><i
                                         class="bi bi-star-fill ms-2 text-warning"></i></a>
                                 {:else}
-                                <a href="" on:click|preventDefault={toggleFav(config.id,true)} title={utils.getLabel('fav_remove',labels,$language)}><i
+                                <a href="" on:click|preventDefault={toggleFav(config.id,true)} title={utils.getLabel('fav_add',labels,$language)}><i
                                         class="bi bi-star ms-2 link-dark"></i></a>
                                 {/if}
                             </td>

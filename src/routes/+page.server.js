@@ -2,7 +2,7 @@ import { hcms } from '$lib/hcms.js';
 import { dev } from '$app/environment';
 import {env} from '$env/dynamic/public';
 
-/* export async function load(params) {    
+export async function load(params) {    
     let data = {};
     try {
         let documentName = getFileName(params);
@@ -43,4 +43,4 @@ function getFileName(params, language) {
         default:
             return '/' + env.PUBLIC_HCMS_ROOT + '/'+language+'/sub/default/index.html';
     }
-} */
+}

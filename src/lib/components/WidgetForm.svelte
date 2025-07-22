@@ -445,6 +445,14 @@
             pl: "Nazwa projektu",
             en: "Project name",
         },
+        mobile_size:{
+            pl: "Rozmiar na urządzeniach mobilnych",
+            en: "Mobile size",
+        },
+        mobile_position:{
+            pl: "Pozycja na urządzeniach mobilnych",
+            en: "Mobile position",
+        }
     };
 </script>
 
@@ -776,6 +784,42 @@
                                 />
                             </div>
                         {/if}
+                        <div>
+                            <label for="widgetMobileSize"
+                                >{utils.getLabel(
+                                    "mobile_size",
+                                    labels,
+                                    $language,
+                                )}</label
+                            >
+                            <input
+                                type="number"
+                                min="1"
+                                max="2"
+                                step="1"
+                                class="form-control form-control-sm"
+                                id="widgetMobileSize"
+                                bind:value={config[index].mobile_size}
+                            />
+                        </div>
+                        <div class="mt-2">
+                            <label for="widgetMobilePosition"
+                                >{utils.getLabel(
+                                    "mobile_position",
+                                    labels,
+                                    $language,
+                                )}</label
+                            >
+                            <input
+                                type="number"
+                                min="1"
+                                max="100"
+                                step="1"
+                                class="form-control form-control-sm"
+                                id="widgetMobilePosition"
+                                bind:value={config[index].mobile_position}
+                            />
+                        </div>
                     </div>
                 {/if}
                 {#if selectedTab === "extended"}

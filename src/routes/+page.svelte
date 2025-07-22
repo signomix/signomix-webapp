@@ -1,6 +1,20 @@
 {#if !$isAuthenticated}
-<div class="alert  w-100 mt-2 text-center" role="alert">
-    {utils.getLabel('notlogged',labels,$language)}
+{#await data}
+loading ...
+{:then data}
+{#if $language=='pl' && data.pl}
+{@html data.pl.content}
+{:else if $language=='en' && data.en}
+english content
+{@html data.en.content}
+{:else if data.pl}
+{@html data.pl.content}
+{/if}
+{/await}
+<div class="row mt-4">
+    <div class="col-12 text-start">
+        <a href="/contact" class="btn btn-lg btn-outline-primary">{utils.getLabel('do_contact',labels,$language)}</a>
+    </div>
 </div>
 {:else}
 <!-- {#if utils.getSubdomain(location).toLowerCase() == 'cloud'}
@@ -24,7 +38,8 @@
             <li class="list-group-item">{utils.getLabel('nofav',labels,$language)}</li>
             {:else}
             {#each dashboards as dashboard}
-            <li class="list-group-item"><i class="bi bi-star-fill me-2 text-warning"></i><a href="/dashboards/{dashboard.id}">{dashboard.title}</a></li>
+            <li class="list-group-item"><i class="bi bi-star-fill me-2 text-warning"></i><a
+                    href="/dashboards/{dashboard.id}">{dashboard.title}</a></li>
             {/each}
             {/if}
         </ul>
@@ -33,30 +48,31 @@
 {/await}
 {/if}
 <script>
-    import { profile,token, language, isAuthenticated, organizationConfig } from '$lib/usersession.js';
+    import { profile, token, language, isAuthenticated, organizationConfig } from '$lib/usersession.js';
     import { utils } from '$lib/utils.js';
     import { browser, dev } from '$app/environment'
     import { redirects } from '$lib/redirects.js';
     import { goto } from '$app/navigation';
 
+    export let data
     let promise
 
-    try{    
+    try {
         console.log('MAIN organizationConfig:', $organizationConfig)
-        if($organizationConfig && $organizationConfig.mainDashboard){
+        if ($organizationConfig && $organizationConfig.mainDashboard) {
             // If mainDashboard is set, redirect to it
             console.log('Redirecting to main dashboard:', $organizationConfig.mainDashboard)
-            goto('/dashboards/'+$organizationConfig.mainDashboard)
+            goto('/dashboards/' + $organizationConfig.mainDashboard)
         } else {
             promise = getConfigs()
         }
-    }catch(e){
+    } catch (e) {
         //console.log(e)
     }
 
     async function getConfigs() {
         let configs = []
-        if(!$isAuthenticated) return configs
+        if (!$isAuthenticated) return configs
         if (dev) {
             return [
                 {
@@ -90,10 +106,10 @@
         return configs;
     }
 
-    try{
-    redirects.handleOriginalUri();
-    }catch(e){
-       // console.log(e)
+    try {
+        redirects.handleOriginalUri();
+    } catch (e) {
+        // console.log(e)
     }
 
     let alertMessage = "HTTP-Error: %1 %2"
@@ -119,9 +135,13 @@
             'pl': "Nie jest dostępne udostępnianie pulpitów niezalogowanym użytkownikom oraz kontrolki pulpitów prezentujące mapy.",
             'en': "Sharing dashboards to unlogged users and dashboard controls presenting maps are not available."
         },
-        'info':{
+        'info': {
             'pl': "Aktualna wersja aplikacji nie jest jeszcze w pełni funkcjonalna. Wszystkie funkcje będą dostępne wkrótce.",
             'en': "The current version of the application is not yet fully functional. All functions will be available soon."
+        },
+        'do_contact': {
+            'pl': 'Masz pytania? Skontaktuj się ...',
+            'en': 'Have questions? Contact us ...'
         }
     }
 

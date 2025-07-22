@@ -314,7 +314,7 @@
     function transformBack(cfg) {
         // TODO: layout will be OK when configured for 10 columns: for 1 column layout widget height will be always 1 row
         // TODO: it should be possible preserve widget height when changing layout from 10 to 1 column
-        //console.log('transformBack')
+        console.log('transformBack', cfg);
         //console.log(cfg)
         for (let i = 0; i < cfg.items.length; i++) {
             let item = cfg.items[i]

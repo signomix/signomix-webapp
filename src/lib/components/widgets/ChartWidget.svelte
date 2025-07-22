@@ -444,5 +444,5 @@
     }
 </script>
 <div class="p-1 pt-2 w-100">
-    <canvas id="c0" bind:this={chartCanvas} class="w-100" />
+    <canvas id="c0" bind:this={chartCanvas} class="w-100" height="100"/>
 </div>

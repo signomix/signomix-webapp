@@ -4,6 +4,7 @@
 	import { dev } from '$app/environment';
 	import { utils } from '$lib/utils.js';
   	import { language, profile } from "$lib/usersession.js";
+	import { defaultOrganizationId } from "$lib/stores.js";
 	export let showDeviceSelectorModal; // boolean
 	export let callback //function
 
@@ -22,7 +23,7 @@
 		dialog.showModal();
 		let url = utils.getBackendUrl(location) + "/api/core/device"
 		url = url + '?offset=' + offset + '&limit=' + limit
-		if($profile.organization != null) {
+		if($profile.organization != null && $profile.organization != defaultOrganizationId) {
 			url = url + '&organization=' + $profile.organization
 		}
 		promise = sgxdata.getDevices(dev, url, '', $token, limit, offset)
@@ -36,6 +37,9 @@
 			tagValueToSearch=''
 			let url = utils.getBackendUrl(location) + "/api/core/device"
 			url = url + '?offset=' + offset + '&limit=' + limit
+			if($profile.organization != null && $profile.organization != defaultOrganizationId) {
+				url = url + '&organization=' + $profile.organization
+			}
 			promise = sgxdata.getDevices(dev, url, 'search=eui:' + euiToSearch, $token, limit, offset)
 		}
 	}
@@ -47,6 +51,9 @@
 			tagValueToSearch=''
 			let url = utils.getBackendUrl(location) + "/api/core/device"
 			url = url + '?offset=' + offset + '&limit=' + limit
+			if($profile.organization != null && $profile.organization != defaultOrganizationId) {
+				url = url + '&organization=' + $profile.organization
+			}
 			promise = sgxdata.getDevices(dev, url, 'search=path:' + pathToSearch, $token, limit, offset)
 		}
 	}
@@ -59,6 +66,9 @@
 			tagValueToSearch=''
 			let url = utils.getBackendUrl(location) + "/api/core/device"
 			url = url + '?offset=' + offset + '&limit=' + limit
+			if($profile.organization != null && $profile.organization != defaultOrganizationId) {
+				url = url + '&organization=' + $profile.organization
+			}
 			promise = sgxdata.getDevices(dev, url, 'search=name:' + nameToSearch ,$token, limit, offset)
 		}
 	}
@@ -70,6 +80,9 @@
 			pathToSearch=''
 			let url = utils.getBackendUrl(location) + "/api/core/device"
 			url = url + '?offset=' + offset + '&limit=' + limit
+			if($profile.organization != null && $profile.organization != defaultOrganizationId) {
+				url = url + '&organization=' + $profile.organization
+			}
 			promise = sgxdata.getDevices(dev, url, 'search=tag:' + tagNameToSearch+':'+tagValueToSearch, $token, limit, offset)
 		}
 	}

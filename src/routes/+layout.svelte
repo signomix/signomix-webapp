@@ -389,11 +389,11 @@
         <main class="col-md-9 col-lg-10 ms-sm-auto px-md-4">
             {#if $isAuthenticated || $page.url.pathname=='/login' || $page.url.pathname=='/account/register'
             || $page.url.pathname=='/account/resetpassword' || $page.url.pathname=='/account/setpassword'
-            || $page.url.pathname=='/confirmed' || $page.url.pathname=='/contact'
+            || $page.url.pathname=='/confirmed' || $page.url.pathname=='/contact' || $page.url.pathname=='/'
             }
             <PageHeader />
             <slot></slot>
-            {:else if !$isAuthenticated}
+<!--             {:else if !$isAuthenticated}
             {#await data}
             loading ...
             {:then data}
@@ -405,12 +405,14 @@
             {:else if data.pl}
             {@html data.pl.content}
             {/if}
-            {/await}
+            {/await} 
             <div class="row mt-4">
             <div class="col-12 text-start">
                 <a href="/contact" class="btn btn-lg btn-outline-primary">{utils.getLabel('do_contact',labels,$language)}</a>
             </div>
+
         </div>
+                    -->
             {/if}
         </main>
     </div>
@@ -437,14 +439,14 @@
 
     console.log('layout.svelte', env.PUBLIC_WEBAPP_MODE);
     console.log('page', $page);
-    export let data
+    //export let data
 
     function print(data) {
         console.log('print data', data);
     }   
 
     onMount(async () => {
-        mobileClient.set( isProbablyMobile() );
+        //mobileClient.set( isProbablyMobile() );
         if (env.PUBLIC_WEBAPP_MODE == 'view') {
             console.log('view mode ', $mobileClient ? 'mobile' : 'desktop');
             //goto('/dashboard')
@@ -456,8 +458,25 @@
                 console.log(e)
             }
         }
+        // Ustawiamy początkową szerokość okna.
+        handleResize();
+
+        // Dodajemy "nasłuchiwacz" (event listener), który będzie wywoływał `handleResize`
+        // za każdym razem, gdy rozmiar okna się zmieni.
+        window.addEventListener('resize', handleResize);
+
+        // `onDestroy` (lub funkcja zwrotna w onMount) uruchamia się, gdy komponent jest niszczony.
+        // Jest to kluczowe, aby usunąć listener i uniknąć wycieków pamięci.
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
 
     });
+
+    // Funkcja, która będzie wywoływana przy każdej zmianie rozmiaru okna.
+    const handleResize = () => {
+        mobileClient.set( isProbablyMobile() );
+    }
 
     function isProbablyMobile() {
         const isUserAgentMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);

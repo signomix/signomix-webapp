@@ -57,7 +57,95 @@
 <div class="dashboard-container" id={dashboardId}>
     {#if items.length==0}
     <div class="alert alert-light mx-auto my-auto">{utils.getLabel('empty',labels,$language)}</div>
+    {:else if $mobileClient}
+    <!-- Mobile Client -->
+    <div class="container">
+    <div class="row">
+    <div class="{numberOfGridCols}">
+    {#each widgets as widget, index}
+    <div class="row mb-1" style="height: {getMobileWidgetHeight(widget)}px;">
+        <div class="col-12 {getBorderClass(index)}">
+            {#if !isRoleOK(index)}
+            <div class="alert alert-light mx-auto my-auto">{utils.getLabel('hidden',labels,$language)}</div>
+            {:else}
+            <!-- WIDGETS START -->
+            {#if 'button'===getWidgetType(index)}
+                    <ButtonWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else if 'buttonplus'===getWidgetType(index)}
+                    <ButtonWidgetPlus bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else if 'chart'===getWidgetType(index)}
+                    <ChartWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else if 'chartjs'===getWidgetType(index)}
+                    <ChartjsWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
+                    {:else if 'canvas'===getWidgetType(index)}
+                    <CanvasWidgetExample index={index} bind:config={dashboardConfig.widgets[index]}
+                        bind:filter={dashboardFilter} />
+                    {:else if 'canvas_placeholder'===getWidgetType(index)}
+                    <CanvasWidgetExample index={index} bind:config={dashboardConfig.widgets[index]}
+                        bind:filter={dashboardFilter} />
+                    {:else if 'chart_placeholder'===getWidgetType(index)}
+                    <ChartjsWidgetExample index={index} bind:config={items} bind:filter={dashboardFilter} />
+                    {:else if 'symbol'===getWidgetType(index)}
+                    <SymbolWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter}
+                        bind:application={dashboardApp} />
+                    {:else if 'date'===getWidgetType(index)}
+                    <DateWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter}
+                        bind:application={dashboardApp} />
+                    {:else if 'textvalue'===getWidgetType(index)}
+                    <TextValueWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter}
+                            bind:application={dashboardApp} />
+                    {:else if 'text'===getWidgetType(index)}
+                    <TextWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else if 'devinfo'===getWidgetType(index)}
+                    <InfoWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else if 'image'===getWidgetType(index)}
+                    <ImageWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else if 'link'===getWidgetType(index)}
+                    <InternalLinkWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else if 'led'===getWidgetType(index)}
+                    <LedWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else if 'raw'===getWidgetType(index)}
+                    <RawDataWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else if 'plan'===getWidgetType(index)}
+                    <PlanWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else if 'report'===getWidgetType(index)}
+                    <ReportWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else if 'map'===getWidgetType(index)}
+                    <MapWidget index={index} bind:config={dashboardConfig.widgets[index]}
+                        bind:filter={dashboardFilter} />
+                    {:else if 'multimap'===getWidgetType(index)}
+                    <GroupMapWidget index={index} bind:config={dashboardConfig.widgets[index]}
+                        bind:filter={dashboardFilter} />
+                    {:else if 'multitrack'===getWidgetType(index)}
+                    <TracksWidget index={index} bind:config={dashboardConfig.widgets[index]}
+                        bind:filter={dashboardFilter} />
+                    {:else if 'groupchart'===getWidgetType(index)}
+                    {#if 'doughnut'===getWidgetChartType(index)}
+                    <DoughnutWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else if 'stacked'===getWidgetChartType(index)}
+                    <StackedBarWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else}
+                    <CanvasWidgetExample index={index} bind:config={dashboardConfig.widgets[index]}
+                        bind:filter={dashboardFilter} />
+                    {/if}
+                    {:else}
+                    <CanvasWidgetExample index={index} bind:config={dashboardConfig.widgets[index]}
+                        bind:filter={dashboardFilter} />
+                    {/if }
+            <!-- WIDGETS END -->
+            {/if}
+        </div>
+    </div>
+    {/each}
+    </div>
+    {#if isMobile}
+    <div class="col-1 bg-secondary bg-opacity-25">M</div>
+    {/if}
+    </div>
+    </div>
+    <!-- Mobile Client END -->
     {:else}
+    <!-- Desktop Client -->
     <div class="row h-100">
         <div class="{numberOfGridCols} d-block">
             <Grid gap={[1,1]} bind:items={items} rowHeight={100} let:item {cols} let:index on:resize={handleResize}
@@ -129,7 +217,6 @@
                     <CanvasWidgetExample index={index} bind:config={dashboardConfig.widgets[index]}
                         bind:filter={dashboardFilter} />
                     {/if }
-
                     {/if}<!-- isRoleOK -->
                 </div>
             </Grid>
@@ -138,6 +225,7 @@
         <div class="col-1 d-block bg-secondary bg-opacity-25"></div>
         {/if}
     </div>
+    <!-- Desktop Client END -->
     {/if}
 </div>
 <!-- Filter modal -->
@@ -178,7 +266,7 @@
     import { utils } from '$lib/utils.js';
     import { goto, afterNavigate, beforeNavigate/*, afterUpdate , tick */ } from '$app/navigation';
     import { invalidateAll } from '$app/navigation';
-    import { token, profile, language, isAuthenticated, viewMode } from '$lib/usersession.js';
+    import { token, profile, language, isAuthenticated, viewMode, mobileClient } from '$lib/usersession.js';
     import { defaultOrganizationId } from '$lib/stores.js';
 
     import DashboardFilterForm from '$lib/components/DashboardFilterForm.svelte';
@@ -217,6 +305,7 @@
 
     let dashboardConfig = {}
     let items = []
+    let widgets = []
 
     let dashboardFilter = { from: '', to: '' }
     let editedFilter = { from: '', to: '' }
@@ -273,6 +362,19 @@
             }
         } catch (e) {
             return 'unknown'
+        }
+    }
+
+    let getMobileWidgetHeight = function (widget) {
+        //console.log('getMobileWidgetHeight', widget)
+        let basicHeight = 100 // default height in px
+        if (widget.mobile_size != undefined && widget.mobile_size != null 
+            && isNaN(widget.mobile_size) == false && widget.mobile_size > 0
+            && widget.mobile_size < 3
+        ) {
+            return widget.mobile_size * basicHeight
+        } else {
+            return basicHeight
         }
     }
 
@@ -379,10 +481,16 @@
         dashboardConfig = data
         setLinkConfig(dashboardConfig)
         blockChanges(dashboardConfig)
-        //console.log('dashboardConfig ', dashboardConfig)
-        //console.log('SHOW dashboard ' + dashboardConfig.id)
-        //console.log('dashboardConfig ', dashboardConfig)
+
         items = dashboardConfig.items
+        widgets = dashboardConfig.widgets
+        //sort widgets by widget.mobile_position (if widget.mobile_position is not defined, set it to 100)
+        widgets.forEach((widget, index) => {
+            if (widget.mobile_position == undefined || widget.mobile_position == null) {
+                widget.mobile_position = 100
+            }
+        });
+        widgets.sort((a, b) => a.mobile_position - b.mobile_position);
         cols = [
             [800, 10],
             [500, 1],

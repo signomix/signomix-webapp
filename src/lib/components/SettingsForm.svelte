@@ -6,15 +6,15 @@
             <label for="input-uid" class="form-label">{utils.getLabel('login',labels,$language)}</label>
         </div>
         <div class="col-md-5">
-            <input disabled={!isEditable('uid')} type="text" class="form-control" id="input-uid" bind:value={userLogin}
-                readonly={readonly||!isEditable('uid')}>
+            <input disabled={!isEditable('uid',$profile,config)} type="text" class="form-control" id="input-uid" bind:value={userLogin}
+                readonly={readonly||!isEditable('uid',$profile,config)}>
         </div>
         <div class="col-md-2 col-form-label">
             <label for="input-account" class="form-label">{utils.getLabel('account',labels,$language)}</label>
         </div>
         <div class="col-md-4">
             <!-- {#if isEditable('type')} -->
-             {#if !readonly && isEditable('type')}
+             {#if !readonly && isEditable('type',$profile,config)}
             <select class="form-select" id="input-account" 
             bind:value="{config.type}" readonly={readonly}>
                 {#each getTypesAllowed() as type}
@@ -22,7 +22,7 @@
                 {/each}
             </select>
             {:else}
-            <input disabled={!isEditable('type')} type="text" class="form-control" id="input-account"
+            <input disabled={!isEditable('type',$profile,config)} type="text" class="form-control" id="input-account"
                 value={utils.getLabel(sgxhelper.getAccountTypeName(config.type,'en'), labels, $language)} readonly={readonly}>
             {/if}
             <!--
@@ -95,7 +95,7 @@
             <label for="input-role" class="form-label">{utils.getLabel('roles',labels,$language)}</label>
         </div>
         <div class="col-md-10">
-            <input disabled={!isEditable('role')} type="text" class="form-control" id="input-role"
+            <input disabled={!isEditable('role',$profile,config)} type="text" class="form-control" id="input-role"
                 bind:value={config.role} readonly={readonly}>
         </div>
     </div>
@@ -134,7 +134,7 @@
             <input type="text" class="form-control" id="input-pathRoot" value={pathRoot} disabled>
         </div>
         <div class="col-md-8">
-            <input disabled={!isEditable('pathExt')} type="text" class="form-control" id="input-path"
+            <input disabled={!isEditable('pathExt',$profile,config)} type="text" class="form-control" id="input-path"
                 bind:value={pathExt} readonly={readonly}>
         </div>
     </div>
@@ -257,7 +257,7 @@
     <hr>
 
     <div class="row">
-        {#if isEditable('password') && config.uid != $profile.uid}
+        {#if isEditable('password',$profile,config) && config.uid != $profile.uid}
         <div class="row">
             <div class="col-md-2 col-form-label">
                 <label for="input-password" class="form-label">{utils.getLabel('password',labels,$language)}</label>
@@ -268,9 +268,8 @@
                     class="form-control"
                     id="input-password"
                     bind:value={password}
-                    readonly={readonly}
+                                        disabled={!isEditable('password',$profile,config)}
                     on:input={(e) => {
-                        // Validate password
                         let error = '';
                         if (password.length < 8) {
                             error = 'Password must be at least 8 characters.';
@@ -346,62 +345,61 @@
     let pathRoot = getPathRoot()
     let pathExt = getPathExt()
     let userLogin = ''
-    let password = isNew() ? '' : null
+    if (config && config.uid !== undefined && config.uid != null && config.uid != 'new') {
+        userLogin = config.uid
+        config.newConfig = false
+    }else{
+        userLogin = 'new'
+        config.newConfig=true
+    }
+    let password = ''
     let errorMessage = ''
     let validationMessage = ''
     let dialog
 
-    /*     function closeDialog(result) {
-            console.log("closeDialog", result)
-            try { dialog.close() } catch (e) { }
-            if (result) {
-                handleSave(true)
-            }
-        } */
-
     //console.log('config', config);
-    if (!isNew()) {
-        userLogin = config.uid
-    }
+    console.log('config', config)
+    console.log('profile', $profile)
+    console.log('isNew', isNew(config))
 
     function getUserTypeName(type) {
         return utils.getLabel(sgxhelper.getAccountTypeName(type, $language))
     }
 
-    function isEditable(fieldName) {
-        //console.log('isEditable', $profile.type, $profile.tenant, config.tenant, $profile.organization, config.organization)
+    function isEditable(fieldName, userProfile, userConfig) {
         // system admin can edit all
-        if ($profile.type == 1) {
-            if (fieldName == 'uid' && !isNew()) {
-                return false
-            } else {
-                return true
-            }
+        if (fieldName == 'uid' && !isNew(userConfig)) {
+            //console.log('isEditable: uid is not editable for existing user')
+            return false
+        }
+        if (userProfile.type == 1) {
+            //console.log('isEditable: system admin can edit all')
+            return true
         }
         // managing admin can edit all users from his organization and tenants
-        if ($profile.type == 8) {
-            if (fieldName == 'uid' && !isNew()) {
-                return false
-            }
-            if ($profile.organization != config.organization) {
+        if (userProfile.type == 8) {
+            if (userProfile.organization != userConfig.organization) {
+                //console.log('isEditable: userProfile.organization != userConfig.organization')
                 return false
             }
             if (fieldName == 'organization') {
+                //console.log('isEditable: organization is not editable for managing admin')
                 return false
             }
+            //console.log('isEditable: managing admin can edit all users from his organization')
             return true
         }
         // tenant admin can edit all users from the same tenant
-        if ($profile.type == 9) {
-            if (fieldName == 'uid' && !isNew()) {
-                return false
-            }
-            if ($profile.tenant != config.tenant) {
+        if (userProfile.type == 9) {
+            if (userProfile.tenant != userConfig.tenant) {
+                //console.log('isEditable: userProfile.tenant != userConfig.tenant')
                 return false
             }
             if (fieldName == 'organization' || fieldName == 'tenant' || fieldName == 'path' || fieldName == 'pathRoot') {
+                //console.log('isEditable: organization is not editable for tenant admin')
                 return false
             }
+            //console.log('isEditable: tenant admin can edit all users from the same tenant')
             return true
         }
         // user can edit selected fields
@@ -409,12 +407,14 @@
             || fieldName == 'preferredLanguage'
             || fieldName == 'generalNotificationChannel' || fieldName == 'infoNotificationChannel' || fieldName == 'warningNotificationChannel'
             || fieldName == 'alertNotificationChannel' || fieldName == 'password') {
+            //console.log('isEditable: field', fieldName, 'is editable for userProfile.type', userProfile.type)
             return true
         }
+        //console.log('isEditable: field', fieldName, 'is not editable for userProfile.type', userProfile.type)
         return false
     }
-    function isNew() {
-        return config.uid == null || config.uid == undefined || config.uid == 'new'
+    function isNew(userConfig) {
+        return userConfig.uid == null || userConfig.uid == undefined || userConfig.uid == 'new'
     }
 
     function getPathRoot() {
@@ -511,8 +511,8 @@
             //config.pathRoot = $context.pathRoot
         }
         //console.log('handleSave.passwod', password)
-        if ((isNew() && password != null && password.length > 0)
-            || isEditable('password') && config.uid != $profile.uid) {
+        if ((isNew(config) && password != null && password.length > 0)
+            || isEditable('password', $profile, config) && config.uid != $profile.uid) {
             config.password = password
         } else {
             //console.log('password', password)
@@ -530,23 +530,13 @@
             console.log("AFTER DIALOG");
             return;
         }*/
-       console.log('executing callback with config', config)
+       //console.log('executing callback with config', config)
         callback(config)
     }
     function handleCancel(event) {
         callback(null)
     }
-    /*     function validate(cfg){
-            if(cfg.phone.startsWith("+") || cfg.phone.startsWith("0")||cfg.phone.length>9){
-                return "Invalid phone number"
-            }
-            return ""
-        } */
 
-    /*     function handlePassword(event) {
-            console.log('handlePassword')
-            goto('/account/settings/password')
-        } */
     function handleRemove(event) {
         alert(utils.getLabel('alert_remove', labels, $language))
     }

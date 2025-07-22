@@ -3,6 +3,8 @@
 	import { token } from '$lib/usersession.js';
 	import { dev } from '$app/environment';
 	import { utils } from '$lib/utils.js';
+	import { profile } from "$lib/usersession.js";
+	import { defaultOrganizationId } from "$lib/stores.js";
 
 	export let showGroupSelectorModal; // boolean
 	export let callback //function
@@ -18,7 +20,12 @@
 	$: if (dialog && showGroupSelectorModal) {
 		dialog.showModal();
 		let url = utils.getBackendUrl(location) + "/api/core/group"
-		url = url + '?offset=' + offset + '&limit=' + limit + '&shared=true'
+		url = url + '?offset=' + offset + '&limit=' + limit
+		if($profile.organization != null && $profile.organization != defaultOrganizationId) {
+			url = url + '&organization=' + $profile.organization
+		} else {
+			url = url + '&shared=true'
+		}
 		promise = sgxdata.getGroups(dev, url, '', $token, limit, offset)
 	}
 
@@ -26,7 +33,12 @@
 		if (event.target.value.length >= 0) {
 			nameToSearch=''
 			let url = utils.getBackendUrl(location) + "/api/core/group"
-			url = url + '?offset=' + offset + '&limit=' + limit + '&shared=true'
+			url = url + '?offset=' + offset + '&limit=' + limit
+			if($profile.organization != null && $profile.organization != defaultOrganizationId) {
+				url = url + '&organization=' + $profile.organization
+			}else{
+				url = url + '&shared=true'
+			}
 			promise = sgxdata.getGroups(dev, url, 'search=eui:' + euiToSearch, $token, limit, offset)
 		}
 	}
@@ -35,7 +47,12 @@
 		if (event.target.value.length >= 0) {
 			euiToSearch=''
 			let url = utils.getBackendUrl(location) + "/api/core/group"
-			url = url + '?offset=' + offset + '&limit=' + limit + '&shared=true'
+			url = url + '?offset=' + offset + '&limit=' + limit
+			if($profile.organization != null && $profile.organization != defaultOrganizationId) {
+				url = url + '&organization=' + $profile.organization
+			}else{
+				url = url + '&shared=true'
+			}
 			promise = sgxdata.getGroups(dev, url, 'search=name:' + nameToSearch, $token, limit, offset)
 		}
 	}
