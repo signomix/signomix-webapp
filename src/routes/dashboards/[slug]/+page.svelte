@@ -63,6 +63,7 @@
     <div class="row">
     <div class="{numberOfGridCols}">
     {#each widgets as widget, index}
+    {#if getMobileWidgetHeight(widget)>0}
     <div class="row mb-1" style="height: {getMobileWidgetHeight(widget)}px;">
         <div class="col-12 {getBorderClass(index)}">
             {#if !isRoleOK(index)}
@@ -136,6 +137,7 @@
             {/if}
         </div>
     </div>
+    {/if}
     {/each}
     </div>
     {#if isMobile}
@@ -150,6 +152,7 @@
         <div class="{numberOfGridCols} d-block">
             <Grid gap={[1,1]} bind:items={items} rowHeight={100} let:item {cols} let:index on:resize={handleResize}
                 on:mount={handleMount}>
+                {#if isVisibleOnDesktop(index)}
                 <div class={getBorderClass(index)}>
                     {#if !isRoleOK(index)}
                     <div class="alert alert-light mx-auto my-auto">{utils.getLabel('hidden',labels,$language)}</div>
@@ -219,6 +222,7 @@
                     {/if }
                     {/if}<!-- isRoleOK -->
                 </div>
+                {/if}<!-- isVisibleOnDesktop -->
             </Grid>
         </div>
         {#if isMobile}
@@ -365,11 +369,23 @@
         }
     }
 
+    let isVisibleOnDesktop = function (idx) {
+        //console.log('isVisibleOnDesktop', widget)
+        if (dashboardConfig.widgets[idx].mobile_size != undefined && dashboardConfig.widgets[idx].mobile_size != null 
+            && isNaN(dashboardConfig.widgets[idx].mobile_size) == false
+            && dashboardConfig.widgets[idx].mobile_size < 0
+        ) {
+            return false
+        } else {
+            return true
+        }
+    }
+
     let getMobileWidgetHeight = function (widget) {
         //console.log('getMobileWidgetHeight', widget)
         let basicHeight = 100 // default height in px
         if (widget.mobile_size != undefined && widget.mobile_size != null 
-            && isNaN(widget.mobile_size) == false && widget.mobile_size > 0
+            && isNaN(widget.mobile_size) == false && widget.mobile_size >= 0
             && widget.mobile_size < 3
         ) {
             return widget.mobile_size * basicHeight

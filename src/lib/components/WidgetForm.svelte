@@ -452,8 +452,24 @@
         mobile_position:{
             pl: "Pozycja na urządzeniach mobilnych",
             en: "Mobile position",
+        },
+        invisible: {
+            pl: "Niewidoczny na urządzeniach mobilnych",
+            en: "Invisible on mobile"
+        },
+        desktop_invisible: {
+            pl: "Niewidoczny na desktopie",
+            en: "Invisible on desktop"
+        },
+        row: {
+            pl: "wiersz",
+            en: "row"
+        },
+        rows: {
+            pl: "wiersze",
+            en: "rows"
         }
-    };
+    }
 </script>
 
 <!--
@@ -792,15 +808,16 @@
                                     $language,
                                 )}</label
                             >
-                            <input
-                                type="number"
-                                min="1"
-                                max="2"
-                                step="1"
+                            <select
                                 class="form-control form-control-sm"
                                 id="widgetMobileSize"
                                 bind:value={config[index].mobile_size}
-                            />
+                            >
+                                <option value="0">{utils.getLabel("invisible",labels,$language)}</option>
+                                <option value="1">1 {utils.getLabel("row",labels,$language)}</option>
+                                <option value="2">2 {utils.getLabel("rows",labels,$language)}</option>
+                                <option value="-1">{utils.getLabel("desktop_invisible",labels,$language)}</option>
+                            </select>
                         </div>
                         <div class="mt-2">
                             <label for="widgetMobilePosition"
