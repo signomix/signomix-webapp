@@ -3,14 +3,16 @@
     import { page } from '$app/stores';
     import { utils } from '$lib/utils.js';
     import { env } from '$env/dynamic/public';
+    import { onMount } from 'svelte';
     import {  profile, token, language, isAuthenticated, viewMode } from '$lib/usersession.js';
     
     console.log('/[slug]', $page)
 
     //if (env.PUBLIC_WEBAPP_MODE == 'view') {
+    onMount(async () => {
         console.log('/[slug]2', $page)
         var tokenObject;
-        let serviceUrl = utils.getBackendUrl(location)
+        let serviceUrl = utils.getBackendUrl(window.location)
         console.log('page', $page);
         // Call the API - get the token object
         token.set('SLUG',$page.params.slug)
@@ -32,6 +34,7 @@
         }).catch(function (error) {
             console.warn('Something went wrong.', error);
         });
+    });
     //} else {
     //    goto('/')
     //}
