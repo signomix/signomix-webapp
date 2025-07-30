@@ -254,8 +254,7 @@
                     {/if}
                     {#if $platformInfo.paidVersionAvailable==true}
                     <li class="nav-item">
-                        <a class="nav-link" class:active={$page.url.pathname.startsWith('/support') }
-                            href="/support">
+                        <a class="nav-link" class:active={$page.url.pathname.startsWith('/support') } href="/support">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i class="bi bi-ticket-detailed me-2"></i>{utils.getLabel('support',labels,$language)}
                             </span>
@@ -356,8 +355,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" class:active={$page.url.pathname==='/contact' }
-                            href="/contact">
+                        <a class="nav-link" class:active={$page.url.pathname==='/contact' } href="/contact">
                             <span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
                                 <i class="bi bi-mailbox me-2"></i>{utils.getLabel('contact',labels,$language)}
                             </span>
@@ -393,7 +391,7 @@
             }
             <PageHeader />
             <slot></slot>
-<!--             {:else if !$isAuthenticated}
+            <!--             {:else if !$isAuthenticated}
             {#await data}
             loading ...
             {:then data}
@@ -443,7 +441,7 @@
 
     function print(data) {
         console.log('print data', data);
-    }   
+    }
 
     onMount(async () => {
         //mobileClient.set( isProbablyMobile() );
@@ -475,13 +473,18 @@
 
     // Funkcja, która będzie wywoływana przy każdej zmianie rozmiaru okna.
     const handleResize = () => {
-        mobileClient.set( isProbablyMobile() );
+        mobileClient.set(isProbablyMobile());
     }
 
     function isProbablyMobile() {
-        const isUserAgentMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        /* const isUserAgentMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         const isSmallScreen = window.matchMedia("(max-width: 767px)").matches;
-        return isUserAgentMobile || isSmallScreen;
+        return isUserAgentMobile || isSmallScreen; */
+        /*
+        Checks if the current viewport width is 767 pixels or less, typically used to determine if the device is a mobile or small screen.
+        */
+        window.matchMedia("(max-width: 767px)").matches;
+        return window.matchMedia("(max-width: 767px)").matches;
     }
 
     function isDocumentationVIsible(userAuthenticated, userProfile, userOrganizationConfig) {
