@@ -1,5 +1,10 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-3 border-bottom">
-    <h5>{utils.getLabel('title',labels, $language)}</h5>
+    <h5>{utils.getLabel('title',labels, $language)}
+{#await data}
+{:then data}
+{data.sentinel.id}
+{/await}
+    </h5>
     {#if data.sentinel.id != null}
     <a href="/sentinels/{data.sentinel.id}" title="View"><i class="bi bi-eye h5 me-2 link-dark"></i></a>
     {/if}

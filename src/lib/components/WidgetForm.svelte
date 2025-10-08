@@ -111,6 +111,7 @@
                 console.log("error parsing query: ", e);
             }
             if (
+                widgets.isVisible(selectedType, "project") &&
                 q.project != undefined &&
                 q.project != null &&
                 q.project != ""

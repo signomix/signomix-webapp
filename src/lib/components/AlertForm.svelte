@@ -30,26 +30,41 @@
   let targets = [
     {
       id: 1,
-      name: "Urządzenia",
+      name: {
+        pl: "Urządzenia",
+        en: "Devices"
+      }
     },
     {
       id: 2,
-      name: "Grupy",
+      name: {
+        pl: "Grupy urządzeń",
+        en: "Device groups"
+      }
     },
     {
       id: 3,
-      name: "Znacznika (tag)",
+      name: {
+        pl: "Urządzeń ze znacznikiem (tag)",
+        en: "Devices with tag"
+      }
     },
   ];
   let selectedType = config.eventType;
   let types = [
     {
       id: 0,
-      name: "Danych",
+      name: {
+        pl: "Danych",
+        en: "Data"
+      },
     },
     {
       id: 1,
-      name: "Komend",
+      name: {
+        pl: "Poleceniach",
+        en: "Commands"
+      }
     },
   ];
 
@@ -67,20 +82,32 @@
   let conditionOperators = [
     {
       id: 1,
-      name: "większe niż",
+      name: {
+        pl: "większa niż",
+        en: "greater than"
+      }
     },
     {
       id: -1,
-      name: "mniejsze niż",
+      name: {
+        pl: "mniejsza niż",
+        en: "less than"
+      }
     },
     {
       id: 0,
-      name: "równe",
+      name: {
+        pl: "równa",
+        en: "equal to"
+      },
     },
     {
       id: 2,
-      name: "różne od",
-    },
+      name: {
+        pl: "różna od",
+        en: "not equal to"
+      }
+    }
   ];
 
   let logicalOperators = [
@@ -127,12 +154,12 @@
       en: "Name",
     },
     for: {
-      pl: "Dla",
-      en: "For",
+      pl: "Informacje o nowych",
+      en: "Info about new",
     },
     refersTo: {
-      pl: "Dotyczy",
-      en: "Refers to",
+      pl: "Dotyczących",
+      en: "Referring to",
     },
     active: {
       pl: "Aktywna",
@@ -155,8 +182,8 @@
       en: "Data not older than (min.)",
     },
     hysteresis: {
-      pl: "Histereza",
-      en: "Hysteresis",
+      pl: "Uwzględnij tolerancję odchylenia (Histereza)",
+      en: "Consider Switching Range (Hysteresis)"
     },
     useScript: {
       pl: "Użyj skryptu",
@@ -166,9 +193,21 @@
       pl: "JEŻELI WARUNKI SKRYPTU SPEŁNIONE",
       en: "IF SCRIPT CONDITIONS MET",
     },
+    given: {
+      pl: "MAJĄC",
+      en: "GIVEN",
+    },
     if: {
       pl: "JEŻELI",
       en: "IF",
+    },
+    nextCondition: {
+      pl: "dodaj kolejny warunek",
+      en: "add next condition",
+    },
+    input1: {
+      pl: "Wartość pomiaru o nazwie",
+      en: "Measurement with name",
     },
     then: {
       pl: "WTEDY",
@@ -177,6 +216,10 @@
     alarm: {
       pl: "Alarm",
       en: "Alarm",
+    },
+    sendAlert: {
+      pl: "Wywołaj alarm",
+      en: "Send alert",
     },
     sendAlarmTo: {
       pl: "Wyślij alarm do",
@@ -555,15 +598,13 @@
 ></Dialog>
 <form>
   <div class="row form-group">
-    <div class="col-sm-2 d-flex align-items-center">
+    <!-- <div class="col-sm-2 d-flex align-items-center">
       <p style="margin: 0;">ID: {config.id}</p>
-    </div>
+    </div> -->
     <div class="col-sm-10">
-      <div class="d-flex">
+      <div class="form-group align-items-center">
         <label
-          for="rule_name"
-          class="flex-shrink-0 text-center text-center"
-          style="position: relative; top: 8px;">{utils.getLabel('name', labels, $language)}:</label
+          for="rule_name" class="me-2">{utils.getLabel('name', labels, $language)}</label
         >
         <input
           type="text"
@@ -574,14 +615,30 @@
         />
       </div>
     </div>
+    <div class="col-sm-2 d-flex align-items-center">
+        <div class="form-check">
+          <label class="form-check-label" for="exampleCheckbox">{utils.getLabel('active', labels, $language)}</label>
+          <input
+            type="checkbox"
+            class="form-check-input"
+            id="exampleCheckbox"
+            bind:checked={config.active}
+          />
+        </div>
+      </div>
   </div>
 
   <div class="container mt-3">
+    <!-- Linia z tekstem "wtedy" -->
+        <div class="d-flex align-items-center">
+          <p class="m-0 me-2"><strong>{utils.getLabel('given', labels, $language)}</strong></p>
+          <hr class="flex-grow-1" />
+        </div>
     <div class="row">
       <div class="col-sm-5">
         <div class="form-group d-flex align-items-center">
           <label for="type_def" class="me-2" style="white-space: nowrap;"
-            >{utils.getLabel('for', labels, $language)}:</label
+            >{utils.getLabel('for', labels, $language)}</label
           >
           <select
             class="form-select"
@@ -593,7 +650,7 @@
               >wybierz typ</option
             >
             {#each types as type}
-              <option value={type.id} selected={selectedType==type.id} >{type.name}</option>
+              <option value={type.id} selected={selectedType==type.id} >{type.name[$language]}</option>
             {/each}
           </select>
         </div>
@@ -601,7 +658,7 @@
       <div class="col-sm-5">
         <div class="form-group d-flex align-items-center">
           <label for="alert_def" class="me-2" style="white-space: nowrap;"
-            >{utils.getLabel('refersTo', labels, $language)}:</label
+            >{utils.getLabel('refersTo', labels, $language)}</label
           >
           <select
             class="form-select"
@@ -613,23 +670,13 @@
               >wybierz target</option
             >
             {#each targets as target}
-              <option value={target.id}>{target.name}</option>
+              <option value={target.id}>{target.name[$language]}</option>
             {/each}
           </select>
         </div>
       </div>
 
-      <div class="col-sm-2 d-flex align-items-center">
-        <div class="form-check">
-          <label class="form-check-label" for="exampleCheckbox">{utils.getLabel('active', labels, $language)}</label>
-          <input
-            type="checkbox"
-            class="form-check-input"
-            id="exampleCheckbox"
-            bind:checked={config.active}
-          />
-        </div>
-      </div>
+      
     </div>
   </div>
 
@@ -638,7 +685,7 @@
       {#if selectedTarget == 1}
         <div class="col-sm-6">
           <div class="form-group">
-            <label for="euiSelector">{utils.getLabel('device', labels, $language)}: </label>
+            <label for="euiSelector" class="me-2" style="white-space: nowrap;">{utils.getLabel('device', labels, $language)}</label>
             <DeviceSelector
               bind:showDeviceSelectorModal={showEuiModal}
               callback={(device) => {
@@ -658,7 +705,7 @@
       {:else if selectedTarget == 2}
         <div class="col-sm-6">
           <div class="form-group">
-            <label for="groupSelector">{utils.getLabel('group', labels, $language)}: </label>
+            <label for="groupSelector" class="me-2" style="white-space: nowrap;">{utils.getLabel('group', labels, $language)}: </label>
             <GroupSelector
               bind:showGroupSelectorModal={showGroupModal}
               callback={(group) => {
@@ -678,7 +725,7 @@
       {:else if selectedTarget == 3}
         <div class="col-sm-6">
           <div class="form-group d-flex align-items-center">
-            <label for="tag" class="me-2">{utils.getLabel('tag', labels, $language)}:</label>
+            <label for="tag" class="me-2" style="white-space: nowrap;">{utils.getLabel('tag', labels, $language)}</label>
             <div class="d-flex">
               <input
                 type="text"
@@ -705,10 +752,11 @@
   <div class="container mt-3">
     {#if selectedType == 0}
     <div class="row">
+      <!--
       <div class="col-sm-6">
         <div class="form-group d-flex align-items-center">
           <label for="timeshift" class="me-2" style="white-space: nowrap;"
-            >{utils.getLabel('notOlderThan', labels, $language)}:</label
+            >{utils.getLabel('notOlderThan', labels, $language)}</label
           >
           <input
             type="number"
@@ -719,11 +767,11 @@
             bind:value={timeShift}
           />
         </div>
-      </div>
+      </div> -->
       <div class="col-sm-6">
         <div class="form-group d-flex align-items-center">
           <label for="hysteresis" class="me-2" style="white-space: nowrap;"
-            >{utils.getLabel('hysteresis', labels, $language)}:</label
+            >{utils.getLabel('hysteresis', labels, $language)}</label
           >
           <input
             type="number"
@@ -741,7 +789,7 @@
       <div class="col-sm-6">
         <div class="form-group d-flex align-items-center">
           <label for="useScript" class="me-2" style="white-space: nowrap;"
-            >{utils.getLabel('useScript', labels, $language)}:</label
+            >{utils.getLabel('useScript', labels, $language)}</label
           >
           <input
             type="checkbox"
@@ -755,7 +803,7 @@
     {#if config.useScript}
     {#if selectedType == 0}
     <div class="d-flex align-items-center mb-1">
-      <p class="mb-0 display-7">{utils.getLabel('ifScriptCondition', labels, $language)}</p>
+      <p class="mb-0 display-7"><strong>{utils.getLabel('ifScriptCondition', labels, $language)}</strong></p>
       <hr class="flex-grow-1 ms-3" />
     </div>
     {/if}
@@ -777,14 +825,15 @@
     <div>
       <!-- Kontener z napisem "Jeżeli" i linią -->
       <div class="d-flex align-items-center mb-1">
-        <p class="mb-0 display-7">{utils.getLabel('if', labels, $language)}</p>
+        <p class="mb-0 display-7 "><strong>{utils.getLabel('if', labels, $language)}</strong></p>
         <hr class="flex-grow-1 ms-3" />
       </div>
 
       <div class="row mb-3">
         <!-- Pierwsze trzy inputy w jednej linii -->
         <div class="col-sm-6">
-          <label for="input1"></label>
+          <div class="form-group d-flex">
+          <label for="input1" class="me-2" style="white-space: nowrap;">{utils.getLabel('input1', labels, $language)}</label>
           <input
             bind:value={config.conditions[0].measurement}
             type="text"
@@ -793,6 +842,7 @@
             style="width: 100%;"
             placeholder="podaj nazwę wartości"
           />
+          </div>
         </div>
 
         <div class="col-sm-3">
@@ -804,7 +854,7 @@
             bind:value={config.conditions[0].condition1}
           >
             {#each conditionOperators as operator}
-              <option value={operator.id}>{operator.name}</option>
+              <option value={operator.id}>{operator.name[$language]}</option>
             {/each}
           </select>
         </div>
@@ -851,7 +901,7 @@
             bind:value={config.conditions[0].condition2}
           >
             {#each conditionOperators as operator}
-              <option value={operator.id}>{operator.name}</option>
+              <option value={operator.id}>{operator.name[$language]}</option>
             {/each}
           </select>
           <input
@@ -881,7 +931,7 @@
         {/if}
         {#if config.conditions.length == 1}
           <button class="btn btn-outline-primary me-1" on:click={addCondition}
-            ><i class="bi bi-plus-lg" /> dodaj drugi warunek</button
+            ><i class="bi bi-plus-lg" />{utils.getLabel('nextCondition', labels, $language)}</button
           >
         {/if}
       </div>
@@ -928,7 +978,7 @@
                 bind:value={condition.condition1}
               >
                 {#each conditionOperators as operator}
-                  <option value={operator.id}>{operator.name}</option>
+                  <option value={operator.id}>{operator.name[$language]}</option>
                 {/each}
               </select>
 
@@ -974,7 +1024,7 @@
                   bind:value={condition.condition2}
                 >
                   {#each conditionOperators as operator}
-                    <option value={operator.id}>{operator.name}</option>
+                    <option value={operator.id}>{operator.name[$language]}</option>
                   {/each}
                 </select>
                 <input
@@ -998,14 +1048,14 @@
       <div class="mt-3">
         <!-- Linia z tekstem "wtedy" -->
         <div class="d-flex align-items-center">
-          <p class="m-0 me-2">{utils.getLabel('then', labels, $language)}</p>
+          <p class="m-0 me-2"><strong>{utils.getLabel('then', labels, $language)}</strong></p>
           <hr class="flex-grow-1" />
         </div>
 
         <!-- Nowa linia z paragrafem, dropdownem i inputem -->
         <div class="d-flex align-items-center mt-2">
           <!-- Paragraf z krótkim napisem -->
-          <p class="m-0 me-2" style="white-space: nowrap;">Wywołaj alarm</p>
+          <p class="m-0 me-2" style="white-space: nowrap;">{utils.getLabel('sendAlert', labels, $language)}</p>
           <!-- Dropdown z 5 opcjami -->
           <select class="form-select me-2" bind:value={config.result.alertType}>
             {#each alarmLevels as alarmLevel}
@@ -1027,7 +1077,7 @@
       </div>
       <div class="d-flex align-items-center mt-2">
         <!-- Input -->
-        <label class="form-check-label me-2" for="team_input">{utils.getLabel('sendInfoTo', labels, $language)}:</label>
+        <label class="form-check-label me-2" for="team_input">{utils.getLabel('sendInfoTo', labels, $language)}</label>
         <input
           id="team_input"
           required

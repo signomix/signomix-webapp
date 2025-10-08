@@ -14,6 +14,8 @@
     import DialogValue from "$lib/components/DialogValue.svelte";
 
     export let config;
+    export let filter;
+    export let euis; // list of EUIs for multi-device command
 
     $: title = config.title != undefined ? config.title : "Command button";
 
@@ -42,12 +44,19 @@
 
     async function sendCommand(decision, value) {
         dialog.close();
-        //dialogValue.close();
         if (!decision || status != 0) {
             status = 0;
             return;
         }
+        //TODO: send command to list of devices
+        if(euis != undefined && euis != null && euis.length > 0){
+            sendMultiCommand(decision, value);
+        }else{
+            sendSingleCommand(decision, value);
+        }
+    }
 
+    async function sendSingleCommand(decision, value) {
         let apiUrl =
             utils.getBackendUrl(location) +
             "/api/core/actuator/" +
@@ -99,6 +108,75 @@
                 Authentication: $token,
             },
             body: command,
+        })
+            .then((response) => {
+                if (response.ok) {
+                    //console.log('Command sent successfully');
+                    status = 1;
+                } else {
+                    //console.log('Error sending command');
+                    status = 2;
+                }
+                return "OK";
+            })
+            .catch((error) => {
+                //console.log('Error sending command: ', error);
+                status = 2;
+                return "ERROR";
+            });
+    }
+
+    async function sendMultiCommand(decision, value) {
+        let apiUrl =
+            utils.getBackendUrl(location) +
+            "/api/core/actuators";
+        let command = {
+            type: config.commandType,
+            command: "",
+            euis: euis
+        };
+        switch (config.commandType) {
+            case "plain":
+                //console.log('sendCommand: ', config.commandText);
+                command.command = config.commandText;
+                break;
+            case "hex":
+                //console.log('sendCommand: ', config.commandText);
+                command.command = config.commandText;
+                break;
+            case "json":
+                //console.log('sendCommand: ', config.commandJSON);
+                command.command = config.commandJSON;
+                break;
+            default:
+                console.log("Unknown command type: ", config.commandType);
+                return;
+        }
+        // inside command replace all occurences of $value with the actual value
+        if (command.command.includes("${value}")) {
+            command.command = command.command.replace("${value}", value);
+        }
+        if (
+            configuration.port != undefined &&
+            configuration.port != null &&
+            isNaN(configuration.port) == false
+        ) {
+            command.command = command.command + "@@@" + configuration.port;
+        }
+        // prepend command with append/replace flag
+        if (configuration.replace != undefined && configuration.replace != null && configuration.replace == true) {
+            command.command = "#" + command.command;
+        } else {
+            command.command = "&" + command.command;
+        }
+
+        promise = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authentication: $token,
+            },
+            body: JSON.stringify(command),
         })
             .then((response) => {
                 if (response.ok) {

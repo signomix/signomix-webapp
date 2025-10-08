@@ -11,14 +11,17 @@ export const utils = {
    */
   getBackendUrl: function (url) {
     let x = url.host
+    let protocol = null
     if (!x.endsWith('localhost')) {
       if (x.startsWith('app.')) {
         x = x.substring(4)
       } else if (x.startsWith('cloud.')) {
         x = x.substring(6)
       }
+      return url.protocol + '//' + x
+    }else{
+      return 'http://'+x
     }
-    return url.protocol + '//' + x
   },
   /**
    * Returns information if the URL is a subdomain of the cloud service

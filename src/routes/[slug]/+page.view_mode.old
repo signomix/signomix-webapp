@@ -1,0 +1,37 @@
+<script>
+    import { goto } from '$app/navigation';
+    import { page } from '$app/stores';
+    import { utils } from '$lib/utils.js';
+    import { env } from '$env/dynamic/public';
+    import { onMount } from 'svelte';
+    import {  profile, token, language, isAuthenticated, viewMode } from '$lib/usersession.js';
+    
+    console.log('/[slug]', $page)
+
+    onMount(async () => {
+        console.log('/[slug]2', $page)
+        var tokenObject;
+        let serviceUrl = utils.getBackendUrl(window.location)
+        console.log('page', $page);
+        // Call the API - get the token object
+        token.set('SLUG',$page.params.slug)
+        viewMode.set('view')
+        fetch(serviceUrl + '/api/auth/token/' + $page.params.slug).then(function (response) {
+            if (response.ok) {
+                return response.json();
+            } else {
+                return Promise.reject(response);
+            }
+        }).then(function (data) {
+            // Store the token data to a variable
+            tokenObject = data;
+            console.log('tokenObject1', tokenObject);
+            token.set(tokenObject.token);
+            let user = {language:'en',organization:1,login:'public',uid:'public'}
+            profile.set(user)
+            goto('/dashboards/'+tokenObject.payload)
+        }).catch(function (error) {
+            console.warn('Something went wrong.', error);
+        });
+    });
+</script>

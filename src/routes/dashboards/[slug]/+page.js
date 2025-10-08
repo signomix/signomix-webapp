@@ -7,6 +7,8 @@ token.subscribe((value)=> usertoken=value)
 
 export const load = async ({ params, url }) => {
 
+  const euiList=url.searchParams.get('euis')
+
   const getSelectedConfig = async (serviceUrl) => {
     let config = null
     if (dev) {
@@ -20,7 +22,11 @@ export const load = async ({ params, url }) => {
         headers.set('Authentication', usertoken);
         await fetch(endpoint, { headers: headers }).then(response => {
           if (response.status == 200) {
-            config = response.json()
+            config = response.json().then(data => {
+              data.euiList = euiList
+              //console.log('Fetched config:', data)
+              return data
+            })
           } else if (response.status == 401 || response.status == 403) {
             token.set(null)
           } else {
