@@ -98,14 +98,14 @@
         if (dataNotAvailable(data, "recalculate")) {
             return "N/A";
         }
-        let valueText = "";
-        let value = data.datasets[0].data[0].values[0]
+        /* let value = data.datasets[0].data[0].values[0]
         let roundedValue
         try {
             roundedValue = Number.parseFloat(value).toFixed(config.rounding);
         } catch (e) {
             roundedValue = null;
-        }
+        } */
+        let roundedValue = getValue(data);
         if (roundedValue == null) {
             return "N/A";
         }
@@ -149,6 +149,7 @@
                 console.log("error parsing config: ", e);
             }
         }
+        let valueText = "";
         if (valueName != null) {
             valueText = valueName;
         } else {
@@ -225,15 +226,31 @@
         return false;
     }
     function getValue(data) {
-        if (dataNotAvailable(data, "getValue")) {
-            return "N/A";
-        }
         let value = data.datasets[0].data[0].values[0];
-        try {
-            return Number.parseFloat(value).toFixed(config.rounding);
-        } catch (e) {
-            return value;
+        // multiplication factor
+        if (
+            config.config != undefined &&
+            config.config != null &&
+            config.config != ""
+        ) {
+            try {
+                let cfg = JSON.parse(config.config);
+                if (
+                    cfg.multiplier != undefined &&
+                    cfg.multiplier != null
+                ) {
+                    value = value * cfg.multiplier;
+                }
+            } catch (e) {
+                console.log("error parsing configuration: ", e);
+            }
         }
+        try {
+            value = Number.parseFloat(value).toFixed(config.rounding);
+        } catch (e) {
+            console.log("error calculating value: ", e);
+        }
+        return value;
     }
     function getColor(data) {
         if (dataNotAvailable(data, "getColor")) {

@@ -17,10 +17,11 @@
             <table class="table">
                 <thead class="table-light">
                     <tr>
-                        <th scope="col" class="col-1">ID</th>
-                        <th scope="col" class="col-3">Nazwa</th>
-                        <th scope="col" class="col-1">Alarm</th>
-                        <th scope="col" class="col-6">Wiadomość</th>
+                        <th scope="col" class="col-1">{utils.getLabel('ID',labels,$language)}</th>
+                        <th scope="col" class="col-1">{utils.getLabel('active',labels,$language)}</th>
+                        <th scope="col" class="col-3">{utils.getLabel('name',labels,$language)}</th>
+                        <th scope="col" class="col-1">{utils.getLabel('alertlevel',labels,$language)}</th>
+                        <th scope="col" class="col-5">{utils.getLabel('alertmessage',labels,$language)}</th>
                         <th scope="col" class="col-1"></th>
                     </tr>
                 </thead>
@@ -28,6 +29,7 @@
                     {#each data.list as sentinel, index}
                     <tr>
                         <td class="col-1">{sentinel.id}</td>
+                        <td class="col-1">{#if sentinel.active}&check;{/if}</td>
                         <td class="col-3"><a href="/sentinels/{sentinel.id}/edit">{sentinel.name}</a></td>
                         <td class="col-1">{sentinel.alertLevel}</td>
                         <td class="col-6">{getAlertMessage(sentinel.alertMessage)}</td>
@@ -159,5 +161,37 @@
             'pl': "Brak dostępu",
             'en': "Access denied",
         },
+        'add': {
+            'pl': "Dodaj",
+            'en': "Add",
+        },
+        'edit': {
+            'pl': "Edytuj",
+            'en': "Edit",
+        },
+        'delete': {
+            'pl': "Usuń",
+            'en': "Delete",
+        },
+        'ID': {
+            'pl': "ID",
+            'en': "ID",
+        },
+        'active': {
+            'pl': "Aktywna",
+            'en': "Active",
+        },
+        'name': {
+            'pl': "Nazwa",
+            'en': "Name",
+        },
+        'alertlevel': {
+            'pl': "Alarm",
+            'en': "Alert",
+        },
+        'alertmessage': {
+            'pl': "Wiadomość",
+            'en': "Message",
+    }
     }
 </script>
