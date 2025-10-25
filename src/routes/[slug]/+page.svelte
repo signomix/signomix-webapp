@@ -32,6 +32,7 @@
         });
     } else { */
         viewMode.set('full')
+        window.location.href = '/'
         goto('/')
     //}
 </script>
