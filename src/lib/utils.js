@@ -386,7 +386,7 @@ export const utils = {
     return result
   },
   recalculate: function (value, rounding, hideNaN) {
-    if(isNaN(value)){
+    if(isNaN(value)||value==='NaN'||value===null||value===undefined){
       return (hideNaN!= undefined && hideNaN)?'' : value;
     }
     try {

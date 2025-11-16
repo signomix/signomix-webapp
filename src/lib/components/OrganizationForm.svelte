@@ -14,7 +14,7 @@
     export let callback;
     export let readonly;
 
-    let configuration;
+    let configuration="";
 
     try {
         // For better readability in the textarea
@@ -31,6 +31,9 @@
     console.log("config", config);
 
     function handleSave(event) {
+        if(isNaN(config.id) || config.id<=0){
+            delete config.id; // Remove id if it's not valid
+        }
         configuration = configuration.trim()
         try {
             JSON.parse(configuration);
