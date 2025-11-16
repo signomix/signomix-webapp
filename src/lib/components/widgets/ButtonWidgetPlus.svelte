@@ -12,10 +12,31 @@
     import Dialog from "$lib/components/Dialog.svelte";
     import Dialog2 from "$lib/components/Dialog2.svelte";
     import DialogValue from "$lib/components/DialogValue.svelte";
+    import { sgxdata } from '$lib/sgxdata.js';
+    import { dev } from '$app/environment';
+    import { afterUpdate } from 'svelte';
 
     export let config;
     export let filter;
     export let euis; // list of EUIs for multi-device command
+
+    let promise0;
+    let apiUrl;
+    let myConfig = config;
+    myConfig.query = "eui " + config.dev_id + " class com.signomix.reports.pre.DeviceConfig"
+    let deviceConfig = {};
+
+    afterUpdate(async () => {
+        apiUrl = utils.getBackendUrl(location) + '/api/reports/single'
+        await sgxdata.getReportData(dev, apiUrl, myConfig, filter, $token).then((data) => {
+            console.log("Device config loaded: ", data);
+            try {
+                deviceConfig = JSON.parse(data.content);
+            } catch (e) {
+                console.log("Error parsing device config: ", e);
+            }
+        });
+    });
 
     $: title = config.title != undefined ? config.title : "Command button";
 
@@ -26,7 +47,11 @@
     let promise;
     let configuration = widgets.getConfiguration(config);
 
-    onMount(() => {
+    onMount(async () => {
+        //apiUrl = utils.getBackendUrl(location) + '/api/reports/single'
+        //await sgxdata.getReportData(dev, apiUrl, myConfig, filter, $token).then((data) => {
+        //console.log("Device config loaded: ", data);
+        //});
         console.log("ButtonWidgetPlus mounted");
     });
 
@@ -37,6 +62,9 @@
 
     function closeInfo(decision) {
         status = 0;
+    }
+    function dummyAction() {
+        // do nothing
     }
     function isViewMode(mode) {
         return "view" == mode;
@@ -49,9 +77,10 @@
             return;
         }
         //TODO: send command to list of devices
-        if(euis != undefined && euis != null && euis.length > 0){
+        let sendStatus = 0;
+        if (euis != undefined && euis != null && euis.length > 0) {
             sendMultiCommand(decision, value);
-        }else{
+        } else {
             sendSingleCommand(decision, value);
         }
     }
@@ -81,11 +110,30 @@
                 break;
             default:
                 console.log("Unknown command type: ", config.commandType);
+                status = 3;
                 return;
         }
         // inside command replace all occurences of $value with the actual value
         if (command.includes("${value}")) {
             command = command.replace("${value}", value);
+        }
+        // replace all occurences of configuration parameters
+        if (command.includes("${param") == true) {
+            for (let paramId in configuration.parameters) {  // TODO: paramId is object?
+                let paramValue = getConfigParameterValue(configuration, paramId, deviceConfig);
+                if (paramValue != undefined && paramValue != null) {
+                    let placeholder = "${" + paramId + "}";
+                    if (command.includes(placeholder)) {
+                        command = command.replaceAll(placeholder, paramValue);
+                    }
+                }
+            }
+        }
+        // handling not completed replace
+        if(command.includes("${device.") || command.includes("${param")) {
+            console.log("Not all placeholders replaced in command: ", command);
+            status = 3;
+            return "CONFIG ERROR";
         }
         if (
             configuration.port != undefined &&
@@ -126,6 +174,32 @@
             });
     }
 
+    function getConfigParameterValue(buttonConfig, paramId, deviceConfig) {
+        console.log("Getting config parameter value for paramId: ", paramId);
+        let paramObject = {};
+        if (
+            buttonConfig != undefined &&
+            buttonConfig.parameters != undefined &&
+            buttonConfig.parameters != null
+        ) {
+            paramObject = buttonConfig.parameters[paramId];
+            console.log("Found paramObject: ", paramObject);
+        }
+        if (paramObject == undefined || paramObject == null) {
+            paramObject.value = null;
+        }
+        if (paramObject.value != undefined && paramObject.value != null) {
+            //if paramObjectValue is of type string and starts with "deviceConfig."
+            if (typeof paramObject.value === "string" && paramObject.value.startsWith("$device.")) {
+                // get device config value
+                paramObject.value = deviceConfig[paramObject.value.substring(8)];
+            }
+            console.log("Resolved device config parameter value: ", paramObject.value);
+        }
+        console.log("Returning parameter value: ", paramObject.value);
+        return paramObject.value;
+    }
+
     async function sendMultiCommand(decision, value) {
         let apiUrl =
             utils.getBackendUrl(location) +
@@ -155,6 +229,24 @@
         // inside command replace all occurences of $value with the actual value
         if (command.command.includes("${value}")) {
             command.command = command.command.replace("${value}", value);
+        }
+        // replace all occurences of configuration parameters
+        if (command.includes("${param") == true) {
+            for (let paramId in configuration.parameters) {
+                let paramValue = getConfigParameterValue(configuration, paramId, deviceConfig);
+                if (paramValue != undefined && paramValue != null) {
+                    let placeholder = "${" + paramId + "}";
+                    if (command.includes(placeholder)) {
+                        command = command.replaceAll(placeholder, paramValue);
+                    }
+                }
+            }
+        }
+                // handling not completed replace
+        if(command.includes("${device.") || command.includes("${param")) {
+            console.log("Not all placeholders replaced in command: ", command);
+            status = 3;
+            return "CONFIG ERROR";
         }
         if (
             configuration.port != undefined &&
@@ -195,13 +287,13 @@
             });
     }
 
-    function getBgColor(configuration){
-		if(configuration.bgcolor != undefined && configuration.bgcolor != null){
-			return configuration.bgcolor;
-		}else{
-			return "body";
-		}
-	}
+    function getBgColor(configuration) {
+        if (configuration.bgcolor != undefined && configuration.bgcolor != null) {
+            return configuration.bgcolor;
+        } else {
+            return "body";
+        }
+    }
 
     let labels = {
         sendQuestion: {
@@ -211,6 +303,18 @@
         ok: {
             pl: "OK",
             en: "OK",
+        },
+        warn: {
+            pl: "Problem",
+            en: "Warning",
+        },
+        err: {
+            pl: "Błąd",
+            en: "Error",
+        },
+        configError: {
+            pl: "Błąd konfiguracji polecenia",
+            en: "Command configuration error",
         },
         save: {
             pl: "Wyślij",
@@ -241,45 +345,27 @@
     ]}
     color="body"
 ></Dialog> -->
-<DialogValue
-    bind:dialog
-    callback={sendCommand}
-    title={utils.getLabel("sendQuestion", labels, $language)}
-    labels={[
-        utils.getLabel("save", labels, $language),
-        utils.getLabel("cancel", labels, $language),
-    ]}
-    color={getBgColor(widgets.getConfiguration(config))}
-    configuration={widgets.getConfiguration(config)}
->{config.description}</DialogValue>
+<DialogValue bind:dialog callback={sendCommand} title={utils.getLabel("sendQuestion", labels, $language)} labels={[
+    utils.getLabel("save", labels, $language), utils.getLabel("cancel", labels, $language), ]}
+    color={getBgColor(widgets.getConfiguration(config))} configuration={widgets.getConfiguration(config)}>
+    {config.description}</DialogValue>
 <div class="container p-0">
     {#if isViewMode($viewMode)}
-        <span class="btn btn-secondary w-100">{title}</span>
+    <span class="btn btn-secondary w-100">{title}</span>
     {:else if status == 0}
-        <a
-            href="#"
-            on:click|preventDefault={decide}
-            class="btn btn-danger w-100"
-            role="button"
-            aria-disabled="true">{title}</a
-        >
+    <a href="#" on:click|preventDefault={decide} class="btn btn-danger w-100" role="button"
+        aria-disabled="true">{title}</a>
     {:else if status == 1}
-        <a
-            href="#"
-            on:click|preventDefault={closeInfo}
-            class="btn btn-success w-100"
-            role="button"
-            aria-disabled="true">{utils.getLabel("ok", labels, $language)}</a
-        >
-        <p>{utils.getLabel("commandSent", labels, $language)}</p>
+    <a href="#" on:click|preventDefault={closeInfo} class="btn btn-success w-100" role="button"
+        aria-disabled="true">{utils.getLabel("ok", labels, $language)}</a>
+    <p>{utils.getLabel("commandSent", labels, $language)}</p>
+    {:else if status == 3}
+    <a href="#" on:click|preventDefault={dummyAction} class="btn btn-warning w-100" role="button"
+        aria-disabled="true">{utils.getLabel("warn", labels, $language)}</a>
+    <p>{utils.getLabel("configError", labels, $language)}</p>
     {:else}
-        <a
-            href="#"
-            on:click|preventDefault={closeInfo}
-            class="btn btn-danger w-100"
-            role="button"
-            aria-disabled="true">{utils.getLabel("ok", labels, $language)}</a
-        >
-        <p>{utils.getLabel("commandError", labels, $language)}</p>
+    <a href="#" on:click|preventDefault={closeInfo} class="btn btn-danger w-100" role="button"
+        aria-disabled="true">{utils.getLabel("err", labels, $language)}</a>
+    <p>{utils.getLabel("commandError", labels, $language)}</p>
     {/if}
 </div>

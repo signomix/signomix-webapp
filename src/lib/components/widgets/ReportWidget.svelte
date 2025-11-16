@@ -15,6 +15,7 @@
     let apiUrl
     let parentHeight = 0;
     let channelNamesTranslated = []
+    let extendedConfig = {}
 
     //console.log('ReportWidget config', config)
     let promise
@@ -47,12 +48,45 @@
                 promise = sgxdata.getData(dev, apiUrl, config, filter, $token, transformData);
             }
         }
+        extendedConfig = widgets.getConfiguration(config);
+        console.log('extendedConfig', extendedConfig)
     });
 
     let front = true;
 
     function switchView() {
         //front = !front;
+    }
+
+    function getValue(value, index){
+        let dataType = 'number'
+        let hideNaN = false
+        let rounding = config.rounding != undefined && config.rounding != null ? config.rounding : 2
+        if(extendedConfig.hideNaN!=undefined && extendedConfig.hideNaN!=null){
+            hideNaN = extendedConfig.hideNaN
+        }
+        if(index!=undefined && index!=null){
+            if(extendedConfig.dataTypes!=undefined && extendedConfig.dataTypes!=null && extendedConfig.dataTypes.length>index){
+                dataType = extendedConfig.dataTypes[index]
+            }
+            if(extendedConfig.roundings!=undefined && extendedConfig.roundings!=null && extendedConfig.roundings.length>index){
+                rounding = extendedConfig.roundings[index]
+            }
+        }
+        switch(dataType){
+            case 'number':
+                return utils.recalculate(value, rounding, hideNaN)
+            case 'date':
+                if(value>0){
+                    return new Date(value).toLocaleString()
+                } else {
+                    return ''
+                }
+            case 'boolean':
+                return value==1?'true':'false'
+            default:
+                return value
+        }
     }
 
     function isGroup() {
@@ -324,7 +358,9 @@
                             {#if reportresult.headers[0].columns[i]=='name'}
                             <td><a href='/dashboards/{dataset.eui}'>{value}</a></td>
                             {:else}
-                            <td>{utils.recalculate(value, config.rounding)}</td>
+                            <td>
+                                {getValue(value, i)}
+                            </td>
                             {/if}
                             {/each}
                             {/if}
@@ -355,7 +391,7 @@
                             <td><a href='/dashboards/{dataset.eui}'>{getDeviceName(reportresult,dataset.eui)}</a></td>
                             <td>{new Date(row.timestamp).toLocaleString()}</td>
                             {#each row.values as value}
-                            <td>{utils.recalculate(value, config.rounding)}</td>
+                            <td>{getValue(value)}</td>
                             {/each}
                         </tr>
                         {/each}
@@ -383,7 +419,7 @@
                         <tr>
                             <td>{new Date(row.timestamp).toLocaleString()}</td>
                             {#each row.values as value}
-                            <td>{utils.recalculate(value, config.rounding)}</td>
+                            <td>{getValue(value)}</td>
                             {/each}
                         </tr>
                         {/each}

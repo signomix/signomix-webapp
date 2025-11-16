@@ -1,0 +1,41 @@
+<html lang="en">
+
+<head>
+  %sveltekit.head%
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+    
+    #content-iframe {
+      width: 100vw;
+      height: 100vh;
+      border: none;
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  %sveltekit.body%
+  <iframe id="content-iframe" src="" title="Content"></iframe>
+  
+  <script>
+    // Pobierz oryginalny URL wywołujący tę stronę
+    const originalUrl = window.location.href;
+    
+    // Ustaw src iframe na oryginalny URL
+    document.getElementById('content-iframe').src = originalUrl;
+  </script>
+</body>
+
+</html>

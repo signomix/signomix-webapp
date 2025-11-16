@@ -385,14 +385,14 @@ export const utils = {
       || defaultOrganizationIdValue == null
     return result
   },
-  recalculate: function (value, rounding) {
+  recalculate: function (value, rounding, hideNaN) {
     if(isNaN(value)){
-      return value
+      return (hideNaN!= undefined && hideNaN)?'' : value;
     }
     try {
       return Number.parseFloat(value).toFixed(rounding);
     } catch (e) {
-      return value;
+      return (hideNaN!= undefined && hideNaN)? '' : value;
     }
   },
   AUTHORIZATION_FAILED: 0,
