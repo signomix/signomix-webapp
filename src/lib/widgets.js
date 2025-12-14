@@ -560,7 +560,9 @@ export const widgets = {
         if (/^[a-zA-Z]/.test(rule)) {
             rule = rule.substring(1);
         }
-
+        if(value==null || value==undefined || isNaN(value)){
+            return -1;
+        }
         const match = rule.match(/^([<>=!]=?|==)\s*(-?\d+(\.\d+)?)$/);
         if (!match) return -1;
         const operator = match[1];

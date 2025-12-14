@@ -422,7 +422,7 @@ export const sgxhelper = {
                 admins = accessedObject.administrators;
                 owner = accessedObject.userID;
                 organizationId = accessedObject.organizationId;
-                isPublic = accessedObject.team.includes(",public,");
+                isPublic = (accessedObject.team===null || accessedObject.team === undefined)? false:accessedObject.team.includes(",public,");
                 path = accessedObject.path;
                 break;
             case 'DeviceGroup':
@@ -430,14 +430,14 @@ export const sgxhelper = {
                 admins = accessedObject.administrators;
                 owner = accessedObject.userID;
                 organizationId = accessedObject.organization;
-                isPublic = accessedObject.team.includes(",public,");
+                isPublic = (accessedObject.team===null || accessedObject.team === undefined)? false:accessedObject.team.includes(",public,");
                 break;
             case 'SentinelConfig':
                 team = accessedObject.team;
                 admins = accessedObject.administrators;
                 owner = accessedObject.userId;
                 organizationId = accessedObject.organizationId;
-                isPublic = accessedObject.team.includes(",public,");
+                isPublic = (accessedObject.team===null || accessedObject.team === undefined)? false:accessedObject.team.includes(",public,");
                 break;
             default:
                 console.error("Unknown object type: " + objectType);
@@ -453,11 +453,11 @@ export const sgxhelper = {
             return isPublic;
         }
         if (profile.organization === defaultOrganizationId) {
-            if (admins.includes("," + profile.uid + ",")) {
+            if (admins!==null && admins!==undefined && admins.includes("," + profile.uid + ",")) {
                 return true;
             }
             if (!writeAccess) {
-                if (team.includes("," + profile.uid + ",")) {
+                if (team!==null && team!==undefined && team.includes("," + profile.uid + ",")) {
                     return true;
                 }
             }
