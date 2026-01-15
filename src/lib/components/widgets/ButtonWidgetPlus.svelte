@@ -15,10 +15,11 @@
     import { sgxdata } from '$lib/sgxdata.js';
     import { dev } from '$app/environment';
     import { afterUpdate } from 'svelte';
+    import { page } from '$app/stores';
 
     export let config;
     export let filter;
-    export let euis; // list of EUIs for multi-device command
+    //export let euis; // list of EUIs for multi-device command
 
     let promise0;
     let apiUrl;
@@ -26,17 +27,8 @@
     myConfig.query = "eui " + config.dev_id + " class com.signomix.reports.pre.DeviceConfig"
     let deviceConfig = {};
 
-    afterUpdate(async () => {
-        apiUrl = utils.getBackendUrl(location) + '/api/reports/single'
-        await sgxdata.getReportData(dev, apiUrl, myConfig, filter, $token).then((data) => {
-            console.log("Device config loaded: ", data);
-            try {
-                deviceConfig = JSON.parse(data.content);
-            } catch (e) {
-                console.log("Error parsing device config: ", e);
-            }
-        });
-    });
+    $: euisString = $page.url.searchParams.get('euis');
+    //$: euisArray = euisString ? euisString.split(',') : [];
 
     $: title = config.title != undefined ? config.title : "Command button";
 
@@ -48,10 +40,15 @@
     let configuration = widgets.getConfiguration(config);
 
     onMount(async () => {
-        //apiUrl = utils.getBackendUrl(location) + '/api/reports/single'
-        //await sgxdata.getReportData(dev, apiUrl, myConfig, filter, $token).then((data) => {
-        //console.log("Device config loaded: ", data);
-        //});
+        apiUrl = utils.getBackendUrl(location) + '/api/reports/single'
+        await sgxdata.getReportData(dev, apiUrl, myConfig, filter, $token).then((data) => {
+            console.log("Device config loaded: ", data);
+            try {
+                deviceConfig = JSON.parse(data.content);
+            } catch (e) {
+                console.log("Error parsing device config: ", e);
+            }
+        });
         console.log("ButtonWidgetPlus mounted");
     });
 
@@ -70,28 +67,44 @@
         return "view" == mode;
     }
 
+    /* async function sendCommand(decision, value) {
+        dialog.close();
+        if (!decision || status != 0) {
+            status = 0;
+            return;
+        }
+        //if (euisArray != undefined && euisArray != null && euisArray.length > 0) {
+        //    sendMultiCommand(decision, value);
+        //} else {
+            sendSingleCommand(decision, value);
+        //}
+    } */
+
+    //async function sendSingleCommand(decision, value) {
     async function sendCommand(decision, value) {
         dialog.close();
         if (!decision || status != 0) {
             status = 0;
             return;
         }
-        //TODO: send command to list of devices
         let sendStatus = 0;
-        if (euis != undefined && euis != null && euis.length > 0) {
-            sendMultiCommand(decision, value);
-        } else {
-            sendSingleCommand(decision, value);
-        }
-    }
-
-    async function sendSingleCommand(decision, value) {
         let apiUrl =
             utils.getBackendUrl(location) +
             "/api/core/actuator/" +
             config.dev_id +
             "/";
         let command;
+        let commandObject={
+            type: config.commandType,
+            command: "",
+            euis: euisString
+        }
+        console.log("sendSingleCommand to device ", config.dev_id);
+        console.log("Euis string: ", euisString);
+        let apiUrlMulti =
+            utils.getBackendUrl(location) +
+            "/api/core/actuators/";
+
         switch (config.commandType) {
             case "plain":
                 //console.log('sendCommand: ', config.commandText);
@@ -130,7 +143,7 @@
             }
         }
         // handling not completed replace
-        if(command.includes("${device.") || command.includes("${param")) {
+        if (command.includes("${device.") || command.includes("${param")) {
             console.log("Not all placeholders replaced in command: ", command);
             status = 3;
             return "CONFIG ERROR";
@@ -149,13 +162,110 @@
             command = "&" + command;
         }
 
-        promise = await fetch(apiUrl, {
+        commandObject.command = command;
+
+        let endpoint;
+        if(euisString != undefined && euisString != null && euisString.length > 0){
+            endpoint = apiUrlMulti;
+            command = JSON.stringify(commandObject);
+        } else {
+            endpoint = apiUrl;
+            command = command;
+        }
+        promise = await fetch(endpoint, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 Authentication: $token,
             },
             body: command,
+        })
+            .then((response) => {
+                if (response.ok) {
+                    //console.log('Command sent successfully');
+                    status = 1;
+                } else {
+                    //console.log('Error sending command');
+                    status = 2;
+                }
+                return "OK";
+            })
+            .catch((error) => {
+                //console.log('Error sending command: ', error);
+                status = 2;
+                return "ERROR";
+            });
+    }
+
+    async function sendMultiCommand(decision, value) {
+        let apiUrl =
+            utils.getBackendUrl(location) +
+            "/api/core/actuators";
+        let command = {
+            type: config.commandType,
+            command: "",
+            euis: euisString
+        };
+        switch (config.commandType) {
+            case "plain":
+                //console.log('sendCommand: ', config.commandText);
+                command.command = config.commandText;
+                break;
+            case "hex":
+                //console.log('sendCommand: ', config.commandText);
+                command.command = config.commandText;
+                break;
+            case "json":
+                //console.log('sendCommand: ', config.commandJSON);
+                command.command = config.commandJSON;
+                break;
+            default:
+                console.log("Unknown command type: ", config.commandType);
+                return;
+        }
+        // inside command replace all occurences of $value with the actual value
+        if (command.command.includes("${value}")) {
+            command.command = command.command.replace("${value}", value);
+        }
+        // replace all occurences of configuration parameters
+        if (command.includes("${param") == true) {
+            for (let paramId in configuration.parameters) {
+                let paramValue = getConfigParameterValue(configuration, paramId, deviceConfig);
+                if (paramValue != undefined && paramValue != null) {
+                    let placeholder = "${" + paramId + "}";
+                    if (command.includes(placeholder)) {
+                        command = command.replaceAll(placeholder, paramValue);
+                    }
+                }
+            }
+        }
+        // handling not completed replace
+        if (command.includes("${device.") || command.includes("${param")) {
+            console.log("Not all placeholders replaced in command: ", command);
+            status = 3;
+            return "CONFIG ERROR";
+        }
+        if (
+            configuration.port != undefined &&
+            configuration.port != null &&
+            isNaN(configuration.port) == false
+        ) {
+            command.command = command.command + "@@@" + configuration.port;
+        }
+        // prepend command with append/replace flag
+        if (configuration.replace != undefined && configuration.replace != null && configuration.replace == true) {
+            command.command = "#" + command.command;
+        } else {
+            command.command = "&" + command.command;
+        }
+
+        promise = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authentication: $token,
+            },
+            body: JSON.stringify(command),
         })
             .then((response) => {
                 if (response.ok) {
@@ -198,93 +308,6 @@
         }
         console.log("Returning parameter value: ", paramObject.value);
         return paramObject.value;
-    }
-
-    async function sendMultiCommand(decision, value) {
-        let apiUrl =
-            utils.getBackendUrl(location) +
-            "/api/core/actuators";
-        let command = {
-            type: config.commandType,
-            command: "",
-            euis: euis
-        };
-        switch (config.commandType) {
-            case "plain":
-                //console.log('sendCommand: ', config.commandText);
-                command.command = config.commandText;
-                break;
-            case "hex":
-                //console.log('sendCommand: ', config.commandText);
-                command.command = config.commandText;
-                break;
-            case "json":
-                //console.log('sendCommand: ', config.commandJSON);
-                command.command = config.commandJSON;
-                break;
-            default:
-                console.log("Unknown command type: ", config.commandType);
-                return;
-        }
-        // inside command replace all occurences of $value with the actual value
-        if (command.command.includes("${value}")) {
-            command.command = command.command.replace("${value}", value);
-        }
-        // replace all occurences of configuration parameters
-        if (command.includes("${param") == true) {
-            for (let paramId in configuration.parameters) {
-                let paramValue = getConfigParameterValue(configuration, paramId, deviceConfig);
-                if (paramValue != undefined && paramValue != null) {
-                    let placeholder = "${" + paramId + "}";
-                    if (command.includes(placeholder)) {
-                        command = command.replaceAll(placeholder, paramValue);
-                    }
-                }
-            }
-        }
-                // handling not completed replace
-        if(command.includes("${device.") || command.includes("${param")) {
-            console.log("Not all placeholders replaced in command: ", command);
-            status = 3;
-            return "CONFIG ERROR";
-        }
-        if (
-            configuration.port != undefined &&
-            configuration.port != null &&
-            isNaN(configuration.port) == false
-        ) {
-            command.command = command.command + "@@@" + configuration.port;
-        }
-        // prepend command with append/replace flag
-        if (configuration.replace != undefined && configuration.replace != null && configuration.replace == true) {
-            command.command = "#" + command.command;
-        } else {
-            command.command = "&" + command.command;
-        }
-
-        promise = await fetch(apiUrl, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authentication: $token,
-            },
-            body: JSON.stringify(command),
-        })
-            .then((response) => {
-                if (response.ok) {
-                    //console.log('Command sent successfully');
-                    status = 1;
-                } else {
-                    //console.log('Error sending command');
-                    status = 2;
-                }
-                return "OK";
-            })
-            .catch((error) => {
-                //console.log('Error sending command: ', error);
-                status = 2;
-                return "ERROR";
-            });
     }
 
     function getBgColor(configuration) {

@@ -12,10 +12,13 @@
     import Dialog from "$lib/components/Dialog.svelte";
     import Dialog2 from "$lib/components/Dialog2.svelte";
     import DialogValue from "$lib/components/DialogValue.svelte";
+    import { page } from '$app/stores';
 
     export let config;
 
     $: title = config.title != undefined ? config.title : "Command button";
+    $: euisString = $page.url.searchParams.get('euis');
+    //$: euisArray = euisString ? euisString.split(',') : [];
 
     let dialog;
 
@@ -50,7 +53,15 @@
             "/api/core/actuator/" +
             config.dev_id +
             "/";
+        let apiUrlMulti =
+            utils.getBackendUrl(location) +
+            "/api/core/actuators/";
         let command;
+        let commandObject={
+            type: config.commandType,
+            command: "",
+            euis: euisString
+        }
         switch (config.commandType) {
             case "plain":
                 //console.log('sendCommand: ', config.commandText);
@@ -80,7 +91,16 @@
             command = command + "@@@" + commandPort;
         }
 
-        promise = await fetch(apiUrl, {
+        commandObject.command = command;
+        let endpoint;
+        if(euisString != undefined && euisString != null && euisString.length > 0){
+            endpoint = apiUrlMulti;
+            command = JSON.stringify(commandObject);
+        } else {
+            endpoint = apiUrl;
+            command = command;
+        }
+        promise = await fetch(endpoint, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

@@ -4,9 +4,10 @@
     import { sgxdata } from '$lib/sgxdata.js';
     import { sgxhelper } from '$lib/sgxhelper.js';
     import { dev } from '$app/environment';
-    //import { onMount } from 'svelte';
+    import { onMount } from 'svelte';
     import { afterUpdate } from 'svelte';
     import { widgets } from '$lib/widgets.js';
+    import { goto } from '$app/navigation';
 
     export let config
     export let filter
@@ -19,18 +20,22 @@
 
     //console.log('ReportWidget config', config)
     let promise
-    if (config.query != undefined && config.query != null && (config.query.toLowerCase().includes('class') || config.query.toLowerCase().includes('report'))) {
-        apiUrl = utils.getBackendUrl(location) + '/api/reports/single/'
-        promise = sgxdata.getReportData(dev, apiUrl, config, filter, $token, transformData);
-    } else {
-        if (isGroup()) {
-            apiUrl = utils.getBackendUrl(location) + '/api/provider/group/'
-            promise = sgxdata.getGroupData(dev, apiUrl, config, filter, $token, transformData);
+
+    onMount(() => {
+        if (config.query != undefined && config.query != null && (config.query.toLowerCase().includes('class') || config.query.toLowerCase().includes('report'))) {
+            apiUrl = utils.getBackendUrl(location) + '/api/reports/single/'
+            promise = sgxdata.getReportData(dev, apiUrl, config, filter, $token, transformData);
         } else {
-            apiUrl = utils.getBackendUrl(location) + '/api/provider/v2/device/'
-            promise = sgxdata.getData(dev, apiUrl, config, filter, $token, transformData);
+            if (isGroup()) {
+                apiUrl = utils.getBackendUrl(location) + '/api/provider/group/'
+                promise = sgxdata.getGroupData(dev, apiUrl, config, filter, $token, transformData);
+            } else {
+                apiUrl = utils.getBackendUrl(location) + '/api/provider/v2/device/'
+                promise = sgxdata.getData(dev, apiUrl, config, filter, $token, transformData);
+            }
         }
-    }
+    });
+
     if (config.channel_translated != undefined && config.channel_translated != null && config.channel_translated != '') {
         channelNamesTranslated = config.channel_translated.split(',')
     }
@@ -49,7 +54,7 @@
             }
         }
         extendedConfig = widgets.getConfiguration(config);
-        console.log('extendedConfig', extendedConfig)
+        //console.log('extendedConfig', extendedConfig)
     });
 
     let front = true;
@@ -99,7 +104,7 @@
 
     function isGroupQuery(reportResult) {
         try {
-            console.log('isGroupQuery', reportResult.queries.default.source)
+            //console.log('isGroupQuery', reportResult.queries.default.source)
             if (reportResult.queries.default.source.includes(' group ')) {
                 return true
             }
@@ -160,7 +165,7 @@
     async function transformData(config, rawData) {
         let isGroup = (config.group != undefined && config.group != null && config.group != '')
         let jsonData = await rawData;
-        console.log('RAW DATA', jsonData)
+        //console.log('RAW DATA', jsonData)
         //let isGroupQuery = isGroupQuery(jsonData)
 
         // data from report server is already in the correct format
@@ -169,12 +174,12 @@
             //console.log('GROUP REPORT', isGroupQuery)
             return jsonData
         } else {
-            console.log('DATA FROM SIGNOMIX-TA-PROVIDER')
+            //console.log('DATA FROM SIGNOMIX-TA-PROVIDER')
         }
 
         // data from signomix-ta-provider must be transformed
-        console.log('STANDARD DATA')
-        console.log('GROUP REPORT', isGroup)
+        //console.log('STANDARD DATA')
+        //console.log('GROUP REPORT', isGroup)
         let reportResult = {
             'status': 200,
             'title': '',
@@ -280,6 +285,60 @@
         }
     }
 
+    function getSelectionColumn() {
+        let cfg=widgets.getConfiguration(config)
+        if (cfg.selectionColumn != undefined && cfg.selectionColumn != null && cfg.selectionColumn !='') {
+            return cfg.selectionColumn
+        } else {
+            return null
+        }
+    }
+
+    function toggleSelectAll(event){
+        try{
+        let checked = event.target.checked
+        let checkboxes = event.target.closest('table').querySelectorAll('tbody input[type="checkbox"]')
+        checkboxes.forEach((cb)=>{
+            cb.checked = checked
+            //console.log('cb', cb.value+' '+cb.checked)
+        })
+        } catch(e){
+            console.log('toggleSelectAll error', e)
+        }
+    }
+    function toggleSelectRaw(event){
+        // do nothing for now
+    }
+    function getDashboardID(){
+        let cfg=widgets.getConfiguration(config)
+        let dashboardID = cfg.dashboardID!=undefined?cfg.dashboardID:'';
+        return dashboardID
+    }
+    
+    function moveToDashboard(event){
+        try{
+        let selectedEuis = []
+        let dashboardID = getDashboardID()
+        if(dashboardID==''){
+            return
+        }
+        //select all checked checkboxes in the table body where table is above the button
+        let checkboxes = event.target.closest('div').querySelectorAll('table tbody input[type="checkbox"]')
+        checkboxes.forEach((cb)=>{
+            if(cb.checked){
+                selectedEuis.push(cb.value)
+            }
+        })
+        if(selectedEuis.length==0){
+            return
+        }
+        //console.log('selectedEuis', selectedEuis)
+        goto('/dashboards/'+dashboardID+'?euis='+selectedEuis.join(','))
+        } catch(e){
+            console.log('moveToDashboard error', e)
+        }
+    }
+
     let labels = {
         'date': {
             'pl': "data",
@@ -288,6 +347,10 @@
         'eui': {
             'pl': "ID",
             'en': "ID"
+        },
+        'buttonLabel': {
+            'pl': "Przejdź do poleceń",
+            'en': "Go to commands"
         },
     }
 
@@ -301,6 +364,7 @@
     {/if}
     <div class="row text-left">
         <div class="col-12 mt-1">
+            {#if promise}
             {#await promise}
             <div class="spinner-border spinner-border-sm" role="status"></div>
             {:then reportresult}
@@ -308,7 +372,7 @@
             {#if reportresult!=undefined && reportresult.status==200 }
             {#if isGroup()}
             {#if getReportType(reportresult)=='group'}
-            //{getDate(reportresult)}
+            <!-- {getDate(reportresult)} -->
             {:else}
             {getDate(reportresult)} {config.group}
             {/if}
@@ -324,7 +388,10 @@
                 {#if getReportType(reportresult)=='group'}
                 <!-- DqlReport GROUP -->
                 <table class="table table-sm table-responsive-sm">
-                    <thead class="text-bg-primary fs-6">
+                    <thead class="text-bg-primary">
+                        {#if getSelectionColumn()!=null}
+                        <th scope="col"><input type="checkbox" on:change={toggleSelectAll}></th>
+                        {/if}
                         {#if isEuiVisible()}
                         <th scope="col">{utils.getLabel('eui', labels, $language)}</th>
                         {/if}
@@ -343,10 +410,12 @@
                         {/if}
                         {/if}
                     </thead>
-
                     <tbody>
                         {#each reportresult.datasets as dataset}
                         <tr>
+                            {#if getSelectionColumn()!=null}
+                            <td><input type="checkbox" on:change={toggleSelectRaw} value={dataset.eui}></td>
+                            {/if}
                             {#if isEuiVisible()}
                             <td><a href='/dashboards/{dataset.eui}'>{getDeviceName(reportresult,dataset.eui)}</a></td>
                             {/if}
@@ -371,7 +440,10 @@
                 {:else}
                 <!-- Report GROUP -->
                 <table class="table table-sm table-responsive-sm">
-                    <thead class="text-bg-primary fs-6">
+                    <thead class="text-bg-primary">
+                        {#if getSelectionColumn()!=null}
+                        <th scope="col"><input type="checkbox" on:change={toggleSelectAll}></th>
+                        {/if}
                         <th scope="col">{utils.getLabel('name', labels, $language)}</th>
                         <th scope="col">{utils.getLabel('date', labels, $language)}</th>
                         {#if channelNamesTranslated.length>0}
@@ -388,6 +460,9 @@
                         {#each reportresult.datasets as dataset}
                         {#each dataset.data as row}
                         <tr>
+                            {#if getSelectionColumn()!=null}
+                            <td><input type="checkbox" on:change={toggleSelectRaw} value={dataset.eui}></td>
+                            {/if}
                             <td><a href='/dashboards/{dataset.eui}'>{getDeviceName(reportresult,dataset.eui)}</a></td>
                             <td>{new Date(row.timestamp).toLocaleString()}</td>
                             {#each row.values as value}
@@ -403,6 +478,9 @@
                 <!-- Report DEVICE -->
                 <table class="table table-sm table-responsive-sm">
                     <thead class="text-bg-primary">
+                        {#if getSelectionColumn()!=null}
+                        <th scope="col"><input type="checkbox" on:change={toggleSelectAll}></th>
+                        {/if}
                         <th scope="col">{utils.getLabel('date', labels, $language)}</th>
                         {#if channelNamesTranslated.length>0}
                         {#each channelNamesTranslated as channel}
@@ -417,6 +495,9 @@
                     <tbody>
                         {#each reportresult.datasets[0].data as row}
                         <tr>
+                            {#if getSelectionColumn()!=null}
+                            <td><input type="checkbox" on:change={toggleSelectRaw} value={dataset.eui}></td>
+                            {/if}
                             <td>{new Date(row.timestamp).toLocaleString()}</td>
                             {#each row.values as value}
                             <td>{getValue(value)}</td>
@@ -425,6 +506,14 @@
                         {/each}
                     </tbody>
                 </table>
+                {/if}
+                {#if getSelectionColumn()!=null}
+                <!-- button for move to other dashboard, disabled if getDashboardID()=='' -->
+                {#if getDashboardID()!=''}
+                <button class="btn btn-primary btn-sm mb-2" on:click={moveToDashboard}>{utils.getLabel('buttonLabel', labels, $language)}</button>
+                {:else}
+                <button class="btn btn-primary btn-sm mb-2" disabled on:click={moveToDashboard}>{utils.getLabel('buttonLabel', labels, $language)}</button>
+                {/if}
                 {/if}
                 {:else}
                 <p><b>Status {reportresult.status}</b> {reportresult.errorMessage}</p>
@@ -436,6 +525,12 @@
             <p style="color: red">{error.message}</p>
             {/if}
             {/await}
+            {/if}
         </div>
     </div>
 </div>
+<style>
+    th, td {
+        padding: 0.2em;   
+        }
+</style>
