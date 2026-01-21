@@ -8,6 +8,7 @@
     import { afterUpdate } from 'svelte';
     import { widgets } from '$lib/widgets.js';
     import { goto } from '$app/navigation';
+    import { page } from '$app/stores';
 
     export let config
     export let filter
@@ -17,30 +18,47 @@
     let parentHeight = 0;
     let channelNamesTranslated = []
     let extendedConfig = {}
+    let sortColumn = null;
+    let defaultSortColumn = null;
+    let sortDirection = 1; // 1 for asc, -1 for desc
 
-    //console.log('ReportWidget config', config)
-    let promise
+    // get list of selected dev EUIs from actual page parameter 'euis'
+    let euisString = $page.url.searchParams.get('euis');
+    let euisArray = euisString ? euisString.split(',') : [];
 
-    onMount(() => {
-        if (config.query != undefined && config.query != null && (config.query.toLowerCase().includes('class') || config.query.toLowerCase().includes('report'))) {
-            apiUrl = utils.getBackendUrl(location) + '/api/reports/single/'
-            promise = sgxdata.getReportData(dev, apiUrl, config, filter, $token, transformData);
-        } else {
-            if (isGroup()) {
-                apiUrl = utils.getBackendUrl(location) + '/api/provider/group/'
-                promise = sgxdata.getGroupData(dev, apiUrl, config, filter, $token, transformData);
-            } else {
-                apiUrl = utils.getBackendUrl(location) + '/api/provider/v2/device/'
-                promise = sgxdata.getData(dev, apiUrl, config, filter, $token, transformData);
-            }
-        }
-    });
+    let promise;
 
-    if (config.channel_translated != undefined && config.channel_translated != null && config.channel_translated != '') {
-        channelNamesTranslated = config.channel_translated.split(',')
+    $: if ((config)) {
+        getData();
     }
 
-    afterUpdate(() => {
+    // backward compatibility reportResult structure
+    let reportResult = {
+        'status': 200,
+        'title': '',
+        'description': '',
+        'content': '',
+        'contentType': 'application/json',
+        'id': -1,
+        'created': '',
+        'datasets': [],
+        'headers': [],
+        'queries': {
+            'default': {
+                'group': '',
+                'className': ''
+            }
+        },
+        configs: {}
+    }
+
+    $: reportresult = null;
+
+    async function getData() {
+        extendedConfig = widgets.getConfiguration(config);
+        if (config.channel_translated != undefined && config.channel_translated != null && config.channel_translated != '') {
+            channelNamesTranslated = config.channel_translated.split(',')
+        }
         if (config.query != undefined && config.query != null && (config.query.toLowerCase().includes('class') || config.query.toLowerCase().includes('report'))) {
             apiUrl = utils.getBackendUrl(location) + '/api/reports/single/'
             promise = sgxdata.getReportData(dev, apiUrl, config, filter, $token, transformData);
@@ -53,9 +71,9 @@
                 promise = sgxdata.getData(dev, apiUrl, config, filter, $token, transformData);
             }
         }
-        extendedConfig = widgets.getConfiguration(config);
-        //console.log('extendedConfig', extendedConfig)
-    });
+        reportresult = await promise;
+        /* reportresult=  */sortData(reportresult);
+    }
 
     let front = true;
 
@@ -63,32 +81,32 @@
         //front = !front;
     }
 
-    function getValue(value, index){
+    function getValue(value, index) {
         let dataType = 'number'
         let hideNaN = false
         let rounding = config.rounding != undefined && config.rounding != null ? config.rounding : 2
-        if(extendedConfig.hideNaN!=undefined && extendedConfig.hideNaN!=null){
+        if (extendedConfig.hideNaN != undefined && extendedConfig.hideNaN != null) {
             hideNaN = extendedConfig.hideNaN
         }
-        if(index!=undefined && index!=null){
-            if(extendedConfig.dataTypes!=undefined && extendedConfig.dataTypes!=null && extendedConfig.dataTypes.length>index){
+        if (index != undefined && index != null) {
+            if (extendedConfig.dataTypes != undefined && extendedConfig.dataTypes != null && extendedConfig.dataTypes.length > index) {
                 dataType = extendedConfig.dataTypes[index]
             }
-            if(extendedConfig.roundings!=undefined && extendedConfig.roundings!=null && extendedConfig.roundings.length>index){
+            if (extendedConfig.roundings != undefined && extendedConfig.roundings != null && extendedConfig.roundings.length > index) {
                 rounding = extendedConfig.roundings[index]
             }
         }
-        switch(dataType){
+        switch (dataType) {
             case 'number':
                 return utils.recalculate(value, rounding, hideNaN)
             case 'date':
-                if(value>0){
+                if (value > 0) {
                     return new Date(value).toLocaleString()
                 } else {
                     return ''
                 }
             case 'boolean':
-                return value==1?'true':'false'
+                return value == 1 ? 'true' : 'false'
             default:
                 return value
         }
@@ -150,7 +168,7 @@
         return date
     }
 
-    function getDeviceName(reportResult, eui){
+    function getDeviceName(reportResult, eui) {
         let name = eui
         try {
             if (reportResult.configs != undefined && reportResult.configs[eui] != undefined && reportResult.configs[eui].name != undefined && reportResult.configs[eui].name != null && reportResult.configs[eui].name != '') {
@@ -180,7 +198,7 @@
         // data from signomix-ta-provider must be transformed
         //console.log('STANDARD DATA')
         //console.log('GROUP REPORT', isGroup)
-        let reportResult = {
+        /* let reportResult = {
             'status': 200,
             'title': '',
             'description': '',
@@ -197,8 +215,8 @@
                 }
             },
             configs: {}
-        }
-        if(jsonData.length==0){
+        } */
+        if (jsonData.length == 0) {
             reportResult.errorMessage = 'No data available'
             return reportResult
         }
@@ -256,87 +274,196 @@
             }
         }
         //console.log('REPORT RESULT', reportResult)
-        return reportResult
+        return sortData(reportResult)
     }
 
     function isEuiVisible() {
-        let cfg=widgets.getConfiguration(config)
-        if (cfg.showEui != undefined && cfg.showEui != null && cfg.showEui == false) {
-            return false
+        let cfg = widgets.getConfiguration(config)
+        if (cfg.euiVisible == undefined || cfg.euiVisible == null) {
+            return false // default false
         } else {
-            return true
+            return cfg.euiVisible
+        }
+    }
+    function isNameVisible() {
+        let cfg = widgets.getConfiguration(config)
+        if (cfg.nameVisible == undefined || cfg.nameVisible == null) {
+            return false // default false
+        } else {
+            return cfg.nameVisible
         }
     }
     function isDateVisible() {
-        let cfg=widgets.getConfiguration(config)
-        if (cfg.showDate != undefined && cfg.showDate != null && cfg.showDate == false) {
-            return false
+        let cfg = widgets.getConfiguration(config)
+        if (cfg.dateVisible == undefined || cfg.dateVisible == null) {
+            return false // default false
         } else {
-            return true
+            return cfg.dateVisible  
         }
     }
 
     function isColumnsVisible() {
-        let cfg=widgets.getConfiguration(config)
-        if (cfg.showColumns != undefined && cfg.showColumns != null && cfg.showColumns == false) {
-            return false
+        let cfg = widgets.getConfiguration(config)
+        if (cfg.columnsVisible == undefined || cfg.columnsVisible == null) {
+            return true // default true
         } else {
-            return true
+            return cfg.columnsVisible
         }
     }
 
     function getSelectionColumn() {
-        let cfg=widgets.getConfiguration(config)
-        if (cfg.selectionColumn != undefined && cfg.selectionColumn != null && cfg.selectionColumn !='') {
+        let cfg = widgets.getConfiguration(config)
+        if (cfg.selectionColumn != undefined && cfg.selectionColumn != null && cfg.selectionColumn != '') {
             return cfg.selectionColumn
         } else {
             return null
         }
     }
 
-    function toggleSelectAll(event){
-        try{
-        let checked = event.target.checked
-        let checkboxes = event.target.closest('table').querySelectorAll('tbody input[type="checkbox"]')
-        checkboxes.forEach((cb)=>{
-            cb.checked = checked
-            //console.log('cb', cb.value+' '+cb.checked)
-        })
-        } catch(e){
+    function getDefaultSortColumn() {
+        let cfg = widgets.getConfiguration(config)
+        if (cfg.sortColumn != undefined && cfg.sortColumn != null && cfg.sortColumn != '') {
+            return cfg.sortColumn
+        } else {
+            return 'eui'
+        }
+    }
+
+    function toggleSelectAll(event) {
+        try {
+            let checked = event.target.checked
+            let checkboxes = event.target.closest('table').querySelectorAll('tbody input[type="checkbox"]')
+            checkboxes.forEach((cb) => {
+                cb.checked = checked
+                //console.log('cb', cb.value+' '+cb.checked)
+            })
+        } catch (e) {
             console.log('toggleSelectAll error', e)
         }
     }
-    function toggleSelectRaw(event){
+    function toggleSelectRaw(event) {
         // do nothing for now
     }
-    function getDashboardID(){
-        let cfg=widgets.getConfiguration(config)
-        let dashboardID = cfg.dashboardID!=undefined?cfg.dashboardID:'';
+    function getDashboardID() {
+        let cfg = widgets.getConfiguration(config)
+        let dashboardID = cfg.dashboardID != undefined ? cfg.dashboardID : '';
         return dashboardID
     }
-    
-    function moveToDashboard(event){
-        try{
-        let selectedEuis = []
-        let dashboardID = getDashboardID()
-        if(dashboardID==''){
-            return
-        }
-        //select all checked checkboxes in the table body where table is above the button
-        let checkboxes = event.target.closest('div').querySelectorAll('table tbody input[type="checkbox"]')
-        checkboxes.forEach((cb)=>{
-            if(cb.checked){
-                selectedEuis.push(cb.value)
+
+    function moveToDashboard(event) {
+        try {
+            let selectedEuis = []
+            let dashboardID = getDashboardID()
+            if (dashboardID == '') {
+                return
             }
-        })
-        if(selectedEuis.length==0){
-            return
-        }
-        //console.log('selectedEuis', selectedEuis)
-        goto('/dashboards/'+dashboardID+'?euis='+selectedEuis.join(','))
-        } catch(e){
+            //select all checked checkboxes in the table body where table is above the button
+            let checkboxes = event.target.closest('div').querySelectorAll('table tbody input[type="checkbox"]')
+            checkboxes.forEach((cb) => {
+                if (cb.checked) {
+                    selectedEuis.push(cb.value)
+                }
+            })
+            if (selectedEuis.length == 0) {
+                return
+            }
+            //console.log('selectedEuis', selectedEuis)
+            goto('/dashboards/' + dashboardID + '?euis=' + selectedEuis.join(','))
+        } catch (e) {
             console.log('moveToDashboard error', e)
         }
+    }
+
+    function sortData(reportResult, columnIndex, sortCol) {
+        console.log('sortData', columnIndex + ' ' + sortDirection + ' ' + sortColumn)
+        if(defaultSortColumn==null) {
+            defaultSortColumn=getDefaultSortColumn();
+        }
+        if(sortColumn==null) {
+            sortColumn=defaultSortColumn;
+        }
+        let column;
+        if(columnIndex == undefined || columnIndex == null) {
+            column = sortColumn; // on reload use last sorted column
+        } else if(columnIndex < 0 && sortCol != undefined && sortCol != null) {
+            column = sortCol; // column name provided
+        } else {
+            // column index provided, determine column name
+            column = reportResult.headers[0].columns[columnIndex];
+        }
+
+        if (sortColumn == column) {
+            if(columnIndex === undefined || columnIndex === null) {
+                // on reload do not change direction
+            } else {
+                // same column clicked, toggle direction
+                sortDirection *= -1;
+            }
+        } else {
+            sortColumn = column;
+            sortDirection = 1;
+        }
+        if (getReportType(reportResult) == 'group') {
+            console.log('Sorting group report');
+            // if sortColumn=='eui' then sort datasets by dataset.eui
+            // else sort each dataset.data by dataset.data[0].values[columnIndex] 
+            if (sortColumn === 'eui') {
+                console.log('Sorting by EUI');
+                reportResult.datasets.sort((a, b) => {
+                    if (a.eui < b.eui) {
+                        return -1 * sortDirection;
+                    }
+                    if (a.eui > b.eui) {
+                        return 1 * sortDirection;
+                    }
+                    return 0;
+                });
+            } else if(sortColumn === 'name') {
+                console.log('Sorting by Name');
+                reportResult.datasets.sort((a, b) => {
+                    if (a.name < b.name) {
+                        return -1 * sortDirection;
+                    }
+                    if (a.name > b.name) {
+                        return 1 * sortDirection;
+                    }
+                    return 0;
+                });
+            } else {
+                console.log('Sorting by column index ' + columnIndex);
+                reportResult.datasets.sort((a, b) => {
+                    let aValue = a.data[0].values[columnIndex];
+                    let bValue = b.data[0].values[columnIndex];
+                    if (aValue < bValue) {
+                        return -1 * sortDirection;
+                    }
+                    if (aValue > bValue) {
+                        return 1 * sortDirection;
+                    }
+                    return 0;
+                });
+            }
+        } else if(columnIndex !== undefined && columnIndex !== null && columnIndex >= 0) {
+            console.log('Sorting device report');
+            reportResult.datasets.forEach(dataset => {
+                dataset.data.sort((a, b) => {
+                    let aValue = a.values[columnIndex];
+                    let bValue = b.values[columnIndex];
+                    if (aValue < bValue) {
+                        return -1 * sortDirection;
+                    }
+                    if (aValue > bValue) {
+                        return 1 * sortDirection;
+                    }
+                    return 0;
+                });
+            });
+        }
+        reportresult={...reportResult}; // Trigger reactivity
+        reportresult.datasets.forEach(ds => {
+            console.log('Dataset ' + ds.eui);
+        });
+        //return reportresult;
     }
 
     let labels = {
@@ -345,8 +472,12 @@
             'en': "date"
         },
         'eui': {
-            'pl': "ID",
-            'en': "ID"
+            'pl': "EUI",
+            'en': "EUI"
+        },
+        'name': {
+            'pl': "nazwa",
+            'en': "name"
         },
         'buttonLabel': {
             'pl': "Przejdź do poleceń",
@@ -364,12 +495,11 @@
     {/if}
     <div class="row text-left">
         <div class="col-12 mt-1">
-            {#if promise}
             {#await promise}
             <div class="spinner-border spinner-border-sm" role="status"></div>
-            {:then reportresult}
+            {:then}
             {#if !front}
-            {#if reportresult!=undefined && reportresult.status==200 }
+            {#if reportresult!=undefined && reportresult!=null && reportresult.status==200 }
             {#if isGroup()}
             {#if getReportType(reportresult)=='group'}
             <!-- {getDate(reportresult)} -->
@@ -381,9 +511,10 @@
             {/if}
             {/if}
             {:else}
-            
+
             <div style="height: {parentHeight-32}px; overflow-y: scroll;">
-                {#if reportresult!=undefined && reportresult.status==200 && (reportresult.errorMessage==undefined || reportresult.errorMessage==null || reportresult.errorMessage=='')}
+                {#if reportresult!=undefined && reportresult!=null && reportresult.status==200 && (reportresult.errorMessage==undefined ||
+                reportresult.errorMessage==null || reportresult.errorMessage=='')}
                 {#if isGroup() || isGroupQuery(reportresult)}
                 {#if getReportType(reportresult)=='group'}
                 <!-- DqlReport GROUP -->
@@ -393,7 +524,18 @@
                         <th scope="col"><input type="checkbox" on:change={toggleSelectAll}></th>
                         {/if}
                         {#if isEuiVisible()}
-                        <th scope="col">{utils.getLabel('eui', labels, $language)}</th>
+                        <th scope="col" on:click|preventDefault={()=> sortData(reportresult, -1, 'eui')}>{utils.getLabel('eui', labels, $language)}
+                            {#if sortColumn == 'eui'}
+                            {sortDirection === 1 ? '▲' : '▼'}
+                            {/if}
+                        </th>
+                        {/if}
+                        {#if isNameVisible()}
+                        <th scope="col" on:click|preventDefault={()=> sortData(reportresult, -1, 'name')}>{utils.getLabel('name', labels, $language)}
+                            {#if sortColumn == 'name'}
+                            {sortDirection === 1 ? '▲' : '▼'}
+                            {/if}
+                        </th>
                         {/if}
                         {#if isDateVisible()}
                         <th scope="col">{utils.getLabel('date', labels, $language)}</th>
@@ -417,6 +559,9 @@
                             <td><input type="checkbox" on:change={toggleSelectRaw} value={dataset.eui}></td>
                             {/if}
                             {#if isEuiVisible()}
+                            <td><a href='/dashboards/{dataset.eui}'>{dataset.eui}</a></td>
+                            {/if}
+                            {#if isNameVisible()}
                             <td><a href='/dashboards/{dataset.eui}'>{getDeviceName(reportresult,dataset.eui)}</a></td>
                             {/if}
                             {#if isDateVisible()}
@@ -510,13 +655,15 @@
                 {#if getSelectionColumn()!=null}
                 <!-- button for move to other dashboard, disabled if getDashboardID()=='' -->
                 {#if getDashboardID()!=''}
-                <button class="btn btn-primary btn-sm mb-2" on:click={moveToDashboard}>{utils.getLabel('buttonLabel', labels, $language)}</button>
+                <button class="btn btn-primary btn-sm mb-2" on:click={moveToDashboard}>{utils.getLabel('buttonLabel',
+                    labels, $language)}</button>
                 {:else}
-                <button class="btn btn-primary btn-sm mb-2" disabled on:click={moveToDashboard}>{utils.getLabel('buttonLabel', labels, $language)}</button>
+                <button class="btn btn-primary btn-sm mb-2" disabled
+                    on:click={moveToDashboard}>{utils.getLabel('buttonLabel', labels, $language)}</button>
                 {/if}
                 {/if}
                 {:else}
-                <p><b>Status {reportresult.status}</b> {reportresult.errorMessage}</p>
+                <p><b>Status {(reportresult!=undefined && reportresult!=null)?reportresult.status:'unknown'}</b> {(reportresult!=undefined && reportresult!=null)?reportresult.errorMessage:''}</p>
                 {/if}
             </div>
             {/if}
@@ -525,12 +672,12 @@
             <p style="color: red">{error.message}</p>
             {/if}
             {/await}
-            {/if}
         </div>
     </div>
 </div>
 <style>
-    th, td {
-        padding: 0.2em;   
-        }
+    th,
+    td {
+        padding: 0.2em;
+    }
 </style>

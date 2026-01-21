@@ -13,18 +13,28 @@
     let errorMessage = '';
     let apiUrl;
     let parentHeight = 0;
+    let resolvedData = null;
+    let randomValue = null;
 
     //console.log('RawDataWidget config', config)
     let promise
 
-    onMount(async () => {
-        getData()
-    });
+    $: {
+        // This block will re-run whenever config or filter change
+        if (config || filter) {
+            getData();
+        }
+    }
 
     async function getData() {
         if (config.query != undefined && config.query != null && (config.query.toLowerCase().includes('class') || config.query.toLowerCase().includes('report'))) {
             apiUrl = utils.getBackendUrl(location) + '/api/reports/single/'
-            promise = await sgxdata.getReportData(dev, apiUrl, config, filter, $token, null)
+            promise = sgxdata.getReportData(dev, apiUrl, config, filter, $token, null)
+            resolvedData = await promise;
+            if (resolvedData && randomValue) {
+                resolvedData.randomValue = randomValue;
+                resolvedData = resolvedData; // Trigger reactivity
+            }
         } else {
             /* apiUrl = utils.getBackendUrl(location) + '/api/provider/v2/device/'
             if (config.group != undefined && config.group != null && config.group != '') {
@@ -32,6 +42,14 @@
             } else {
                 promise = sgxdata.getData(dev, apiUrl, config, filter, $token);
             } */
+        }
+    }
+
+    function f1() {
+        if (resolvedData) {
+            randomValue = Math.random().toString(36).substring(2, 15);
+            resolvedData.randomValue = randomValue;
+            resolvedData = resolvedData; // Trigger reactivity
         }
     }
 
@@ -56,11 +74,12 @@
     {/if}
     <div class="row text-left">
         <div class="col-12">
+            <button on:click={f1} class="btn btn-primary btn-sm mb-2">Add random value</button>
             {#await promise}
             <div class="spinner-border spinner-border-sm" role="status"></div>
             {:then data}
             <pre
-                style="height: auto; max-height: {parentHeight-32}px; overflow: auto;">{JSON.stringify(data, null, 2)}</pre>
+                style="height: auto; max-height: {parentHeight-32}px; overflow: auto;">{JSON.stringify(resolvedData || data, null, 2)}</pre>
             {:catch error}
             <p style="color: red">{error.message}</p>
             {/await}

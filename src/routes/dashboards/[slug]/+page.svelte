@@ -184,6 +184,8 @@
                             bind:application={dashboardApp} />
                     {:else if 'text'===getWidgetType(index)}
                     <TextWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
+                    {:else if 'selecteddevs'===getWidgetType(index)}
+                    <SelectedDevsWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
                     {:else if 'devinfo'===getWidgetType(index)}
                     <InfoWidget bind:config={dashboardConfig.widgets[index]} bind:filter={dashboardFilter} />
                     {:else if 'image'===getWidgetType(index)}
@@ -296,6 +298,7 @@
     import ButtonWidgetPlus from '$lib/components/widgets/ButtonWidgetPlus.svelte';
     import TextValueWidget from '$lib/components/widgets/TextValueWidget.svelte';
     import DateWidget from '$lib/components/widgets/DateWidget.svelte';
+    import SelectedDevsWidget from '$lib/components/widgets/SelectedDevsWidget.svelte';
 
     export let data
 
