@@ -23,8 +23,7 @@
     let sortDirection = 1; // 1 for asc, -1 for desc
 
     // get list of selected dev EUIs from actual page parameter 'euis'
-    let euisString = $page.url.searchParams.get('euis');
-    let euisArray = euisString ? euisString.split(',') : [];
+    //let euisString = $page.url.searchParams.get('euis');
 
     let promise;
 
@@ -60,10 +59,29 @@
             channelNamesTranslated = config.channel_translated.split(',')
         }
         if (config.query != undefined && config.query != null && (config.query.toLowerCase().includes('class') || config.query.toLowerCase().includes('report'))) {
+            if(config.query.includes('$url.')){
+                // get query part starting after '$url.' to the next space or end of string
+                let paramName = config.query.split('$url.')[1].split(/[\s'"]+/)[0];
+                if(paramName.length>0){
+                    // get value from URL search params
+                    let paramValue = $page.url.searchParams.get(paramName);
+                    // replace in query
+                    if(paramValue!=null){
+                        // prepend comma to inform backend it's a list of values
+                        config.query = config.query.replace('$url.'+paramName, ','+paramValue);
+                    }
+                }
+            }
             apiUrl = utils.getBackendUrl(location) + '/api/reports/single/'
             promise = sgxdata.getReportData(dev, apiUrl, config, filter, $token, transformData);
         } else {
             if (isGroup()) {
+                /* if(euisString != null && euisString != '') {
+                    // NOT SUPPORTED
+                    //build group as comma separated EUIs list, 
+                    // starting with comma to inform backend it's a list of EUIs
+                    config.group = ','+euisString;
+                } */
                 apiUrl = utils.getBackendUrl(location) + '/api/provider/group/'
                 promise = sgxdata.getGroupData(dev, apiUrl, config, filter, $token, transformData);
             } else {
@@ -375,7 +393,7 @@
     }
 
     function sortData(reportResult, columnIndex, sortCol) {
-        console.log('sortData', columnIndex + ' ' + sortDirection + ' ' + sortColumn)
+        //console.log('sortData', columnIndex + ' ' + sortDirection + ' ' + sortColumn)
         if(defaultSortColumn==null) {
             defaultSortColumn=getDefaultSortColumn();
         }
@@ -404,11 +422,11 @@
             sortDirection = 1;
         }
         if (getReportType(reportResult) == 'group') {
-            console.log('Sorting group report');
+            //console.log('Sorting group report');
             // if sortColumn=='eui' then sort datasets by dataset.eui
             // else sort each dataset.data by dataset.data[0].values[columnIndex] 
             if (sortColumn === 'eui') {
-                console.log('Sorting by EUI');
+                //console.log('Sorting by EUI');
                 reportResult.datasets.sort((a, b) => {
                     if (a.eui < b.eui) {
                         return -1 * sortDirection;
@@ -419,7 +437,7 @@
                     return 0;
                 });
             } else if(sortColumn === 'name') {
-                console.log('Sorting by Name');
+                //console.log('Sorting by Name');
                 reportResult.datasets.sort((a, b) => {
                     if (a.name < b.name) {
                         return -1 * sortDirection;
@@ -430,7 +448,7 @@
                     return 0;
                 });
             } else {
-                console.log('Sorting by column index ' + columnIndex);
+                //console.log('Sorting by column index ' + columnIndex);
                 reportResult.datasets.sort((a, b) => {
                     let aValue = a.data[0].values[columnIndex];
                     let bValue = b.data[0].values[columnIndex];
@@ -444,7 +462,7 @@
                 });
             }
         } else if(columnIndex !== undefined && columnIndex !== null && columnIndex >= 0) {
-            console.log('Sorting device report');
+            //console.log('Sorting device report');
             reportResult.datasets.forEach(dataset => {
                 dataset.data.sort((a, b) => {
                     let aValue = a.values[columnIndex];
@@ -461,7 +479,7 @@
         }
         reportresult={...reportResult}; // Trigger reactivity
         reportresult.datasets.forEach(ds => {
-            console.log('Dataset ' + ds.eui);
+            //console.log('Dataset ' + ds.eui);
         });
         //return reportresult;
     }
