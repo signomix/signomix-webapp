@@ -63,7 +63,7 @@
                         //myChart.update()
                     })
             }
-            //console.log('ChartWidget ctx', ctx)    
+            //console.log('ChartWidget ctx', ctx)
         } catch (error) {
             errorMessage = error.message;
             console.log('ChartWidget error', errorMessage);
@@ -268,10 +268,10 @@
         //console.log('widgetConfig.channel_translated', widgetConfig.channel_translated)
         let namesTranslated = []
         let translatedChannel = null;
-        if (config.channel_translated !== null && config.channel_translated !== undefined) {
+        if (config.channel_translated !== null && config.channel_translated !== undefined && config.channel_translated.trim().length>0) {
             translatedChannel = config.channel_translated
         }
-        if (config.channelTranslated !== null && config.channelTranslated !== undefined) {
+        if (config.channelTranslated !== null && config.channelTranslated !== undefined && config.channelTranslated.trim().length>0) {
             translatedChannel = config.channelTranslated
         }
         if (translatedChannel !== null && translatedChannel !== undefined) {
@@ -355,13 +355,6 @@
         }
 
         chartData.labels = labels
-        /* if (toLocaleTimeStringSupportsLocales()) {
-            firstDate = new Date(dFirst).toLocaleDateString('pl')
-            lastDate = new Date(dLast).toLocaleDateString('pl')
-        } else {
-            firstDate = new Date(dFirst).toISOString().substring(0, 10)
-            lastDate = new Date(dLast).toISOString().substring(0, 10)
-        } */
         let chartOptions = {
             responsive: true,
             animation: false,
