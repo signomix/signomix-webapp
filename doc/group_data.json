@@ -1,0 +1,435 @@
+{
+  "datasets": [
+    {
+      "size": 10,
+      "data": [
+        { "timestamp": 1783640535540, "values": [2.0] },
+        { "timestamp": 1783640234615, "values": [2.0] },
+        { "timestamp": 1783639933717, "values": [2.0] },
+        { "timestamp": 1783639633495, "values": [2.0] },
+        { "timestamp": 1783639332503, "values": [2.0] },
+        { "timestamp": 1783639031529, "values": [2.0] },
+        { "timestamp": 1783638730695, "values": [2.0] },
+        { "timestamp": 1783638430494, "values": [2.0] },
+        { "timestamp": 1783638130288, "values": [2.0] },
+        { "timestamp": 1783637830131, "values": [2.0] }
+      ],
+      "eui": "00033728193A26DB",
+      "name": "dataset0"
+    },
+    {
+      "size": 10,
+      "data": [
+        { "timestamp": 1783640403302, "values": [1.0] },
+        { "timestamp": 1783640102424, "values": [1.0] },
+        { "timestamp": 1783639801634, "values": [1.0] },
+        { "timestamp": 1783639500990, "values": [1.0] },
+        { "timestamp": 1783639200330, "values": [1.0] },
+        { "timestamp": 1783638899620, "values": [1.0] },
+        { "timestamp": 1783638598754, "values": [1.0] },
+        { "timestamp": 1783638298709, "values": [1.0] },
+        { "timestamp": 1783637997953, "values": [1.0] },
+        { "timestamp": 1783637697351, "values": [1.0] }
+      ],
+      "eui": "0003230F013A2EDE",
+      "name": "dataset0"
+    },
+    {
+      "size": 10,
+      "data": [
+        { "timestamp": 1776469728576, "values": [2.0] },
+        { "timestamp": 1776468224804, "values": [2.0] },
+        { "timestamp": 1776467924525, "values": [2.0] },
+        { "timestamp": 1776467323956, "values": [1.0] },
+        { "timestamp": 1776466420331, "values": [1.0] },
+        { "timestamp": 1776465824255, "values": [1.0] },
+        { "timestamp": 1776465519976, "values": [1.0] },
+        { "timestamp": 1776465218166, "values": [1.0] },
+        { "timestamp": 1776464318976, "values": [1.0] },
+        { "timestamp": 1776464021205, "values": [1.0] }
+      ],
+      "eui": "0003220A173A2EDE",
+      "name": "dataset0"
+    },
+    {
+      "size": 10,
+      "data": [
+        { "timestamp": 1783640446139, "values": [2.0] },
+        { "timestamp": 1783640146240, "values": [2.0] },
+        { "timestamp": 1783639845170, "values": [2.0] },
+        { "timestamp": 1783639544287, "values": [2.0] },
+        { "timestamp": 1783639244904, "values": [2.0] },
+        { "timestamp": 1783638944705, "values": [2.0] },
+        { "timestamp": 1783638644466, "values": [2.0] },
+        { "timestamp": 1783638343124, "values": [2.0] },
+        { "timestamp": 1783638043169, "values": [2.0] },
+        { "timestamp": 1783637742149, "values": [2.0] }
+      ],
+      "eui": "00071D45143A714E",
+      "name": "dataset0"
+    },
+    {
+      "size": 10,
+      "data": [
+        { "timestamp": 1783640569543, "values": [2.0] },
+        { "timestamp": 1783640269042, "values": [2.0] },
+        { "timestamp": 1783639968124, "values": [2.0] },
+        { "timestamp": 1783639666733, "values": [2.0] },
+        { "timestamp": 1783639366087, "values": [2.0] },
+        { "timestamp": 1783639066114, "values": [2.0] },
+        { "timestamp": 1783638764806, "values": [2.0] },
+        { "timestamp": 1783638465493, "values": [2.0] },
+        { "timestamp": 1783638164659, "values": [2.0] },
+        { "timestamp": 1783637863847, "values": [2.0] }
+      ],
+      "eui": "00070A23103A714E",
+      "name": "dataset0"
+    },
+    {
+      "size": 10,
+      "data": [
+        { "timestamp": 1783640223507, "values": [4.0] },
+        { "timestamp": 1783639323103, "values": [4.0] },
+        { "timestamp": 1783638422368, "values": [4.0] },
+        { "timestamp": 1783637521959, "values": [4.0] },
+        { "timestamp": 1783636621651, "values": [4.0] },
+        { "timestamp": 1783635720926, "values": [4.0] },
+        { "timestamp": 1783634819980, "values": [3.0] },
+        { "timestamp": 1783633919026, "values": [3.0] },
+        { "timestamp": 1783633018827, "values": [3.0] },
+        { "timestamp": 1783632118186, "values": [2.0] }
+      ],
+      "eui": "0050504EAE52DCFF",
+      "name": "dataset0"
+    },
+    {
+      "size": 10,
+      "data": [
+        { "timestamp": 1783640647115, "values": [2.0] },
+        { "timestamp": 1783640346461, "values": [2.0] },
+        { "timestamp": 1783640046354, "values": [2.0] },
+        { "timestamp": 1783639745398, "values": [2.0] },
+        { "timestamp": 1783639444679, "values": [2.0] },
+        { "timestamp": 1783639143986, "values": [2.0] },
+        { "timestamp": 1783638842994, "values": [2.0] },
+        { "timestamp": 1783638242427, "values": [2.0] },
+        { "timestamp": 1783637941443, "values": [2.0] },
+        { "timestamp": 1783637640638, "values": [2.0] }
+      ],
+      "eui": "00C287C4D868D7BE",
+      "name": "dataset0"
+    },
+    {
+      "size": 10,
+      "data": [
+        { "timestamp": 1773485660893, "values": [4.0] },
+        { "timestamp": 1773485360773, "values": [4.0] },
+        { "timestamp": 1773485060500, "values": [4.0] },
+        { "timestamp": 1773484760353, "values": [4.0] },
+        { "timestamp": 1773484459785, "values": [4.0] },
+        { "timestamp": 1773484159449, "values": [4.0] },
+        { "timestamp": 1773483859413, "values": [4.0] },
+        { "timestamp": 1773483558668, "values": [4.0] },
+        { "timestamp": 1773483257931, "values": [4.0] },
+        { "timestamp": 1773482957719, "values": [4.0] }
+      ],
+      "eui": "00071233163A714E",
+      "name": "dataset0"
+    },
+    {
+      "size": 10,
+      "data": [
+        { "timestamp": 1783193501355, "values": [3.0] },
+        { "timestamp": 1783192600847, "values": [3.0] },
+        { "timestamp": 1783192564928, "values": [3.0] },
+        { "timestamp": 1782841999883, "values": [5.0] },
+        { "timestamp": 1782841963908, "values": [5.0] },
+        { "timestamp": 1782555450694, "values": [5.0] },
+        { "timestamp": 1782554549954, "values": [5.0] },
+        { "timestamp": 1782553649047, "values": [5.0] },
+        { "timestamp": 1782552749010, "values": [4.0] },
+        { "timestamp": 1782552712986, "values": [3.0] }
+      ],
+      "eui": "0018B24441524630",
+      "name": "dataset0"
+    },
+    {
+      "size": 10,
+      "data": [
+        { "timestamp": 1782459606814, "values": [null] },
+        { "timestamp": 1782458705870, "values": [null] },
+        { "timestamp": 1782457805005, "values": [null] },
+        { "timestamp": 1782456904263, "values": [null] },
+        { "timestamp": 1782456003379, "values": [null] },
+        { "timestamp": 1782455102777, "values": [null] },
+        { "timestamp": 1782454202103, "values": [null] },
+        { "timestamp": 1782453301423, "values": [null] },
+        { "timestamp": 1782452401109, "values": [null] },
+        { "timestamp": 1782451500685, "values": [null] }
+      ],
+      "eui": "007D7DB31F478F5C",
+      "name": "dataset0"
+    },
+    {
+      "size": 10,
+      "data": [
+        { "timestamp": 1775153024908, "values": [2.0] },
+        { "timestamp": 1775152801201, "values": [2.0] },
+        { "timestamp": 1775152688539, "values": [2.0] },
+        { "timestamp": 1775152387923, "values": [2.0] },
+        { "timestamp": 1775152328512, "values": [2.0] },
+        { "timestamp": 1775152269730, "values": [2.0] },
+        { "timestamp": 1775151969667, "values": [2.0] },
+        { "timestamp": 1775151669199, "values": [2.0] },
+        { "timestamp": 1775151368640, "values": [2.0] },
+        { "timestamp": 1775151067898, "values": [2.0] }
+      ],
+      "eui": "0007133E163A714E",
+      "name": "dataset0"
+    },
+    {
+      "size": 10,
+      "data": [
+        { "timestamp": 1770197710740, "values": [27.0] },
+        { "timestamp": 1770196240881, "values": [25.0] },
+        { "timestamp": 1770195883859, "values": [25.0] },
+        { "timestamp": 1770194389919, "values": [25.0] },
+        { "timestamp": 1770193781378, "values": [25.0] },
+        { "timestamp": 1770193480880, "values": [25.0] },
+        { "timestamp": 1770192881183, "values": [25.0] },
+        { "timestamp": 1770192579718, "values": [25.0] },
+        { "timestamp": 1770192278959, "values": [25.0] },
+        { "timestamp": 1770191978878, "values": [25.0] }
+      ],
+      "eui": "00071244143A714E",
+      "name": "dataset0"
+    }
+  ],
+  "headers": [
+    { "columns": ["pm2_5avg"], "name": "00073334163A714E" },
+    { "columns": ["pm2_5avg"], "name": "52774790D697B9DD" },
+    { "columns": ["pm2_5avg"], "name": "00033728193A26DB" },
+    { "columns": ["pm2_5avg"], "name": "00072338133A714E" },
+    { "columns": ["pm2_5avg"], "name": "0003230F013A2EDE" },
+    { "columns": ["pm2_5avg"], "name": "0003220A173A2EDE" },
+    { "columns": ["pm2_5avg"], "name": "0003272B023A6598" },
+    { "columns": ["pm2_5avg"], "name": "00071D45143A714E" },
+    { "columns": ["pm2_5avg"], "name": "006B26E79EC5E968" },
+    { "columns": ["pm2_5avg"], "name": "00070A23103A714E" },
+    { "columns": ["pm2_5avg"], "name": "0050504EAE52DCFF" },
+    { "columns": ["pm2_5avg"], "name": "00C287C4D868D7BE" },
+    { "columns": ["pm2_5avg"], "name": "00D671F14EA0BCC1" },
+    { "columns": ["pm2_5avg"], "name": "00AD3CA7653E8DC1" },
+    { "columns": ["pm2_5avg"], "name": "00071233163A714E" },
+    { "columns": ["pm2_5avg"], "name": "0018B24441524630" },
+    { "columns": ["pm2_5avg"], "name": "007D7DB31F478F5C" },
+    { "columns": ["pm2_5avg"], "name": "0007133E163A714E" },
+    { "columns": ["pm2_5avg"], "name": "00071D17133A714E" },
+    { "columns": ["pm2_5avg"], "name": "00D9614FC35D1B8F" },
+    { "columns": ["pm2_5avg"], "name": "00071244143A714E" }
+  ],
+  "configs": {
+    "00071233163A714E": {
+      "altitude": "0.0",
+      "latitude": "52.081551",
+      "eui": "00071233163A714E",
+      "name": "Nadarzyn - Stara Wieś",
+      "longitude": "20.756739"
+    },
+    "00D671F14EA0BCC1": {
+      "altitude": "100000.0",
+      "latitude": "53.1311913",
+      "eui": "00D671F14EA0BCC1",
+      "name": "Bydgoszcz - Miedzyń",
+      "longitude": "17.9242191"
+    },
+    "0003272B023A6598": {
+      "altitude": "135.0",
+      "latitude": "51.13130187988281",
+      "eui": "0003272B023A6598",
+      "name": "ASMP Wilczyce2",
+      "luminosity": false,
+      "heca": true,
+      "longitude": "17.154644012451172"
+    },
+    "0007133E163A714E": {
+      "altitude": "100000.0",
+      "latitude": "51.03552",
+      "eui": "0007133E163A714E",
+      "name": "Ratowice SP6ICO",
+      "longitude": "17.26925"
+    },
+    "00D9614FC35D1B8F": {
+      "altitude": "100000.0",
+      "latitude": "50.04709834257405",
+      "eui": "00D9614FC35D1B8F",
+      "name": "Dębica \"Kwiatek\"",
+      "longitude": "21.40010923147202"
+    },
+    "007D7DB31F478F5C": {
+      "altitude": "100000.0",
+      "latitude": "53.0611751",
+      "eui": "007D7DB31F478F5C",
+      "name": "Rynarzewo",
+      "longitude": "17.8333643"
+    },
+    "00072338133A714E": {
+      "altitude": "100000.0",
+      "latitude": "50.895205",
+      "eui": "00072338133A714E",
+      "name": "SQ6RQT-Chwałków",
+      "longitude": "16.682249"
+    },
+    "0018B24441524630": {
+      "altitude": "100000.0",
+      "latitude": "53.133768370516684",
+      "eui": "0018B24441524630",
+      "name": "Bydgoszcz - Sowińskiego",
+      "longitude": "17.998238342653345"
+    },
+    "0050504EAE52DCFF": {
+      "altitude": "100000.0",
+      "latitude": "52.9943",
+      "eui": "0050504EAE52DCFF",
+      "name": "Chodziez",
+      "longitude": "16.9222"
+    },
+    "00071244143A714E": {
+      "altitude": "100000.0",
+      "latitude": "51.5115492",
+      "eui": "00071244143A714E",
+      "name": "Radziądz",
+      "longitude": "16.9639635"
+    },
+    "00C287C4D868D7BE": {
+      "altitude": "100000.0",
+      "latitude": "53.130555",
+      "eui": "00C287C4D868D7BE",
+      "name": "Bydgoszcz - Brdyujście",
+      "longitude": "18.119188"
+    },
+    "0003220A173A2EDE": {
+      "altitude": "100000.0",
+      "latitude": "52.4394012",
+      "eui": "0003220A173A2EDE",
+      "name": "Poznań VSS",
+      "longitude": "16.9387705"
+    },
+    "00073334163A714E": {
+      "altitude": "100000.0",
+      "latitude": "51.077363289285145",
+      "eui": "00073334163A714E",
+      "name": "Valdyn SQ6PNV Mokronos dolny",
+      "longitude": "16.936326026916507"
+    },
+    "00071D17133A714E": {
+      "altitude": "100000.0",
+      "latitude": "51.275259731473405",
+      "eui": "00071D17133A714E",
+      "name": "Nowa Wieś Bory",
+      "longitude": "15.411200523376467"
+    },
+    "52774790D697B9DD": {
+      "altitude": "100000.0",
+      "latitude": "100000.0",
+      "eui": "52774790D697B9DD",
+      "name": "smogometr_ldz_01",
+      "longitude": "100000.0"
+    },
+    "00071D45143A714E": {
+      "altitude": "100000.0",
+      "latitude": "51.0390488",
+      "eui": "00071D45143A714E",
+      "name": "Kąty Wrocławskie",
+      "longitude": "16.7677988"
+    },
+    "00033728193A26DB": {
+      "altitude": "100000.0",
+      "latitude": "51.73630549874255",
+      "eui": "00033728193A26DB",
+      "name": "ASMP Łódź , Obywatelska",
+      "longitude": "19.43099324852796"
+    },
+    "0003230F013A2EDE": {
+      "altitude": "100000.0",
+      "latitude": "51.2562",
+      "eui": "0003230F013A2EDE",
+      "name": "Lublin-Szerokie SP8NCG",
+      "longitude": "22.4994"
+    },
+    "006B26E79EC5E968": {
+      "altitude": "100000.0",
+      "latitude": "53.158266",
+      "eui": "006B26E79EC5E968",
+      "name": "Nowy Dwór",
+      "longitude": "18.224523"
+    },
+    "00070A23103A714E": {
+      "altitude": "100000.0",
+      "latitude": "51.03718429663773",
+      "eui": "00070A23103A714E",
+      "name": "Bielany Wr",
+      "longitude": "16.96250438690186"
+    },
+    "00AD3CA7653E8DC1": {
+      "altitude": "100000.0",
+      "latitude": "52.25038902651251",
+      "eui": "00AD3CA7653E8DC1",
+      "name": "Warszawa",
+      "longitude": "20.92651426792145"
+    }
+  },
+  "title": "",
+  "description": "",
+  "id": -1,
+  "created": "2026-07-29T22:07:39.063+00:00",
+  "queries": {
+    "default": {
+      "source": "report DqlReport group 17-93-67-B0-A6 channel pm2_5avg last 10",
+      "limit": 10,
+      "average": 0,
+      "minimum": 0,
+      "maximum": 0,
+      "summary": 0,
+      "channelName": "pm2_5avg",
+      "multiplierChannelName": null,
+      "multiplierDeviceEui": null,
+      "timeseries": false,
+      "project": null,
+      "newValue": null,
+      "eui": null,
+      "group": "17-93-67-B0-A6",
+      "state": null,
+      "fromTs": null,
+      "toTs": null,
+      "toTsExclusive": null,
+      "virtual": false,
+      "offset": 0,
+      "className": "DqlReport",
+      "tag": null,
+      "sortOrder": "DESC",
+      "sortBy": "timestamp",
+      "parameters": {},
+      "notNull": false,
+      "skipNull": false,
+      "intervalValue": null,
+      "intervalName": null,
+      "firstInInterval": false,
+      "intervalTimestampAtEnd": true,
+      "intervalDeltas": false,
+      "gapfill": false,
+      "format": "json",
+      "zone": null,
+      "channels": ["pm2_5avg"],
+      "interval": "null null",
+      "sortingForced": false,
+      "multiplierChannels": [],
+      "tagName": null,
+      "tagValue": null
+    }
+  },
+  "content": null,
+  "contentType": "application/json",
+  "status": 200,
+  "errorMessage": null
+}
